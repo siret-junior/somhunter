@@ -94,7 +94,7 @@
 <!-- ===================================== -->
 <!-- MAIN BODY: Image grid-->
 <!-- ===================================== -->
-<div class="ranker-right-sidebar image-grid-section image-browser-main-tiles small-9 cell grid-container">
+<div id="frameGridWrapper" class="ranker-right-sidebar image-grid-section image-browser-main-tiles small-9 cell grid-container">
 
   <ul id="frameGrid" class="<%= somhunter.screen.type %>-grid frame-grid grid-x grid-x align-center align-middle"></ul>
 
@@ -139,9 +139,51 @@
 <script>
   let vd = {};
   vd.somhunter = <%- JSON.stringify(somhunter) %>;
+  let pageId = 0;
+  let lastPageTime = 0;
+  let pageLoadSpan = 1500;
+
+
+function showNextTopnDisplay(id, thisFilename) {
+  pageId++;
+  // Make the request
+  fetch("/get_topn_screen?pageId=" + pageId, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+      
+      // Get updated view data
+      oldLength = vd.somhunter.screen.frames.length;
+      vd.somhunter.screen.frames = vd.somhunter.screen.frames.concat(data.viewData.somhunter.screen.frames);
+      appendImageGrid(vd, oldLength);
+
+    })
+    .catch((e) => {
+      pageId--;
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
 
 
 function showTopnDisplay(id, thisFilename) {
+  pageId = 0;
   // Make the request
   fetch("/get_topn_screen", {
     method: "GET",
@@ -176,6 +218,7 @@ function showTopnDisplay(id, thisFilename) {
 }
 
 function showSomDisplay(id, thisFilename) {
+  pageId = 0;
   // Make the request
   fetch("/get_som_screen", {
     method: "GET",
@@ -226,6 +269,7 @@ function putDetailModelToState(screenData) {
 }
 
 function showVideoDetail(id, thisFilename) {
+  pageId = 0;
   // Make the request
   fetch("/get_frame_detail_data?frameId=" + id, {
     method: "GET",
@@ -395,6 +439,7 @@ function submitImage(el) {
 
 
 function resetSearchSession() {
+  pageId = 0;
   // Request input data
   const reqData = {};
 
@@ -496,6 +541,52 @@ function setupImageGrid(viewData) {
   elem.innerHTML = elemHtml;
 }
 
+function appendImageGrid(viewData, fromIndex) {
+
+  const elem = document.getElementById("frameGrid");
+  const frames = viewData.somhunter.screen.frames;
+  
+  let elemHtml = elem.innerHTML;
+  // Iterate over all the frames
+  for (let i = fromIndex; i < frames.length; ++i) {
+    
+    let likedStr = "";
+    let actionStr = `like(this, ${frames[i].id})`;
+    if (frames[i].liked) {
+      likedStr = "liked";
+      actionStr = `unlike(this, ${frames[i].id})`;
+    }
+
+    elemHtml += `<li 
+      class="frame-in-grid small-6 medium-4 large-2 cell
+      ${likedStr}" 
+      onclick="${actionStr}" 
+      data-frame-id="${frames[i].id}"
+      style="background-image: url('${frames[i].src}')"
+    >
+      <div class="just-clicker">
+        <a 
+          class="button frame-in-grid-hover-btn submit-frame" 
+          onclick="submitImage(this);event.cancelBubble=true;" 
+          title="Submit this frame.">
+          ✔
+        </a>
+
+        <a 
+          class="button frame-in-grid-hover-btn show-detail" 
+          data-open="modalImage"
+          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
+          title="Show the detail of this frame.">
+          Detail
+        </a>
+      </div>
+    </li>`
+
+  }
+
+  elem.innerHTML = elemHtml;
+}
+
 function setupQueryInputs(viewData) {
   const q0 = viewData.somhunter.textQueries.q0.value;
   const q1 = viewData.somhunter.textQueries.q1.value;
@@ -506,6 +597,28 @@ function setupQueryInputs(viewData) {
   elIn0.value = q0
   elIn0.value = q1
 }
+
+
+/**
+ * This controls infinite scrolling.
+ */
+var grid = document.getElementById("frameGridWrapper");
+var content = document.getElementById("frameGrid");
+
+function scroller() {
+  // add more contents if user scrolled down enough and last
+  // page was loaded a second before
+  if(grid.scrollTop + 300 > grid.scrollTopMax && Date.now() > (lastPageTime + pageLoadSpan)) {
+    console.log(grid.scrollTop + "; " + grid.offsetHeight + "; " + content.offsetHeight);
+    lastPageTime = Date.now();
+    if (vd.somhunter.screen.type == "topn")
+    {
+      showNextTopnDisplay();
+    }
+  }
+}
+
+grid.addEventListener("scroll", scroller, false);
 
 /**
  * This function modifies current page HTML according to state data.

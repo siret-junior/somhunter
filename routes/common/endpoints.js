@@ -46,10 +46,20 @@ exports.getSomScreen = function (req, res) {
 exports.getTopnScreen = function (req, res) {
   const sess = req.session;
 
+  global.logger.log("info", "TOPN " + JSON.stringify(req.query));
+  let pageId = 0;
+  if (req.query && req.query.pageId)
+  {
+    global.logger.log("info", "TOPN " + JSON.stringify(req.query.pageId));
+    global.logger.log("info", "TOPN " + Number(req.query.pageId));
+    pageId = Number(req.query.pageId);
+  }
+
+  global.logger.log("info", "TOPN calling core with " + pageId);
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, "topn", 0);
+  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, "topn", pageId);
   frames = displayFrames.frames;
   // -------------------------------
 
