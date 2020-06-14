@@ -649,9 +649,8 @@ function setupQueryInputs(viewData) {
  * This controls infinite scrolling.
  */
 var grid = document.getElementById("frameGridWrapper");
-var content = document.getElementById("frameGrid");
 
-function scroller() {
+function infiniteScroll() {
   // add more contents if user scrolled down enough and last
   // page was loaded a second before
   if(grid.scrollTop + 300 > grid.scrollTopMax && Date.now() > (lastPageTime + pageLoadSpan)) {
@@ -664,7 +663,7 @@ function scroller() {
   }
 }
 
-grid.addEventListener("scroll", scroller, false);
+grid.addEventListener("scroll", infiniteScroll, false);
 
 /**
  * This function modifies current page HTML according to state data.
