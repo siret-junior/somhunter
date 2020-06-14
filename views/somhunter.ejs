@@ -455,6 +455,16 @@ function setupImageGrid(viewData) {
   const elem = document.getElementById("frameGrid");
   const frames = viewData.somhunter.screen.frames;
   
+  elem.classList.remove("topn-grid");
+  elem.classList.remove("som-grid");
+
+  if (viewData.somhunter.screen.type == "som")
+  {
+    elem.classList.add("som-grid");
+  } else {
+    elem.classList.add("topn-grid");
+  }
+
   let elemHtml = "";
   // Iterate over all the frames
   for (let i = 0; i < frames.length; ++i) {
