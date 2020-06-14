@@ -22,15 +22,25 @@ exports.getFrameDetailData = function (req, res) {
 exports.getSomScreen = function (req, res) {
   const sess = req.session;
 
-  const frameId = Number(req.query.frameId);
-
   let frameData = {};
+
+  if (!global.core.isSomReady())
+  {
+    res.status(200).jsonp({ viewData: null, error: {message:"SOM not yet ready."} });
+    return;
+  }
+
   // -------------------------------
   // Call the core
-  frameData = global.core.get_display(global.cfg.framesPathPrefix, "som", frameId, 0);
+  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, "som");
   // -------------------------------
 
-  res.status(200).jsonp(frameData);
+  SessionState.switchScreenTo(sess.state, "som", frameData.frames);
+
+  let viewData = {};
+  viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
+
+  res.status(200).jsonp({ viewData: viewData });
 };
 
 exports.getTopnScreen = function (req, res) {
@@ -49,6 +59,35 @@ exports.getTopnScreen = function (req, res) {
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
 
   res.status(200).jsonp({ viewData: viewData });
+};
+
+exports.rescore = function (req, res) {
+  const sess = req.session;
+
+  const body = req.body;
+  const q0 = body.q0;
+  const q1 = body.q1;
+
+  const textQuery = q0;
+
+  // Append temporal query
+  if (q1 != "")
+  {
+    textQuery += " >> ";
+    textQuery += q1;
+  }
+
+  const likes = SessionState.getLikes(sess.state);
+  const unlikes = SessionState.getUnlikes(sess.state);
+
+  // -------------------------------
+  // Call the core
+  global.core.add_likes(likes);
+  global.core.remove_likes(unlikes);
+  global.core.rescore(textQuery);
+  // -------------------------------
+
+  res.status(200).jsonp({});
 };
 
 exports.submitFrame = function (req, res) {
@@ -83,9 +122,19 @@ exports.getAutocompleteResults = function (req, res) {
 };
 
 exports.resetSearchSession = function (req, res) {
-  const pass = req.body.pass;
+  const sess = req.session;
 
-  res.redirect(301, "/");
+  // -------------------------------
+  // Call the core
+  global.core.resetAll();
+  // -------------------------------
+
+  viewData.somhunter = SessionState.resetSearchSession(sess.state);
+
+  let viewData = {};
+  viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
+
+  res.status(200).jsonp({ viewData: viewData });
 };
 
 exports.likeFrame = function (req, res) {

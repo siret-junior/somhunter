@@ -53,11 +53,11 @@ SomHunterWrapper::SomHunterWrapper(const Napi::CallbackInfo &info)
 	Config cfg = Config::parse_json_config(config_fpth);
 	try {
 		this->actualClass_ = new SomHunter(cfg);
+		debug("API: SomHunter initialized.");
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
-	debug("API: SomHunter initialized.");
 }
 
 Napi::Value
@@ -243,6 +243,33 @@ SomHunterWrapper::add_likes(const Napi::CallbackInfo &info)
 		      << fr_IDs.size() << std::endl);
 
 		this->actualClass_->add_likes(fr_IDs);
+	} catch (const std::exception &e) {
+		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	}
+
+	return Napi::Object{};
+}
+
+Napi::Value
+SomHunterWrapper::rescore(const Napi::CallbackInfo &info) {
+	Napi::Env env = info.Env();
+	Napi::HandleScope scope(env);
+
+	// Process arguments
+	int length = info.Length();
+
+	if (length != 1) {
+		Napi::TypeError::New(env, "Wrong number of parameters: SomHunterWrapper::rescore")
+		  .ThrowAsJavaScriptException();
+	}
+	std::string query{ info[0].As<Napi::String>().Utf8Value() };
+	
+	try {
+		debug("API: CALL \n\t rescore\n\t\t query =  "
+		      << query << std::endl);
+
+		this->actualClass_->rescore(query);
+
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}

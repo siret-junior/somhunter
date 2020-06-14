@@ -18,9 +18,11 @@ private:
 
 	Napi::Value add_likes(const Napi::CallbackInfo &info);
 
-	Napi::Value reset_all(const Napi::CallbackInfo &info);
-
 	Napi::Value remove_likes(const Napi::CallbackInfo &info);
+
+	Napi::Value rescore(const Napi::CallbackInfo &info);
+
+	Napi::Value reset_all(const Napi::CallbackInfo &info);
 
 	Napi::Value autocomplete_keywords(const Napi::CallbackInfo &info);
 

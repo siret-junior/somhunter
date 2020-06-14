@@ -4,6 +4,7 @@ build
 data/*
 .vscode/
 .vs/
+logs/*
 output/
 public/images/*
 public/export/*
