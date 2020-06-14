@@ -243,14 +243,14 @@ function putDetailModelToState(screenData) {
       <div class="just-clicker">
         <a 
           class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(this);event.cancelBubble=true;" 
+          onclick="submitImage(${frames[i].id});event.cancelBubble=true;" 
           title="Submit this frame.">
           ✔
         </a>
 
         <a 
           class="button frame-in-grid-hover-btn show-detail" 
-          data-open="modalImage"
+          data-open="modalDetail"
           onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
           title="Show the detail of this frame.">
           Detail
@@ -392,9 +392,8 @@ function like(el, frameId) {
     });
 }
 
-function submitImage(el) {
-  const frameId = $(el).parent().parent().data("image-id");
-
+function submitImage(frameId) {
+  
   // Request input data
   const reqData = {
     frameId: frameId,
@@ -453,10 +452,6 @@ function resetSearchSession() {
       if (data.error) {
         throw Error(data.error.message);
       }
-
-      // Get updated view data
-      viewData = data.viewData;
-      putDocumentToState(viewData);
 
       // Now request new display
       showTopnDisplay();
@@ -527,7 +522,7 @@ function setupImageGrid(viewData) {
       <div class="just-clicker">
         <a 
           class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(this);" 
+          onclick="submitImage(${frames[i].id});event.cancelBubble=true;" 
           title="Submit this frame.">
           ✔
         </a>

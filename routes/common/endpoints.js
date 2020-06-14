@@ -98,7 +98,7 @@ exports.submitFrame = function (req, res) {
 
   // -------------------------------
   // Call the core
-  global.core.submit_to_server(submittedFrameId);
+  global.core.submitToServer(submittedFrameId);
   // -------------------------------
 
   res.status(200).jsonp({});

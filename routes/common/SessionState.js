@@ -37,19 +37,17 @@ exports.switchScreenTo = function (state, screen, frames) {
 };
 
 exports.resetSearchSession = function (state) {
-  state = {
-    textQueries: {
-      q0: { value: "" },
-      q1: { value: "" },
-    },
-    likes: [],
-    unlikes: [],
-    frameContext: {
+  state.textQueries = {
+    q0: { value: "" },
+    q1: { value: "" },
+  };
+  (state.likes = []),
+    (state.unlikes = []),
+    (state.frameContext = {
       frameId: null,
       frames: [],
-    },
-    screen: null,
-  };
+    });
+  state.screen = null;
 };
 
 exports.getLikes = function (state) {
