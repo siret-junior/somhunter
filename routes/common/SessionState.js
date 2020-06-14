@@ -16,6 +16,11 @@ exports.Construct = function () {
   };
 };
 
+exports.setTextQueries = function (state, q0, q1) {
+  state.textQueries.q0.value = q0;
+  state.textQueries.q1.value = q1;
+};
+
 exports.switchScreenTo = function (state, screen, frames) {
   // Apply current likes
   for (let i = 0; i < frames.length; ++i) {
@@ -31,8 +36,7 @@ exports.switchScreenTo = function (state, screen, frames) {
   };
 };
 
-
-exports.resetSearchSession = function(state) {
+exports.resetSearchSession = function (state) {
   state = {
     textQueries: {
       q0: { value: "" },
@@ -46,7 +50,7 @@ exports.resetSearchSession = function(state) {
     },
     screen: null,
   };
-}
+};
 
 exports.getLikes = function (state) {
   return state.likes;

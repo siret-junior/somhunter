@@ -43,7 +43,10 @@
     let a, b, i;
 
     // Get current value in input
-    const val = inp.value;
+    let val = inp.value;
+
+    // Get just the last word
+    val = val.split(" ").slice(-1);
 
     // Close any already open lists of autocompleted values
     closeAllLists();
@@ -53,17 +56,16 @@
       // Do nothing
       return false;
     }
+    
     // Set current focus to nothing
     currentFocus = -1;
 
-    // Create a <div> element that will contain the items (values)
-    a = document.createElement("dev");
-    // Set it's attributes
-    a.setAttribute("id", this.id + "autocomplete-list");
+    a = document.createElement("div");
+    a.setAttribute("id", "autocompleteList");
     a.setAttribute("class", "autocomplete-items");
 
     // Create AJAX call to get appropriate data
-    fetch(`/get_autocomplete_results?isRanker=true&queryValue=${val}`, {
+    fetch(`/get_autocomplete_results?queryValue=${val}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -76,17 +78,17 @@
         return res.json();
       })
       .then((data) => {
+
         // Handle error
         if (data.error) {
           throw Error(data.error.message);
         }
 
-        // Append the DIV element as a child of the autocomplete container
         inp.parentNode.appendChild(a);
 
         // For each item in the returned array
         for (i = 0; i < data.length; i++) {
-          // Create a DIV element for each element
+          
           b = document.createElement("div");
 
           // Make the matching letters bold
@@ -131,18 +133,8 @@
 
           // Execute a function when someone clicks on the item value (DIV element)
           b.addEventListener("click", function (e) {
-            // Clear input field
-            inp.value = "";
-
-            let selVal = "";
-            let selValWord = "";
-
+            
             for (let i = 0; i < this.childNodes.length; i++) {
-              if (this.childNodes[i].className == "wordnet-id") {
-                selVal = this.childNodes[i].innerHTML;
-                continue;
-              }
-
               if (this.childNodes[i].className == "keyword-title") {
                 selValWord = this.childNodes[i].innerHTML;
                 continue;
@@ -150,9 +142,12 @@
             }
             selValWord = selValWord.replace(/(<([^>]+)>)/gi, "");
 
-            const elem = document.getElementById(
-              viewData.elemIds.ranker.selectedKeywords1
-            );
+
+            // Update the input value
+            let words = inp.value.split(" ");
+            words = words.slice(0, words.length - 1)
+            words.push(selValWord);
+            inp.value = words.join(" ") + " ";
 
             // Close the list of autocompleted values,(or any other open lists of autocompleted values)
             closeAllLists();
