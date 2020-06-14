@@ -1,3 +1,5 @@
+const { resetSearchSession } = require("./endpoints");
+
 exports.Construct = function () {
   return {
     textQueries: {
@@ -29,8 +31,29 @@ exports.switchScreenTo = function (state, screen, frames) {
   };
 };
 
-exports.getSomhunterState = function (state) {
-  return state;
+
+exports.resetSearchSession = function(state) {
+  state = {
+    textQueries: {
+      q0: { value: "" },
+      q1: { value: "" },
+    },
+    likes: [],
+    unlikes: [],
+    frameContext: {
+      frameId: null,
+      frames: [],
+    },
+    screen: null,
+  };
+}
+
+exports.getLikes = function (state) {
+  return state.likes;
+};
+
+exports.getUnlikes = function (state) {
+  return state.unlikes;
 };
 
 exports.getSomhunterUiState = function (state) {

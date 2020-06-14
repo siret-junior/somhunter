@@ -47,6 +47,11 @@ const myFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} ${level}: ${message}`;
 });
 
+// Make sure that this dir exists
+fs.mkdir(global.cfg.logsDir, { recursive: true }, (err) => {
+  if (err) throw err;
+});
+
 // Create main logger
 global.logger = createLogger({
   level: "debug",
@@ -167,11 +172,12 @@ app.use("/", somhunterRouter);
 // SOMHunter endpoints
 app.get("/get_frame_detail_data", endpoints.getFrameDetailData);
 app.get("/get_autocomplete_results", endpoints.getAutocompleteResults);
-app.post("/get_topn_screen", endpoints.getTopnScreen);
-app.post("/get_som_screen", endpoints.getSomScreen);
+app.get("/get_topn_screen", endpoints.getTopnScreen);
+app.get("/get_som_screen", endpoints.getSomScreen);
 app.post("/submit_frame", endpoints.submitFrame);
 app.post("/reset_search_session", endpoints.resetSearchSession);
 
+app.post("/rescore", endpoints.rescore);
 app.post("/like_frame", endpoints.likeFrame);
 app.post("/unlike_frame", endpoints.unlikeFrame);
 

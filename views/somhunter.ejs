@@ -15,10 +15,10 @@
     <div class="grid-x align-left grid-padding-x"> 
       <!-- Top buttons -->
       <div class="small-6 cell">
-        <a class="button block-btn new-seach-btn">New search</a>
+        <a class="button block-btn new-seach-btn" onclick="resetSearchSession()">New search</a>
       </div>
       <div class="small-6 cell">
-        <a class="button block-btn help-btn">Help</a>
+        <a class="button block-btn help-btn" data-open="modalHelp">Help</a>
       </div>
     
     </div>
@@ -31,13 +31,15 @@
         <!-- Text queries -->
         <div class="autocomplete-input-cont small-12 cell">
           <h2>Text queries</h2>
-          <!-- Autocomplete text input -->
+          <!-- Autocomplete text input -->  
           <div class="input-cont">
-            <input type="text" id="textQueryInput0" class="text-query-input" data-id="2" tabindex="1" name="textQuery[]" value="<%= somhunter.textQueries.q0.value %>">
+            <input type="text" id="textQueryInput0" class="text-query-input" data-id="2" 
+              tabindex="1" name="textQuery[]" value="<%= somhunter.textQueries.q0.value %>">
           </div>
           <p class="inter-query-text"> ... AND THEN ...</p>
           <div class="input-cont">
-            <input type="text" id="textQueryInput1" class="text-query-input left-marged" data-id="1" tabindex="2" name="textQuery[]" value="<%= somhunter.textQueries.q1.value %>">
+            <input type="text" id="textQueryInput1" class="text-query-input left-marged" data-id="1" 
+              tabindex="2" name="textQuery[]" value="<%= somhunter.textQueries.q1.value %>">
           </div>
                     
         </div>
@@ -62,11 +64,11 @@
       <div class="screen-btns grid-padding-x grid-x align-left"> 
 
         <div class="small-12 cell">
-          <a id="btnSom" class="button block-btn som-screen-btn">SOM Screen</a>
+          <a id="btnSom" onclick="showSomDisplay()" class="button block-btn som-screen-btn">SOM Screen</a>
         </div>
         
         <div class="small-6 cell">
-          <a id="btnTopn" class="active button block-btn top-ranked-btn">Top-ranked</a>
+          <a id="btnTopn" onclick="showTopnDisplay()" class="active button block-btn top-ranked-btn">Top-ranked</a>
         </div>
 
         <div class="small-6 cell">
@@ -113,6 +115,22 @@
   </ul>
 
 </div>
+
+<!-- ===================================== -->
+<!-- HELP MODAL -->
+<!-- ===================================== -->
+<div class="large reveal grid-x" id="modalHelp" data-reveal data-src="999" data-overlay="false">
+  
+  <button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+
+  <h1>Help</h1>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In in imperdiet enim, eget egestas enim. Aliquam nec ornare ipsum. Nullam ullamcorper dapibus dictum. Nulla semper dapibus eleifend. Sed id nibh vel sapien lobortis commodo a nec orci. Curabitur elit ex, sagittis a aliquet sed, tempus vitae augue. Pellentesque tincidunt, leo non facilisis euismod, diam arcu ultrices turpis, at ultricies arcu tortor quis sem. Nam rutrum convallis malesuada. 
+  </p>
+
+</div>
 </section>
 
 <!-- Include footer -->
@@ -122,7 +140,92 @@
   let vd = {};
   vd.somhunter = <%- JSON.stringify(somhunter) %>;
 
-  function showVideoDetail(id, thisFilename) {
+
+function showTopnDisplay(id, thisFilename) {
+  // Make the request
+  fetch("/get_topn_screen", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+      
+      // Get updated view data
+      viewData = data.viewData;
+      putDocumentToState(viewData);
+
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+function showSomDisplay(id, thisFilename) {
+  // Make the request
+  fetch("/get_som_screen", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+      
+      // Get updated view data
+      viewData = data.viewData;
+      putDocumentToState(viewData);
+
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+
+function putDetailModelToState(screenData) {
+  const grid = document.getElementById(videoDetailFrameGrid);
+
+  // \todo
+
+  /*
+  screenData {
+    {
+      type: screen,
+      frames: frames,
+    }
+  }
+  */
+}
+
+function showVideoDetail(id, thisFilename) {
   // Make the request
   fetch("/get_frame_detail_data?frameId=" + id, {
     method: "GET",
@@ -139,8 +242,9 @@
       if (data.error) {
         throw Error(data.error.message);
       }
-      // \todo - Fill in the grid
-      const grid = document.getElementById(videoDetailFrameGrid);
+
+      // Get modal data
+      putDetailModelToState(data);
     })
     .catch((e) => {
       console.log("Error: " + JSON.stringify(e.message));
@@ -152,6 +256,52 @@
       );
     });
 }
+
+function rescore() {
+
+  // Get current queries
+  const q0 = document.getElementById("textQueryInput0").value;
+  const q1 = document.getElementById("textQueryInput1").value;
+
+  // Request input data
+  const reqData = {
+    q0: q0,
+    q1: q1,
+  };
+
+  // Make the request
+  fetch("rescore", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reqData),
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+
+      // Now request new display
+      showTopnDisplay();
+
+      showGlobalMessage(`Rescored.`, "", 5000,"s");      
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+  }
 
 function like(el, frameId) {
 
@@ -229,6 +379,8 @@ function submitImage(el) {
       if (data.error) {
         throw Error(data.error.message);
       }
+
+      showGlobalMessage(`Frame '${frameId}' submitted.`, "", 5000,"s");      
     })
     .catch((e) => {
       console.log("Error: " + JSON.stringify(e.message));
@@ -241,7 +393,7 @@ function submitImage(el) {
     });
 }
 
-// xoxo
+
 function resetSearchSession() {
   // Request input data
   const reqData = {};
@@ -267,6 +419,8 @@ function resetSearchSession() {
       // Get updated view data
       viewData = data.viewData;
       putDocumentToState(viewData);
+
+      showGlobalMessage("Search reset.", "", 5000,"s");      
     })
     .catch((e) => {
       console.log("Error: " + JSON.stringify(e.message));
@@ -291,7 +445,7 @@ function setupPanelButtons(viewData) {
       break;
 
     case "topn":
-      elBtnSom.classList.add("active");
+      elBtnTopn.classList.add("active");
       break;
   }
 }
