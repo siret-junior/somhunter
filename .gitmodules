@@ -1,0 +1,3 @@
+[submodule "cppsrc/SomHunterWrapper/SOMHunterCore"]
+	path = cppsrc/SomHunterWrapper/SOMHunterCore
+	url = https://github.com/Anophel/SOMHunterCore

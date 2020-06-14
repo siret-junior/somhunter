@@ -1,0 +1,379 @@
+<!-- Include header -->
+<%- include common/header.ejs %>
+
+<section class="ranker-grid-section grid-container">
+  <div class="grid-x grid-x align-center">
+
+<!-- ===================================== -->
+<!-- Left sidebar: Query builder -->
+<!-- ===================================== -->
+<div class="ranker-left-sidebar small-3 cell">
+
+  <section class="autocomplete-section ranker-single">
+    <form autocomplete="off" class="autocomplete-form grid-container">
+
+    <div class="grid-x align-left grid-padding-x"> 
+      <!-- Top buttons -->
+      <div class="small-6 cell">
+        <a class="button block-btn new-seach-btn">New search</a>
+      </div>
+      <div class="small-6 cell">
+        <a class="button block-btn help-btn">Help</a>
+      </div>
+    
+    </div>
+
+    <!-- ---------------------------------- -->
+    <!-- Query inputs -->
+    <!-- ---------------------------------- -->    
+      <div class="grid-x grid-padding-x align-left"> 
+
+        <!-- Text queries -->
+        <div class="autocomplete-input-cont small-12 cell">
+          <h2>Text queries</h2>
+          <!-- Autocomplete text input -->
+          <div class="input-cont">
+            <input type="text" id="textQueryInput0" class="text-query-input" data-id="2" tabindex="1" name="textQuery[]" value="<%= somhunter.textQueries.q0.value %>">
+          </div>
+          <p class="inter-query-text"> ... AND THEN ...</p>
+          <div class="input-cont">
+            <input type="text" id="textQueryInput1" class="text-query-input left-marged" data-id="1" tabindex="2" name="textQuery[]" value="<%= somhunter.textQueries.q1.value %>">
+          </div>
+                    
+        </div>
+
+        <!-- Autocomplete logic -->
+        <%- include common/autocomplete_logic.ejs %>
+
+        <div class="autocomplete-input-cont small-12 cell">
+          <a class="button block-btn rescore-btn">Rescore</a>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- ---------------------------------- -->
+  <!-- Control buttons-->
+  <!-- ---------------------------------- -->
+  <section class="section-control-buttons ">
+    <div class="grid-container"> 
+
+      <!-- Screen buttons -->
+      <div class="screen-btns grid-padding-x grid-x align-left"> 
+
+        <div class="small-12 cell">
+          <a id="btnSom" class="button block-btn som-screen-btn">SOM Screen</a>
+        </div>
+        
+        <div class="small-6 cell">
+          <a id="btnTopn" class="active button block-btn top-ranked-btn">Top-ranked</a>
+        </div>
+
+        <div class="small-6 cell">
+          <a id="btnDetail" class="button block-btn detail-btn">Detail</a>
+        </div>
+
+      </div>
+
+      <!-- Tips -->
+      <div class="screen-btns grid-x align-left"> 
+
+        <ul class="tips-list">
+          <li>SHIFT + Mouse Wheel for <span>TEMPORAL CONETXT</span></li>
+        </ul>
+        
+      </div>
+    </div>
+  </section>
+    
+
+  </div>
+
+<!-- ===================================== -->
+<!-- MAIN BODY: Image grid-->
+<!-- ===================================== -->
+<div class="ranker-right-sidebar image-grid-section image-browser-main-tiles small-9 cell grid-container">
+
+  <ul id="frameGrid" class="<%= somhunter.screen.type %>-grid frame-grid grid-x grid-x align-center align-middle"></ul>
+
+</div>
+
+
+
+<!-- ===================================== -->
+<!-- VIDEO DETAIL MODAL -->
+<!-- ===================================== -->
+<div class="full reveal grid-x" id="modalImage" data-reveal data-src="999" data-overlay="false">
+  
+  <button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+
+  <ul id="videoDetailFrameGrid">
+  </ul>
+
+</div>
+</section>
+
+<!-- Include footer -->
+<%- include common/footer.ejs %>
+
+<script>
+  let vd = {};
+  vd.somhunter = <%- JSON.stringify(somhunter) %>;
+
+  function showVideoDetail(id, thisFilename) {
+  // Make the request
+  fetch("/get_frame_detail_data?frameId=" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+      // \todo - Fill in the grid
+      const grid = document.getElementById(videoDetailFrameGrid);
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+function like(el, frameId) {
+
+  // Request input data
+  const reqData = {
+    frameId: frameId,
+  };
+
+  let url = "/like_frame";
+  // If unlike
+  if (el.classList.contains("liked"))
+  {
+    url = "/unlike_frame";
+  }
+
+  // Make the request
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reqData),
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+
+      if (data.isLiked)
+      {
+        el.classList.add("liked");
+      } else {
+        el.classList.remove("liked");
+      }
+
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+function submitImage(el) {
+  const frameId = $(el).parent().parent().data("image-id");
+
+  // Request input data
+  const reqData = {
+    frameId: frameId,
+  };
+
+  // Make the request
+  fetch("/submit_frame", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reqData),
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+// xoxo
+function resetSearchSession() {
+  // Request input data
+  const reqData = {};
+
+  // Make the request
+  fetch("/reset_search_session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reqData),
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+
+      // Get updated view data
+      viewData = data.viewData;
+      putDocumentToState(viewData);
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000
+      );
+    });
+}
+
+function setupPanelButtons(viewData) {
+  const elBtnSom = document.getElementById("btnSom");
+  const elBtnTopn = document.getElementById("btnTopn");
+
+  elBtnSom.classList.remove("active");
+  elBtnTopn.classList.remove("active");
+
+  switch (viewData.somhunter.screen.type) {
+    case "som":
+      elBtnSom.classList.add("active");
+      break;
+
+    case "topn":
+      elBtnSom.classList.add("active");
+      break;
+  }
+}
+
+function setupImageGrid(viewData) {
+
+  const elem = document.getElementById("frameGrid");
+  const frames = viewData.somhunter.screen.frames;
+  
+  let elemHtml = "";
+  // Iterate over all the frames
+  for (let i = 0; i < frames.length; ++i) {
+    
+    let likedStr = "";
+    let actionStr = `like(this, ${frames[i].id})`;
+    if (frames[i].liked) {
+      likedStr = "liked";
+      actionStr = `unlike(this, ${frames[i].id})`;
+    }
+
+    elemHtml += `<li 
+      class="frame-in-grid small-6 medium-4 large-2 cell
+      ${likedStr}" 
+      onclick="${actionStr}" 
+      data-frame-id="${frames[i].id}"
+      style="background-image: url('${frames[i].src}')"
+    >
+      <div class="just-clicker">
+        <a 
+          class="button frame-in-grid-hover-btn submit-frame" 
+          onclick="submitImage(this);event.cancelBubble=true;" 
+          title="Submit this frame.">
+          ✔
+        </a>
+
+        <a 
+          class="button frame-in-grid-hover-btn show-detail" 
+          data-open="modalImage"
+          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
+          title="Show the detail of this frame.">
+          Detail
+        </a>
+      </div>
+    </li>`
+
+  }
+
+  elem.innerHTML = elemHtml;
+}
+
+function setupQueryInputs(viewData) {
+  const q0 = viewData.somhunter.textQueries.q0.value;
+  const q1 = viewData.somhunter.textQueries.q1.value;
+
+  elIn0 = document.getElementById("textQueryInput0");
+  elIn1 = document.getElementById("textQueryInput1");
+
+  elIn0.value = q0
+  elIn0.value = q1
+}
+
+/**
+ * This function modifies current page HTML according to state data.
+ */
+function putDocumentToState(viewData) {
+
+  // -----------------------------
+  // Manage image grid
+  setupImageGrid(viewData);
+
+  // -----------------------------
+  // Change buttons
+  setupPanelButtons(viewData);
+
+  // -----------------------------
+  // Setup query inputs
+  setupQueryInputs(viewData);
+}
+
+/** Put document into correct state */
+onDocumentReady(function () {
+  putDocumentToState(vd);
+});
+
+</script>

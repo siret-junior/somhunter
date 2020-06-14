@@ -1,0 +1,12 @@
+_local
+node_modules/
+build
+data/*
+.vscode/
+.vs/
+output/
+public/images/*
+public/export/*
+*.tmp
+*.log
+LOCAL_GIT_SETTINGS.md
