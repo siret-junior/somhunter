@@ -223,7 +223,6 @@ public:
 		return FrameRange(from_it, to_it + 1);
 	}
 
-	
 	/** Translation to VideoFrameRefs from vector ids or FrameRange */
 	std::vector<VideoFramePointer> ids_to_video_frame(
 	  const std::vector<ImageId> &ids) const;
@@ -237,8 +236,8 @@ private:
 	 *
 	 * Line determines image ID therefore input file must have them sorted.
 	 */
-	static std::vector<std::vector<KeywordId>> parse_top_kws_for_imgs_text_file(
-	  const std::string &filepath);
+	static std::vector<std::vector<KeywordId>>
+	parse_top_kws_for_imgs_text_file(const std::string &filepath);
 
 	/**
 	 * From filename string it parses useful info as video/shot/frame ID

@@ -80,11 +80,9 @@ public:
 	                             ImageId frame_ID,
 	                             const std::vector<ImageId> &imgs);
 
-	void log_show_detail_display(const Frames &frames,
-	                             ImageId frame_ID);
+	void log_show_detail_display(const Frames &frames, ImageId frame_ID);
 
-	void log_show_video_replay(const Frames &frames,
-	                           ImageId frame_ID);
+	void log_show_video_replay(const Frames &frames, ImageId frame_ID);
 
 	void log_scroll(const Frames &frames,
 	                DisplayType from_disp_type,

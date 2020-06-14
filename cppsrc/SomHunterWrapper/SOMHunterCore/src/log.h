@@ -9,8 +9,6 @@
 #include <sstream>
 #include <string>
 
-
-
 #if LOGLEVEL > 0
 
 #define _write_log(level, x)                                                   \

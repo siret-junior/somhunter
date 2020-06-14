@@ -37,8 +37,6 @@ class SomHunter
 	std::vector<VideoFramePointer> current_display;
 	DisplayType current_display_type{ DisplayType::DTopN };
 
-
-
 	// asynchronous SOM worker
 	AsyncSom asyncSom;
 
@@ -57,7 +55,9 @@ public:
 	  , keywords(cfg)
 	  , asyncSom(cfg)
 	  , submitter(cfg.submitter_config)
-	{}
+	{
+		asyncSom.start_work(features, scores);
+	}
 
 	/** Returns display of desired type
 	 *
