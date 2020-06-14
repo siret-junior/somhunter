@@ -16,6 +16,7 @@ SomHunterWrapper::Init(Napi::Env env, Napi::Object exports)
 	  "SomHunterWrapper",
 	  { InstanceMethod("getDisplay", &SomHunterWrapper::get_display),
 	    InstanceMethod("addLikes", &SomHunterWrapper::add_likes),
+		InstanceMethod("rescore", &SomHunterWrapper::rescore),
 	    InstanceMethod("resetAll", &SomHunterWrapper::reset_all),
 	    InstanceMethod("removeLikes", &SomHunterWrapper::remove_likes),
 	    InstanceMethod("autocompleteKeywords",
@@ -226,8 +227,6 @@ SomHunterWrapper::add_likes(const Napi::CallbackInfo &info)
 		  .ThrowAsJavaScriptException();
 	}
 
-	std::string prefix{ info[0].As<Napi::String>().Utf8Value() };
-
 	std::vector<ImageId> fr_IDs;
 
 	Napi::Array arr = info[0].As<Napi::Array>();
@@ -317,10 +316,7 @@ SomHunterWrapper::remove_likes(const Napi::CallbackInfo &info)
 		  .ThrowAsJavaScriptException();
 	}
 
-	std::string prefix{ info[0].As<Napi::String>().Utf8Value() };
-
 	std::vector<ImageId> fr_IDs;
-
 	Napi::Array arr = info[0].As<Napi::Array>();
 	for (size_t i{ 0 }; i < arr.Length(); ++i) {
 		Napi::Value val = arr[i];

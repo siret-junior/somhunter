@@ -48,7 +48,7 @@
         <%- include common/autocomplete_logic.ejs %>
 
         <div class="autocomplete-input-cont small-12 cell">
-          <a class="button block-btn rescore-btn">Rescore</a>
+          <a class="button block-btn rescore-btn" onclick="rescore()">Rescore</a>
         </div>
       </div>
     </form>
@@ -105,13 +105,13 @@
 <!-- ===================================== -->
 <!-- VIDEO DETAIL MODAL -->
 <!-- ===================================== -->
-<div class="full reveal grid-x" id="modalImage" data-reveal data-src="999" data-overlay="false">
+<div class="large reveal grid-x" id="modalDetail" data-reveal data-src="999" data-overlay="false">
   
   <button class="close-button" data-close aria-label="Close modal" type="button">
     <span aria-hidden="true">&times;</span>
   </button>
 
-  <ul id="videoDetailFrameGrid">
+  <ul id="videoDetailFrameGrid" class="detail-grid frame-grid grid-x grid-x align-center align-middle">
   </ul>
 
 </div>
@@ -254,9 +254,8 @@ function showSomDisplay(id, thisFilename) {
 
 
 function putDetailModelToState(screenData) {
-  const grid = document.getElementById(videoDetailFrameGrid);
-
-  // \todo
+  const grid = document.getElementById("videoDetailFrameGrid");
+  const frames = screenData.frames;
 
   /*
   screenData {
@@ -264,8 +263,47 @@ function putDetailModelToState(screenData) {
       type: screen,
       frames: frames,
     }
-  }
+  } 
   */
+  let elemHtml = "";
+  // Iterate over all the frames
+  for (let i = 0; i < frames.length; ++i) {
+    
+    let likedStr = "";
+    let actionStr = `like(this, ${frames[i].id})`;
+    if (frames[i].liked) {
+      likedStr = "liked";
+      actionStr = `unlike(this, ${frames[i].id})`;
+    }
+
+    elemHtml += `<li 
+      class="frame-in-grid small-6 medium-4 large-2 cell
+      ${likedStr}" 
+      onclick="${actionStr}" 
+      data-frame-id="${frames[i].id}"
+      style="background-image: url('${frames[i].src}')"
+    >
+      <div class="just-clicker">
+        <a 
+          class="button frame-in-grid-hover-btn submit-frame" 
+          onclick="submitImage(${frames[i].id});event.cancelBubble=true;" 
+          title="Submit this frame.">
+          ✔
+        </a>
+
+        <a 
+          class="button frame-in-grid-hover-btn show-detail" 
+          data-open="modalDetail"
+          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
+          title="Show the detail of this frame.">
+          Detail
+        </a>
+      </div>
+    </li>`
+
+  }
+
+  grid.innerHTML = elemHtml;
 }
 
 function showVideoDetail(id, thisFilename) {
@@ -398,9 +436,8 @@ function like(el, frameId) {
     });
 }
 
-function submitImage(el) {
-  const frameId = $(el).parent().parent().data("image-id");
-
+function submitImage(frameId) {
+  
   // Request input data
   const reqData = {
     frameId: frameId,
@@ -461,9 +498,8 @@ function resetSearchSession() {
         throw Error(data.error.message);
       }
 
-      // Get updated view data
-      viewData = data.viewData;
-      putDocumentToState(viewData);
+      // Now request new display
+      showTopnDisplay();
 
       showGlobalMessage("Search reset.", "", 5000,"s");      
     })
@@ -500,6 +536,16 @@ function setupImageGrid(viewData) {
   const elem = document.getElementById("frameGrid");
   const frames = viewData.somhunter.screen.frames;
   
+  elem.classList.remove("topn-grid");
+  elem.classList.remove("som-grid");
+
+  if (viewData.somhunter.screen.type == "som")
+  {
+    elem.classList.add("som-grid");
+  } else {
+    elem.classList.add("topn-grid");
+  }
+
   let elemHtml = "";
   // Iterate over all the frames
   for (let i = 0; i < frames.length; ++i) {
@@ -521,15 +567,15 @@ function setupImageGrid(viewData) {
       <div class="just-clicker">
         <a 
           class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(this);event.cancelBubble=true;" 
+          onclick="submitImage(${frames[i].id});event.cancelBubble=true;" 
           title="Submit this frame.">
           ✔
         </a>
 
         <a 
           class="button frame-in-grid-hover-btn show-detail" 
-          data-open="modalImage"
-          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
+          data-open="modalDetail"
+          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');" 
           title="Show the detail of this frame.">
           Detail
         </a>
@@ -595,7 +641,7 @@ function setupQueryInputs(viewData) {
   elIn1 = document.getElementById("textQueryInput1");
 
   elIn0.value = q0
-  elIn0.value = q1
+  elIn1.value = q1
 }
 
 
@@ -641,6 +687,21 @@ function putDocumentToState(viewData) {
 /** Put document into correct state */
 onDocumentReady(function () {
   putDocumentToState(vd);
+
+
+  $(window).bind('mousewheel DOMMouseScroll', function(event){
+    if (event.shiftKey) {
+      if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+          // scroll up
+          console.log("playing the video back ...");
+      }
+      else {
+          // scroll down
+          console.log("playing the video forward...");
+      }
+    }
+  });
+
 });
 
 </script>

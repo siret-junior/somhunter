@@ -1,3 +1,4 @@
+vbs-log/
 _local
 node_modules/
 build
@@ -8,6 +9,7 @@ logs/*
 output/
 public/images/*
 public/export/*
+public/thumbs/
 *.tmp
 *.log
 LOCAL_GIT_SETTINGS.md

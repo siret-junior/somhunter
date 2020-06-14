@@ -11,11 +11,6 @@ git clone --recurse-submodules https://github.com/FrankMejzlik/SOMHunter !! EDIT
 - Node.js
 - Python 3
 
-## Data
-Please use included data extractor placed in the `extractor/` directory. You can also use pre-extracted data for the V3C1 dataset [HERE]().
-
-Then set up paths to those files inside the `config.json` file. The application will take this config file (placed in the root of the project) and load the files at the provided locations.
-
 ## Getting the dependencies
 cURL library is required dependency for building the SOMHunter core.
 
@@ -50,6 +45,13 @@ npm install
 npm run start
 ```
 
-The `npm install` also triggers the `npm run build` command that will compile the native core library. If you have all the dependencies set correctly, this should finish without any errors. If any errors occur, pleaes follow the presented errors and try to resolve them. 
+The `npm install` also triggers the `npm run build` command that will compile the native core library. If you have all the dependencies set correctly, this should finish without any errors. If any errors occur, pleese follow the presented errors and try to resolve them. 
 
 If you need to edit some compile options, please head to the `cppsrc/SomHunterWrapper/binding.gyp` file that is config file for the node-gyp build system.
+
+## Data
+Please use included data extractor placed in the `extractor/` directory. You can also use pre-extracted data for the V3C1 dataset [HERE]().
+
+Then set up paths to those files inside the `config.json` file. The application will take this config file (placed in the root of the project) and load the files at the provided locations.
+
+Also the extracted frames (e.g. JPEG files) must be placed in the `public/thumbs/` directory so the browser can access them. The symlink to their original directory will suffice.

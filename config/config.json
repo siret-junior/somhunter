@@ -5,7 +5,7 @@
 
         "logsDir": "logs/",
 
-        "framesPathPrefix": "/images/v3c1_w2vv/thumbs/",
+        "framesPathPrefix": "/thumbs/",
 
         "autocompleteResCount": 10,
 

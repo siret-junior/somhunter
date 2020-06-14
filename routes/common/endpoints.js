@@ -13,7 +13,7 @@ exports.getFrameDetailData = function (req, res) {
   let frameData = {};
   // -------------------------------
   // Call the core
-  frameData = global.core.get_display(global.cfg.framesPathPrefix, "detail", frameId, 0);
+  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, "detail", null, frameId);
   // -------------------------------
 
   res.status(200).jsonp(frameData);
@@ -24,9 +24,8 @@ exports.getSomScreen = function (req, res) {
 
   let frameData = {};
 
-  if (!global.core.isSomReady())
-  {
-    res.status(200).jsonp({ viewData: null, error: {message:"SOM not yet ready."} });
+  if (!global.core.isSomReady()) {
+    res.status(200).jsonp({ viewData: null, error: { message: "SOM not yet ready." } });
     return;
   }
 
@@ -81,19 +80,20 @@ exports.rescore = function (req, res) {
   const textQuery = q0;
 
   // Append temporal query
-  if (q1 != "")
-  {
+  if (q1 != "") {
     textQuery += " >> ";
     textQuery += q1;
   }
+
+  SessionState.setTextQueries(sess.state, q0, q1);
 
   const likes = SessionState.getLikes(sess.state);
   const unlikes = SessionState.getUnlikes(sess.state);
 
   // -------------------------------
   // Call the core
-  global.core.add_likes(likes);
-  global.core.remove_likes(unlikes);
+  global.core.addLikes(likes);
+  global.core.removeLikes(unlikes);
   global.core.rescore(textQuery);
   // -------------------------------
 
@@ -108,7 +108,7 @@ exports.submitFrame = function (req, res) {
 
   // -------------------------------
   // Call the core
-  global.core.submit_to_server(submittedFrameId);
+  global.core.submitToServer(submittedFrameId);
   // -------------------------------
 
   res.status(200).jsonp({});
@@ -139,7 +139,7 @@ exports.resetSearchSession = function (req, res) {
   global.core.resetAll();
   // -------------------------------
 
-  viewData.somhunter = SessionState.resetSearchSession(sess.state);
+  SessionState.resetSearchSession(sess.state);
 
   let viewData = {};
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
