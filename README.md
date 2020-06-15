@@ -28,8 +28,7 @@ npm run start
 
 (Optionally replace `npm` with `yarn`.)
 
-This should open a browser window with the running SOMHunter interface.
-Now you can start browsing!
+If everything goes all right, you can start browsing at http://localhost:8080/
 
 ### Getting the dependencies on UNIX systems
 
