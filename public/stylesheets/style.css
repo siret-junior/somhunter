@@ -268,6 +268,7 @@ a:focus {
   list-style: none;
   margin-top: 2rem;
   width: 100%;
+  display: none;
 }
 
 .tips-list li {
