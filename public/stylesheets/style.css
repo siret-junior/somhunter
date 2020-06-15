@@ -2031,6 +2031,15 @@ a:hover, a:focus {
   right: 0;
 }
 
+/** KNN button (top-right) */
+.frame-in-grid .button.show-knn {
+  top: initial;
+  left: 0;
+  bottom: 0;
+  right: initial;
+  background: #ff9933;
+}
+
 .frame-in-grid:before {
   content: "";
   position: absolute;

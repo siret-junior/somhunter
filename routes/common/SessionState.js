@@ -21,7 +21,7 @@ exports.setTextQueries = function (state, q0, q1) {
   state.textQueries.q1.value = q1;
 };
 
-exports.switchScreenTo = function (state, screen, frames) {
+exports.switchScreenTo = function (state, screen, frames, targetFrame) {
   // Apply current likes
   for (let i = 0; i < frames.length; ++i) {
     // If UI has it liked
@@ -34,6 +34,8 @@ exports.switchScreenTo = function (state, screen, frames) {
     type: screen,
     frames: frames,
   };
+  
+  state.frameContext.frameId = targetFrame;
 };
 
 exports.resetSearchSession = function (state) {

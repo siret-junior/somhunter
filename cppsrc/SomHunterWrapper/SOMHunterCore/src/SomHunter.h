@@ -35,7 +35,7 @@ class SomHunter
 
 	// Current display context
 	std::vector<VideoFramePointer> current_display;
-	DisplayType current_display_type{ DisplayType::DTopN };
+	DisplayType current_display_type{ DisplayType::DNull };
 
 	// asynchronous SOM worker
 	AsyncSom asyncSom;

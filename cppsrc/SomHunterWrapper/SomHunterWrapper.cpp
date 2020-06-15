@@ -93,6 +93,9 @@ SomHunterWrapper::get_display(const Napi::CallbackInfo &info)
 	} else if (display_string == "detail") {
 		disp_type = DisplayType::DVideoDetail;
 		selected_image = info[3].As<Napi::Number>().Uint32Value();
+	} else if (display_string == "topknn") {
+		disp_type = DisplayType::DTopKNN;
+		selected_image = info[3].As<Napi::Number>().Uint32Value();
 	}
 
 	// Call native method

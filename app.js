@@ -172,7 +172,7 @@ app.use("/", somhunterRouter);
 // SOMHunter endpoints
 app.get("/get_frame_detail_data", endpoints.getFrameDetailData);
 app.get("/get_autocomplete_results", endpoints.getAutocompleteResults);
-app.get("/get_topn_screen", endpoints.getTopnScreen);
+app.get("/get_top_screen", endpoints.getTopScreen);
 app.get("/get_som_screen", endpoints.getSomScreen);
 app.post("/submit_frame", endpoints.submitFrame);
 app.post("/reset_search_session", endpoints.resetSearchSession);

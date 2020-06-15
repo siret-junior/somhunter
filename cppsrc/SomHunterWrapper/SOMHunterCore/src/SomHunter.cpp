@@ -125,6 +125,7 @@ SomHunter::reset_search_session()
 {
 	reset_scores();
 	submitter.log_reset_search();
+	som_start();
 }
 
 void
@@ -178,7 +179,8 @@ SomHunter::get_random_display()
 FramePointerRange
 SomHunter::get_topn_display(PageId page)
 {
-	if (page == 0) // First page -> load
+	// Another display or first page -> load
+	if (current_display_type != DisplayType::DTopN || page == 0) 
 	{
 		debug("Loading top n display first page");
 		// Get ids
@@ -201,7 +203,8 @@ SomHunter::get_topn_display(PageId page)
 FramePointerRange
 SomHunter::get_topn_context_display(PageId page)
 {
-	if (page == 0) // First page -> load
+	// Another display or first page -> load
+	if (current_display_type != DisplayType::DTopNContext || page == 0) 
 	{
 		debug("Loading top n context display first page");
 		// Get ids
@@ -288,19 +291,25 @@ SomHunter::get_video_detail_display(ImageId selected_image)
 FramePointerRange
 SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 {
-	if (page == 0) {
+	// Another display or first page -> load
+	if (current_display_type != DisplayType::DTopKNN || page == 0) 
+	{
+		debug("Getting KNN for image " << selected_image);
 		// Get ids
 		auto ids = features.get_top_knn(frames,
 		                                selected_image,
 		                                config.topn_frames_per_video,
 		                                config.topn_frames_per_shot);
 
+		debug("Got result of size " << ids.size());
 		// Log
 		submitter.log_show_topknn_display(frames, selected_image, ids);
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
 		current_display_type = DisplayType::DTopKNN;
+
+		debug("Context is ready");
 
 		// KNN is query by example so we NEED to log a rerank
 		UsedTools ut;
@@ -312,9 +321,11 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 		                                 current_display_type,
 		                                 ids,
 		                                 last_text_query);
+										 
+		debug("Logging is done");
 	}
 
-	return FramePointerRange(current_display);
+	return get_page_from_last(page);
 }
 
 FramePointerRange
@@ -323,13 +334,13 @@ SomHunter::get_page_from_last(PageId page)
 	debug("Getting page "
 	      << page << ", page size " << config.display_page_size
 	      << ", current display size " << current_display.size());
-	if ((page + 1) * config.display_page_size >= current_display.size())
-		throw std::runtime_error("Page out of bounds.");
+
+	size_t begin_off{ std::min(current_display.size(), page * config.display_page_size) };
+	size_t end_off{ std::min(current_display.size(), page * config.display_page_size + config.display_page_size) };
 
 	FramePointerRange res(
-	  current_display.cbegin() + page * config.display_page_size,
-	  current_display.cbegin() + page * config.display_page_size +
-	    config.display_page_size);
+	  current_display.cbegin() + begin_off,
+	  current_display.cbegin() + end_off);
 
 	// Update context
 	for (auto iter = res.begin(); iter != res.end(); ++iter)
