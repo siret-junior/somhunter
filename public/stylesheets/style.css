@@ -1941,6 +1941,10 @@ a.hinted {
   height: 100vh;
   position: relative;
   margin: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
 }
 
 .som-grid.frame-grid .frame-in-grid {

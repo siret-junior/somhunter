@@ -80,7 +80,7 @@ exports.rescore = function (req, res) {
   const q0 = body.q0;
   const q1 = body.q1;
 
-  const textQuery = q0;
+  let textQuery = q0;
 
   // Append temporal query
   if (q1 != "") {
@@ -99,6 +99,10 @@ exports.rescore = function (req, res) {
   global.core.removeLikes(unlikes);
   global.core.rescore(textQuery);
   // -------------------------------
+
+  // Reset likes
+  SessionState.resetLikes(sess.state);
+  SessionState.resetUnlikes(sess.state);
 
   res.status(200).jsonp({});
 };

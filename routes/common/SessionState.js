@@ -60,6 +60,19 @@ exports.getUnlikes = function (state) {
   return state.unlikes;
 };
 
+exports.resetLikes = function (state) {
+  state.likes = [];
+
+  const frames = state.screen.frames;
+    for (let i = 0; i < frames.length; ++i) {
+      frames[i].liked = false;
+    }
+};
+
+exports.resetUnlikes = function (state) {
+  state.unlikes = [];
+};
+
 exports.getSomhunterUiState = function (state) {
   // For now it's just the whole state
   return state;
