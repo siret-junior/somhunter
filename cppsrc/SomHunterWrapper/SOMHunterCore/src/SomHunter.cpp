@@ -29,6 +29,8 @@
 FramePointerRange
 SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page)
 {
+	submitter.poll();
+
 	switch (d_type) {
 		case DisplayType::DRand:
 			return get_random_display();
@@ -64,6 +66,8 @@ SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page)
 void
 SomHunter::add_likes(const std::vector<ImageId> &likes)
 {
+	submitter.poll();
+
 	for (auto ii : likes) {
 		this->likes.insert(ii);
 
@@ -76,6 +80,8 @@ SomHunter::add_likes(const std::vector<ImageId> &likes)
 void
 SomHunter::remove_likes(const std::vector<ImageId> &likes)
 {
+	submitter.poll();
+
 	for (auto ii : likes) {
 		this->likes.erase(ii);
 
@@ -104,6 +110,8 @@ SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
 void
 SomHunter::rescore(std::string text_query)
 {
+	submitter.poll();
+
 	// Rescore text query
 	rescore_keywords(std::move(text_query));
 
@@ -158,6 +166,8 @@ SomHunter::submit_to_server(ImageId frame_id)
 void
 SomHunter::reset_search_session()
 {
+	submitter.poll();
+
 	reset_scores();
 	submitter.log_reset_search();
 	som_start();
