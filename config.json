@@ -1,6 +1,6 @@
 {
   "submitter_config":{
-    "submit_to_VBS": true,
+    "submit_to_VBS": false,
     "submit_rerank_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/log",
     "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit",
 
