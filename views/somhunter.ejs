@@ -375,7 +375,7 @@ function rescore() {
       // Now request new display
       showTopDisplay();
 
-      showGlobalMessage(`Rescored.`, "", 2000,"s");      
+      //showGlobalMessage(`Rescored.`, "", 2000,"s");      
     })
     .catch((e) => {
       console.log("Error: " + JSON.stringify(e.message));
@@ -712,6 +712,11 @@ function putDocumentToState(viewData) {
   // -----------------------------
   // Setup query inputs
   setupQueryInputs(viewData);
+
+  // Scroll to the top
+  $('#frameGridWrapper').animate({
+      scrollTop: $("#offCanvasLeftSplit1").offset().top
+  }, 500);
 
   // -----------------------------
   // Set state
