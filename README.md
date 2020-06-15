@@ -1,57 +1,95 @@
-# SOMHunter
+# SOMHunter opensource
 
-# Extracting the data from the videos
+This is an open-source version of the SOMHunter video search and retrieval engine, slightly simplified from the prototype that was featured at Video Browser Showdown 2020 in Daejeon, Korea (see https://videobrowsershowdown.org/ ).
 
-# Building the SOMHunter
-Please start with 
-```
-git clone --recurse-submodules https://github.com/FrankMejzlik/SOMHunter !! EDIT THIS
-```
-## Prerequisites
-- Node.js
+Main features:
+
+- a very simple demonstration dataset is packed in the repository, indexed V3C1 dataset will be available for download
+- keyword search, similarity-based search
+- several ways of browsing and re-scoring the results (including SOMs)
+- VBS-compatible submission and logging API clients
+
+## Installation
+
+Prerequisities:
+
+- a working installation of Node.js with some variant of package manager
+  (either `npm` or `yarn`)
 - Python 3
+- C++ compiler
+- `libcurl` (see below for installation on various platforms)
 
-## Getting the dependencies
-cURL library is required dependency for building the SOMHunter core.
-
-### Unix systems
-Use your system package manager to download and install the `libcurl` library. When you proceed to installation  the `pkg-config` will try to find the `libcurl` in your system. 
-
-In case of any problems you can manually configure the build configuration file at `cppsrc/SomHunterWrapper/binding.gyp`.
-
-### Windows
-For the Windows, include library for the `libcurl` is set to `c:\Program Files\curl\include\` and the compiled library directory to `c:\Program Files\curl\include\lib\`. You can install headers and the library there manually of course, but the recommended solution is to use the [vcpkg](https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019) package system. 
-
-After you install the vcpkg just download the library and export. After that you just place it into the program files directory above.
-
-This is an exapmple for 64-bit version of the library. **vcpkg** also handles all the dependencies and bundles them into the exported directory as well.
-```
-:: Install the package
-vcpkg install curl:x64-windows
-
-:: Do the export
-vcpkg export --raw curl:x64-windows
-```
-
-Now you just copy the exported directory to the `c:\Program Files\`.
-
-In case of any problems you can manually configure the build configuration file at `cppsrc/SomHunterWrapper/binding.gyp` and configure the include and library paths as you wish.
-
-## Bulding & running
-After resolving the dependencies, you just build and run the application.
+After cloning this repository, change to the repository directory and run
 
 ```
 npm install
 npm run start
 ```
 
-The `npm install` also triggers the `npm run build` command that will compile the native core library. If you have all the dependencies set correctly, this should finish without any errors. If any errors occur, pleese follow the presented errors and try to resolve them. 
+(Optionally replace `npm` with `yarn`.)
 
-If you need to edit some compile options, please head to the `cppsrc/SomHunterWrapper/binding.gyp` file that is config file for the node-gyp build system.
+This should open a browser window with the running SOMHunter interface.
+Now you can start browsing!
 
-## Data
-Please use included data extractor placed in the `extractor/` directory. You can also use pre-extracted data for the V3C1 dataset [HERE]().
+### Getting the dependencies on UNIX systems
 
-Then set up paths to those files inside the `config.json` file. The application will take this config file (placed in the root of the project) and load the files at the provided locations.
+You should be able to install all dependencies from the package management. On
+Debian-based systems (including Ubuntu and Mint) the following should work:
 
-Also the extracted frames (e.g. JPEG files) must be placed in the `public/thumbs/` directory so the browser can access them. The symlink to their original directory will suffice.
+```
+apt-get install build-essential libcurl4-openssl-dev nodejs yarnpkg
+```
+
+The build system uses `pkg-config` to find libCURL -- if that fails, either
+install the CURL pkgconfig file manually, or customize the build configuration
+in `cppsrc/SomHunterWrapper/binding.gyp` to fit your setup.
+
+Similar (similarly named) packages should be available on most other distributions.
+
+### Getting the dependencies on Windows
+
+The build systems expects libCURL to reside in `c:\Program Files\curl\`.  You
+may want to install it using
+[vcpkg](https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=vs-2019) as
+follows:
+
+- download and install `vcpkg`
+- install and export libCURL:
+```
+vcpkg install curl:x64-windows
+vcpkg export --raw curl:x64-windows
+```
+- copy the directory with the exported libCURL to `c:\Program Files\`.
+
+Alternatively, you can use any working development installation of libCURL by
+filling the appropriate paths in `cppsrc/SomHunterWrapper/binding.gyp`.
+
+### Build problems
+
+We have tested SOMHunter on Windows and several different Linux distributions,
+which should cover a majority of target environments. Please report any errors
+you encounter using the GitHub issue tracer, so that we can fix them improve
+the portability of SOMHunter.
+
+## Datasets
+
+The repository contains a (very small) pre-extracted indexed dataset (see
+https://doi.org/10.1109/ICMEW.2015.7169765 for dataset details). That should be
+ready to use.
+
+We can provide a larger pre-indexed dataset based on the [V3C1 video
+collection](https://link.springer.com/chapter/10.1007/978-3-030-05710-7_29),
+but do not provide a direct download due to licensing issues. Please contact us
+to get a downloadable link.
+
+### Using custom video data
+
+You may set up the locations of the dataset files in `config.json`. The
+thumbnails of the extracted video frames must be placed in directory
+`public/thumbs/`, so that they are accessible from the browser. (You may want
+to use a symbolic link that points to the thumbnails elsewhere, in order to
+save disk space and IO bandwidth.)
+
+Extraction of data from custom files proceeds as follows:
+
+- TODO
