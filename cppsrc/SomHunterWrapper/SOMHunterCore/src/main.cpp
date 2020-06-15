@@ -55,6 +55,9 @@ main()
 		std::cout << p_kw->synset_strs.front() << std::endl;
 	}
 
+	// Try keyword rescore
+	core.rescore("dog park");
+
 	// Try different displays
 	auto d_topn = core.get_display(DisplayType::DTopN, 0, 0);
 	std::cout << "TOP N\n"; 

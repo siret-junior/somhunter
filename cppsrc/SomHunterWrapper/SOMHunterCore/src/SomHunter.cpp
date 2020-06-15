@@ -68,6 +68,8 @@ SomHunter::add_likes(const std::vector<ImageId> &likes)
 		this->likes.insert(ii);
 
 		frames.get_frame(ii).liked = true;
+
+		submitter.log_like(frames, current_display_type, ii);
 	}
 }
 
@@ -78,6 +80,8 @@ SomHunter::remove_likes(const std::vector<ImageId> &likes)
 		this->likes.erase(ii);
 
 		frames.get_frame(ii).liked = false;
+
+		submitter.log_dislike(frames, current_display_type, ii);
 	}
 }
 
@@ -124,6 +128,9 @@ SomHunter::rescore(std::string text_query)
 	                          config.topn_frames_per_video,
 	                          config.topn_frames_per_shot);
 
+	debug("used_tools.topknn_used = " << used_tools.topknn_used);
+	debug("used_tools.KWs_used = " << used_tools.KWs_used);
+	debug("used_tools.LDs_used = " << used_tools.LDs_used);
 	submitter.submit_and_log_rescore(frames,
 	                                 scores,
 	                                 used_tools,
@@ -178,6 +185,7 @@ void
 SomHunter::rescore_feedback()
 {
 	scores.apply_bayes(likes, shown_images, features);
+	used_tools.LDs_used = true;
 }
 
 void
