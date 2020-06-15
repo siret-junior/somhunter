@@ -583,19 +583,18 @@ function getThumbPrototype(likedStr, actionStr, id, src) {
         </a>
 
         <a 
-          class="button frame-in-grid-hover-btn show-knn" 
-          data-open="modalImage"
-          onclick="showTopDisplay('topknn', ${id});event.cancelBubble=true;" 
-          title="Show most similiar frames.">
-          KNN
-        </a>
-
-        <a 
           class="button frame-in-grid-hover-btn show-detail" 
-          data-open="modalImage"
+          data-open="modalDetail"
           onclick="showVideoDetail(${id}, '${src}');event.cancelBubble=true;" 
           title="Show the detail of this frame.">
           Detail
+        </a>
+
+        <a 
+          class="button frame-in-grid-hover-btn show-knn" 
+          onclick="showTopDisplay('topknn', ${id});event.cancelBubble=true;" 
+          title="Show most similiar frames.">
+          KNN
         </a>
       </div>
     </li>`;
