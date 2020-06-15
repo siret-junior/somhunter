@@ -95,6 +95,10 @@ public:
 
 		while (res.size() < TOPKNN_LIMIT) {
 			auto [adept_ID, f]{ q3.top() };
+
+			if (q3.empty())
+				break;
+				
 			q3.pop();
 
 			auto vf = frames.get_frame(adept_ID);

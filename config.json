@@ -2,7 +2,8 @@
   "submitter_config":{
     "submit_to_VBS": true,
     "submit_rerank_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/log",
-    "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit", 
+    "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit",
+
   
     "team_ID": 4,
     "member_ID": 1,

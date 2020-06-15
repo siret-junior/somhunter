@@ -142,6 +142,7 @@
   let pageId = 0;
   let lastPageTime = 0;
   let pageLoadSpan = 1500;
+  let ignoreNextLike = false;
 
 
 function showNextTopDisplay(id, thisFilename) {
@@ -278,7 +279,7 @@ function putDetailModelToState(screenData) {
     let actionStr = `like(this, ${frames[i].id})`;
     if (frames[i].liked) {
       likedStr = "liked";
-      actionStr = `unlike(this, ${frames[i].id})`;
+      actionStr = `like(this, ${frames[i].id})`;
     }
 
     elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
@@ -306,6 +307,7 @@ function showVideoDetail(id, thisFilename) {
         throw Error(data.error.message);
       }
 
+      ignoreNextLike = true;
       // Get modal data
       putDetailModelToState(data);
     })
@@ -367,6 +369,11 @@ function rescore() {
   }
 
 function like(el, frameId) {
+  if (ignoreNextLike)
+  {
+    ignoreNextLike = false;
+    return;
+  }
 
   // Request input data
   const reqData = {
@@ -535,7 +542,7 @@ function setupImageGrid(viewData) {
     let actionStr = `like(this, ${frames[i].id})`;
     if (frames[i].liked) {
       likedStr = "liked";
-      actionStr = `unlike(this, ${frames[i].id})`;
+      actionStr = `like(this, ${frames[i].id})`;
     }
 
     elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
@@ -557,7 +564,7 @@ function appendImageGrid(viewData, fromIndex) {
     let actionStr = `like(this, ${frames[i].id})`;
     if (frames[i].liked) {
       likedStr = "liked";
-      actionStr = `unlike(this, ${frames[i].id})`;
+      actionStr = `like(this, ${frames[i].id})`;
     }
 
     elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
@@ -585,7 +592,7 @@ function getThumbPrototype(likedStr, actionStr, id, src) {
         <a 
           class="button frame-in-grid-hover-btn show-detail" 
           data-open="modalDetail"
-          onclick="showVideoDetail(${id}, '${src}');event.cancelBubble=true;" 
+          onclick="showVideoDetail(${id}, '${src}');" 
           title="Show the detail of this frame.">
           Detail
         </a>
