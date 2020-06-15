@@ -334,13 +334,13 @@ SomHunter::get_page_from_last(PageId page)
 	debug("Getting page "
 	      << page << ", page size " << config.display_page_size
 	      << ", current display size " << current_display.size());
-	if ((page + 1) * config.display_page_size >= current_display.size())
-		throw std::runtime_error("Page out of bounds.");
+
+	size_t begin_off{ std::min(current_display.size(), page * config.display_page_size) };
+	size_t end_off{ std::min(current_display.size(), page * config.display_page_size + config.display_page_size) };
 
 	FramePointerRange res(
-	  current_display.cbegin() + page * config.display_page_size,
-	  current_display.cbegin() + page * config.display_page_size +
-	    config.display_page_size);
+	  current_display.cbegin() + begin_off,
+	  current_display.cbegin() + end_off);
 
 	// Update context
 	for (auto iter = res.begin(); iter != res.end(); ++iter)
