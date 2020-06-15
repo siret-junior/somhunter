@@ -1,3 +1,9 @@
+/**
+ * Foundation for Sites by ZURB
+ * Version 6.5.1
+ * foundation.zurb.com
+ * Licensed under MIT Open Source
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
   if (typeof exports === "object" && typeof module === "object") module.exports = factory(require("jquery"));
   else if (typeof define === "function" && define.amd) define(["jquery"], factory);
