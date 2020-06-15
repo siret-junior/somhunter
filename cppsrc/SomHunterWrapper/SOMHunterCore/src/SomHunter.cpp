@@ -194,6 +194,9 @@ SomHunter::rescore_keywords(const std::string &query)
 void
 SomHunter::rescore_feedback()
 {
+	if (likes.empty())
+		return;
+		
 	scores.apply_bayes(likes, shown_images, features);
 	used_tools.LDs_used = true;
 }
