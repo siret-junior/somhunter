@@ -125,6 +125,7 @@ SomHunter::reset_search_session()
 {
 	reset_scores();
 	submitter.log_reset_search();
+	som_start();
 }
 
 void
@@ -293,18 +294,22 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 	// Another display or first page -> load
 	if (current_display_type != DisplayType::DTopKNN || page == 0) 
 	{
+		debug("Getting KNN for image " << selected_image);
 		// Get ids
 		auto ids = features.get_top_knn(frames,
 		                                selected_image,
 		                                config.topn_frames_per_video,
 		                                config.topn_frames_per_shot);
 
+		debug("Got result of size " << ids.size());
 		// Log
 		submitter.log_show_topknn_display(frames, selected_image, ids);
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
 		current_display_type = DisplayType::DTopKNN;
+
+		debug("Context is ready");
 
 		// KNN is query by example so we NEED to log a rerank
 		UsedTools ut;
@@ -316,9 +321,11 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 		                                 current_display_type,
 		                                 ids,
 		                                 last_text_query);
+										 
+		debug("Logging is done");
 	}
 
-	return FramePointerRange(current_display);
+	return get_page_from_last(page);
 }
 
 FramePointerRange

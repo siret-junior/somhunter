@@ -34,7 +34,7 @@ exports.getSomScreen = function (req, res) {
   frameData = global.core.getDisplay(global.cfg.framesPathPrefix, "som");
   // -------------------------------
 
-  SessionState.switchScreenTo(sess.state, "som", frameData.frames);
+  SessionState.switchScreenTo(sess.state, "som", frameData.frames, 0);
 
   let viewData = {};
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
@@ -42,21 +42,30 @@ exports.getSomScreen = function (req, res) {
   res.status(200).jsonp({ viewData: viewData });
 };
 
-exports.getTopnScreen = function (req, res) {
+exports.getTopScreen = function (req, res) {
   const sess = req.session;
+
+  global.logger.log("info", req.query)
+  let type = 'topn'
+  if (req.query && req.query.type)
+    type = req.query.type;
 
   let pageId = 0;
   if (req.query && req.query.pageId)
     pageId = Number(req.query.pageId);
 
+  let frameId = 0;
+  if (req.query && req.query.frameId)
+    frameId = Number(req.query.frameId);
+
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, "topn", pageId);
+  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, type, pageId, frameId);
   frames = displayFrames.frames;
   // -------------------------------
 
-  SessionState.switchScreenTo(sess.state, "topn", frames);
+  SessionState.switchScreenTo(sess.state, type, frames, frameId);
 
   let viewData = {};
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);

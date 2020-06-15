@@ -69,7 +69,8 @@ Frames::Frames(const Config &config)
 	}
 
 	{ // We can precompute this into binary file as well
-		size_t i = 0;
+
+ 		size_t i = 0;
 		size_t prev_frame_vid_ID = SIZE_T_ERR_VAL;
 
 		size_t beg_img_ID = SIZE_T_ERR_VAL;

@@ -31,12 +31,11 @@ public:
 	                                 size_t per_vid_limit = 0,
 	                                 size_t from_shot_limit = 0) const
 	{
-		return get_top_knn(
-		  frames,
-		  id,
-		  [](ImageId frame_ID) { return true; },
-		  per_vid_limit,
-		  from_shot_limit);
+		return get_top_knn(frames,
+		                   id,
+		                   [](ImageId frame_ID) { return true; },
+		                   per_vid_limit,
+		                   from_shot_limit);
 	}
 
 	inline std::vector<ImageId> get_top_knn(
@@ -81,16 +80,20 @@ public:
 			auto vf = frames.get_frame(adept_ID);
 
 			// If we have already enough from this video
-			if (++per_vid_frame_hist[vf.video_ID] > per_vid_limit)
+			if (per_vid_frame_hist[vf.video_ID] >= per_vid_limit)
 				continue;
 
 			// If we have already enough from this shot
-			if (frames_per_shot[vf.video_ID][vf.shot_ID]++ >=
+			if (frames_per_shot[vf.video_ID][vf.shot_ID] >=
 			    from_shot_limit)
+				continue;
 
-				// Only if predicate is true
-				if (pred(adept_ID))
-					res.emplace_back(adept_ID);
+			// Only if predicate is true
+			if (pred(adept_ID)) {
+				res.emplace_back(adept_ID);
+				per_vid_frame_hist[vf.video_ID]++;
+				frames_per_shot[vf.video_ID][vf.shot_ID]++;
+			}
 		}
 
 		return res;

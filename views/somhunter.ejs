@@ -68,7 +68,7 @@
         </div>
         
         <div class="small-6 cell">
-          <a id="btnTopn" onclick="showTopnDisplay()" class="active button block-btn top-ranked-btn">Top-ranked</a>
+          <a id="btnTopn" onclick="showTopDisplay()" class="active button block-btn top-ranked-btn">Top-ranked</a>
         </div>
 
         <div class="small-6 cell">
@@ -144,10 +144,11 @@
   let pageLoadSpan = 1500;
 
 
-function showNextTopnDisplay(id, thisFilename) {
+function showNextTopDisplay(id, thisFilename) {
   pageId++;
+  let url = "/get_top_screen?pageId=" + pageId + "&type=" + vd.somhunter.screen.type + "&frameId=" + vd.somhunter.frameContext.frameId
   // Make the request
-  fetch("/get_topn_screen?pageId=" + pageId, {
+  fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -181,11 +182,15 @@ function showNextTopnDisplay(id, thisFilename) {
     });
 }
 
-
-function showTopnDisplay(id, thisFilename) {
+function showTopDisplay(type, id, thisFilename) {
   pageId = 0;
+  if (type === undefined)
+    type = "topn"
+  let url = "/get_top_screen?pageId=" + pageId + "&type=" + type
+  if (id !== undefined)
+    url += "&frameId=" + id
   // Make the request
-  fetch("/get_topn_screen", {
+  fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -276,31 +281,7 @@ function putDetailModelToState(screenData) {
       actionStr = `unlike(this, ${frames[i].id})`;
     }
 
-    elemHtml += `<li 
-      class="frame-in-grid small-6 medium-4 large-2 cell
-      ${likedStr}" 
-      onclick="${actionStr}" 
-      data-frame-id="${frames[i].id}"
-      style="background-image: url('${frames[i].src}')"
-    >
-      <div class="just-clicker">
-        <a 
-          class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(${frames[i].id});event.cancelBubble=true;" 
-          title="Submit this frame.">
-          ✔
-        </a>
-
-        <a 
-          class="button frame-in-grid-hover-btn show-detail" 
-          data-open="modalDetail"
-          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
-          title="Show the detail of this frame.">
-          Detail
-        </a>
-      </div>
-    </li>`
-
+    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
   }
 
   grid.innerHTML = elemHtml;
@@ -370,7 +351,7 @@ function rescore() {
       }
 
       // Now request new display
-      showTopnDisplay();
+      showTopDisplay();
 
       showGlobalMessage(`Rescored.`, "", 5000,"s");      
     })
@@ -499,7 +480,7 @@ function resetSearchSession() {
       }
 
       // Now request new display
-      showTopnDisplay();
+      showTopDisplay();
 
       showGlobalMessage("Search reset.", "", 5000,"s");      
     })
@@ -557,31 +538,7 @@ function setupImageGrid(viewData) {
       actionStr = `unlike(this, ${frames[i].id})`;
     }
 
-    elemHtml += `<li 
-      class="frame-in-grid small-6 medium-4 large-2 cell
-      ${likedStr}" 
-      onclick="${actionStr}" 
-      data-frame-id="${frames[i].id}"
-      style="background-image: url('${frames[i].src}')"
-    >
-      <div class="just-clicker">
-        <a 
-          class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(${frames[i].id});event.cancelBubble=true;" 
-          title="Submit this frame.">
-          ✔
-        </a>
-
-        <a 
-          class="button frame-in-grid-hover-btn show-detail" 
-          data-open="modalDetail"
-          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');" 
-          title="Show the detail of this frame.">
-          Detail
-        </a>
-      </div>
-    </li>`
-
+    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
   }
 
   elem.innerHTML = elemHtml;
@@ -603,34 +560,45 @@ function appendImageGrid(viewData, fromIndex) {
       actionStr = `unlike(this, ${frames[i].id})`;
     }
 
-    elemHtml += `<li 
+    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
+  }
+
+  elem.innerHTML = elemHtml;
+}
+
+function getThumbPrototype(likedStr, actionStr, id, src) {
+  return `<li 
       class="frame-in-grid small-6 medium-4 large-2 cell
       ${likedStr}" 
       onclick="${actionStr}" 
-      data-frame-id="${frames[i].id}"
-      style="background-image: url('${frames[i].src}')"
+      data-frame-id="${id}"
+      style="background-image: url('${src}')"
     >
       <div class="just-clicker">
         <a 
           class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(this);event.cancelBubble=true;" 
+          onclick="submitImage(${id});event.cancelBubble=true;" 
           title="Submit this frame.">
           ✔
         </a>
 
         <a 
+          class="button frame-in-grid-hover-btn show-knn" 
+          data-open="modalImage"
+          onclick="showTopDisplay('topknn', ${id});event.cancelBubble=true;" 
+          title="Show most similiar frames.">
+          KNN
+        </a>
+
+        <a 
           class="button frame-in-grid-hover-btn show-detail" 
           data-open="modalImage"
-          onclick="showVideoDetail(${frames[i].id}, '${frames[i].src}');event.cancelBubble=true;" 
+          onclick="showVideoDetail(${id}, '${src}');event.cancelBubble=true;" 
           title="Show the detail of this frame.">
           Detail
         </a>
       </div>
-    </li>`
-
-  }
-
-  elem.innerHTML = elemHtml;
+    </li>`;
 }
 
 function setupQueryInputs(viewData) {
@@ -654,11 +622,10 @@ function infiniteScroll() {
   // add more contents if user scrolled down enough and last
   // page was loaded a second before
   if(grid.scrollTop + 300 > grid.scrollTopMax && Date.now() > (lastPageTime + pageLoadSpan)) {
-    console.log(grid.scrollTop + "; " + grid.offsetHeight + "; " + content.offsetHeight);
     lastPageTime = Date.now();
-    if (vd.somhunter.screen.type == "topn")
+    if (vd.somhunter.screen.type == "topn" || vd.somhunter.screen.type == "topknn")
     {
-      showNextTopnDisplay();
+      showNextTopDisplay();
     }
   }
 }
@@ -681,6 +648,10 @@ function putDocumentToState(viewData) {
   // -----------------------------
   // Setup query inputs
   setupQueryInputs(viewData);
+
+  // -----------------------------
+  // Set state
+  vd = viewData;
 }
 
 /** Put document into correct state */

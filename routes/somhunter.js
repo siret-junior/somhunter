@@ -45,7 +45,7 @@ router.get("/", function (req, res, next) {
   frames = displayFrames.frames;
   // -------------------------------
 
-  SessionState.switchScreenTo(sess.state, "topn", frames);
+  SessionState.switchScreenTo(sess.state, "topn", frames, 0);
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
 
   // Resolve and render dedicated template

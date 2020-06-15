@@ -40,6 +40,10 @@ main()
 	std::cout << "TOP N\n"; 
 	print_display(d_topn);
 
+	auto d_topknn = core.get_display(DisplayType::DTopKNN, 2, 0);
+	std::cout << "TOP KNN\n";
+	print_display(d_topknn);
+
 	auto d_rand = core.get_display(DisplayType::DRand);
 	std::cout << "RANDOM\n"; 
 	print_display(d_rand);
