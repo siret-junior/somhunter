@@ -9,6 +9,11 @@ Main features:
 - several ways of browsing and re-scoring the results (including SOMs)
 - VBS-compatible submission and logging API clients
 
+SOMHunter is licensed as free software, under the GPLv2 license. This grants you freedom to use the software for many research purposes and publish the results. For exploring and referencing the original work, you may find some of the following articles helpful:
+
+- Kratochvíl, M., Veselý, P., Mejzlík, F., & Lokoč, J. (2020, January). [SOM-Hunter: Video Browsing with Relevance-to-SOM Feedback Loop](https://link.springer.com/chapter/10.1007/978-3-030-37734-2_71). In *International Conference on Multimedia Modeling* (pp. 790-795). Springer, Cham.
+- Mejzlík, F., Veselý, P., Kratochvíl, M., Souček, T., & Lokoč, J. (2020, June). [SOMHunter for Lifelog Search](SOMHunter for Lifelog Search). In *Proceedings of the Third Annual Workshop on Lifelog Search Challenge* (pp. 73-75).
+
 ## Installation
 
 Prerequisities:
