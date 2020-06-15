@@ -44,7 +44,7 @@
   "kws_file": "data/ITEC_w2vv/word2idx.txt",
 
   "display_page_size": 128,
-  "topn_frames_per_video": 6,
-  "topn_frames_per_shot": 3
+  "topn_frames_per_video": 12,
+  "topn_frames_per_shot": 6
 
 }
