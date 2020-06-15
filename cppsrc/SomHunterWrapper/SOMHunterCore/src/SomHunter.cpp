@@ -178,7 +178,8 @@ SomHunter::get_random_display()
 FramePointerRange
 SomHunter::get_topn_display(PageId page)
 {
-	if (page == 0) // First page -> load
+	// Another display or first page -> load
+	if (current_display_type != DisplayType::DTopN || page == 0) 
 	{
 		debug("Loading top n display first page");
 		// Get ids
@@ -201,7 +202,8 @@ SomHunter::get_topn_display(PageId page)
 FramePointerRange
 SomHunter::get_topn_context_display(PageId page)
 {
-	if (page == 0) // First page -> load
+	// Another display or first page -> load
+	if (current_display_type != DisplayType::DTopNContext || page == 0) 
 	{
 		debug("Loading top n context display first page");
 		// Get ids
@@ -288,7 +290,9 @@ SomHunter::get_video_detail_display(ImageId selected_image)
 FramePointerRange
 SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 {
-	if (page == 0) {
+	// Another display or first page -> load
+	if (current_display_type != DisplayType::DTopKNN || page == 0) 
+	{
 		// Get ids
 		auto ids = features.get_top_knn(frames,
 		                                selected_image,
