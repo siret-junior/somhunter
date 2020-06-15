@@ -93,6 +93,12 @@ SomHunter::rescore(std::string text_query)
 	likes.clear();
 	shown_images.clear();
 
+	// Reset likes
+	likes.clear();
+	for (auto &fr : frames) {
+		fr.liked = false;
+	}
+
 	auto top_n = scores.top_n(frames,
 	                          TOPN_LIMIT,
 	                          config.topn_frames_per_video,
