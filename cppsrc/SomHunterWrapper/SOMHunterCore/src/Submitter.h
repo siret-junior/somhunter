@@ -52,7 +52,9 @@ public:
 	                            const UsedTools &used_tools,
 	                            DisplayType disp_type,
 	                            const std::vector<ImageId> &topn_imgs,
-	                            const std::string &sentence_query);
+	                            const std::string &sentence_query,
+	                            const size_t topn_frames_per_video,
+	                            const size_t topn_frames_per_shot);
 
 	void log_add_keywords(const std::string &sentence_query);
 

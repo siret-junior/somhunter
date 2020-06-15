@@ -160,7 +160,9 @@ Submitter::submit_and_log_rescore(const Frames &frames,
                                   const UsedTools &used_tools,
                                   DisplayType /*disp_type*/,
                                   const std::vector<ImageId> &topn_imgs,
-                                  const std::string &sentence_query)
+                                  const std::string &sentence_query,
+                                  const size_t topn_frames_per_video,
+                                  const size_t topn_frames_per_shot)
 {
 
 	std::vector<Json> results;
@@ -211,9 +213,9 @@ Submitter::submit_and_log_rescore(const Frames &frames,
 	}
 
 	query_val += "from_video_limit=";
-	query_val += std::to_string(TOPN_PER_VIDEO_NUM_FRAMES_LIMIT);
+	query_val += std::to_string(topn_frames_per_video);
 	query_val += ";from_shot_limit=";
-	query_val += std::to_string(PER_VIDEO_NUM_FROM_SHOT_LIMIT);
+	query_val += std::to_string(topn_frames_per_shot);
 
 	Json result_json_arr = Json::array(results);
 
