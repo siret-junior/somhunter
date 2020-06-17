@@ -3,21 +3,21 @@
         {
             "target_name": "somhunter_core",
             "sources": [
-                "SOMHunterCore/src/json11.cpp",
+                "src/json11.cpp",
                 "main.cpp",
-                "SomHunterWrapper.cpp",
-                "SOMHunterCore/src/SomHunter.cpp",
-                "SOMHunterCore/src/SOM.cpp",
-                "SOMHunterCore/src/AsyncSom.cpp",
-                "SOMHunterCore/src/DatasetFeatures.cpp",
-                "SOMHunterCore/src/DatasetFrames.cpp",
-                "SOMHunterCore/src/KeywordRanker.cpp",
-                "SOMHunterCore/src/RelevanceScores.cpp",
-                "SOMHunterCore/src/Submitter.cpp",
+                "SomHunterNapi.cpp",
+                "src/SomHunter.cpp",
+                "src/SOM.cpp",
+                "src/AsyncSom.cpp",
+                "src/DatasetFeatures.cpp",
+                "src/DatasetFrames.cpp",
+                "src/KeywordRanker.cpp",
+                "src/RelevanceScores.cpp",
+                "src/Submitter.cpp",
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")",
-                "SOMHunterCore/src/"
+                "src/"
             ],
             "libraries": [],
             "dependencies": [

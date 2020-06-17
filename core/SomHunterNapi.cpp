@@ -20,41 +20,41 @@
  */
 #include "common.h"
 
-#include "SomHunterWrapper.h"
+#include "SomHunterNapi.h"
 
 #include <stdexcept>
 
-Napi::FunctionReference SomHunterWrapper::constructor;
+Napi::FunctionReference SomHunterNapi::constructor;
 
 Napi::Object
-SomHunterWrapper::Init(Napi::Env env, Napi::Object exports)
+SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 {
 	Napi::HandleScope scope(env);
 
 	Napi::Function func = DefineClass(
 	  env,
-	  "SomHunterWrapper",
-	  { InstanceMethod("getDisplay", &SomHunterWrapper::get_display),
-	    InstanceMethod("addLikes", &SomHunterWrapper::add_likes),
-		InstanceMethod("rescore", &SomHunterWrapper::rescore),
-	    InstanceMethod("resetAll", &SomHunterWrapper::reset_all),
-	    InstanceMethod("removeLikes", &SomHunterWrapper::remove_likes),
+	  "SomHunterNapi",
+	  { InstanceMethod("getDisplay", &SomHunterNapi::get_display),
+	    InstanceMethod("addLikes", &SomHunterNapi::add_likes),
+		InstanceMethod("rescore", &SomHunterNapi::rescore),
+	    InstanceMethod("resetAll", &SomHunterNapi::reset_all),
+	    InstanceMethod("removeLikes", &SomHunterNapi::remove_likes),
 	    InstanceMethod("autocompleteKeywords",
-	                   &SomHunterWrapper::autocomplete_keywords),
-	    InstanceMethod("isSomReady", &SomHunterWrapper::is_som_ready),
+	                   &SomHunterNapi::autocomplete_keywords),
+	    InstanceMethod("isSomReady", &SomHunterNapi::is_som_ready),
 	    InstanceMethod("submitToServer",
-	                   &SomHunterWrapper::submit_to_server) });
+	                   &SomHunterNapi::submit_to_server) });
 
 	constructor = Napi::Persistent(func);
 	constructor.SuppressDestruct();
 
-	exports.Set("SomHunterWrapper", func);
+	exports.Set("SomHunterNapi", func);
 
 	return exports;
 }
 
-SomHunterWrapper::SomHunterWrapper(const Napi::CallbackInfo &info)
-  : Napi::ObjectWrap<SomHunterWrapper>(info)
+SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
+  : Napi::ObjectWrap<SomHunterNapi>(info)
 {
 	debug("API: Instantiating SomHunter...");
 
@@ -82,7 +82,7 @@ SomHunterWrapper::SomHunterWrapper(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::get_display(const Napi::CallbackInfo &info)
+SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -92,7 +92,7 @@ SomHunterWrapper::get_display(const Napi::CallbackInfo &info)
 	if (length > 4) {
 		Napi::TypeError::New(env,
 		                     "Wrong number of parameters "
-		                     "(SomHunterWrapper::get_display)")
+		                     "(SomHunterNapi::get_display)")
 		  .ThrowAsJavaScriptException();
 	}
 
@@ -246,7 +246,7 @@ SomHunterWrapper::get_display(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::add_likes(const Napi::CallbackInfo &info)
+SomHunterNapi::add_likes(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -282,7 +282,7 @@ SomHunterWrapper::add_likes(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::rescore(const Napi::CallbackInfo &info) {
+SomHunterNapi::rescore(const Napi::CallbackInfo &info) {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
 
@@ -290,7 +290,7 @@ SomHunterWrapper::rescore(const Napi::CallbackInfo &info) {
 	int length = info.Length();
 
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters: SomHunterWrapper::rescore")
+		Napi::TypeError::New(env, "Wrong number of parameters: SomHunterNapi::rescore")
 		  .ThrowAsJavaScriptException();
 	}
 	std::string query{ info[0].As<Napi::String>().Utf8Value() };
@@ -309,7 +309,7 @@ SomHunterWrapper::rescore(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value
-SomHunterWrapper::reset_all(const Napi::CallbackInfo &info)
+SomHunterNapi::reset_all(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -319,7 +319,7 @@ SomHunterWrapper::reset_all(const Napi::CallbackInfo &info)
 	if (length != 0) {
 		Napi::TypeError::New(env,
 		                     "Wrong number of parameters "
-		                     "(SomHunterWrapper::reset_all)")
+		                     "(SomHunterNapi::reset_all)")
 		  .ThrowAsJavaScriptException();
 	}
 	try {
@@ -335,7 +335,7 @@ SomHunterWrapper::reset_all(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::remove_likes(const Napi::CallbackInfo &info)
+SomHunterNapi::remove_likes(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -370,7 +370,7 @@ SomHunterWrapper::remove_likes(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::autocomplete_keywords(const Napi::CallbackInfo &info)
+SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -476,7 +476,7 @@ SomHunterWrapper::autocomplete_keywords(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::is_som_ready(const Napi::CallbackInfo &info)
+SomHunterNapi::is_som_ready(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -486,7 +486,7 @@ SomHunterWrapper::is_som_ready(const Napi::CallbackInfo &info)
 	if (length != 0) {
 		Napi::TypeError::New(env,
 		                     "Wrong number of parameters "
-		                     "(SomHunterWrapper::is_som_ready)")
+		                     "(SomHunterNapi::is_som_ready)")
 		  .ThrowAsJavaScriptException();
 	}
 
@@ -510,7 +510,7 @@ SomHunterWrapper::is_som_ready(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterWrapper::submit_to_server(const Napi::CallbackInfo &info)
+SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);

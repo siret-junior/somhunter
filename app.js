@@ -175,7 +175,7 @@ global.logger.log("debug", "dataConfigFilepath = " + dataConfigFilepath);
 
 // Create global instance of the ImageRanker
 const core = require(path.join(__dirname, "build/Release/somhunter_core.node"));
-global.core = new core.SomHunterWrapper(dataConfigFilepath);
+global.core = new core.SomHunterNapi(dataConfigFilepath);
 global.logger.log("info", "SOMHunter is ready...");
 
 /*
