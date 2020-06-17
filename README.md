@@ -37,6 +37,8 @@ If everything goes all right, you can start browsing at http://localhost:8080/
 . The site is password-protected by default, you can use the default login
 `som` and password `hunter`, or set a different login in `config/user.js`.
 
+![SOMHunter interface](media/screenshot.jpg)
+
 ### Getting the dependencies on UNIX systems
 
 You should be able to install all dependencies from the package management. On
