@@ -1,4 +1,6 @@
 
+# HOW-TO: Adding a new display type
+
 This tutorial shows the implementation of a simple display variant (a k-NN display), as an basic example of adding UI functionality. In particular, we show how to
 
 - create the backend plumbing required to generate the data for the display
