@@ -18,12 +18,35 @@
  * You should have received a copy of the GNU General Public License along with
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
+#pragma once
+
+#include "SomHunter.h"
 #include <napi.h>
 
-#include "SomHunterWrapper.h"
+class SomHunterNapi : public Napi::ObjectWrap<SomHunterNapi>
+{
+public:
+	static Napi::Object Init(Napi::Env env, Napi::Object exports);
 
-Napi::Object InitAll(Napi::Env env, Napi::Object exports) {
-  return SomHunterWrapper::Init(env, exports);
-}
+	SomHunterNapi(const Napi::CallbackInfo &info);
 
-NODE_API_MODULE(NODE_GYP_MODULE_NAME, InitAll)
+private:
+	static Napi::FunctionReference constructor;
+	SomHunter *actualClass_;
+
+	Napi::Value get_display(const Napi::CallbackInfo &info);
+
+	Napi::Value add_likes(const Napi::CallbackInfo &info);
+
+	Napi::Value remove_likes(const Napi::CallbackInfo &info);
+
+	Napi::Value rescore(const Napi::CallbackInfo &info);
+
+	Napi::Value reset_all(const Napi::CallbackInfo &info);
+
+	Napi::Value autocomplete_keywords(const Napi::CallbackInfo &info);
+
+	Napi::Value is_som_ready(const Napi::CallbackInfo &info);
+
+	Napi::Value submit_to_server(const Napi::CallbackInfo &info);
+};
