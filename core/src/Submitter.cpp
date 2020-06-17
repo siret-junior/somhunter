@@ -256,7 +256,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 void
 Submitter::log_add_keywords(const std::string &query_sentence)
 {
-	push_event("txt", "jointEmbedding", query_sentence);
+	push_event("text", "jointEmbedding", query_sentence);
 }
 void
 Submitter::log_like(const DatasetFrames &frames,

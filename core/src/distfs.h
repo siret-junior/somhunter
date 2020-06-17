@@ -25,8 +25,11 @@
 #include <algorithm>
 #include <cmath>
 
+#ifdef USE_INTRINS
+
+#ifdef _MSC_VER
 template<unsigned i>
-inline float
+constexpr inline float
 get(__m128 V)
 {
 	union
@@ -37,6 +40,15 @@ get(__m128 V)
 	converter.v = V;
 	return converter.a[i];
 }
+#else
+template<unsigned i>
+constexpr inline float
+get(__m128 V)
+{
+	return V[i];
+}
+#endif
+#endif
 
 static inline float
 sqrf(float n)
