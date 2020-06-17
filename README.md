@@ -76,8 +76,8 @@ filling the appropriate paths in `cppsrc/SomHunterWrapper/binding.gyp`.
 
 We have tested SOMHunter on Windows and several different Linux distributions,
 which should cover a majority of target environments. Please report any errors
-you encounter using the GitHub issue tracer, so that we can fix them improve
-the portability of SOMHunter.
+you encounter using the GitHub issue tracker, so that we can fix them (and
+improve the portability of SOMHunter).
 
 ## Datasets
 
