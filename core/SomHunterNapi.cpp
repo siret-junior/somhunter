@@ -73,7 +73,7 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
 	// Parse the config
 	Config cfg = Config::parse_json_config(config_fpth);
 	try {
-		this->actualClass_ = new SomHunter(cfg);
+		somhunter = new SomHunter(cfg);
 		debug("API: SomHunter initialized.");
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
@@ -119,7 +119,7 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 	}
 
 	// Call native method
-	FramePointerRange dislpay_frames;
+	FramePointerRange display_frames;
 	try {
 		debug("API: CALL \n\t get_display\n\t\tdisp_type = "
 		      << int(disp_type) << std::endl
@@ -127,11 +127,11 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 		      << std::endl
 		      << "n\t\t page_num = " << page_num);
 
-		dislpay_frames = this->actualClass_->get_display(
+		display_frames = somhunter->get_display(
 		  disp_type, selected_image, page_num);
 
 		debug("API: RETURN \n\t get_display\n\t\tframes.size() = "
-		      << dislpay_frames.size());
+		      << display_frames.size());
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -161,8 +161,8 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 		napi_create_array(env, &arr);
 		{
 			size_t i{ 0_z };
-			for (auto it{ dislpay_frames.begin() };
-			     it != dislpay_frames.end();
+			for (auto it{ display_frames.begin() };
+			     it != display_frames.end();
 			     ++it) {
 
 				napi_value obj;
@@ -273,7 +273,7 @@ SomHunterNapi::add_likes(const Napi::CallbackInfo &info)
 		debug("API: CALL \n\t add_likes\n\t\fr_IDs.size() = "
 		      << fr_IDs.size() << std::endl);
 
-		this->actualClass_->add_likes(fr_IDs);
+		somhunter->add_likes(fr_IDs);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -299,7 +299,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info) {
 		debug("API: CALL \n\t rescore\n\t\t query =  "
 		      << query << std::endl);
 
-		this->actualClass_->rescore(query);
+		somhunter->rescore(query);
 
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
@@ -325,7 +325,7 @@ SomHunterNapi::reset_all(const Napi::CallbackInfo &info)
 	try {
 		debug("API: CALL \n\t reset_all()");
 
-		this->actualClass_->reset_search_session();
+		somhunter->reset_search_session();
 
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
@@ -361,7 +361,7 @@ SomHunterNapi::remove_likes(const Napi::CallbackInfo &info)
 		debug("API: CALL \n\t add_likes\n\t\fr_IDs.size() = "
 		      << fr_IDs.size() << std::endl);
 
-		this->actualClass_->add_likes(fr_IDs);
+		somhunter->add_likes(fr_IDs);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -390,7 +390,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 	// Get suggested keywords
 	std::vector<const Keyword *> kws;
 	try {
-		kws = this->actualClass_->autocomplete_keywords(prefix, count);
+		kws = somhunter->autocomplete_keywords(prefix, count);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -494,7 +494,7 @@ SomHunterNapi::is_som_ready(const Napi::CallbackInfo &info)
 	try {
 		debug("API: CALL \n\t som_ready()");
 
-		is_ready = this->actualClass_->som_ready();
+		is_ready = somhunter->som_ready();
 
 		debug(
 		  "API: RETURN \n\t som_ready()\n\t\tis_ready = " << is_ready);
@@ -529,7 +529,7 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
 		debug("API: CALL \n\t submit_to_server\n\t\frame_ID = "
 		      << frame_ID);
 
-		this->actualClass_->submit_to_server(frame_ID);
+		somhunter->submit_to_server(frame_ID);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
