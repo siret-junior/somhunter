@@ -124,12 +124,188 @@ Additional minor utilities include:
   - `use_intrins.h` and `distfs.h` define fast SSE-accelerated computation of vector-vector operations (provides around 4x speedup for almost all computation-heavy operations)
   - `main.cpp`, which is __not__ compiled-in by default, but demonstrates how to run the SOMHunter core as a standalone C++ application.
 
-### How-To: adding a new display
+### How-To: connecting a new core feature with the UI
+We'll use adding the nearest neighbours display (the KNN display) as an example to show you how to connect the UI with the core functions.
 
-TODO franta:
-- kam se to vsude dopise
-- jak se to prida do logu
-muzes to ukazat treba na tom jak tam doplnit ten kNN displej
+In general, you need to follow three steps:
+1) Add the desired **public method** to the SomHunter class (located at `core/src/SomHunter.h`).
+   - In our case, it is the `get_display` method which subsequently calls the `get_topKNN_display` method.
+   - This method returns two iterators pointing to the desired frame range
+2) Create **[N-API](https://nodejs.org/api/n-api.html) wrapper function** for this mew method inside the `core/SomHunterNapi.h` file (here specifically, we're talking about the `get_display` wrapper function).
+   - The main purpose of this wrapper is to "translate" types and data structures between JavaScript and the C++.
+   - Thanks to this wrapper the native addon behaves like any other JavaScript module.
+3) Call the new method inside the front-end code to achieve desired results.
+   - We call it inside the `getTopScreen` method in the `routes/endpoints.js` file where the handlers for all different requests are implemented.
+   - These requests are created using [client-side scripts](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) (in `views/somhunter_event_handlers.ejs` that is included in the template `views/somhunter.ejs`)
+
+
+Now let's take a look at that in more detail.
+#### Adding the native method
+This part is fairly straightforward. We just implement whatever function we want to use from the UI. For example, we implemented a function that will return frames for the requested screen. The function signature can look like this:
+```
+// FILE: core/src/SomHunter.h
+
+// Returns the iterators pointing to the desired display frames
+FramePointerRange get_display(DisplayType d_type, ImageId selected_image = 0, PageId page = 0);
+```
+#### Wrapping it using N-API
+Now we have the function and we want to be able to call it from the JavaScript modules. Therefore we create a function that will handle the conversion from the C++ types to the JavaScript types. We do that in the `core/SomHunterNapi.h` and `core/SomHunterNapi.cpp` files. 
+
+For more information about using the N-API, please refer to the [official documentation](https://nodejs.org/api/n-api.html).
+
+In case of function for getting the Top-KNN display, it could look something like this:
+```
+// FILE: core/SomHunterNapi.h
+
+/* Note that the input parameter is always the same. 
+   We will extract the actual parameters from the `info` parameter. */
+Napi::Value get_display(const Napi::CallbackInfo &info);
+```
+for it's implementation, please head to `core/SomHunterNapi.cpp`. 
+
+This function takes up to 4 parameters from the JS and converts them into the C++ types. For example, this takes the first parameter and tries to convert it to the `std::string`:
+```
+std::string path_prefix{ info[0].As<Napi::String>().Utf8Value()
+```
+
+Then it calls the actual core function:
+```
+FramePointerRange dislpay_frames = this->actualClass_->get_display(disp_type, selected_image, page_num);
+```
+
+Then it converts provided output back to the JS types and returns it:
+```
+napi_value result; // Create a generic JS value
+napi_create_object(env, &result); // Set it to be JS Object
+
+// Set "page" key value
+{
+  napi_value key; 
+  napi_create_string_utf8(env, "page", NAPI_AUTO_LENGTH, &key); // Set it to UTF-8 encoded string with this value
+
+  napi_value value;
+  napi_create_uint32(env, uint32_t(page_num), &value); // Set it to the uint32 value
+
+  napi_set_property(env, result, key, value); // Add this key-value pair into the `result` object
+}
+
+.
+.
+.
+
+return Napi::Object(env, result); // Construct the final Napi::Value instance with the result and return it
+```
+
+There are also other wrapper functions that you can use as an example of how to convert from/to all the different types.
+
+#### Using the new function in the UI
+We start with adding the button on every frame in every grid. It will call the `showTopDisplay` method on click event. The HTML for each frame in grid is returned by the `getThumbPrototype` function in `views/somhunter_event_handlers.ejs`. We add the `a` element:
+```
+// FILE: views/somhunter_event_handlers.ejs
+
+function getThumbPrototype(likedStr, actionStr, id, src) {
+  ...
+    <a 
+      class="button frame-in-grid-hover-btn show-knn" 
+      onclick="showTopDisplay('topknn', ${id});event.cancelBubble=true;" 
+      title="Show most similiar frames.">
+      KNN
+    </a>
+  ...
+}
+```
+Then we define the event handler called `showTopDisplay`. This method will create the request and then wait for the response so it can update the page accordingly. We define it as follows:
+```
+// FILE: views/somhunter_event_handlers.ejs
+
+function showTopDisplay(type, id, thisFilename) {
+  pageId = 0;
+  if (type === undefined)
+    type = "topn"
+  let url = "/get_top_screen?pageId=" + pageId + "&type=" + type
+  if (id !== undefined)
+    url += "&frameId=" + id
+  // Make the request
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) { throw Error(res.statusText); }
+      return res.json()
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+      
+      // Get updated view data
+      viewData = data.viewData;
+      putDocumentToState(viewData);
+
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+```
+
+
+Now, every time we click the new button the request at the `/get_top_screen` URL will be created. We need to create a code that will resolve it. 
+
+First, we head to the `app.js` where we register this GET call and we call the corresponding router. Because we will define our request handler inside the `routes/endpoints.js` module, we register this endpoint as:
+```
+// FILE: app.js
+
+app.get("/get_top_screen", endpoints.getTopScreen);
+```
+
+Finally, the last part that is missing is the request handler itself. Let's go to the `routes/endpoints.js` and define it like this:
+```
+// FILE: routes/endpoints.js
+
+exports.getTopScreen = function (req, res) {
+  const sess = req.session;
+
+  global.logger.log("info", req.query)
+  let type = 'topn'
+  if (req.query && req.query.type)
+    type = req.query.type;
+
+  let pageId = 0;
+  if (req.query && req.query.pageId)
+    pageId = Number(req.query.pageId);
+
+  let frameId = 0;
+  if (req.query && req.query.frameId)
+    frameId = Number(req.query.frameId);
+
+  let frames = [];
+  // -------------------------------
+  // Call the core
+  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, type, pageId, frameId);
+  frames = displayFrames.frames;
+  // -------------------------------
+
+  SessionState.switchScreenTo(sess.state, type, frames, frameId);
+
+  let viewData = {};
+  viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
+
+  res.status(200).jsonp({ viewData: viewData });
+};
+```
+
+Now the new functionality should be working as expected.
 
 ### How-To: modifying the rescore functions
 
