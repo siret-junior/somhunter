@@ -36,7 +36,7 @@ ScoreModel::apply_simple(std::set<ImageId> likes,
 		scores[ii] *= sum;
 	}
 
-  normalize();
+  	normalize();
 }
 ```
 
