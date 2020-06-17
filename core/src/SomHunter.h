@@ -101,7 +101,7 @@ public:
 	 * Applies all algorithms for score
 	 * computation and updates context.
 	 */
-	void rescore(std::string text_query);
+	void rescore(const std::string &text_query);
 
 	bool som_ready() const;
 

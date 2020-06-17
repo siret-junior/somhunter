@@ -21,6 +21,8 @@
 
 #include "KeywordRanker.h"
 
+#include <cmath>
+
 std::vector<Keyword>
 KeywordRanker::parse_kw_classes_text_file(const std::string &filepath)
 {
@@ -214,7 +216,8 @@ KeywordRanker::parse_float_matrix(const std::string &filepath,
 KwSearchIds
 KeywordRanker::find(const std::string &search, size_t num_limit) const
 {
-	KwSearchIds r, r2;
+	KwSearchIds r;
+	KwSearchIds r2;
 
 	for (KeywordId i = 0; i < keywords.size(); ++i)
 		for (size_t j = 0; j < keywords[i].synset_strs.size(); ++j) {
@@ -224,10 +227,10 @@ KeywordRanker::find(const std::string &search, size_t num_limit) const
 			auto &s = kw.synset_strs[j];
 			auto f = s.find(search);
 
-			if (f == s.npos)
+			if (f == std::basic_string<char>::npos)
 				continue;
 
-			if (!f)
+			if (f == 0u)
 				r.emplace_back(kw.kw_ID, j);
 			else
 				r2.emplace_back(kw.kw_ID, j);
@@ -289,11 +292,12 @@ KeywordRanker::rank_sentence_query(const std::string &sentence_query_raw,
 	if (query.empty())
 		return;
 
-	std::vector<std::vector<KeywordId>> pos, neg;
+	std::vector<std::vector<KeywordId>> pos;
+	std::vector<std::vector<KeywordId>> neg;
 
 	std::vector<KeywordId> pos_one_query;
 	// Split tokens into temporal queries
-	for (auto kw_word : query) {
+	for (const auto &kw_word : query) {
 
 		// If temp query separator
 		if (kw_word == ">>" || kw_word == ">") {
@@ -338,7 +342,7 @@ KeywordRanker::rank_query(const std::vector<std::vector<KeywordId>> &positive,
 
 	// Update the model
 	for (auto &&[frame_ID, dist] : sorted_frames) {
-		model.adjust(frame_ID, exp(dist * -42));
+		model.adjust(frame_ID, std::exp(dist * -42));
 	}
 
 	model.normalize();
@@ -431,10 +435,11 @@ KeywordRanker::get_sorted_frames(
 		score_vec = VecAdd(score_vec, kw_features_bias_vec);
 
 		// Apply hyperbolic tangent function
-		std::transform(score_vec.begin(),
-		               score_vec.end(),
-		               score_vec.begin(),
-		               [](const float &score) { return tanh(score); });
+		std::transform(
+		  score_vec.begin(),
+		  score_vec.end(),
+		  score_vec.begin(),
+		  [](const float &score) { return std::tanh(score); });
 
 		std::vector<float> sentence_vec =
 

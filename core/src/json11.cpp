@@ -43,8 +43,8 @@ using std::vector;
  */
 struct NullStruct
 {
-	bool operator==(NullStruct) const { return true; }
-	bool operator<(NullStruct) const { return false; }
+	bool operator==(NullStruct /*unused*/) const { return true; }
+	bool operator<(NullStruct /*unused*/) const { return false; }
 };
 
 /* * * * * * * * * * * * * * * * * * * *
@@ -52,7 +52,7 @@ struct NullStruct
  */
 
 static void
-dump(NullStruct, string &out)
+dump(NullStruct /*unused*/, string &out)
 {
 	out += "null";
 }
@@ -441,11 +441,11 @@ JsonValue::object_items() const
 {
 	return statics().empty_map;
 }
-const Json &JsonValue::operator[](size_t) const
+const Json &JsonValue::operator[](size_t /*unused*/) const
 {
 	return static_null();
 }
-const Json &JsonValue::operator[](const string &) const
+const Json &JsonValue::operator[](const string & /*unused*/) const
 {
 	return static_null();
 }
@@ -459,8 +459,8 @@ const Json &JsonArray::operator[](size_t i) const
 {
 	if (i >= m_value.size())
 		return static_null();
-	else
-		return m_value[i];
+
+	return m_value[i];
 }
 
 /* * * * * * * * * * * * * * * * * * * *
@@ -641,7 +641,7 @@ struct JsonParser final
 	 *
 	 * Encode pt as UTF-8 and add it to out.
 	 */
-	void encode_utf8(long pt, string &out)
+	static void encode_utf8(long pt, string &out)
 	{
 		if (pt < 0)
 			return;
@@ -849,11 +849,9 @@ struct JsonParser final
 		if (str.compare(i, expected.length(), expected) == 0) {
 			i += expected.length();
 			return res;
-		} else {
-			return fail("parse error: expected " + expected +
-			            ", got " +
-			            str.substr(i, expected.length()));
 		}
+		return fail("parse error: expected " + expected + ", got " +
+		            str.substr(i, expected.length()));
 	}
 
 	/* parse_json()
@@ -893,7 +891,7 @@ struct JsonParser final
 			if (ch == '}')
 				return data;
 
-			while (1) {
+			while (true) {
 				if (ch != '"')
 					return fail(
 					  "expected '\"' in object, got " +
@@ -932,7 +930,7 @@ struct JsonParser final
 			if (ch == ']')
 				return data;
 
-			while (1) {
+			while (true) {
 				i--;
 				data.push_back(parse_json(depth + 1));
 				if (failed)

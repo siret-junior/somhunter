@@ -58,7 +58,7 @@ public:
 	 * bayesian update rule.
 	 */
 	void apply_bayes(std::set<ImageId> likes,
-	                 std::set<ImageId> screen,
+	                 const std::set<ImageId> &screen,
 	                 const DatasetFeatures &features);
 
 	// gets images with top scores and skips first offset
@@ -71,7 +71,7 @@ public:
 	                                        size_t n,
 	                                        size_t from_vid_limit,
 	                                        size_t from_shot_limit) const;
-	std::vector<ImageId> weighted_sample(size_t n, float pow = 1) const;
+	std::vector<ImageId> weighted_sample(size_t k, float pow = 1) const;
 	ImageId weighted_example(const std::vector<ImageId> &subset) const;
 	size_t rank_of_image(ImageId i) const;
 };

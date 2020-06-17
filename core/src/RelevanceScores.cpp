@@ -201,7 +201,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 	auto updb = [&tree, branches, n, upd](size_t i) {
 		for (;;) {
 			upd(i);
-			if (i)
+			if (i != 0u)
 				i = (i - 1) / 2;
 			else
 				break;
@@ -255,7 +255,7 @@ ScoreModel::weighted_example(const std::vector<ImageId> &subset) const
 
 void
 ScoreModel::apply_bayes(std::set<ImageId> likes,
-                        std::set<ImageId> screen,
+                        const std::set<ImageId> &screen,
                         const DatasetFeatures &features)
 {
 	if (likes.empty())
@@ -292,9 +292,9 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 
 		auto worker = [&](size_t threadID) {
 			const ImageId first =
-			                threadID * scores.size() / n_threads,
-			              last = (threadID + 1) * scores.size() /
-			                     n_threads;
+			  threadID * scores.size() / n_threads;
+			const ImageId last =
+			  (threadID + 1) * scores.size() / n_threads;
 
 			for (ImageId ii = first; ii < last; ++ii) {
 				float divSum = 0;

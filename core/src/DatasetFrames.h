@@ -159,7 +159,7 @@ class DatasetFrames
 	std::vector<VideoFrame> _frames;
 
 	std::string frames_path_prefix;
-	VideoFilenameOffsets offs;
+	VideoFilenameOffsets offs{};
 
 public:
 	DatasetFrames(const Config &config);
@@ -246,8 +246,8 @@ public:
 	/** Translation to VideoFrameRefs from vector ids or FrameRange */
 	std::vector<VideoFramePointer> ids_to_video_frame(
 	  const std::vector<ImageId> &ids) const;
-	std::vector<VideoFramePointer> range_to_video_frame(
-	  const FrameRange &ids) const;
+	static std::vector<VideoFramePointer> range_to_video_frame(
+	  const FrameRange &ids);
 
 private:
 	/**

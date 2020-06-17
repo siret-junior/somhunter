@@ -42,7 +42,7 @@ main()
 	const std::string cfg_fpth{ "../../config.json" };
 
 	// Parse config file
-	auto config = Config::parse_json_config(std::move(cfg_fpth));
+	auto config = Config::parse_json_config(cfg_fpth);
 
 	// Instantiate the SOMHunter
 	SomHunter core{ config };

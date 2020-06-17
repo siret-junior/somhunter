@@ -226,8 +226,8 @@ public:
 		return parse_multi(in, parser_stop_pos, err, strategy);
 	}
 
-	bool operator==(const Json &rhs) const;
-	bool operator<(const Json &rhs) const;
+	bool operator==(const Json &other) const;
+	bool operator<(const Json &other) const;
 	bool operator!=(const Json &rhs) const { return !(*this == rhs); }
 	bool operator<=(const Json &rhs) const { return !(rhs < *this); }
 	bool operator>(const Json &rhs) const { return (rhs < *this); }

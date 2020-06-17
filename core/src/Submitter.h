@@ -51,7 +51,7 @@ class Submitter
 	const SubmitterConfig cfg;
 
 public:
-	Submitter(const SubmitterConfig &cfg);
+	Submitter(const SubmitterConfig &config);
 	// waits until the last thread submits
 	~Submitter() noexcept;
 
@@ -76,7 +76,7 @@ public:
 	                            const size_t topn_frames_per_video,
 	                            const size_t topn_frames_per_shot);
 
-	void log_add_keywords(const std::string &sentence_query);
+	void log_add_keywords(const std::string &query_sentence);
 
 	void log_like(const DatasetFrames &frames,
 	              DisplayType disp_type,

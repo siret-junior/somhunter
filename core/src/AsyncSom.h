@@ -35,7 +35,7 @@ class AsyncSom
 {
 	std::thread worker;
 
-	size_t features_dim;
+	size_t features_dim{};
 
 	// worker sync
 	std::condition_variable new_data_wakeup;

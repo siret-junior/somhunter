@@ -66,9 +66,9 @@ public:
 	 *    - number of lines is number of selected frames
 	 */
 	// @todo Make this template and inside some `Parsers` class
-	FeatureMatrix parse_float_matrix(const std::string &filepath,
-	                                 size_t row_dim,
-	                                 size_t begin_offset = 0);
+	static FeatureMatrix parse_float_matrix(const std::string &filepath,
+	                                        size_t row_dim,
+	                                        size_t begin_offset = 0);
 	/**
 	 * FORMAT:
 	 *    Matrix of 4B floats:
@@ -76,9 +76,9 @@ public:
 	 *    - number of lines is number of selected frames
 	 */
 	// @todo Make this template and inside some `Parsers` class
-	FeatureVector parse_float_vector(const std::string &filepath,
-	                                 size_t dim,
-	                                 size_t begin_offset = 0);
+	static FeatureVector parse_float_vector(const std::string &filepath,
+	                                        size_t dim,
+	                                        size_t begin_offset = 0);
 
 	inline KeywordRanker(const Config &config)
 	  : keywords(parse_kw_classes_text_file(config.kws_file))
@@ -119,7 +119,7 @@ public:
 	                const DatasetFrames &frames,
 	                const Config &cfg) const;
 
-	void rank_sentence_query(const std::string &query,
+	void rank_sentence_query(const std::string &sentence_query_raw,
 	                         ScoreModel &model,
 	                         const DatasetFeatures &features,
 	                         const DatasetFrames &frames,

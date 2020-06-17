@@ -39,7 +39,8 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 
 	while (!parent->terminate) {
 
-		std::vector<float> points, scores;
+		std::vector<float> points;
+		std::vector<float> scores;
 		size_t n;
 
 		{
@@ -96,14 +97,14 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 		                        0);
 		float negAlpha = -0.01f;
 		float negRadius = 1.0f;
-		float alphasA[2] = { 0.1f, 0.05f },
-		      alphasB[2] = { negAlpha * alphasA[0],
-			             negAlpha * alphasA[1] },
-		      radiiA[2] = { float(SOM_DISPLAY_GRID_WIDTH +
+		float alphasA[2] = { 0.1f, 0.05f };
+		float alphasB[2] = { negAlpha * alphasA[0],
+			             negAlpha * alphasA[1] };
+		float radiiA[2] = { float(SOM_DISPLAY_GRID_WIDTH +
 			                  SOM_DISPLAY_GRID_HEIGHT) /
 			              3,
-			            0.1f },
-		      radiiB[2] = { negRadius * radiiA[0],
+			            0.1f };
+		float radiiB[2] = { negRadius * radiiA[0],
 			            negRadius * radiiA[1] };
 		som(n,
 		    SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT,

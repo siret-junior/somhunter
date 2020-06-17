@@ -107,7 +107,7 @@ submitter_thread(const std::string &submit_url,
 		static struct curl_slist reqheader = { hdr.data(), nullptr };
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, &reqheader);
 
-		bool curl_ok = !curl_easy_perform(curl);
+		bool curl_ok = curl_easy_perform(curl) == 0u;
 
 		if (curl_ok)
 			info("Submit OK");
@@ -371,7 +371,7 @@ Submitter::log_scroll(const DatasetFrames & /*frames*/,
                       float dirY)
 {
 	std::string ev_type("rankedList");
-	std::string disp_type("");
+	std::string disp_type;
 
 	switch (from_disp_type) {
 		case DisplayType::DTopN:

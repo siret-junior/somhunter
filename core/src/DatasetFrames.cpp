@@ -139,7 +139,7 @@ DatasetFrames::DatasetFrames(const Config &config)
 		}
 	}
 
-	if (!size())
+	if (size() == 0u)
 		warn("No image paths loaded");
 	else
 		info("Loaded " << size() << " image paths");
@@ -149,16 +149,17 @@ VideoFrame
 DatasetFrames::parse_video_filename(std::string &&filename)
 {
 	// Extract string representing video ID
-	std::string_view videoIdString(filename.data() + offs.vid_ID_off,
-	                               offs.vid_ID_len);
+	std::string_view;
+	videoIdString(filename.data() + offs.vid_ID_off, offs.vid_ID_len);
 
 	// Extract string representing shot ID
-	std::string_view shotIdString(filename.data() + offs.shot_ID_off,
-	                              offs.shot_ID_len);
+	std::string_view;
+	shotIdString(filename.data() + offs.shot_ID_off, offs.shot_ID_len);
 
 	// Extract string representing frame number
-	std::string_view frameNumberString(filename.data() + offs.frame_num_off,
-	                                   offs.frame_num_len);
+	std::string_view;
+	frameNumberString(filename.data() + offs.frame_num_off,
+	                  offs.frame_num_len);
 
 	return VideoFrame(std::move(filename),
 	                  str_to_int(videoIdString),
@@ -185,7 +186,7 @@ DatasetFrames::ids_to_video_frame(const std::vector<ImageId> &ids) const
 }
 
 std::vector<VideoFramePointer>
-DatasetFrames::range_to_video_frame(const FrameRange &ids) const
+DatasetFrames::range_to_video_frame(const FrameRange &ids)
 {
 	std::vector<VideoFramePointer> res;
 	res.reserve(ids.size());

@@ -108,12 +108,12 @@ SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
 }
 
 void
-SomHunter::rescore(std::string text_query)
+SomHunter::rescore(const std::string &text_query)
 {
 	submitter.poll();
 
 	// Rescore text query
-	rescore_keywords(std::move(text_query));
+	rescore_keywords(text_query);
 
 	// Rescore relevance feedback
 	rescore_feedback();

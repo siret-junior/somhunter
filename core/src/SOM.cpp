@@ -108,10 +108,10 @@ som(size_t /*n*/,
     const std::vector<float> &points,
     std::vector<float> &koho,
     const std::vector<float> &nhbrdist,
-    float alphasA[2],
-    float radiiA[2],
-    float alphasB[2],
-    float radiiB[2],
+    const float alphasA[2],
+    const float radiiA[2],
+    const float alphasB[2],
+    const float radiiB[2],
     const std::vector<float> &scores,
     std::mt19937 &rng)
 {
@@ -119,11 +119,14 @@ som(size_t /*n*/,
 	std::discrete_distribution<size_t> random(scores.begin(), scores.end());
 	info("build end");
 
-	float thresholdA0 = radiiA[0], alphaA0 = alphasA[0],
-	      thresholdADiff = radiiA[1] - radiiA[0],
-	      alphaADiff = alphasA[1] - alphasA[0], thresholdB0 = radiiB[0],
-	      alphaB0 = alphasB[0], thresholdBDiff = radiiB[1] - radiiB[0],
-	      alphaBDiff = alphasB[1] - alphasB[0];
+	float thresholdA0 = radiiA[0];
+	float alphaA0 = alphasA[0];
+	float thresholdADiff = radiiA[1] - radiiA[0];
+	float alphaADiff = alphasA[1] - alphasA[0];
+	float thresholdB0 = radiiB[0];
+	float alphaB0 = alphasB[0];
+	float thresholdBDiff = radiiB[1] - radiiB[0];
+	float alphaBDiff = alphasB[1] - alphasB[0];
 
 	for (size_t iter = 0; iter < niter; ++iter) {
 		size_t point = random(rng);
@@ -145,10 +148,10 @@ som(size_t /*n*/,
 			}
 		}
 
-		float thresholdA = thresholdA0 + riter * thresholdADiff,
-		      thresholdB = thresholdB0 + riter * thresholdBDiff,
-		      alphaA = alphaA0 + riter * alphaADiff,
-		      alphaB = alphaB0 + riter * alphaBDiff;
+		float thresholdA = thresholdA0 + riter * thresholdADiff;
+		float thresholdB = thresholdB0 + riter * thresholdBDiff;
+		float alphaA = alphaA0 + riter * alphaADiff;
+		float alphaB = alphaB0 + riter * alphaBDiff;
 
 		for (size_t i = 0; i < k; ++i) {
 			float d = nhbrdist[i + k * nearest];

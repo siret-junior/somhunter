@@ -32,6 +32,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 #include "log.h"
 
@@ -291,7 +292,8 @@ inline float
 d_cos_normalized(const std::vector<float> &left, const float *right, size_t dim)
 {
 	float s = 0.0f;
-	const float *iv = left.data(), *jv = right;
+	const float *iv = left.data();
+	const float *jv = right;
 
 	for (size_t d = 0; d < dim; ++d) {
 		s += iv[d] * jv[d];
