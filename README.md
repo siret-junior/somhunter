@@ -99,3 +99,39 @@ save disk space and IO bandwidth.)
 Extraction of data from custom files proceeds as follows:
 
 - TODO
+
+## Customizing SOMHunter
+
+The program is structured as follows:
+
+- The frontend requests are routed to views and actions in `routes/somhunter.js`, display-specific routes are present in `routes/common/endpoints.js`
+- The views (for the browser) are rendered in `views/somhunter.ejs`
+- Node.js "frontend" communicates with C++ "backend" that handles the main data operations; the backend source code is in `cppsrc/`; the main API is in `cppsrc/SomHunterWrapper/SomHunterWrapper.h` (and `.cpp`)
+- The backend implementation is present in `cppsrc/SomHunterWrapper/SOMHunterCore/src/` which contains the following modules (`.cpp` and `.h`):
+  - `SomHunter` -- main data-holding structure with the C++ version of the wrapper API
+  - `Submitter` -- VBS API client for submitting search results for the competition, also contains the logging functionality
+  - `DatasetFrames` -- loading of the dataset description (frame IDs, shot IDs, video IDs, ...)
+  - `DatasetFeatures` -- loading of the dataset feature matrix
+  - `KeywordRanker` -- loading and application of W2VV keywords
+  - `RelevanceScores` -- maintenance of the per-frame scores and feedback-based reranking
+  - `SOM` and `AsyncSom` -- SOM implementation, background worker that computes the SOM
+
+Additional minor utilities include:
+  - `config.h` that contains various `#define`d constants, including file paths
+  - `log.h` which defines a relatively user-friendly logging with debug levels
+  - `use_intrins.h` and `distfs.h` define fast SSE-accelerated computation of vector-vector operations (provides around 4x speedup for almost all computation-heavy operations)
+  - `main.cpp`, which is __not__ compiled-in by default, but demonstrates how to run the SOMHunter core as a standalone C++ application.
+
+### How-To: adding a new display
+
+TODO franta:
+- kam se to vsude dopise
+- jak se to prida do logu
+muzes to ukazat treba na tom jak tam doplnit ten kNN displej
+
+### How-To: modifying the rescore functions
+
+TODO prtrik
+- ukazat novou funkci ktera rescoruje proste jako `sum(similarity(x,likes))`, treba `apply_simple`
+- kam se vsude dopise ta akce
+- jak se to prida do logu
