@@ -53,6 +53,10 @@ public:
 	size_t size() const { return scores.size(); }
 	void normalize();
 
+	/** 
+	 * Applies relevance feedback based on 
+	 * bayesian update rule.
+	 */
 	void apply_bayes(std::set<ImageId> likes,
 	                 std::set<ImageId> screen,
 	                 const DatasetFeatures &features);

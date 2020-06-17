@@ -225,7 +225,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 			sort_types.push_back("jointEmbedding");
 		}
 
-		if (used_tools.LDs_used) {
+		if (used_tools.bayes_used) {
 			used_cats.push_back("image");
 			used_types.push_back("feedbackModel");
 			sort_types.push_back("feedbackModel");

@@ -122,7 +122,6 @@ SomHunter::rescore(std::string text_query)
 	som_start();
 
 	// Update search context
-	likes.clear();
 	shown_images.clear();
 
 	// Reset likes
@@ -138,7 +137,7 @@ SomHunter::rescore(std::string text_query)
 
 	debug("used_tools.topknn_used = " << used_tools.topknn_used);
 	debug("used_tools.KWs_used = " << used_tools.KWs_used);
-	debug("used_tools.LDs_used = " << used_tools.LDs_used);
+	debug("used_tools.bayes_used = " << used_tools.bayes_used);
 	submitter.submit_and_log_rescore(frames,
 	                                 scores,
 	                                 used_tools,
@@ -147,8 +146,6 @@ SomHunter::rescore(std::string text_query)
 	                                 last_text_query,
 	                                 config.topn_frames_per_video,
 	                                 config.topn_frames_per_shot);
-
-	asyncSom.start_work(features, scores);
 }
 
 bool
@@ -198,7 +195,7 @@ SomHunter::rescore_feedback()
 		return;
 		
 	scores.apply_bayes(likes, shown_images, features);
-	used_tools.LDs_used = true;
+	used_tools.bayes_used = true;
 }
 
 void

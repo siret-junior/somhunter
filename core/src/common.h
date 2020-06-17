@@ -80,19 +80,19 @@ struct UsedTools
 {
 	UsedTools()
 	  : KWs_used(false)
-	  , LDs_used(false)
+	  , bayes_used(false)
 	  , topknn_used(false)
 	{}
 
 	void reset()
 	{
 		KWs_used = false;
-		LDs_used = false;
+		bayes_used = false;
 		topknn_used = false;
 	}
 
 	bool KWs_used;
-	bool LDs_used;
+	bool bayes_used;
 	bool topknn_used;
 };
 
