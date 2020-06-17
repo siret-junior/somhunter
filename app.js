@@ -51,7 +51,7 @@ const somhunterRouter = require("./routes/somhunter");
 const routerNotFound = require("./routes/404");
 
 // API endpoints
-const endpoints = require("./routes/common/endpoints");
+const endpoints = require("./routes/endpoints");
 
 /*
  * Logging

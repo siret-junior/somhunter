@@ -23,7 +23,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const SessionState = require("./SessionState");
+const SessionState = require("./common/SessionState");
 
 exports.getFrameDetailData = function (req, res) {
   const sess = req.session;
