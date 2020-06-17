@@ -51,11 +51,12 @@ public:
 	                                 size_t per_vid_limit = 0,
 	                                 size_t from_shot_limit = 0) const
 	{
-		return get_top_knn(frames,
-		                   id,
-		                   [](ImageId frame_ID) { return true; },
-		                   per_vid_limit,
-		                   from_shot_limit);
+		return get_top_knn(
+		  frames,
+		  id,
+		  [](ImageId frame_ID) { return true; },
+		  per_vid_limit,
+		  from_shot_limit);
 	}
 
 	inline std::vector<ImageId> get_top_knn(

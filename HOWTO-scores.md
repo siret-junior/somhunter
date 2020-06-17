@@ -1,49 +1,58 @@
 
-# HOW-TO: Adding a new reascore function
+# HOW-TO: Adding a new rescore function
 
-This tutorial shows, how new rescore function can be implemented. 
+This tutorial briefs the implementation and modification of the existing frame
+scoring functions.
 
-Rescore functions are placed in the backend in module RelevanceScore (e. g. `apply_bayes` in `core/src/RelevanceScores.cpp`) or its modules (e. g. `core/src/KeywordRanker.h` and `.cpp`). We will use adding new relevance feedback function as an example. Our new relevance feedback function takes in ids of selected relevant frames and based on their similarity in DatasetFeatures are computed new scores.
+Rescore functions are implemented in the backend, currently in the module
+`RelevanceScore`. In the current version, there is only `apply_bayes` function
+(in `core/src/RelevanceScores.cpp`). Several additional functions serve for
+initial ranking of the frames with keyword-based scores, these can be found in
+the `KeywordRanker` module.
 
-## 1. Provide all the input data, which the new rescore function needs. 
-In our example, we need selected relevant frames, which are already implemented (see `likes` in `core/src/SomHunter.h`), because they are same as for `apply_bayes` function. If your new rescore function needs any additional input data, you need to connect this new feature with the UI (similiarly as in [HOW-TO: Adding a new display type](HOWTO-display.md)).
+The current Bayesian ranker uses almost exclusively the data available from
+`DatasetFeatures`, i.e. the feature vectors for each frame; these are
+"compared" using a distance measure based on cosine simiarity.
 
-## 2. Implementing new rescore function. 
-If your new function is rather simple, it can be placed in `core/src/RelevanceScore.h` and `.cpp`. Otherwise, we recommend creating a new backend module (in case loading some additional data at the start of somhunter, etc.). Our example function is simple, so we will create a new function in the `core/src/RelevanceScore.h` and `.cpp`. 
+We show how to construct a very simple rescoring function that modifies the
+score based on sum of distances from all user-marked frames.
 
-Example code:
-`core/src/RelevanceScore.h`
+## 1. Write the re-scorer
+
+The re-scoring function can be added to the ScoreModel for simplicity. Add a
+method header in `core/src/RelevanceScore.h` as such:
+```cpp
+void apply_simple(const std::set<ImageId>& likes, const DatasetFeatures &features);
 ```
-void apply_simple(std::set<ImageId> likes,
-	                 const DatasetFeatures &features);
-```
 
-`core/src/RelevanceScore.cpp`
-```
+The implementation goes preferentially into `core/src/RelevanceScore.cpp`:
+```cpp
 void
-ScoreModel::apply_simple(std::set<ImageId> likes,
+ScoreModel::apply_simple(const std::set<ImageId>& likes,
                         const DatasetFeatures &features)
 {
-	if (likes.empty())
-		return;
-	
 	for (ImageId ii = 0; ii < scores.size(); ++ii) {
 		float sum = 0;
 
-		for (ImageId oi : screen)
-			sum += features.d_dot(ii, oi);
+		for (ImageId i : likes)
+			sum += features.d_dot(ii, i);
 
-		scores[ii] *= sum;
+		scores[ii] *= pow(0.5, -sum);
 	}
 
   	normalize();
 }
 ```
 
-## 3. Connecting main backend module SomHunter and our new function. 
-Relevance scores are updated every time function rescore is called. At first, we call our new rescore function with input data, which we discussed in section 1. 
+The `normalize()` call at the end keeps the scores in a relatively sane
+interval, and prevents various numeric problems. `features` are used as a main
+data source.
 
-We will modify `rescore` in `core/src/SomHunter.cpp` as follows:
+## 2. Plug the new function into the rescorer
+Relevance scores are updated everytime `rescore()` is called.
+
+We will modify `rescore` in `core/src/SomHunter.cpp` to call the customized
+function as follows:
 ```
 void
 SomHunter::rescore(std::string text_query)
@@ -76,6 +85,7 @@ SomHunter::rescore(std::string text_query)
 	                          config.topn_frames_per_video,
 	                          config.topn_frames_per_shot);
                             
+	// logging (see the description below)
 	submitter.submit_and_log_rescore(frames,
 	                                 scores,
 	                                 used_tools,
@@ -86,51 +96,74 @@ SomHunter::rescore(std::string text_query)
 	                                 config.topn_frames_per_shot);
 }
 ```
+
+## 3. Optional: Pass additional information to the rescorer from the front-end
+
+If your rescoring method needs more information than plain likes and dislikes,
+you need to modify the function that pass the data to the backend, namely:
+
+- backend rescorer interface in `SomHunter.h`
+- backend N-API wrapper in `SomHunterNapi.cpp` and `.h`
+- route handler in `routes`
+- optionally, add the controls for the new functionality to `routes` and `views`.
+
+Use the [N-API documentation](https://nodejs.org/api/n-api.html) to get an
+overview of possiblilities of data transfer to frontend. For a similar
+modification, you can look at the code in [the tutorial about new display
+types](HOWTO-display.md).
+
 ## 4. Logging
-Now we have working rescore and the last step is to add this new feature to the logging system. Logging system takes in structure `UsedTools` and based on this parameter it fills categories and types to the logs. Our example function is similar to the bayes rescore function, so we will use the same type. If you are going to implement a different type of rescore function, you have to extend the `UsedTools` structure and fill in correct categories and types in function `submit_and_log_rescore` in `core/src/Submitter.cpp`. Please consult logging details with VBS standard for the current year.
 
-Function `rescore` in `core/src/SomHunter.cpp` with filled `UsedCategories`:
+Finally, VBS rules say that all user actions must be logged with all relevant
+parameters, to aid future analysis!
+
+Various logging functions are available in `Submitter.h` and `Submitter.cpp`,
+and it's generally easy to create various customized ones. VBS defines message
+categories and types which should be filled in properly; the "contents" of the
+log message is otherwise an arbitrary string, but should be
+machine-interpretable.
+
+Notably, VBS rules may change (we may update this repository accordingly).
+
+The actual rescoring function calls the correct submitter method with many
+parameters that should be logged:
+```cpp
+submitter.submit_and_log_rescore(frames, // frames marked by the user
+				 scores, // instance of scores used for collecting additional data
+				 used_tools, // a simple list of tools already used for this search (class UsedTools)
+				 current_display_type, // what display the user employed to submit the feedback
+				 top_n, // currently top-scoring frames
+				 last_text_query, // last text query
+				 config.topn_frames_per_video, // current framefilter settings
+				 config.topn_frames_per_shot);
 ```
-void
-SomHunter::rescore(std::string text_query)
-{
-	submitter.poll();
 
-	// Rescore text query
-	rescore_keywords(std::move(text_query));
+If required, you may supply your own information; use the function `push_event`
+in `Submitter` that fills the log message into the "backlog" of events that are
+sent periodically:
+```cpp
+void push_event(const std::string &cat,
+		const std::string &type,
+		const std::string &value);
+```
 
-	// Rescore relevance feedback
-	if (!likes.empty())
-	{
-		scores.apply_simple(likes, features);
-		used_tools.bayes_used = true;
-	}
+Or, start the sending with any custom contents immediately, as in the
+`submit_and_log_rescore` function:
 
-	// Start SOM computation
-	som_start();
+```cpp
+//...
 
-	// Update search context
-	shown_images.clear();
+Json top = Json::object{ { "teamId", int(cfg.team_ID) },
+			 { "memberId", int(cfg.member_ID) },
+			 { "timestamp", double(timestamp()) },
+			 { "usedCategories", used_cats },
+			 { "usedTypes", used_types },
+			 { "sortType", sort_types },
+			 { "resultSetAvailability", "top" },
+			 { "type", "result" },
+			 { "value", query_val },
+			 { "results", std::move(result_json_arr) } };
 
-	// Reset likes
-	likes.clear();
-	for (auto &fr : frames) {
-		fr.liked = false;
-	}
-
-	auto top_n = scores.top_n(frames,
-	                          TOPN_LIMIT,
-	                          config.topn_frames_per_video,
-	                          config.topn_frames_per_shot);
-                            
-	submitter.submit_and_log_rescore(frames,
-	                                 scores,
-	                                 used_tools,
-	                                 current_display_type,
-	                                 top_n,
-	                                 last_text_query,
-	                                 config.topn_frames_per_video,
-	                                 config.topn_frames_per_shot);
-}
+start_sender(cfg.submit_rerank_URL, "", top.dump());
 ```
 

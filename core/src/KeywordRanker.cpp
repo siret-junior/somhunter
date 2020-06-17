@@ -19,7 +19,6 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include "KeywordRanker.h"
 
 std::vector<Keyword>
@@ -92,8 +91,8 @@ KeywordRanker::parse_kw_classes_text_file(const std::string &filepath)
 
 FeatureVector
 KeywordRanker::parse_float_vector(const std::string &filepath,
-                                      size_t dim,
-                                      size_t begin_offset)
+                                  size_t dim,
+                                  size_t begin_offset)
 {
 	// Open file for reading as binary from the end side
 	std::ifstream ifs(filepath, std::ios::binary | std::ios::ate);
@@ -151,8 +150,8 @@ KeywordRanker::parse_float_vector(const std::string &filepath,
 
 FeatureMatrix
 KeywordRanker::parse_float_matrix(const std::string &filepath,
-                                      size_t row_dim,
-                                      size_t begin_offset)
+                                  size_t row_dim,
+                                  size_t begin_offset)
 {
 	// Open file for reading as binary from the end side
 	std::ifstream ifs(filepath, std::ios::binary | std::ios::ate);
@@ -255,10 +254,10 @@ KeywordRanker::find(const std::string &search, size_t num_limit) const
 
 void
 KeywordRanker::rank_sentence_query(const std::string &sentence_query_raw,
-                                       ScoreModel &model,
-                                       const DatasetFeatures &features,
-                                       const DatasetFrames &frames,
-                                       const Config &cfg) const
+                                   ScoreModel &model,
+                                   const DatasetFeatures &features,
+                                   const DatasetFrames &frames,
+                                   const Config &cfg) const
 {
 	// Copy this sentence
 	std::string sentence_query(sentence_query_raw);
@@ -321,13 +320,12 @@ KeywordRanker::rank_sentence_query(const std::string &sentence_query_raw,
 }
 
 void
-KeywordRanker::rank_query(
-  const std::vector<std::vector<KeywordId>> &positive,
-  const std::vector<std::vector<KeywordId>> &negative,
-  ScoreModel &model,
-  const DatasetFeatures &features,
-  const DatasetFrames &frames,
-  const Config &cfg) const
+KeywordRanker::rank_query(const std::vector<std::vector<KeywordId>> &positive,
+                          const std::vector<std::vector<KeywordId>> &negative,
+                          ScoreModel &model,
+                          const DatasetFeatures &features,
+                          const DatasetFrames &frames,
+                          const Config &cfg) const
 {
 	// Don't waste time
 	if (positive.empty())
@@ -347,14 +345,13 @@ KeywordRanker::rank_query(
 }
 
 void
-KeywordRanker::apply_temp_queries(
-  std::vector<std::vector<float>> &dist_cache,
-  ImageId img_ID,
-  const FeatureMatrix &queries,
-  size_t query_idx,
-  float &result_dist,
-  const DatasetFeatures &features,
-  const DatasetFrames &frames) const
+KeywordRanker::apply_temp_queries(std::vector<std::vector<float>> &dist_cache,
+                                  ImageId img_ID,
+                                  const FeatureMatrix &queries,
+                                  size_t query_idx,
+                                  float &result_dist,
+                                  const DatasetFeatures &features,
+                                  const DatasetFrames &frames) const
 {
 	// If no queries left
 	if (query_idx >= queries.size())

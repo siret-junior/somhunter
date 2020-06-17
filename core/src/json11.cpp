@@ -402,13 +402,11 @@ Json::object_items() const
 {
 	return m_ptr->object_items();
 }
-const Json &
-Json::operator[](size_t i) const
+const Json &Json::operator[](size_t i) const
 {
 	return (*m_ptr)[i];
 }
-const Json &
-Json::operator[](const string &key) const
+const Json &Json::operator[](const string &key) const
 {
 	return (*m_ptr)[key];
 }
@@ -447,20 +445,17 @@ const Json &JsonValue::operator[](size_t) const
 {
 	return static_null();
 }
-const Json &
-JsonValue::operator[](const string &) const
+const Json &JsonValue::operator[](const string &) const
 {
 	return static_null();
 }
 
-const Json &
-JsonObject::operator[](const string &key) const
+const Json &JsonObject::operator[](const string &key) const
 {
 	auto iter = m_value.find(key);
 	return (iter == m_value.end()) ? static_null() : iter->second;
 }
-const Json &
-JsonArray::operator[](size_t i) const
+const Json &JsonArray::operator[](size_t i) const
 {
 	if (i >= m_value.size())
 		return static_null();

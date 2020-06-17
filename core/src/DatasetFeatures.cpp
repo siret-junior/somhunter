@@ -27,8 +27,7 @@
 #include "config_json.h"
 #include "log.h"
 
-
-DatasetFeatures::DatasetFeatures(const DatasetFrames &p, const Config& config)
+DatasetFeatures::DatasetFeatures(const DatasetFrames &p, const Config &config)
   : n(p.size())
   , features_dim(config.features_dim)
 {

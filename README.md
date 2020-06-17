@@ -29,7 +29,7 @@ the following articles helpful:
 
 ## Installation
 
-Prerequisities:
+Prerequisites:
 
 - a working installation of Node.js with some variant of package manager
   (either `npm` or `yarn`)
@@ -105,7 +105,7 @@ The program is structured as follows:
   - `DatasetFrames` -- loading of the dataset description (frame IDs, shot IDs, video IDs, ...)
   - `DatasetFeatures` -- loading of the dataset feature matrix
   - `KeywordRanker` -- loading and application of W2VV keywords
-  - `RelevanceScores` -- maintenance of the per-frame scores and feedback-based reranking
+  - `RelevanceScores` -- maintenance of the per-frame scores and feedback-based re-ranking
   - `SOM` and `AsyncSom` -- SOM implementation, background worker that computes the SOM
 
 Additional minor utilities include:

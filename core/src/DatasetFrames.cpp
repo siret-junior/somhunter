@@ -90,7 +90,7 @@ DatasetFrames::DatasetFrames(const Config &config)
 
 	{ // We can precompute this into binary file as well
 
- 		size_t i = 0;
+		size_t i = 0;
 		size_t prev_frame_vid_ID = SIZE_T_ERR_VAL;
 
 		size_t beg_img_ID = SIZE_T_ERR_VAL;
@@ -100,7 +100,8 @@ DatasetFrames::DatasetFrames(const Config &config)
 
 			std::string tmp;
 
-			auto vf = DatasetFrames::parse_video_filename(std::move(s));
+			auto vf =
+			  DatasetFrames::parse_video_filename(std::move(s));
 
 			vf.frame_ID = i;
 
@@ -172,11 +173,11 @@ DatasetFrames::ids_to_video_frame(const std::vector<ImageId> &ids) const
 	std::vector<VideoFramePointer> res;
 	res.reserve(ids.size());
 	for (ImageId i : ids) {
-		if (i == IMAGE_ID_ERR_VAL){
+		if (i == IMAGE_ID_ERR_VAL) {
 			res.push_back(nullptr);
 			continue;
 		}
-			
+
 		res.push_back(&get_frame(i));
 	}
 

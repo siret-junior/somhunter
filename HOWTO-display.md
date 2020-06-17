@@ -31,7 +31,7 @@ The parameters are passed in `info`, these need to be converted to C++ types. Th
 info[0].As<Napi::String>().Utf8Value()
 ```
 
-From the Napi wrapper, you can call the actual function in the backend instance (available as `somhunter`):
+From the N-Api wrapper, you can call the actual function in the backend instance (available as `somhunter`):
 ```cpp
 FramePointerRange dislpay_frames =
   somhunter->get_display(disp_type, selected_image, page_num);

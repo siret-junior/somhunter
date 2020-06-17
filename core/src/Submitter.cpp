@@ -256,26 +256,20 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 void
 Submitter::log_add_keywords(const std::string &query_sentence)
 {
-	const std::string ev_cat("text");
-	const std::string ev_type("jointEmbedding");
-
-	push_event(ev_cat, ev_type, query_sentence);
+	push_event("txt", "jointEmbedding", query_sentence);
 }
 void
 Submitter::log_like(const DatasetFrames &frames,
                     DisplayType /*disp_type*/,
                     ImageId frame_ID)
 {
-	const std::string ev_cat("image");
-	const std::string ev_type("feedbackModel");
-
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
 	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
 	        << ";FId" << frame_ID << ";like;";
 
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("image", "feedbackModel", data_ss.str());
 }
 
 void
@@ -283,68 +277,41 @@ Submitter::log_dislike(const DatasetFrames &frames,
                        DisplayType /*disp_type*/,
                        ImageId frame_ID)
 {
-	const std::string ev_cat("image");
-	const std::string ev_type("feedbackModel");
-
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
 	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
 	        << ";FId" << frame_ID << ";dislike;";
 
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("image", "feedbackModel", data_ss.str());
 }
 
 void
 Submitter::log_show_random_display(const DatasetFrames & /*frames*/,
                                    const std::vector<ImageId> & /*imgs*/)
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("randomSelection");
-
-	std::stringstream data_ss;
-	data_ss << "random_display;";
-
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", "randomSelection", "random_display;");
 }
 
 void
 Submitter::log_show_som_display(const DatasetFrames & /*frames*/,
                                 const std::vector<ImageId> & /*imgs*/)
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("exploration");
-
-	std::stringstream data_ss;
-	data_ss << "som_display;";
-
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", "exploration", "som_display");
 }
 
 void
 Submitter::log_show_topn_display(const DatasetFrames & /*frames*/,
                                  const std::vector<ImageId> & /*imgs*/)
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("rankedList");
-
-	std::stringstream data_ss;
-	data_ss << "topn_display;";
-
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", "rankedList", "topn_display");
 }
 
 void
 Submitter::log_show_topn_context_display(const DatasetFrames & /*frames*/,
                                          const std::vector<ImageId> & /*imgs*/)
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("rankedList");
-
-	std::stringstream data_ss;
-	data_ss << "topn_context_display;";
-
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", "rankedList", "topn_context_display;");
 }
 
 void
@@ -352,41 +319,31 @@ Submitter::log_show_topknn_display(const DatasetFrames &frames,
                                    ImageId frame_ID,
                                    const std::vector<ImageId> & /*imgs*/)
 {
-	const std::string ev_cat("image");
-	const std::string ev_type("globalFeatures");
-
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
 	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
 	        << ";FId" << frame_ID << ";topknn_display;";
 
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("image", "globalFeatures", data_ss.str());
 }
 
 void
 Submitter::log_show_detail_display(const DatasetFrames &frames,
                                    ImageId frame_ID)
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("videoSummary");
-
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
 	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
 	        << ";FId" << frame_ID << ";video_detail;";
 
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", "videoSummary", data_ss.str());
 }
 
 void
-Submitter::log_show_video_replay(const DatasetFrames &frames,
-                                 ImageId frame_ID)
+Submitter::log_show_video_replay(const DatasetFrames &frames, ImageId frame_ID)
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("temporalContext");
-
 	static int64_t last_replay_submit = 0;
 	static ImageId last_frame_ID = IMAGE_ID_ERR_VAL;
 
@@ -405,7 +362,7 @@ Submitter::log_show_video_replay(const DatasetFrames &frames,
 	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
 	        << ";FId" << frame_ID << ";replay;";
 
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", "temporalContext", data_ss.str());
 }
 
 void
@@ -413,7 +370,6 @@ Submitter::log_scroll(const DatasetFrames & /*frames*/,
                       DisplayType from_disp_type,
                       float dirY)
 {
-	const std::string ev_cat("browsing");
 	std::string ev_type("rankedList");
 	std::string disp_type("");
 
@@ -459,16 +415,13 @@ Submitter::log_scroll(const DatasetFrames & /*frames*/,
 	data_ss << "scroll" << (dirY > 0 ? "Up" : "Down") << ";" << dirY << ";"
 	        << disp_type << ";";
 
-	push_event(ev_cat, ev_type, data_ss.str());
+	push_event("browsing", ev_type, data_ss.str());
 }
 
 void
 Submitter::log_reset_search()
 {
-	const std::string ev_cat("browsing");
-	const std::string ev_type("resetAll");
-
-	push_event(ev_cat, ev_type, "");
+	push_event("browsing", "resetAll", "");
 }
 
 void

@@ -304,9 +304,8 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 					  expf(-features.d_dot(ii, oi) / Sigma);
 
 				for (auto &&like : likes) {
-					const float likeValTmp =
-					  expf(-features.d_dot(ii, like) /
-					       Sigma);
+					const float likeValTmp = expf(
+					  -features.d_dot(ii, like) / Sigma);
 					scores[ii] *=
 					  likeValTmp / (likeValTmp + divSum);
 				}

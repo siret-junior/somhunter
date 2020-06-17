@@ -31,7 +31,9 @@
 
 #if LOGLEVEL > 0
 
-#define _dont_write_log do {} while(0)
+#define _dont_write_log                                                        \
+	do {                                                                   \
+	} while (0)
 #define _write_log(level, x)                                                   \
 	do {                                                                   \
 		std::cerr << level << x << "\n\t(" << __func__                 \

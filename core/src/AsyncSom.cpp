@@ -100,7 +100,8 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 		      alphasB[2] = { negAlpha * alphasA[0],
 			             negAlpha * alphasA[1] },
 		      radiiA[2] = { float(SOM_DISPLAY_GRID_WIDTH +
-			                  SOM_DISPLAY_GRID_HEIGHT) / 3,
+			                  SOM_DISPLAY_GRID_HEIGHT) /
+			              3,
 			            0.1f },
 		      radiiB[2] = { negRadius * radiiA[0],
 			            negRadius * radiiA[1] };
@@ -169,8 +170,7 @@ void
 AsyncSom::start_work(const DatasetFeatures &fs, const ScoreModel &sc)
 {
 	std::unique_lock lck(worker_lock);
-	points =
-	  std::vector<float>(fs.fv(0), fs.fv(0) + fs.dim() * sc.size());
+	points = std::vector<float>(fs.fv(0), fs.fv(0) + fs.dim() * sc.size());
 	scores = std::vector<float>(sc.v(), sc.v() + sc.size());
 	new_data = true;
 	lck.unlock();

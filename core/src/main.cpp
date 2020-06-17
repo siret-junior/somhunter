@@ -20,12 +20,12 @@
  */
 
 #include "SomHunter.h"
-#include <stdio.h>
 #include <chrono>
+#include <stdio.h>
 #include <thread>
 
 void
-print_display(const FramePointerRange & d)
+print_display(const FramePointerRange &d)
 {
 	for (auto iter = d.begin(); iter != d.end(); iter++)
 		std::cout << (*iter)->frame_ID << std::endl;
@@ -60,7 +60,7 @@ main()
 
 	// Try different displays
 	auto d_topn = core.get_display(DisplayType::DTopN, 0, 0);
-	std::cout << "TOP N\n"; 
+	std::cout << "TOP N\n";
 	print_display(d_topn);
 
 	auto d_topknn = core.get_display(DisplayType::DTopKNN, 2, 0);
@@ -68,14 +68,14 @@ main()
 	print_display(d_topknn);
 
 	auto d_rand = core.get_display(DisplayType::DRand);
-	std::cout << "RANDOM\n"; 
+	std::cout << "RANDOM\n";
 	print_display(d_rand);
 
 	// Try keyword rescore
 	core.rescore("dog park");
 
 	d_topn = core.get_display(DisplayType::DTopN, 0, 0);
-	std::cout << "TOP N\n"; 
+	std::cout << "TOP N\n";
 	print_display(d_topn);
 
 	// Try reset session
@@ -100,7 +100,7 @@ main()
 	core.rescore("\\/?!,.'\"");
 
 	d_topn = core.get_display(DisplayType::DTopN, 0, 0);
-	std::cout << "TOP N\n"; 
+	std::cout << "TOP N\n";
 	print_display(d_topn);
 
 	std::cout << "Len of top n page 0 " << d_topn.size() << std::endl;
@@ -110,7 +110,7 @@ main()
 	std::cout << "Len of top n page 2 " << d_topn.size() << std::endl;
 
 	// Try SOM
-	while(!core.som_ready()) {
+	while (!core.som_ready()) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 	std::cout << "SOM is ready now!" << std::endl;

@@ -36,7 +36,7 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	  "SomHunterNapi",
 	  { InstanceMethod("getDisplay", &SomHunterNapi::get_display),
 	    InstanceMethod("addLikes", &SomHunterNapi::add_likes),
-		InstanceMethod("rescore", &SomHunterNapi::rescore),
+	    InstanceMethod("rescore", &SomHunterNapi::rescore),
 	    InstanceMethod("resetAll", &SomHunterNapi::reset_all),
 	    InstanceMethod("removeLikes", &SomHunterNapi::remove_likes),
 	    InstanceMethod("autocompleteKeywords",
@@ -78,7 +78,6 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
-
 }
 
 Napi::Value
@@ -127,8 +126,8 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 		      << std::endl
 		      << "n\t\t page_num = " << page_num);
 
-		display_frames = somhunter->get_display(
-		  disp_type, selected_image, page_num);
+		display_frames =
+		  somhunter->get_display(disp_type, selected_image, page_num);
 
 		debug("API: RETURN \n\t get_display\n\t\tframes.size() = "
 		      << display_frames.size());
@@ -169,13 +168,14 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 				napi_create_object(env, &obj);
 				{
 					ImageId ID{ IMAGE_ID_ERR_VAL };
-					bool is_liked{false};
+					bool is_liked{ false };
 					std::string filename{};
 
-					if ((*it) != nullptr)	{
+					if ((*it) != nullptr) {
 						ID = (*it)->frame_ID;
 						is_liked = (*it)->liked;
-						filename = path_prefix +(*it)->filename;
+						filename =
+						  path_prefix + (*it)->filename;
 					}
 
 					{
@@ -187,11 +187,14 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 						  &key);
 
 						napi_value value;
-						if (ID == IMAGE_ID_ERR_VAL)	{
-							napi_get_null(env, &value);
+						if (ID == IMAGE_ID_ERR_VAL) {
+							napi_get_null(env,
+							              &value);
 						} else {
-						napi_create_uint32(
-						  env, uint32_t(ID), &value);
+							napi_create_uint32(
+							  env,
+							  uint32_t(ID),
+							  &value);
 						}
 
 						napi_set_property(
@@ -282,7 +285,8 @@ SomHunterNapi::add_likes(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::rescore(const Napi::CallbackInfo &info) {
+SomHunterNapi::rescore(const Napi::CallbackInfo &info)
+{
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
 
@@ -290,14 +294,15 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info) {
 	int length = info.Length();
 
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters: SomHunterNapi::rescore")
+		Napi::TypeError::New(
+		  env, "Wrong number of parameters: SomHunterNapi::rescore")
 		  .ThrowAsJavaScriptException();
 	}
 	std::string query{ info[0].As<Napi::String>().Utf8Value() };
-	
+
 	try {
-		debug("API: CALL \n\t rescore\n\t\t query =  "
-		      << query << std::endl);
+		debug("API: CALL \n\t rescore\n\t\t query =  " << query
+		                                               << std::endl);
 
 		somhunter->rescore(query);
 
