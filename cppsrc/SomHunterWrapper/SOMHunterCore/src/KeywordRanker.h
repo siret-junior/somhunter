@@ -29,8 +29,8 @@
 #include <string>
 #include <vector>
 
-#include "Frames.h"
-#include "Scores.h"
+#include "DatasetFrames.h"
+#include "RelevanceScores.h"
 #include "common.h"
 #include "config_json.h"
 #include "utils.h"
@@ -46,7 +46,7 @@ struct Keyword
 	std::vector<ImageId> top_ex_imgs;
 };
 
-class ImageKeywordsW2VV
+class KeywordRanker
 {
 	std::vector<Keyword> keywords;
 	FeatureMatrix kw_features;
@@ -80,7 +80,7 @@ public:
 	                                 size_t dim,
 	                                 size_t begin_offset = 0);
 
-	inline ImageKeywordsW2VV(const Config &config)
+	inline KeywordRanker(const Config &config)
 	  : keywords(parse_kw_classes_text_file(config.kws_file))
 	  , kw_features(parse_float_matrix(config.kw_scores_mat_file,
 	                                   config.pre_PCA_features_dim))
@@ -93,12 +93,12 @@ public:
 	                                       config.pre_PCA_features_dim))
 	{}
 
-	ImageKeywordsW2VV(const ImageKeywordsW2VV &) = delete;
-	ImageKeywordsW2VV &operator=(const ImageKeywordsW2VV &) = delete;
+	KeywordRanker(const KeywordRanker &) = delete;
+	KeywordRanker &operator=(const KeywordRanker &) = delete;
 
-	ImageKeywordsW2VV(ImageKeywordsW2VV &&) = default;
-	ImageKeywordsW2VV &operator=(ImageKeywordsW2VV &&) = default;
-	~ImageKeywordsW2VV() noexcept = default;
+	KeywordRanker(KeywordRanker &&) = default;
+	KeywordRanker &operator=(KeywordRanker &&) = default;
+	~KeywordRanker() noexcept = default;
 
 	/**
 	 * Gets all string representants of this keyword.
@@ -115,14 +115,14 @@ public:
 	void rank_query(const std::vector<std::vector<KeywordId>> &positive,
 	                const std::vector<std::vector<KeywordId>> &negative,
 	                ScoreModel &model,
-	                const ImageFeatures &features,
-	                const Frames &frames,
+	                const DatasetFeatures &features,
+	                const DatasetFrames &frames,
 	                const Config &cfg) const;
 
 	void rank_sentence_query(const std::string &query,
 	                         ScoreModel &model,
-	                         const ImageFeatures &features,
-	                         const Frames &frames,
+	                         const DatasetFeatures &features,
+	                         const DatasetFrames &frames,
 	                         const Config &cfg) const;
 
 private:
@@ -131,8 +131,8 @@ private:
 	                        const FeatureMatrix &queries,
 	                        size_t query_idx,
 	                        float &result_dist,
-	                        const ImageFeatures &features,
-	                        const Frames &frames) const;
+	                        const DatasetFeatures &features,
+	                        const DatasetFrames &frames) const;
 
 	/**
 	 * Sorts all images based on provided query and retrieves vector
@@ -142,8 +142,8 @@ private:
 	std::vector<std::pair<ImageId, float>> get_sorted_frames(
 	  const std::vector<std::vector<KeywordId>> &positive,
 	  const std::vector<std::vector<KeywordId>> &negative,
-	  const ImageFeatures &features,
-	  const Frames &frames,
+	  const DatasetFeatures &features,
+	  const DatasetFrames &frames,
 	  const Config &cfg) const;
 };
 

@@ -19,7 +19,7 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "Frames.h"
+#include "DatasetFeatures.h"
 #include "SomHunter.h"
 
 #include "config_json.h"
@@ -28,7 +28,7 @@
 #include <fstream>
 
 std::vector<std::vector<KeywordId>>
-Frames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
+DatasetFrames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
 {
 	std::ifstream inFile(filepath.c_str(), std::ios::in);
 
@@ -74,7 +74,7 @@ Frames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
 	return result_vec;
 }
 
-Frames::Frames(const Config &config)
+DatasetFrames::DatasetFrames(const Config &config)
 {
 	// Save the config values
 	frames_path_prefix = config.frames_path_prefix;
@@ -100,7 +100,7 @@ Frames::Frames(const Config &config)
 
 			std::string tmp;
 
-			auto vf = Frames::parse_video_filename(std::move(s));
+			auto vf = DatasetFrames::parse_video_filename(std::move(s));
 
 			vf.frame_ID = i;
 
@@ -145,7 +145,7 @@ Frames::Frames(const Config &config)
 }
 
 VideoFrame
-Frames::parse_video_filename(std::string &&filename)
+DatasetFrames::parse_video_filename(std::string &&filename)
 {
 	// Extract string representing video ID
 	std::string_view videoIdString(filename.data() + offs.vid_ID_off,
@@ -167,7 +167,7 @@ Frames::parse_video_filename(std::string &&filename)
 }
 
 std::vector<VideoFramePointer>
-Frames::ids_to_video_frame(const std::vector<ImageId> &ids) const
+DatasetFrames::ids_to_video_frame(const std::vector<ImageId> &ids) const
 {
 	std::vector<VideoFramePointer> res;
 	res.reserve(ids.size());
@@ -184,7 +184,7 @@ Frames::ids_to_video_frame(const std::vector<ImageId> &ids) const
 }
 
 std::vector<VideoFramePointer>
-Frames::range_to_video_frame(const FrameRange &ids) const
+DatasetFrames::range_to_video_frame(const FrameRange &ids) const
 {
 	std::vector<VideoFramePointer> res;
 	res.reserve(ids.size());

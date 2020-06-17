@@ -26,8 +26,8 @@
 #include <set>
 #include <vector>
 
-#include "Features.h"
-#include "Frames.h"
+#include "DatasetFeatures.h"
+#include "DatasetFrames.h"
 
 class ScoreModel
 {
@@ -35,7 +35,7 @@ class ScoreModel
 	std::vector<float> scores;
 
 public:
-	ScoreModel(const Frames &p)
+	ScoreModel(const DatasetFrames &p)
 	  : scores(p.size(), 1.0f)
 	{}
 
@@ -55,15 +55,15 @@ public:
 
 	void apply_bayes(std::set<ImageId> likes,
 	                 std::set<ImageId> screen,
-	                 const ImageFeatures &features);
+	                 const DatasetFeatures &features);
 
 	// gets images with top scores and skips first offset
-	std::vector<ImageId> top_n(const Frames &frames,
+	std::vector<ImageId> top_n(const DatasetFrames &frames,
 	                           size_t n,
 	                           size_t from_vid_limit = 0,
 	                           size_t from_shot_limit = 0) const;
 	// gets images with top scores with temporal context
-	std::vector<ImageId> top_n_with_context(const Frames &frames,
+	std::vector<ImageId> top_n_with_context(const DatasetFrames &frames,
 	                                        size_t n,
 	                                        size_t from_vid_limit,
 	                                        size_t from_shot_limit) const;

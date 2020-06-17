@@ -14,31 +14,31 @@ SET(HEADERS
 	config.h
 	distfs.h
 	SOM.h
-	Features.h
-	Frames.h
-	ImageKeywordsW2VV.h
-	json11.hpp
+	DatasetFeatures.h
+	DatasetFrames.h
+	KeywordRanker.h
   	log.h
-	Scores.h
+	RelevanceScores.h
   	SomHunter.h
 	Submitter.h
 	use_intrins.h
 	utils.h
 	log.h
+	json11.hpp
 )
 
 SET(SOURCES
 	${HEADERS}
 	AsyncSom.cpp
 	SOM.cpp
-	Features.cpp
-	Frames.cpp
-	ImageKeywordsW2VV.cpp
-	json11.cpp
-	Scores.cpp
+	DatasetFeatures.cpp
+	DatasetFrames.cpp
+	KeywordRanker.cpp
+	RelevanceScores.cpp
   	SomHunter.cpp
 	Submitter.cpp
 	main.cpp
+	json11.cpp
 )
 
 #create the program

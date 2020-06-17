@@ -27,9 +27,10 @@
 #include <vector>
 
 #include "AsyncSom.h"
-#include "Features.h"
-#include "Frames.h"
-#include "Scores.h"
+#include "DatasetFeatures.h"
+#include "DatasetFrames.h"
+#include "KeywordRanker.h"
+#include "RelevanceScores.h"
 #include "Submitter.h"
 
 /* This is the main backend class. */
@@ -37,9 +38,9 @@
 class SomHunter
 {
 	// *** LOADED DATASET ***
-	Frames frames;
-	const ImageFeatures features;
-	const ImageKeywordsW2VV keywords;
+	DatasetFrames frames;
+	const DatasetFeatures features;
+	const KeywordRanker keywords;
 	const Config config;
 
 	// *** SEARCH CONTEXT ***

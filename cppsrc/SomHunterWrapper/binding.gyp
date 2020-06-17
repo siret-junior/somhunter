@@ -6,13 +6,13 @@
                 "SOMHunterCore/src/json11.cpp",
                 "main.cpp",
                 "SomHunterWrapper.cpp",
+                "SOMHunterCore/src/SomHunter.cpp",
                 "SOMHunterCore/src/SOM.cpp",
                 "SOMHunterCore/src/AsyncSom.cpp",
-                "SOMHunterCore/src/Features.cpp",
-                "SOMHunterCore/src/Frames.cpp",
-                "SOMHunterCore/src/ImageKeywordsW2VV.cpp",
-                "SOMHunterCore/src/Scores.cpp",
-                "SOMHunterCore/src/SomHunter.cpp",
+                "SOMHunterCore/src/DatasetFeatures.cpp",
+                "SOMHunterCore/src/DatasetFrames.cpp",
+                "SOMHunterCore/src/KeywordRanker.cpp",
+                "SOMHunterCore/src/RelevanceScores.cpp",
                 "SOMHunterCore/src/Submitter.cpp",
             ],
             "include_dirs": [
@@ -64,6 +64,12 @@
                                 "zlib.lib"
                             ]
                         },
+                        "copies": [
+                            {
+                                "destination": "<(PRODUCT_DIR)",
+                                "files": [ "C:\\Program Files\\curl\\bin\\libcurl.dll" ]
+                            }
+                        ],
                         "msvs_settings": {
                             "VCCLCompilerTool": {
                                 "AdditionalOptions": [

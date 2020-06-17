@@ -166,7 +166,7 @@ AsyncSom::~AsyncSom()
 }
 
 void
-AsyncSom::start_work(const ImageFeatures &fs, const ScoreModel &sc)
+AsyncSom::start_work(const DatasetFeatures &fs, const ScoreModel &sc)
 {
 	std::unique_lock lck(worker_lock);
 	points =

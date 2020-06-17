@@ -22,7 +22,7 @@
 #ifndef features_h
 #define features_h
 
-#include "Frames.h"
+#include "DatasetFrames.h"
 
 #include <cmath>
 #include <map>
@@ -30,13 +30,13 @@
 
 #include "distfs.h"
 
-class ImageFeatures
+class DatasetFeatures
 {
 	size_t n, features_dim;
 	std::vector<float> data;
 
 public:
-	ImageFeatures(const Frames &, const Config &config);
+	DatasetFeatures(const DatasetFrames &, const Config &config);
 
 	size_t size() const { return n; }
 	size_t dim() const { return features_dim; }
@@ -46,7 +46,7 @@ public:
 		return data.data() + features_dim * i;
 	}
 
-	std::vector<ImageId> get_top_knn(const Frames &frames,
+	std::vector<ImageId> get_top_knn(const DatasetFrames &frames,
 	                                 ImageId id,
 	                                 size_t per_vid_limit = 0,
 	                                 size_t from_shot_limit = 0) const
@@ -59,7 +59,7 @@ public:
 	}
 
 	inline std::vector<ImageId> get_top_knn(
-	  const Frames &frames,
+	  const DatasetFrames &frames,
 	  ImageId id,
 	  std::function<bool(ImageId ID)> pred,
 	  size_t per_vid_limit = 0,

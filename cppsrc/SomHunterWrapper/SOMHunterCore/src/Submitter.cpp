@@ -134,7 +134,7 @@ Submitter::~Submitter()
 }
 
 void
-Submitter::submit_and_log_submit(const Frames &frames,
+Submitter::submit_and_log_submit(const DatasetFrames &frames,
                                  DisplayType disp_type,
                                  ImageId frame_ID)
 {
@@ -153,7 +153,7 @@ Submitter::submit_and_log_submit(const Frames &frames,
 }
 
 void
-Submitter::log_submit(const Frames & /*frames*/,
+Submitter::log_submit(const DatasetFrames & /*frames*/,
                       DisplayType /*disp_type*/,
                       ImageId /*frame_ID*/)
 {
@@ -161,7 +161,7 @@ Submitter::log_submit(const Frames & /*frames*/,
 }
 
 void
-Submitter::log_rerank(const Frames & /*frames*/,
+Submitter::log_rerank(const DatasetFrames & /*frames*/,
                       DisplayType /*from_disp_type*/,
                       const std::vector<ImageId> & /*topn_imgs*/)
 {
@@ -175,7 +175,7 @@ Submitter::send_backlog_only()
 }
 
 void
-Submitter::submit_and_log_rescore(const Frames &frames,
+Submitter::submit_and_log_rescore(const DatasetFrames &frames,
                                   const ScoreModel &scores,
                                   const UsedTools &used_tools,
                                   DisplayType /*disp_type*/,
@@ -262,7 +262,7 @@ Submitter::log_add_keywords(const std::string &query_sentence)
 	push_event(ev_cat, ev_type, query_sentence);
 }
 void
-Submitter::log_like(const Frames &frames,
+Submitter::log_like(const DatasetFrames &frames,
                     DisplayType /*disp_type*/,
                     ImageId frame_ID)
 {
@@ -279,7 +279,7 @@ Submitter::log_like(const Frames &frames,
 }
 
 void
-Submitter::log_dislike(const Frames &frames,
+Submitter::log_dislike(const DatasetFrames &frames,
                        DisplayType /*disp_type*/,
                        ImageId frame_ID)
 {
@@ -296,7 +296,7 @@ Submitter::log_dislike(const Frames &frames,
 }
 
 void
-Submitter::log_show_random_display(const Frames & /*frames*/,
+Submitter::log_show_random_display(const DatasetFrames & /*frames*/,
                                    const std::vector<ImageId> & /*imgs*/)
 {
 	const std::string ev_cat("browsing");
@@ -309,7 +309,7 @@ Submitter::log_show_random_display(const Frames & /*frames*/,
 }
 
 void
-Submitter::log_show_som_display(const Frames & /*frames*/,
+Submitter::log_show_som_display(const DatasetFrames & /*frames*/,
                                 const std::vector<ImageId> & /*imgs*/)
 {
 	const std::string ev_cat("browsing");
@@ -322,7 +322,7 @@ Submitter::log_show_som_display(const Frames & /*frames*/,
 }
 
 void
-Submitter::log_show_topn_display(const Frames & /*frames*/,
+Submitter::log_show_topn_display(const DatasetFrames & /*frames*/,
                                  const std::vector<ImageId> & /*imgs*/)
 {
 	const std::string ev_cat("browsing");
@@ -335,7 +335,7 @@ Submitter::log_show_topn_display(const Frames & /*frames*/,
 }
 
 void
-Submitter::log_show_topn_context_display(const Frames & /*frames*/,
+Submitter::log_show_topn_context_display(const DatasetFrames & /*frames*/,
                                          const std::vector<ImageId> & /*imgs*/)
 {
 	const std::string ev_cat("browsing");
@@ -348,7 +348,7 @@ Submitter::log_show_topn_context_display(const Frames & /*frames*/,
 }
 
 void
-Submitter::log_show_topknn_display(const Frames &frames,
+Submitter::log_show_topknn_display(const DatasetFrames &frames,
                                    ImageId frame_ID,
                                    const std::vector<ImageId> & /*imgs*/)
 {
@@ -365,7 +365,7 @@ Submitter::log_show_topknn_display(const Frames &frames,
 }
 
 void
-Submitter::log_show_detail_display(const Frames &frames,
+Submitter::log_show_detail_display(const DatasetFrames &frames,
                                    ImageId frame_ID)
 {
 	const std::string ev_cat("browsing");
@@ -381,7 +381,7 @@ Submitter::log_show_detail_display(const Frames &frames,
 }
 
 void
-Submitter::log_show_video_replay(const Frames &frames,
+Submitter::log_show_video_replay(const DatasetFrames &frames,
                                  ImageId frame_ID)
 {
 	const std::string ev_cat("browsing");
@@ -392,7 +392,7 @@ Submitter::log_show_video_replay(const Frames &frames,
 
 	// If no need to log now
 
-	if (last_replay_submit + cfg.log_replay_timeout > timestamp() &&
+	if (last_replay_submit + cfg.log_replay_timeout > size_t(timestamp()) &&
 	    frame_ID == last_frame_ID)
 		return;
 
@@ -409,7 +409,7 @@ Submitter::log_show_video_replay(const Frames &frames,
 }
 
 void
-Submitter::log_scroll(const Frames & /*frames*/,
+Submitter::log_scroll(const DatasetFrames & /*frames*/,
                       DisplayType from_disp_type,
                       float dirY)
 {
@@ -448,7 +448,7 @@ Submitter::log_scroll(const Frames & /*frames*/,
 
 	// If no need to log now
 
-	if (last_logged + cfg.log_replay_timeout > timestamp() &&
+	if (last_logged + cfg.log_replay_timeout > size_t(timestamp()) &&
 	    from_disp_type == last_disp_type)
 		return;
 
@@ -489,7 +489,7 @@ void
 Submitter::poll()
 {
 	if (last_submit_timestamp + cfg.send_logs_to_server_period <
-	    timestamp())
+	    size_t(timestamp()))
 		send_backlog_only();
 
 	for (size_t i = 0; i < submit_threads.size();)

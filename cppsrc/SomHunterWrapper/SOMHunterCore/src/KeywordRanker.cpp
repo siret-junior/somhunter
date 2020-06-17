@@ -20,10 +20,10 @@
  */
 
 
-#include "ImageKeywordsW2VV.h"
+#include "KeywordRanker.h"
 
 std::vector<Keyword>
-ImageKeywordsW2VV::parse_kw_classes_text_file(const std::string &filepath)
+KeywordRanker::parse_kw_classes_text_file(const std::string &filepath)
 {
 	std::ifstream inFile(filepath.c_str(), std::ios::in);
 
@@ -91,7 +91,7 @@ ImageKeywordsW2VV::parse_kw_classes_text_file(const std::string &filepath)
 }
 
 FeatureVector
-ImageKeywordsW2VV::parse_float_vector(const std::string &filepath,
+KeywordRanker::parse_float_vector(const std::string &filepath,
                                       size_t dim,
                                       size_t begin_offset)
 {
@@ -150,7 +150,7 @@ ImageKeywordsW2VV::parse_float_vector(const std::string &filepath,
 }
 
 FeatureMatrix
-ImageKeywordsW2VV::parse_float_matrix(const std::string &filepath,
+KeywordRanker::parse_float_matrix(const std::string &filepath,
                                       size_t row_dim,
                                       size_t begin_offset)
 {
@@ -213,7 +213,7 @@ ImageKeywordsW2VV::parse_float_matrix(const std::string &filepath,
 }
 
 KwSearchIds
-ImageKeywordsW2VV::find(const std::string &search, size_t num_limit) const
+KeywordRanker::find(const std::string &search, size_t num_limit) const
 {
 	KwSearchIds r, r2;
 
@@ -254,10 +254,10 @@ ImageKeywordsW2VV::find(const std::string &search, size_t num_limit) const
 }
 
 void
-ImageKeywordsW2VV::rank_sentence_query(const std::string &sentence_query_raw,
+KeywordRanker::rank_sentence_query(const std::string &sentence_query_raw,
                                        ScoreModel &model,
-                                       const ImageFeatures &features,
-                                       const Frames &frames,
+                                       const DatasetFeatures &features,
+                                       const DatasetFrames &frames,
                                        const Config &cfg) const
 {
 	// Copy this sentence
@@ -321,12 +321,12 @@ ImageKeywordsW2VV::rank_sentence_query(const std::string &sentence_query_raw,
 }
 
 void
-ImageKeywordsW2VV::rank_query(
+KeywordRanker::rank_query(
   const std::vector<std::vector<KeywordId>> &positive,
   const std::vector<std::vector<KeywordId>> &negative,
   ScoreModel &model,
-  const ImageFeatures &features,
-  const Frames &frames,
+  const DatasetFeatures &features,
+  const DatasetFrames &frames,
   const Config &cfg) const
 {
 	// Don't waste time
@@ -347,14 +347,14 @@ ImageKeywordsW2VV::rank_query(
 }
 
 void
-ImageKeywordsW2VV::apply_temp_queries(
+KeywordRanker::apply_temp_queries(
   std::vector<std::vector<float>> &dist_cache,
   ImageId img_ID,
   const FeatureMatrix &queries,
   size_t query_idx,
   float &result_dist,
-  const ImageFeatures &features,
-  const Frames &frames) const
+  const DatasetFeatures &features,
+  const DatasetFrames &frames) const
 {
 	// If no queries left
 	if (query_idx >= queries.size())
@@ -407,11 +407,11 @@ ImageKeywordsW2VV::apply_temp_queries(
 }
 
 std::vector<std::pair<ImageId, float>>
-ImageKeywordsW2VV::get_sorted_frames(
+KeywordRanker::get_sorted_frames(
   const std::vector<std::vector<KeywordId>> &positive,
   const std::vector<std::vector<KeywordId>> & /*negative*/,
-  const ImageFeatures &features,
-  const Frames &frames,
+  const DatasetFeatures &features,
+  const DatasetFrames &frames,
   const Config &cfg) const
 {
 	const size_t result_dim = cfg.kw_PCA_mat_dim;

@@ -152,7 +152,7 @@ public:
 	}
 };
 
-class Frames
+class DatasetFrames
 {
 	/** Map from video ID to range of image IDs */
 	std::vector<FrameRange> _video_ID_to_frame_range;
@@ -162,7 +162,7 @@ class Frames
 	VideoFilenameOffsets offs;
 
 public:
-	Frames(const Config &config);
+	DatasetFrames(const Config &config);
 
 	std::string operator[](ImageId i) const
 	{

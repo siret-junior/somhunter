@@ -19,7 +19,7 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "Features.h"
+#include "DatasetFeatures.h"
 
 #include <exception>
 #include <fstream>
@@ -28,7 +28,7 @@
 #include "log.h"
 
 
-ImageFeatures::ImageFeatures(const Frames &p, const Config& config)
+DatasetFeatures::DatasetFeatures(const DatasetFrames &p, const Config& config)
   : n(p.size())
   , features_dim(config.features_dim)
 {
@@ -42,7 +42,6 @@ ImageFeatures::ImageFeatures(const Frames &p, const Config& config)
 	// Skip the header
 	in.ignore(config.features_file_data_off);
 
-	// the heck. ifstream::read parameter types should be punished.
 	if (!in.read(reinterpret_cast<char *>(data.data()),
 	             sizeof(float) * data.size()))
 		warn("Feature matrix reading problems");

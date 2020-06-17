@@ -32,11 +32,11 @@
 #include "log.h"
 #include "utils.h"
 
-#include "Frames.h"
-#include "Scores.h"
+#include "DatasetFrames.h"
+#include "RelevanceScores.h"
 
-#include "ImageKeywordsW2VV.h"
-using ImageKeywords = ImageKeywordsW2VV;
+#include "KeywordRanker.h"
+using ImageKeywords = KeywordRanker;
 
 using namespace json11;
 
@@ -62,12 +62,12 @@ public:
 	size_t n_submitters() { return submit_threads.size(); }
 
 	/** Called whenever we want to submit frame/shot into the server */
-	void submit_and_log_submit(const Frames &frames,
+	void submit_and_log_submit(const DatasetFrames &frames,
 	                           DisplayType disp_type,
 	                           ImageId frame_ID);
 
 	/** Called whenever we rescore (Bayes/LD) */
-	void submit_and_log_rescore(const Frames &frames,
+	void submit_and_log_rescore(const DatasetFrames &frames,
 	                            const ScoreModel &scores,
 	                            const UsedTools &used_tools,
 	                            DisplayType disp_type,
@@ -78,35 +78,37 @@ public:
 
 	void log_add_keywords(const std::string &sentence_query);
 
-	void log_like(const Frames &frames,
+	void log_like(const DatasetFrames &frames,
 	              DisplayType disp_type,
 	              ImageId frame_ID);
 
-	void log_dislike(const Frames &frames,
+	void log_dislike(const DatasetFrames &frames,
 	                 DisplayType disp_type,
 	                 ImageId frame_ID);
 
-	void log_show_som_display(const Frames &frames,
+	void log_show_som_display(const DatasetFrames &frames,
 	                          const std::vector<ImageId> &imgs);
 
-	void log_show_random_display(const Frames &frames,
+	void log_show_random_display(const DatasetFrames &frames,
 	                             const std::vector<ImageId> &imgs);
 
-	void log_show_topn_display(const Frames &frames,
+	void log_show_topn_display(const DatasetFrames &frames,
 	                           const std::vector<ImageId> &imgs);
 
-	void log_show_topn_context_display(const Frames &frames,
+	void log_show_topn_context_display(const DatasetFrames &frames,
 	                                   const std::vector<ImageId> &imgs);
 
-	void log_show_topknn_display(const Frames &frames,
+	void log_show_topknn_display(const DatasetFrames &frames,
 	                             ImageId frame_ID,
 	                             const std::vector<ImageId> &imgs);
 
-	void log_show_detail_display(const Frames &frames, ImageId frame_ID);
+	void log_show_detail_display(const DatasetFrames &frames,
+	                             ImageId frame_ID);
 
-	void log_show_video_replay(const Frames &frames, ImageId frame_ID);
+	void log_show_video_replay(const DatasetFrames &frames,
+	                           ImageId frame_ID);
 
-	void log_scroll(const Frames &frames,
+	void log_scroll(const DatasetFrames &frames,
 	                DisplayType from_disp_type,
 	                float dirY);
 
@@ -124,12 +126,12 @@ private:
 	void send_backlog_only();
 
 	/** Called by @ref submit_and_log_submit */
-	void log_submit(const Frames &frames,
+	void log_submit(const DatasetFrames &frames,
 	                DisplayType disp_type,
 	                ImageId frame_ID);
 
 	/** Called by @ref submit_and_log_rescore */
-	void log_rerank(const Frames &frames,
+	void log_rerank(const DatasetFrames &frames,
 	                DisplayType from_disp_type,
 	                const std::vector<ImageId> &topn_imgs);
 

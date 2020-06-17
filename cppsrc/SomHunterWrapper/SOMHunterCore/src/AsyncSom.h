@@ -27,9 +27,9 @@
 #include <thread>
 #include <vector>
 
-#include "Features.h"
-#include "Frames.h"
-#include "Scores.h"
+#include "DatasetFeatures.h"
+#include "DatasetFrames.h"
+#include "RelevanceScores.h"
 
 class AsyncSom
 {
@@ -68,7 +68,7 @@ public:
 	AsyncSom(const Config &cfg);
 	~AsyncSom();
 
-	void start_work(const ImageFeatures &fs, const ScoreModel &sc);
+	void start_work(const DatasetFeatures &fs, const ScoreModel &sc);
 
 	bool map_ready() const
 	{

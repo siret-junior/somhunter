@@ -19,7 +19,7 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "Scores.h"
+#include "RelevanceScores.h"
 
 #include <algorithm>
 #include <cassert>
@@ -96,7 +96,7 @@ heap_down(T *heap, size_t start, size_t lim, C less = std::less<T>())
 }
 
 std::vector<ImageId>
-ScoreModel::top_n_with_context(const Frames &frames,
+ScoreModel::top_n_with_context(const DatasetFrames &frames,
                                size_t n,
                                size_t from_vid_limit,
                                size_t from_shot_limit) const
@@ -126,7 +126,7 @@ ScoreModel::top_n_with_context(const Frames &frames,
 }
 
 std::vector<ImageId>
-ScoreModel::top_n(const Frames &frames,
+ScoreModel::top_n(const DatasetFrames &frames,
                   size_t n,
                   size_t from_vid_limit,
                   size_t from_shot_limit) const
@@ -256,7 +256,7 @@ ScoreModel::weighted_example(const std::vector<ImageId> &subset) const
 void
 ScoreModel::apply_bayes(std::set<ImageId> likes,
                         std::set<ImageId> screen,
-                        const ImageFeatures &features)
+                        const DatasetFeatures &features)
 {
 	if (likes.empty())
 		return;
