@@ -3,9 +3,9 @@
         {
             "target_name": "somhunter_core",
             "sources": [
-                "src/json11.cpp",
                 "main.cpp",
                 "SomHunterNapi.cpp",
+                "src/json11.cpp",
                 "src/SomHunter.cpp",
                 "src/SOM.cpp",
                 "src/AsyncSom.cpp",

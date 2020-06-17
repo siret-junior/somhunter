@@ -30,7 +30,7 @@ som(size_t n,
     size_t k,
     size_t dim,
     size_t niter,
-    std::vector<float> &points,
+    const std::vector<float> &points,
     std::vector<float> &koho,
     const std::vector<float> &nhbrdist,
     const float alphasA[2],
@@ -44,7 +44,7 @@ void
 mapPointsToKohos(size_t n,
                  size_t k,
                  size_t dim,
-                 std::vector<float> &points,
+                 const std::vector<float> &points,
                  const std::vector<float> &koho,
                  std::vector<size_t> &mapping);
 #endif

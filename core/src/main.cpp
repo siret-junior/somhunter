@@ -24,16 +24,19 @@
 #include <stdio.h>
 #include <thread>
 
+#if 0
 void
 print_display(const FramePointerRange &d)
 {
 	for (auto iter = d.begin(); iter != d.end(); iter++)
 		std::cout << (*iter)->frame_ID << std::endl;
 }
+#endif
 
 int
 main()
 {
+#if 0
 	debug("this is debug log");
 	info("this is info log");
 	warn("this is warn log");
@@ -116,6 +119,6 @@ main()
 	std::cout << "SOM is ready now!" << std::endl;
 
 	auto d_som = core.get_display(DisplayType::DSom);
-
+#endif
 	return 0;
 }
