@@ -10,6 +10,7 @@ In our example, we need selected relevant frames, which are already implemented 
 
 ## 2. Implementing new rescore function. 
 If your new function is rather simple, it can be placed in `core/src/RelevanceScore.h` and `.cpp`. Otherwise, we recommend creating a new backend module (in case loading some additional data at the start of somhunter, etc.). Our example function is simple, so we will create a new function in the `core/src/RelevanceScore.h` and `.cpp`. 
+
 Example code:
 `core/src/RelevanceScore.h`
 ```
@@ -41,6 +42,7 @@ ScoreModel::apply_simple(std::set<ImageId> likes,
 
 ## 3. Connecting main backend module SomHunter and our new function. 
 Relevance scores are updated every time function rescore is called. At first, we call our new rescore function with input data, which we discussed in section 1. 
+
 We will modify `rescore` in `core/src/SomHunter.cpp` as follows:
 ```
 void
