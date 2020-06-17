@@ -27,13 +27,13 @@ ScoreModel::apply_simple(std::set<ImageId> likes,
 	if (likes.empty())
 		return;
 	
-  for (float &s : scores) {
-    float sum = 0;
+	for (ImageId ii = 0; ii < scores.size(); ++ii) {
+		float sum = 0;
 
-    for (ImageId oi : likes)
-      sum += features.d_dot(ii, oi);
+		for (ImageId oi : screen)
+			sum += features.d_dot(ii, oi);
 
-		s *= sum;
+		scores[ii] *= sum;
 	}
 
   normalize();
@@ -55,9 +55,9 @@ SomHunter::rescore(std::string text_query)
 
 	// Rescore relevance feedback
 	if (!likes.empty())
-  {
-    scores.apply_simple(likes, features);
-  }
+	{
+		scores.apply_simple(likes, features);
+	}
 
 	// Start SOM computation
 	som_start();
@@ -101,10 +101,10 @@ SomHunter::rescore(std::string text_query)
 
 	// Rescore relevance feedback
 	if (!likes.empty())
-  {
-    scores.apply_simple(likes, features);
-    used_tools.bayes_used = true;
-  }
+	{
+		scores.apply_simple(likes, features);
+		used_tools.bayes_used = true;
+	}
 
 	// Start SOM computation
 	som_start();
