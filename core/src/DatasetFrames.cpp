@@ -149,15 +149,15 @@ VideoFrame
 DatasetFrames::parse_video_filename(std::string &&filename)
 {
 	// Extract string representing video ID
-	std::string_view;
+	std::string_view
 	videoIdString(filename.data() + offs.vid_ID_off, offs.vid_ID_len);
 
 	// Extract string representing shot ID
-	std::string_view;
+	std::string_view
 	shotIdString(filename.data() + offs.shot_ID_off, offs.shot_ID_len);
 
 	// Extract string representing frame number
-	std::string_view;
+	std::string_view
 	frameNumberString(filename.data() + offs.frame_num_off,
 	                  offs.frame_num_len);
 
