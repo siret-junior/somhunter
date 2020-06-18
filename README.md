@@ -27,7 +27,8 @@ the following articles helpful:
   [SOMHunter for Lifelog Search](https://dl.acm.org/doi/abs/10.1145/3379172.3391727).
   In *Proceedings of the Third Annual Workshop on Lifelog Search Challenge* (pp. 73-75).
 
-## Trying SOMHunter from Docker
+## Try SOMHunter from Docker ![image size](https://img.shields.io/docker/image-size/exaexa/somhunter) ![latest version](https://img.shields.io/docker/v/exaexa/somhunter) ![pulls](https://img.shields.io/docker/pulls/exaexa/somhunter)
+
 
 You can get a working SOMHunter copy from Docker:
 ```sh
