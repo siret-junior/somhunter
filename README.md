@@ -148,7 +148,9 @@ ready to use.
 We can provide a larger pre-indexed dataset based on the [V3C1 video
 collection](https://link.springer.com/chapter/10.1007/978-3-030-05710-7_29),
 but do not provide a direct download due to licensing issues. Please contact us
-to get a downloadable link.
+to get a downloadable link. You will need to have the TRECVID data use
+agreement signed; see
+https://www-nlpir.nist.gov/projects/tv2019/data.html#licenses for details.
 
 ### Using custom video data
 
