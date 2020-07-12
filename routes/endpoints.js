@@ -45,7 +45,7 @@ exports.getSomScreen = function (req, res) {
   let frameData = {};
 
   if (!global.core.isSomReady()) {
-    res.status(200).jsonp({ viewData: null, error: { message: "SOM not yet ready." } });
+    res.status(200).jsonp({ viewData: null, error: { code: 1, message: "SOM not yet ready." } });
     return;
   }
 
