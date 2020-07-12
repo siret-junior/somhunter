@@ -101,9 +101,9 @@ find "/PATH/TO/YOUR/VIDEOS/output/" -name 'v*_s*_f*.jpg' | while read path ; do
 done
 ```
 
-Replace the paths `/PATH/TO/...` as required for your setup. Finally, point the SOMHunter `config.json` to the newly created `MyDataset.dataset`.
+Replace the paths `/PATH/TO/...` as required for your setup.
 
-The following files are also necessary for proper loading of the datasets, but you can re-use the ones supplied with the ITEC dataset as their content is the same for all datasets:
+The following extra files are necessary for proper loading of the datasets, but you can re-use the ones supplied with the ITEC dataset as their content is the same for all datasets:
 - `txt_bias-2048floats.bin`
 - `txt_weight-11147x2048floats.bin`
 - `word2idx.txt`
