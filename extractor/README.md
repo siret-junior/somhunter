@@ -84,10 +84,11 @@ The output directory should now contain the following files:
 - `MyDataset.w2vv.normed.128pca.viretformat`
 - `MyDataset.w2vv.pca.matrix.bin`
 - `MyDataset.w2vv.pca.mean.bin`
+- `MyDataset.dataset`
 
 Move these to the `data` directory in SOMHunter and change the paths in `config.json` that originally point to the `ITEC` dataset to point to your new `MyDataset`.
 
-Finally, lots of thumbnails are generated in subdirectories, with names like `video_name/images/v00000_s00000(f00000000-f00000000)_f00000000.jpg`. You should verify that the extraction matches your expectations. After that, you can create the `MyDataset.keyframes.dataset` for SOMHunter with a bit of shell scripting, as follows:
+Finally, lots of thumbnails are generated in subdirectories, with names like `video_name/images/v00000_s00000(f00000000-f00000000)_f00000000.jpg`. You should verify that the extraction matches your expectations. After that, it is necessary to move the thumbnails to the places where SOMHunter expects them, which can be done with a bit of shell scripting, as follows:
 
 ```sh
 find "/PATH/TO/YOUR/VIDEOS/output/" -name 'v*_s*_f*.jpg' | while read path ; do
@@ -95,15 +96,14 @@ find "/PATH/TO/YOUR/VIDEOS/output/" -name 'v*_s*_f*.jpg' | while read path ; do
   vid="${fn%%_s*}"
   vid="${vid#v}"
   dirname="/PATH/TO/SOMHUNTER/public/thumbs/$vid"
-  mkdir -p "$dirname"
-  cp "$path" "$dirname"
-  echo "$vid/$fn"
-done |tee /PATH/TO/SOMHUNTER/data/MyDataset.keyframes.dataset
+  mkdir -v -p "$dirname"
+  cp -v "$path" "$dirname"
+done
 ```
 
-Replace the `/PATH/TO/...` as required for your setup. Finally, point the SOMHunter `config.json` to the newly created `MyDataset.keyframes.keyframes`.
+Replace the paths `/PATH/TO/...` as required for your setup. Finally, point the SOMHunter `config.json` to the newly created `MyDataset.dataset`.
 
-Several other files are necessary for proper loading of the datasets, but they are the same for all datasets, so you can use the ones supplied with the ITEC dataset:
+The following files are also necessary for proper loading of the datasets, but you can re-use the ones supplied with the ITEC dataset as their content is the same for all datasets:
 - `txt_bias-2048floats.bin`
 - `txt_weight-11147x2048floats.bin`
 - `word2idx.txt`

@@ -22,7 +22,7 @@ class ThumbnailExtractor:
             for scene_no, (start, end) in enumerate(scenes):
                 assert kf_idx == len(keyframe_indices) or keyframe_indices[kf_idx] >= start
                 while kf_idx < len(keyframe_indices) and keyframe_indices[kf_idx] <= end:
-                    filename = "v{:05d}_s{:05d}(f{:08d}-f{:08d})_f{:08d}.jpg".format(
+                    filename = "{:05d}/v{:05d}_s{:05d}(f{:08d}-f{:08d})_f{:08d}.jpg".format(
                         video_id, scene_no, start, end, keyframe_indices[kf_idx])
                     f.write(filename + "\n")
 
