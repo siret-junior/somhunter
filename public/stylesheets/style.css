@@ -151,6 +151,17 @@ cursor: pointer;
 height: 16.66vh;
 }
 
+.frame-in-grid .frame-id {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+  width: auto;
+  font-size: 20px;
+  color: #3de60d;
+  padding: 0px 5px;
+}
+
 .just-clicker:after {
 content: "";
 background-image: url("../images/generic/icon_info.svg");

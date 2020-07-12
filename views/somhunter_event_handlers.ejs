@@ -168,7 +168,7 @@ function putDetailModelToState(screenData) {
       actionStr = `like(this, ${frames[i].id})`;
     }
 
-    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
+    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src, frames[i].vId);
   }
 
   grid.innerHTML = elemHtml;
@@ -441,7 +441,7 @@ function setupImageGrid(viewData) {
       actionStr = `like(this, ${frames[i].id})`;
     }
 
-    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
+    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src, frames[i].vId,);
   }
 
   elem.innerHTML = elemHtml;
@@ -468,7 +468,7 @@ function appendImageGrid(viewData, fromIndex) {
       actionStr = `like(this, ${frames[i].id})`;
     }
 
-    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
+    elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src, frames[i].vId);
   }
 
   elem.innerHTML = elemHtml;
@@ -502,7 +502,7 @@ function getNoThumbPrototype(src) {
     </li>`;
 }
 
-function getThumbPrototype(likedStr, actionStr, id, src) {
+function getThumbPrototype(likedStr, actionStr, id, src, vidId) {
   return `<li 
       class="frame-in-grid small-6 medium-4 large-2 cell
       ${likedStr}" 
@@ -511,6 +511,7 @@ function getThumbPrototype(likedStr, actionStr, id, src) {
       style="background-image: url('${src}')"
     >
       <div class="just-clicker">
+        <span class="frame-id">${vidId}</span>
         <a 
           class="button frame-in-grid-hover-btn submit-frame" 
           onclick="submitImage(${id});event.cancelBubble=true;" 

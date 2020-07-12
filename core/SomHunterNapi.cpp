@@ -168,11 +168,15 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 				napi_create_object(env, &obj);
 				{
 					ImageId ID{ IMAGE_ID_ERR_VAL };
+					ImageId v_ID{ IMAGE_ID_ERR_VAL };
+					ImageId s_ID{ IMAGE_ID_ERR_VAL };
 					bool is_liked{ false };
 					std::string filename{};
 
 					if ((*it) != nullptr) {
 						ID = (*it)->frame_ID;
+						v_ID = (*it)->video_ID;
+						s_ID = (*it)->shot_ID;
 						is_liked = (*it)->liked;
 						filename =
 						  path_prefix + (*it)->filename;
@@ -194,6 +198,52 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 							napi_create_uint32(
 							  env,
 							  uint32_t(ID),
+							  &value);
+						}
+
+						napi_set_property(
+						  env, obj, key, value);
+					}
+
+					{
+						napi_value key;
+						napi_create_string_utf8(
+						  env,
+						  "vId",
+						  NAPI_AUTO_LENGTH,
+						  &key);
+
+						napi_value value;
+						if (ID == IMAGE_ID_ERR_VAL) {
+							napi_get_null(env,
+							              &value);
+						} else {
+							napi_create_uint32(
+							  env,
+							  uint32_t(v_ID),
+							  &value);
+						}
+
+						napi_set_property(
+						  env, obj, key, value);
+					}
+
+					{
+						napi_value key;
+						napi_create_string_utf8(
+						  env,
+						  "sId",
+						  NAPI_AUTO_LENGTH,
+						  &key);
+
+						napi_value value;
+						if (ID == IMAGE_ID_ERR_VAL) {
+							napi_get_null(env,
+							              &value);
+						} else {
+							napi_create_uint32(
+							  env,
+							  uint32_t(s_ID),
 							  &value);
 						}
 
