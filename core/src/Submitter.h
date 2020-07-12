@@ -22,9 +22,13 @@
 #ifndef _SUBMITTER_H
 #define _SUBMITTER_H
 
+//#define LOG_CURL_REQUESTS
+
 #include <memory>
+#include <string>
 #include <thread>
 #include <vector>
+using namespace std::literals;
 
 #include "json11.hpp"
 
@@ -115,9 +119,12 @@ public:
 	void log_reset_search();
 
 private:
-	void start_sender(const std::string &submit_url,
+	void start_poster(const std::string &submit_url,
 	                  const std::string &query_string,
 	                  const std::string &post_data);
+
+	void start_getter(const std::string &submit_url,
+	                  const std::string &query_string);
 
 	void send_query_with_backlog(const std::string &query_string);
 
@@ -138,6 +145,12 @@ private:
 	void push_event(const std::string &cat,
 	                const std::string &type,
 	                const std::string &value);
+
+	bool is_DRES_server() const;
+
+	const std::string &get_submit_URL() const;
+	const std::string &get_rerank_URL() const;
+	const std::string &get_interaction_URL() const;
 };
 
 #endif

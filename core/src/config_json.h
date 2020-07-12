@@ -24,6 +24,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <variant>
 
 #include "json11.hpp"
 
@@ -41,12 +42,48 @@ struct VideoFilenameOffsets
 	size_t frame_num_len;
 };
 
+/** Config for submitting to the older server.
+ *
+ * https://github.com/klschoef/vbsserver/
+ */
+struct ServerConfigVbs
+{
+	std::string submit_URL;
+	std::string submit_rerank_URL;
+	std::string submit_interaction_URL;
+};
+
+/** Config for submitting to the DRES server.
+ *
+ * https://github.com/lucaro/DRES
+ */
+struct ServerConfigDres
+{
+	std::string submit_URL;
+	std::string submit_rerank_URL;
+	std::string submit_interaction_URL;
+
+	std::string cookie_file;
+
+	std::string login_URL;
+	std::string username;
+	std::string password;
+};
+
+using ServerConfig = std::variant<ServerConfigVbs, ServerConfigDres>;
+
+/** Config needed by the Submitter instance.
+ *
+ * \see ServerConfig
+ * \see ServerConfigVbs
+ * \see ServerConfigDres
+ */
 struct SubmitterConfig
 {
 	/** If submit actions will create actual HTTP request */
 	bool submit_to_VBS;
-	std::string submit_rerank_URL;
-	std::string submit_URL;
+
+	ServerConfig server_cfg;
 
 	size_t team_ID;
 	size_t member_ID;
@@ -90,6 +127,11 @@ struct Config
 	size_t topn_frames_per_shot;
 
 	static Config parse_json_config(const std::string &filepath);
+
+private:
+	static SubmitterConfig parse_submitter_config(const json11::Json &json);
+	static ServerConfigVbs parse_vbs_config(const json11::Json &json);
+	static ServerConfigDres parse_dres_config(const json11::Json &json);
 };
 
 /** Parsees the JSON config file that holds initial config.
@@ -126,25 +168,7 @@ Config::parse_json_config(const std::string &filepath)
 	}
 
 	auto cfg = Config{
-		SubmitterConfig{
-		  json["submitter_config"]["submit_to_VBS"].bool_value(),
-		  json["submitter_config"]["submit_rerank_URL"].string_value(),
-		  json["submitter_config"]["submit_URL"].string_value(),
-
-		  size_t(json["submitter_config"]["team_ID"].int_value()),
-		  size_t(json["submitter_config"]["member_ID"].int_value()),
-
-		  json["submitter_config"]["VBS_submit_archive_dir"]
-		    .string_value(),
-		  json["submitter_config"]["VBS_submit_archive_log_suffix"]
-		    .string_value(),
-		  json["submitter_config"]["extra_verbose_log"].bool_value(),
-
-		  size_t(json["submitter_config"]["send_logs_to_server_period"]
-		           .int_value()),
-		  size_t(
-		    json["submitter_config"]["log_replay_timeout"].int_value()),
-		},
+		parse_submitter_config(json["submitter_config"]),
 
 		size_t(json["max_frame_filename_len"].int_value()),
 
@@ -187,6 +211,71 @@ Config::parse_json_config(const std::string &filepath)
 	};
 
 	return cfg;
+}
+
+inline SubmitterConfig
+Config::parse_submitter_config(const json11::Json &json)
+{
+	SubmitterConfig res;
+
+	res.submit_to_VBS = json["submit_to_VBS"].bool_value();
+
+	res.team_ID = size_t(json["team_ID"].int_value());
+	res.member_ID = size_t(json["member_ID"].int_value());
+
+	res.VBS_submit_archive_dir =
+	  json["VBS_submit_archive_dir"].string_value();
+	res.VBS_submit_archive_log_suffix =
+	  json["VBS_submit_archive_log_suffix"].string_value();
+	res.extra_verbose_log = json["extra_verbose_log"].bool_value();
+
+	res.send_logs_to_server_period =
+	  size_t(json["send_logs_to_server_period"].int_value());
+	res.log_replay_timeout = size_t(json["log_replay_timeout"].int_value());
+
+	// Parse a type of the submit server
+	std::string server_type{ json["submit_server"].string_value() };
+
+	// Parse the correct JSON format based on the server type
+	if (server_type == "vbs") {
+		res.server_cfg =
+		  parse_vbs_config(json["server_config"][server_type]);
+	} else if (server_type == "dres") {
+		res.server_cfg =
+		  parse_dres_config(json["server_config"][server_type]);
+	}
+	// If error value
+	else {
+#ifndef NDEBUG
+		std::string msg{ "Uknown submit server type: " + server_type };
+		warn(msg);
+		throw std::runtime_error(msg);
+#endif
+	}
+
+	return res;
+}
+
+inline ServerConfigVbs
+Config::parse_vbs_config(const json11::Json &json)
+{
+	return ServerConfigVbs{ json["submit_URL"].string_value(),
+		                json["submit_rerank_URL"].string_value(),
+		                json["submit_interaction_URL"].string_value() };
+}
+
+inline ServerConfigDres
+Config::parse_dres_config(const json11::Json &json)
+{
+	return ServerConfigDres{ json["submit_URL"].string_value(),
+		                 json["submit_rerank_URL"].string_value(),
+		                 json["submit_interaction_URL"].string_value(),
+
+		                 json["cookie_file"].string_value(),
+
+		                 json["login_URL"].string_value(),
+		                 json["username"].string_value(),
+		                 json["password"].string_value() };
 }
 
 #endif // CONFIG_JSON_H_

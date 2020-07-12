@@ -27,12 +27,119 @@
 
 #include <curl/curl.h>
 
+#ifdef LOG_CURL_REQUESTS
+
 static void
-submitter_thread(const std::string &submit_url,
-                 const std::string &query,
-                 const std::string &data,
-                 bool &finished,
-                 const SubmitterConfig &cfg)
+curl_dump(const char *text,
+          FILE *stream,
+          unsigned char *ptr,
+          size_t size,
+          char nohex)
+{
+	size_t i;
+	size_t c;
+
+	unsigned int width = 0x10;
+
+	if (nohex)
+		/* without the hex output, we can fit more on screen */
+		width = 0x40;
+
+	fprintf(stream,
+	        "%s, %10.10lu bytes (0x%8.8lx)\n",
+	        text,
+	        (unsigned long)size,
+	        (unsigned long)size);
+
+	for (i = 0; i < size; i += width) {
+
+		fprintf(stream, "%4.4lx: ", (unsigned long)i);
+
+		if (!nohex) {
+			/* hex not disabled, show it */
+			for (c = 0; c < width; c++)
+				if (i + c < size)
+					fprintf(stream, "%02x ", ptr[i + c]);
+				else
+					fputs("   ", stream);
+		}
+
+		for (c = 0; (c < width) && (i + c < size); c++) {
+			/* check for 0D0A; if found, skip past and start a new
+			 * line of output */
+			if (nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D &&
+			    ptr[i + c + 1] == 0x0A) {
+				i += (c + 2 - width);
+				break;
+			}
+			fprintf(stream,
+			        "%c",
+			        (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80)
+			          ? ptr[i + c]
+			          : '.');
+			/* check again for 0D0A, to avoid an extra \n if it's at
+			 * width */
+			if (nohex && (i + c + 2 < size) &&
+			    ptr[i + c + 1] == 0x0D && ptr[i + c + 2] == 0x0A) {
+				i += (c + 3 - width);
+				break;
+			}
+		}
+		fputc('\n', stream); /* newline */
+	}
+	fflush(stream);
+}
+
+static int
+trace_fn(CURL *handle, curl_infotype type, char *dt, size_t size, void *userp)
+{
+	struct data *config = (struct data *)userp;
+	const char *text;
+
+	switch (type) {
+		case CURLINFO_TEXT:
+			std::cout << dt << std::endl;
+			return 0;
+			break;
+		case CURLINFO_HEADER_OUT:
+			text = "=> Send header";
+			break;
+		case CURLINFO_DATA_OUT:
+			text = "=> Send data";
+			break;
+		case CURLINFO_SSL_DATA_OUT:
+			text = "=> Send SSL data";
+			break;
+		case CURLINFO_HEADER_IN:
+			text = "<= Recv header";
+			break;
+		case CURLINFO_DATA_IN:
+			text = "<= Recv data";
+			break;
+		case CURLINFO_SSL_DATA_IN:
+			text = "<= Recv SSL data";
+			break;
+	}
+
+	curl_dump(text, stderr, (unsigned char *)dt, size, 0);
+	return 0;
+}
+
+#endif // LOG_CURL_REQUESTS
+
+static size_t
+res_cb(char *contents, size_t size, size_t nmemb, void *userp)
+{
+	static_cast<std::string *>(userp)->append(contents, size * nmemb);
+	return size * nmemb;
+}
+
+static void
+poster_thread(const std::string &submit_url,
+              const std::string &query,
+              const std::string &data,
+              bool &finished,
+              const SubmitterConfig &cfg)
 {
 	/*
 	 * write the stuff into a file just to be sure and have it nicely
@@ -82,13 +189,30 @@ submitter_thread(const std::string &submit_url,
 		             '{',
 		             '\n');
 
-		std::cout << "**** Query string: " << query << std::endl
-		          << std::endl
-		          << "**** " << data_not_so_pretty_fmtd << std::endl;
+		if (data_not_so_pretty_fmtd.length() > 200) {
+			data_not_so_pretty_fmtd[200] = '\0';
+		}
+
+		if (cfg.extra_verbose_log) {
+			std::cout << "**********************" << std::endl
+			          << "POST '" << submit_url
+			          << "' request: " << query << std::endl
+			          << "body: " << data_not_so_pretty_fmtd
+			          << std::endl
+			          << "**********************" << std::endl;
+		}
 	}
 
 	if (cfg.submit_to_VBS) {
 		CURL *curl = curl_easy_init();
+		std::string res_buffer;
+
+#ifdef LOG_CURL_REQUESTS
+
+		curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, trace_fn);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+#endif // LOG_CURL_REQUESTS
 
 		curl_easy_setopt(curl, CURLOPT_HEADER, 0);
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -102,10 +226,23 @@ submitter_thread(const std::string &submit_url,
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length());
 
-		// for some reason, curl refuses to work with const char ptrs
 		static std::string hdr = "Content-type: application/json";
 		static struct curl_slist reqheader = { hdr.data(), nullptr };
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, &reqheader);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res_buffer);
+
+		// If DRES server
+		if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
+			auto s_cfg{ std::get<ServerConfigDres>(
+			  cfg.server_cfg) };
+
+			curl_easy_setopt(
+			  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(
+			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+		}
 
 		bool curl_ok = curl_easy_perform(curl) == 0u;
 
@@ -113,6 +250,109 @@ submitter_thread(const std::string &submit_url,
 			info("Submit OK");
 		else
 			warn("Submit failed!");
+
+		if (cfg.extra_verbose_log) {
+			std::cout << std::endl
+			          << "RESPONSE:" << std::endl
+			          << res_buffer << std::endl
+			          << "**********************" << std::endl;
+		}
+
+		curl_easy_cleanup(curl);
+	}
+
+	finished = true;
+}
+
+static void
+getter_thread(const std::string &submit_url,
+              const std::string &query,
+              bool &finished,
+              const SubmitterConfig &cfg)
+{
+
+	if (!std::filesystem::is_directory(cfg.VBS_submit_archive_dir))
+		std::filesystem::create_directory(cfg.VBS_submit_archive_dir);
+
+	if (!std::filesystem::is_directory(cfg.VBS_submit_archive_dir))
+		warn("wtf, directory was not created");
+
+	{
+		std::string path = cfg.VBS_submit_archive_dir +
+		                   std::string("/") +
+		                   std::to_string(timestamp()) +
+		                   cfg.VBS_submit_archive_log_suffix;
+		std::ofstream o(path.c_str(), std::ios::app);
+		if (!o) {
+			warn("Could not write a log file!");
+		} else {
+			o << "{"
+			  << "\"query_string\": \"" << query << "\","
+			  << std::endl
+			  << "\"submit_url\": \"" << submit_url << "\""
+			  << std::endl;
+
+			o << "}" << std::endl;
+		}
+	}
+
+	if (cfg.extra_verbose_log) {
+		std::cout << "**********************" << std::endl
+		          << "GET '" << submit_url << "' request: " << query
+		          << std::endl;
+	}
+
+	if (cfg.submit_to_VBS) {
+		CURL *curl = curl_easy_init();
+		std::string res_buffer;
+
+#ifdef LOG_CURL_REQUESTS
+
+		curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, trace_fn);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+#endif // LOG_CURL_REQUESTS
+
+		curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30);
+
+		std::string url = submit_url;
+		url += "?" + query;
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+		static std::string hdr = "Content-type: application/json";
+		static struct curl_slist reqheader = { hdr.data(), nullptr };
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, &reqheader);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res_buffer);
+
+		// If DRES server
+		if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
+			auto s_cfg{ std::get<ServerConfigDres>(
+			  cfg.server_cfg) };
+
+			curl_easy_setopt(
+			  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(
+			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+		}
+
+		bool curl_ok = curl_easy_perform(curl) == 0u;
+
+		if (curl_ok)
+			info("Submit OK");
+		else
+			warn("Submit failed!");
+
+		if (cfg.extra_verbose_log) {
+			std::cout << std::endl
+			          << "RESPONSE:" << std::endl
+			          << res_buffer << std::endl
+			          << "**********************" << std::endl;
+		}
 
 		curl_easy_cleanup(curl);
 	}
@@ -123,7 +363,55 @@ submitter_thread(const std::string &submit_url,
 Submitter::Submitter(const SubmitterConfig &config)
   : last_submit_timestamp(timestamp())
   , cfg(config)
-{}
+{
+	// If DRES server, login to the session
+	if (is_DRES_server()) {
+		auto s_cfg{ std::get<ServerConfigDres>(cfg.server_cfg) };
+
+		CURL *curl;
+		CURLcode res;
+		curl = curl_easy_init();
+		std::string res_buffer;
+
+		if (curl) {
+#ifdef LOG_CURL_REQUESTS
+
+			curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, trace_fn);
+			curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+#endif // LOG_CURL_REQUESTS
+
+			curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_easy_setopt(
+			  curl, CURLOPT_URL, s_cfg.login_URL.c_str());
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+			struct curl_slist *headers = NULL;
+			headers = curl_slist_append(
+			  headers, "Content-Type: application/json");
+			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+			const std::string data_str{ "{ \"username\": \""s +
+				                    s_cfg.username +
+				                    "\" ,\"password\": \""s +
+				                    s_cfg.password + "\" }" };
+			std::cout << data_str << std::endl;
+			const char *data = data_str.c_str();
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res_buffer);
+
+			curl_easy_setopt(
+			  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(
+			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+
+			res = curl_easy_perform(curl);
+		}
+		curl_easy_cleanup(curl);
+	}
+}
 
 Submitter::~Submitter()
 {
@@ -143,11 +431,19 @@ Submitter::submit_and_log_submit(const DatasetFrames &frames,
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream query_ss;
-	query_ss << "team=" << cfg.team_ID << "&member=" << cfg.member_ID
-	         << "&video="
-	         << (vf.video_ID + 1) //< !! VBS videos start from 1
-	         << "&frame="
-	         << vf.frame_number; //< !! VBS frame numbers start at 0
+
+	if (is_DRES_server()) {
+		query_ss << "&item=" << std::setfill('0') << std::setw(5)
+		         << (vf.video_ID + 1) //< !! VBS videos start from 1
+		         << "&frame="
+		         << vf.frame_number; //< !! VBS frame numbers start at 0
+	} else {
+		query_ss << "team=" << cfg.team_ID
+		         << "&member=" << cfg.member_ID << "&video="
+		         << (vf.video_ID + 1) //< !! VBS videos start from 1
+		         << "&frame="
+		         << vf.frame_number; //< !! VBS frame numbers start at 0
+	}
 
 	send_query_with_backlog(query_ss.str());
 }
@@ -171,7 +467,17 @@ Submitter::log_rerank(const DatasetFrames & /*frames*/,
 void
 Submitter::send_backlog_only()
 {
-	send_query_with_backlog("");
+	// Send interaction logs
+	if (!backlog.empty()) {
+		Json a = Json::object{ { "timestamp", double(timestamp()) },
+			               { "events", std::move(backlog) },
+			               { "type", "interaction" } };
+		backlog.clear();
+		start_poster(get_interaction_URL(), ""s, a.dump());
+	}
+
+	// We always reset timer
+	last_submit_timestamp = timestamp();
 }
 
 void
@@ -250,7 +556,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 		                 { "value", query_val },
 		                 { "results", std::move(result_json_arr) } };
 
-	start_sender(cfg.submit_rerank_URL, "", top.dump());
+	start_poster(get_rerank_URL(), "", top.dump());
 }
 
 void
@@ -425,15 +731,27 @@ Submitter::log_reset_search()
 }
 
 void
-Submitter::start_sender(const std::string &submit_url,
+Submitter::start_poster(const std::string &submit_url,
                         const std::string &query_string,
                         const std::string &post_data)
 {
 	finish_flags.emplace_back(std::make_unique<bool>(false));
-	submit_threads.emplace_back(submitter_thread,
+	submit_threads.emplace_back(poster_thread,
 	                            submit_url,
 	                            query_string,
 	                            post_data,
+	                            std::ref(*(finish_flags.back())),
+	                            cfg);
+}
+
+void
+Submitter::start_getter(const std::string &submit_url,
+                        const std::string &query_string)
+{
+	finish_flags.emplace_back(std::make_unique<bool>(false));
+	submit_threads.emplace_back(getter_thread,
+	                            submit_url,
+	                            query_string,
 	                            std::ref(*(finish_flags.back())),
 	                            cfg);
 }
@@ -457,18 +775,11 @@ Submitter::poll()
 void
 Submitter::send_query_with_backlog(const std::string &query_string)
 {
+	// Send the submit
+	start_getter(get_submit_URL(), query_string);
 
-	if (!backlog.empty()) {
-		Json a = Json::object{ { "timestamp", double(timestamp()) },
-			               { "events", std::move(backlog) },
-			               { "type", "interaction" } };
-		backlog.clear();
-		start_sender(cfg.submit_URL, query_string, a.dump());
-	} else if (!query_string.empty())
-		start_sender(cfg.submit_URL, query_string, "");
-
-	// We always reset timer
-	last_submit_timestamp = timestamp();
+	// Send the backlog
+	send_backlog_only();
 }
 
 void
@@ -484,4 +795,42 @@ Submitter::push_event(const std::string &cat,
 		               { "value", value } };
 
 	backlog.emplace_back(std::move(a));
+}
+
+bool
+Submitter::is_DRES_server() const
+{
+	return std::holds_alternative<ServerConfigDres>(cfg.server_cfg);
+}
+
+const std::string &
+Submitter::get_submit_URL() const
+{
+	if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
+		return std::get<ServerConfigDres>(cfg.server_cfg).submit_URL;
+	}
+
+	return std::get<ServerConfigVbs>(cfg.server_cfg).submit_URL;
+}
+
+const std::string &
+Submitter::get_rerank_URL() const
+{
+	if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
+		return std::get<ServerConfigDres>(cfg.server_cfg)
+		  .submit_rerank_URL;
+	}
+
+	return std::get<ServerConfigVbs>(cfg.server_cfg).submit_rerank_URL;
+}
+
+const std::string &
+Submitter::get_interaction_URL() const
+{
+	if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
+		return std::get<ServerConfigDres>(cfg.server_cfg)
+		  .submit_interaction_URL;
+	}
+
+	return std::get<ServerConfigVbs>(cfg.server_cfg).submit_interaction_URL;
 }
