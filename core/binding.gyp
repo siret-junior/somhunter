@@ -67,7 +67,7 @@
                         "copies": [
                             {
                                 "destination": "<(PRODUCT_DIR)",
-                                "files": [ "C:\\Program Files\\curl\\bin\\libcurl.dll" ]
+                                "files": [ "C:\\Program Files\\curl\\bin\\libcurl.dll", "C:\\Program Files\\curl\\bin\\zlib1.dll" ]
                             }
                         ],
                         "msvs_settings": {
