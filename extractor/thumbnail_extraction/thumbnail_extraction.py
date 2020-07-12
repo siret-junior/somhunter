@@ -23,7 +23,7 @@ class ThumbnailExtractor:
                 assert kf_idx == len(keyframe_indices) or keyframe_indices[kf_idx] >= start
                 while kf_idx < len(keyframe_indices) and keyframe_indices[kf_idx] <= end:
                     filename = "{:05d}/v{:05d}_s{:05d}(f{:08d}-f{:08d})_f{:08d}.jpg".format(
-                        video_id, scene_no, start, end, keyframe_indices[kf_idx])
+                        video_id, video_id, scene_no, start, end, keyframe_indices[kf_idx])
                     f.write(filename + "\n")
 
                     image = selected_frames[kf_idx]
