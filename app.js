@@ -42,6 +42,7 @@ global.rootDir = __dirname;
 // Load config into the `global.cfg` variable
 const config = require("./config/config");
 config.initConfig();
+global.coreCfg = require("./config");
 
 /*
  * Request routing
@@ -176,6 +177,16 @@ global.logger.log("debug", "dataConfigFilepath = " + dataConfigFilepath);
 // Create global instance of the ImageRanker
 const core = require(path.join(__dirname, "build/Release/somhunter_core.node"));
 global.core = new core.SomHunterNapi(dataConfigFilepath);
+if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.submitter_config.submit_to_VBS) {
+  const logRes = global.core.loginToDres();
+  if (logRes){
+    global.logger.log("info", "Login to DRES OK!");
+  } else {
+    global.logger.log("warn", "Login to DRES server failed! Submits will be rejected!");
+  }
+
+  global.coreCfg.submitter_config.server_config.dres.loggedIn = logRes;
+}
 global.logger.log("info", "SOMHunter is ready...");
 
 /*
@@ -194,6 +205,7 @@ app.post("/reset_search_session", endpoints.resetSearchSession);
 app.post("/rescore", endpoints.rescore);
 app.post("/like_frame", endpoints.likeFrame);
 app.post("/unlike_frame", endpoints.unlikeFrame);
+app.post("/login_to_dres", endpoints.loginToDres);
 
 // 404 fallback
 app.use("/404", routerNotFound);

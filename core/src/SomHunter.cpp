@@ -154,6 +154,12 @@ SomHunter::som_ready() const
 	return asyncSom.map_ready();
 }
 
+bool
+SomHunter::login_to_dres() const
+{
+	return submitter.login_to_DRES();
+}
+
 void
 SomHunter::submit_to_server(ImageId frame_id)
 {

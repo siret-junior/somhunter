@@ -105,6 +105,8 @@ public:
 
 	bool som_ready() const;
 
+	bool login_to_dres() const;
+
 	/** Sumbits frame with given id to VBS server */
 	void submit_to_server(ImageId frame_id);
 

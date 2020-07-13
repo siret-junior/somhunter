@@ -19,6 +19,9 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
  
+ .hidden {
+  display: none;
+}
 
  body {
   background: #cacaca;
@@ -56,7 +59,7 @@ font-size: 22px;
 
 .button {
 opacity: 0.8;
-background-color: #acacac;
+background-color: #1843c5;
 }
 .button:hover,
 .button:focus {
@@ -336,6 +339,7 @@ margin-left: 1rem;
 width: 100%;
 font-size: 1.2rem;
 padding: 0.8rem 0.6rem;
+background: #aaa;
 }
 
 .new-seach-btn {
@@ -579,4 +583,29 @@ display: block;
 .tools-panel.bottom {
   position: absolute;
   bottom: 0;
+}
+
+#settingsModal {
+  background: #f0cdaff0;
+  border: none;
+}
+
+#settingsModal p{
+  margin: 0;
+}
+
+.logged-in {
+  background: #59b028;
+  color: #fff;
+  padding: 1rem;
+}
+
+.not-logged-in {
+  background: #ff0000;
+  color: #fff;
+  padding: 1rem;
+}
+
+#dresLoginStatusAlt.active {
+  display: block;
 }

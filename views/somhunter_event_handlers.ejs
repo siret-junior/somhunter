@@ -693,18 +693,39 @@ function putDocumentToState(viewData) {
   vd = viewData;
 }
 
-/** Put document into correct state */
-onDocumentReady(function () {
-  putDocumentToState(vd);
+/** Returns true if global keybinds can take action (e.g. no text input is active). */
+function globalKeysCanPoll() {
+  const el1 = document.getElementById("textQueryInput0");
+  const el2 = document.getElementById("textQueryInput1");
 
-  $(document).bind("mousewheel DOMMouseScroll", frameMouseScrollHandler);
-});
+  if (el1 == document.activeElement
+  || el2 == document.activeElement) {
+    return false;
+  }
+  return true;
+}
 
 $(document).keyup(function(e) {
+  if (!globalKeysCanPoll()) {
+    return;
+  }
+
   // Detect escape
   if (e.key === "Escape") { 
     handleEscapeKey();
+
+  } else if (e.key === "Enter") {
+    rescore("topn");
+  
+  // T key
+  } else if (e.keyCode === 84) {
+    showTopDisplay("topn");
+
+  // S key
+  } else if (e.keyCode === 83) {
+    showSomDisplay();
   }
+  
 });
 
 function handleEscapeKey() {
@@ -757,7 +778,7 @@ function frameMouseScrollHandler(event)
     if (
       event.originalEvent.wheelDelta > 0 ||
       event.originalEvent.detail < 0
-    ) {
+    ) { 
       // scroll up
       console.log("playing the video back ..." + frameId);
       replayOffsetY += scrollSpeed;
@@ -791,5 +812,12 @@ function frameMouseScrollHandler(event)
     
   }
 }
+
+/** Put document into correct state */
+onDocumentReady(function () {
+  putDocumentToState(vd);
+
+  $(document).bind("mousewheel DOMMouseScroll", frameMouseScrollHandler);
+});
 
 </script>

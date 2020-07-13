@@ -42,6 +42,7 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	    InstanceMethod("autocompleteKeywords",
 	                   &SomHunterNapi::autocomplete_keywords),
 	    InstanceMethod("isSomReady", &SomHunterNapi::is_som_ready),
+	    InstanceMethod("loginToDres", &SomHunterNapi::login_to_dres),
 	    InstanceMethod("submitToServer",
 	                   &SomHunterNapi::submit_to_server) });
 
@@ -533,6 +534,40 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 	}
 
 	return Napi::Object(env, result_arr);
+}
+
+Napi::Value
+SomHunterNapi::login_to_dres(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	Napi::HandleScope scope(env);
+
+	// Process arguments
+	int length = info.Length();
+	if (length != 0) {
+		Napi::TypeError::New(env,
+		                     "Wrong number of parameters "
+		                     "(SomHunterNapi::login_to_dres)")
+		  .ThrowAsJavaScriptException();
+	}
+
+	bool result{ false };
+	try {
+		debug("API: CALL \n\t login_to_dres()");
+
+		result = somhunter->login_to_dres();
+
+		debug(
+		  "API: RETURN \n\t login_to_dres()\n\t\result = " << result);
+
+	} catch (const std::exception &e) {
+		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	}
+
+	napi_value res;
+	napi_get_boolean(env, result, &res);
+
+	return Napi::Object(env, res);
 }
 
 Napi::Value

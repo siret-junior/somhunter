@@ -67,6 +67,7 @@ router.get("/", function (req, res, next) {
 
   SessionState.switchScreenTo(sess.state, "topn", frames, 0);
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
+  viewData.coreCfg = global.coreCfg;
 
   // Resolve and render dedicated template
   res.render(routeSettings.slug, viewData);

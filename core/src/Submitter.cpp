@@ -360,57 +360,66 @@ getter_thread(const std::string &submit_url,
 	finished = true;
 }
 
+bool
+Submitter::login_to_DRES() const
+{
+	auto s_cfg{ std::get<ServerConfigDres>(cfg.server_cfg) };
+
+	CURL *curl;
+	CURLcode res;
+	curl = curl_easy_init();
+	std::string res_buffer;
+
+	if (curl) {
+#ifdef LOG_CURL_REQUESTS
+
+		curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, trace_fn);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+#endif // LOG_CURL_REQUESTS
+
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_easy_setopt(curl, CURLOPT_URL, s_cfg.login_URL.c_str());
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+		struct curl_slist *headers = NULL;
+		headers =
+		  curl_slist_append(headers, "Content-Type: application/json");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+		const std::string data_str{ "{ \"username\": \""s +
+			                    s_cfg.username +
+			                    "\" ,\"password\": \""s +
+			                    s_cfg.password + "\" }" };
+		std::cout << data_str << std::endl;
+		const char *data = data_str.c_str();
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res_buffer);
+
+		curl_easy_setopt(
+		  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+		curl_easy_setopt(
+		  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+
+		res = curl_easy_perform(curl);
+	}
+	curl_easy_cleanup(curl);
+
+	if (res == CURLE_OK) {
+		info("DRES server login OK.");
+		return true;
+	} else {
+		warn("DRES server login request returned cURL error: " << curl_easy_strerror(res));
+		return false;
+	}
+}
+
 Submitter::Submitter(const SubmitterConfig &config)
   : last_submit_timestamp(timestamp())
   , cfg(config)
 {
-	// If DRES server, login to the session
-	if (is_DRES_server()) {
-		auto s_cfg{ std::get<ServerConfigDres>(cfg.server_cfg) };
-
-		CURL *curl;
-		CURLcode res;
-		curl = curl_easy_init();
-		std::string res_buffer;
-
-		if (curl) {
-#ifdef LOG_CURL_REQUESTS
-
-			curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, trace_fn);
-			curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-#endif // LOG_CURL_REQUESTS
-
-			curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_easy_setopt(
-			  curl, CURLOPT_URL, s_cfg.login_URL.c_str());
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-
-			struct curl_slist *headers = NULL;
-			headers = curl_slist_append(
-			  headers, "Content-Type: application/json");
-			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-			const std::string data_str{ "{ \"username\": \""s +
-				                    s_cfg.username +
-				                    "\" ,\"password\": \""s +
-				                    s_cfg.password + "\" }" };
-			std::cout << data_str << std::endl;
-			const char *data = data_str.c_str();
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res_buffer);
-
-			curl_easy_setopt(
-			  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
-			curl_easy_setopt(
-			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
-
-			res = curl_easy_perform(curl);
-		}
-		curl_easy_cleanup(curl);
-	}
 }
 
 Submitter::~Submitter()

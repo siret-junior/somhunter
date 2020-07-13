@@ -63,6 +63,8 @@ public:
 	// frame)
 	void poll();
 
+	bool login_to_DRES() const;
+
 	size_t n_submitters() { return submit_threads.size(); }
 
 	/** Called whenever we want to submit frame/shot into the server */

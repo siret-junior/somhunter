@@ -48,5 +48,7 @@ private:
 
 	Napi::Value is_som_ready(const Napi::CallbackInfo &info);
 
+	Napi::Value login_to_dres(const Napi::CallbackInfo &info);
+
 	Napi::Value submit_to_server(const Napi::CallbackInfo &info);
 };

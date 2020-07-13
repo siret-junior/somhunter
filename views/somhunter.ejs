@@ -69,7 +69,7 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
 
         <div class="autocomplete-input-cont small-12 cell">
           <a class="button block-btn rescore-btn" onclick="rescore('topn')">Rescore to TOP N</a>
-          <a class="button block-btn rescore-btn" onclick="rescore('som')">Rescore to SOM</a>
+          <a class="button block-btn rescore-btn" onclick="rescore('som')">Rescore to SOM <br />[Enter]</a>
         </div>
       </div>
     </form>
@@ -85,11 +85,11 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
       <div class="screen-btns grid-padding-x grid-x align-left"> 
 
         <div class="small-6 cell">
-          <a id="btnSom" onclick="showSomDisplay()" class="button block-btn som-screen-btn">SOM Screen</a>
+          <a id="btnSom" onclick="showSomDisplay()" class="button block-btn som-screen-btn">SOM Screen [S]</a>
         </div>
         
         <div class="small-6 cell">
-          <a id="btnTopn" onclick="showTopDisplay()" class="active button block-btn top-ranked-btn">Top-ranked</a>
+          <a id="btnTopn" onclick="showTopDisplay()" class="active button block-btn top-ranked-btn">Top-ranked [T]</a>
         </div>
 
       </div>
@@ -101,6 +101,16 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
           <li>SHIFT + Mouse Wheel for <span>TEMPORAL CONETXT</span></li>
         </ul>
         
+        <h1 id="dresLoginStatusAlt" class="
+        <% const srvCfg = coreCfg.submitter_config;
+        if (srvCfg.submit_server == "dres" && srvCfg.submit_to_VBS) { %>
+          
+            <% if (!srvCfg.server_config.dres.loggedIn) { %>
+              active
+            <% }  %>  
+          <% }  %>
+          hidden not-logged-in">!!! NOT LOGGED TO THE DRES SERVER !!!</h1>
+
       </div>
 
       <!-- Bottom tools panel -->
@@ -174,8 +184,7 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
     <span aria-hidden="true">&times;</span>
   </button>
 
-  <h1>Settings</h1>
-  
+  <%- include settings_panel.ejs %>  
 
 </div>
 </section>

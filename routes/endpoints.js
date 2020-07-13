@@ -198,3 +198,19 @@ exports.unlikeFrame = function (req, res) {
 
   res.status(200).jsonp({ isLiked: false });
 };
+
+exports.loginToDres = function (req, res) {
+  const sess = req.session;
+
+  // -------------------------------
+  // Call the core
+  const result = global.core.loginToDres();
+  // -------------------------------
+
+  if (global.coreCfg.submitter_config.submit_server == "dres") {
+    global.coreCfg.submitter_config.server_config.dres.loggedIn = result;
+  }
+  
+  res.status(200).jsonp({ result: result });
+};
+
