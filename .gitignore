@@ -15,3 +15,5 @@ public/thumbs_v3c1/
 *.tmp
 *.log
 LOCAL_GIT_SETTINGS.md
+cookie.txt
+core/config.json
