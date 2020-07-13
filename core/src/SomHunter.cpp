@@ -171,6 +171,18 @@ SomHunter::reset_search_session()
 }
 
 void
+SomHunter::log_video_replay(ImageId frame_ID)
+{
+	submitter.log_show_video_replay(frames, frame_ID);
+}
+
+void
+SomHunter::log_scroll(float dir_Y)
+{
+	submitter.log_scroll(frames, current_display_type, dir_Y);
+}
+
+void
 SomHunter::rescore_keywords(const std::string &query)
 {
 	// Do not rescore if query did not change

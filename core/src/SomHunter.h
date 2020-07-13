@@ -111,6 +111,10 @@ public:
 	/** Resets current search context and starts new search */
 	void reset_search_session();
 
+	void log_video_replay(ImageId frame_ID);
+
+	void log_scroll(float dir_Y);
+
 private:
 	/**
 	 *	Applies text query from the user.
