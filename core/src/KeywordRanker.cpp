@@ -24,7 +24,8 @@
 #include <cmath>
 
 std::vector<Keyword>
-KeywordRanker::parse_kw_classes_text_file(const std::string &filepath)
+KeywordRanker::parse_kw_classes_text_file(const std::string &filepath,
+                                          const DatasetFrames &frames)
 {
 	std::ifstream inFile(filepath.c_str(), std::ios::in);
 
@@ -58,18 +59,23 @@ KeywordRanker::parse_kw_classes_text_file(const std::string &filepath)
 		SynsetStrings synset_strings{ tokens[0] };
 
 		// Top exmaple images
-		std::vector<ImageId> top_ex_imgs;
-#if TOP_IMAGES_IN_FILE
-		for (std::stringstream top_ex_imgs_ss(tokens[2]);
-		     std::getline(top_ex_imgs_ss, token, '#');) {
-			top_ex_imgs.push_back(str2<int>(token));
+		std::vector<const VideoFrame *> top_ex_imgs;
+		{
+			std::string token;
+			for (std::stringstream top_ex_imgs_ss(tokens[2]);
+			     std::getline(top_ex_imgs_ss, token, '#');) {
+
+				ImageId img_ID{ str2<ImageId>(token) };
+
+				top_ex_imgs.push_back(
+				  &frames.get_frame(img_ID));
+			}
 		}
-#endif
 
 		std::string description;
-#if IS_DESCRIPTION_IN_FILE
-		//\todo Add descr
-#endif
+		if (tokens.size() > 3) {
+			description = std::move(tokens[3]);
+		}
 
 		Keyword k{ vec_idx,
 			   synset_ID,

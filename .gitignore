@@ -11,6 +11,7 @@ output/
 public/images/*
 public/export/*
 public/_thumbs/
+public/thumbs_v3c1/
 *.tmp
 *.log
 LOCAL_GIT_SETTINGS.md

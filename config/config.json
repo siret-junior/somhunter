@@ -8,6 +8,7 @@
         "framesPathPrefix": "/thumbs/",
 
         "autocompleteResCount": 10,
+        "autocompleteExampleFramesCount": 5,
 
         "dataConfigFilepath": "config.json",
         "jsonIndentation": 4

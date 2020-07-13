@@ -151,7 +151,8 @@ exports.getAutocompleteResults = function (req, res) {
   const acKeywords = global.core.autocompleteKeywords(
     global.cfg.framesPathPrefix,
     prefix,
-    global.cfg.autocompleteResCount
+    global.cfg.autocompleteResCount,
+    global.cfg.autocompleteExampleFramesCount
   );
 
   // Send response

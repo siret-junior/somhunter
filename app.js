@@ -39,7 +39,7 @@ const { combine, timestamp, printf } = format;
 // Set root project directory
 global.rootDir = __dirname;
 
-// Load config
+// Load config into the `global.cfg` variable
 const config = require("./config/config");
 config.initConfig();
 

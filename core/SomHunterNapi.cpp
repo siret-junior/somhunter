@@ -433,7 +433,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 	// Process arguments
 	int length = info.Length();
 
-	if (length != 3) {
+	if (length != 4) {
 		Napi::TypeError::New(env, "Wrong number of parameters")
 		  .ThrowAsJavaScriptException();
 	}
@@ -441,6 +441,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 	std::string path_prefix{ info[0].As<Napi::String>().Utf8Value() };
 	std::string prefix{ info[1].As<Napi::String>().Utf8Value() };
 	size_t count{ info[2].As<Napi::Number>().Uint32Value() };
+	size_t example_count{ info[3].As<Napi::Number>().Uint32Value() };
 
 	// Get suggested keywords
 	std::vector<const Keyword *> kws;
@@ -508,15 +509,19 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 			napi_create_array(env, &value);
 
 			size_t ii{ 0 };
-			for (auto &&filename : p_kw->top_ex_imgs) {
-				// \todo This must not be just IDs, but the
-				// whole filepaths.
-				/*napi_value val;
-				napi_create_string_utf8(env, (path_prefix +
-				filename_.data(), NAPI_AUTO_LENGTH, &filename);
+			for (auto &&p_frame : p_kw->top_ex_imgs) {
+				if (ii >= example_count) {
+					break;
+				}
 
-				napi_set_element(env, value, ii, val);
-				++ii;*/
+				napi_value v;
+				napi_create_string_utf8(
+				  env,
+				  (path_prefix + p_frame->filename).c_str(),
+				  NAPI_AUTO_LENGTH,
+				  &v);
+				napi_set_element(env, value, ii, v);
+				++ii;
 			}
 
 			napi_set_property(env, single_result_dict, key, value);

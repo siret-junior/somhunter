@@ -73,7 +73,7 @@ public:
 	  , frames(cfg)
 	  , features(frames, cfg)
 	  , scores(frames)
-	  , keywords(cfg)
+	  , keywords(cfg, frames)
 	  , asyncSom(cfg)
 	  , submitter(cfg.submitter_config)
 	{

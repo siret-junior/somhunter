@@ -43,7 +43,7 @@ struct Keyword
 	KwDescription desc;
 
 	/** Best representative images for this keyword */
-	std::vector<ImageId> top_ex_imgs;
+	std::vector<const VideoFrame *> top_ex_imgs;
 };
 
 class KeywordRanker
@@ -56,7 +56,8 @@ class KeywordRanker
 
 public:
 	static std::vector<Keyword> parse_kw_classes_text_file(
-	  const std::string &filepath);
+	  const std::string &filepath,
+	  const DatasetFrames &frames);
 
 	/**
 	 * Parses float matrix from a binary file that is written in row-major
@@ -80,8 +81,8 @@ public:
 	                                        size_t dim,
 	                                        size_t begin_offset = 0);
 
-	inline KeywordRanker(const Config &config)
-	  : keywords(parse_kw_classes_text_file(config.kws_file))
+	inline KeywordRanker(const Config &config, const DatasetFrames &frames)
+	  : keywords(parse_kw_classes_text_file(config.kws_file, frames))
 	  , kw_features(parse_float_matrix(config.kw_scores_mat_file,
 	                                   config.pre_PCA_features_dim))
 	  , kw_features_bias_vec(
