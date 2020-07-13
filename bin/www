@@ -36,7 +36,7 @@ var debug = require("debug")("somhunter:server");
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || global.cfg.port);
+var port = normalizePort(process.env.PORT || String(global.cfg.port));
 app.set("port", port);
 
 /*
