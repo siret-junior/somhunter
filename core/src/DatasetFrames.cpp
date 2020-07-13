@@ -90,7 +90,7 @@ DatasetFrames::DatasetFrames(const Config &config)
 
 	{ // We can precompute this into binary file as well
 
-		size_t i = 0;
+		ImageId i = 0;
 		size_t prev_frame_vid_ID = SIZE_T_ERR_VAL;
 
 		size_t beg_img_ID = SIZE_T_ERR_VAL;
@@ -149,17 +149,16 @@ VideoFrame
 DatasetFrames::parse_video_filename(std::string &&filename)
 {
 	// Extract string representing video ID
-	std::string_view
-	videoIdString(filename.data() + offs.vid_ID_off, offs.vid_ID_len);
+	std::string_view videoIdString(filename.data() + offs.vid_ID_off,
+	                               offs.vid_ID_len);
 
 	// Extract string representing shot ID
-	std::string_view
-	shotIdString(filename.data() + offs.shot_ID_off, offs.shot_ID_len);
+	std::string_view shotIdString(filename.data() + offs.shot_ID_off,
+	                              offs.shot_ID_len);
 
 	// Extract string representing frame number
-	std::string_view
-	frameNumberString(filename.data() + offs.frame_num_off,
-	                  offs.frame_num_len);
+	std::string_view frameNumberString(filename.data() + offs.frame_num_off,
+	                                   offs.frame_num_len);
 
 	return VideoFrame(std::move(filename),
 	                  str_to_int(videoIdString),

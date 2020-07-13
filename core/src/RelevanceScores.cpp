@@ -213,7 +213,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 
 	std::vector<ImageId> res(k, 0);
 
-	for (auto &rei : res) {
+	for (ImageId &rei : res) {
 		float x = real_dist(gen) * tree[0];
 		size_t i = 0;
 		for (;;) {
@@ -234,7 +234,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 
 		tree[i] = 0;
 		updb(i);
-		rei = i - branches;
+		rei = ImageId(i - branches);
 	}
 
 	return res;
@@ -292,9 +292,9 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 
 		auto worker = [&](size_t threadID) {
 			const ImageId first =
-			  threadID * scores.size() / n_threads;
+			  ImageId(threadID * scores.size() / n_threads);
 			const ImageId last =
-			  (threadID + 1) * scores.size() / n_threads;
+			  ImageId((threadID + 1) * scores.size() / n_threads);
 
 			for (ImageId ii = first; ii < last; ++ii) {
 				float divSum = 0;

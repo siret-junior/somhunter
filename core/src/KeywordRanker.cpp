@@ -463,7 +463,7 @@ KeywordRanker::get_sorted_frames(
 	                              std::numeric_limits<float>::quiet_NaN()));
 
 	std::vector<std::pair<ImageId, float>> scores;
-	for (size_t img_ID = 0; img_ID < features.size(); ++img_ID) {
+	for (ImageId img_ID = 0; img_ID < features.size(); ++img_ID) {
 		const float *p_img_fea_vec = features.fv(img_ID);
 
 		// Get cosine distance and scale it to [0.0f, 1.0f]
