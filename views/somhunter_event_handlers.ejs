@@ -145,18 +145,11 @@ function showSomDisplay() {
 }
 
 
-function putDetailModelToState(screenData) {
+function putDetailModelToState(screenData, targetId) {
   const grid = document.getElementById("videoDetailFrameGrid");
+  const gridParent = grid.parentElement;
   const frames = screenData.frames;
 
-  /*
-  screenData {
-    {
-      type: screen,
-      frames: frames,
-    }
-  } 
-  */
   let elemHtml = "";
   // Iterate over all the frames
   for (let i = 0; i < frames.length; ++i) {
@@ -170,8 +163,21 @@ function putDetailModelToState(screenData) {
 
     elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src, frames[i].vId);
   }
-
+  // Insert the HTML
   grid.innerHTML = elemHtml;
+
+  // Scroll to the element
+  const targetEl = grid.querySelector(`li[data-frame-id='${targetId}']`);
+  const offsetToParent = targetEl.getBoundingClientRect().top - targetEl.offsetParent.getBoundingClientRect().top;
+  gridParent.scroll({
+    top: offsetToParent,
+    left: 0,
+    behavior: 'smooth'
+  })
+
+  // Highlight the target
+  targetEl.classList.add("highlighted");
+
 }
 
 function showVideoDetail(id, thisFilename) {
@@ -195,7 +201,7 @@ function showVideoDetail(id, thisFilename) {
 
       ignoreNextLike = true;
       // Get modal data
-      putDetailModelToState(data);
+      putDetailModelToState(data, id);
     })
     .catch((e) => {
       console.log("Error: " + JSON.stringify(e.message));

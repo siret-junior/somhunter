@@ -137,6 +137,24 @@ width: calc(100% / (64 / 8));
 height: calc(100% / (64 / 8));
 }
 
+#modalDetail {
+  width: 80vw !important;
+  
+  max-width: 80vw;
+  margin: 5vh 10vw 5vh 10vw !important;
+  left: 0 !important;
+  top: 0 !important;
+  max-height: 90vh !important;
+  padding: 2rem;
+}
+
+#modalDetail .close-button {
+  padding: 0;
+  margin: 0.3rem;
+  top: 0;
+  right: 0;
+}
+
 .frame-in-grid {
 background-size: cover;
 cursor: pointer;
@@ -151,6 +169,9 @@ cursor: pointer;
 height: 16.66vh;
 }
 
+.frame-in-grid.highlighted {
+  border: 5px solid #db18c6;
+}
 .frame-in-grid .frame-id {
   position: absolute;
   left: 0;
