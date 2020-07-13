@@ -561,3 +561,22 @@ display: block;
   width: 12.3vw;
   margin-top: 0.8rem;
 }
+.settings-button {
+  max-width: 60px;
+  padding: 0;
+  background: transparent;
+}
+
+.settings-button:hover g,
+.settings-button:focus g{
+ color: #b95b0a;
+}
+
+.tools-panel {
+  
+}
+
+.tools-panel.bottom {
+  position: absolute;
+  bottom: 0;
+}
