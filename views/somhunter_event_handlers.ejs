@@ -185,6 +185,76 @@ function putDetailModelToState(screenData, targetId) {
   targetEl.classList.add("highlighted");
 }
 
+function puReplayModelToState(screenData, targetId) {
+  const grid = document.getElementById("replayWindowFrameGrid");
+  const gridParent = grid.parentElement;
+  const frames = screenData.frames;
+
+  $(grid).empty();
+
+  // Iterate over all the frames
+  for (let i = 0; i < frames.length; ++i) {
+    let likedStr = "";
+    if (frames[i].liked) {
+      likedStr = "liked";
+    }
+
+    let e = getThumbPrototype(likedStr,
+      frames[i].id,
+      frames[i].src,
+      frames[i].vId);
+
+      grid.appendChild(e);
+
+  }
+
+  const targetEl = grid.querySelector(`li[data-frame-id='${targetId}']`);
+  const targetIdx = Array.from(targetEl.parentNode.children).indexOf(targetEl);
+
+  replayOffsetY = -frameWPix * targetIdx;
+  replayGrid.style.marginLeft = `${replayOffsetY}px`;
+
+  // Highlight the target
+  targetEl.classList.add("highlighted");
+}
+
+function fillInReplayStripe(id) {
+  pageId = 0;
+  // Make the request
+  fetch("/get_frame_detail_data?frameId=" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    })
+    .then((data) => {
+      // Handle error
+      if (data.error) {
+        throw Error(data.error.message);
+      }
+
+      ignoreNextLike = true;
+
+      // Get modal data
+      puReplayModelToState(data, id);
+    })
+    .catch((e) => {
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
 function showVideoDetail(id, thisFilename) {
   pageId = 0;
   // Make the request
@@ -438,7 +508,7 @@ function setupImageGrid(viewData) {
   }
 
   $(elem).empty();
-  
+
   // Iterate over all the frames
   for (let i = 0; i < frames.length; ++i) {
     if (frames[i].id == null) {
@@ -630,39 +700,95 @@ onDocumentReady(function () {
   $(document).bind("mousewheel DOMMouseScroll", frameMouseScrollHandler);
 });
 
+$(document).keyup(function(e) {
+  // Detect escape
+  if (e.key === "Escape") { 
+    handleEscapeKey();
+  }
+});
+
+function handleEscapeKey() {
+  // Hide replay stripe
+  replayStripe.classList.remove("active");
+}
+
+function handleVideoReplayAction(frameId) {
+  // \todo
+}
+
+function getCursorHitElem() {
+  const elems = document.querySelectorAll(":hover"); 
+  return elems[elems.length - 1];
+}
+
+const replayStripe = document.getElementById("replayWindow");
+const replayGrid = document.getElementById("replayWindowFrameGrid");
+let prevFrameId = null;
+let replayOffsetY = 0;
+const scrollSpeed = 100;
+const frameWPerc = 12.3;
+let frameWPix = window.innerWidth * (frameWPerc / 100);
+
 function frameMouseScrollHandler(event) 
 {
+  // If a SHIFT key is down
   if (event.shiftKey) {
 
     // Get cursor hit
-
-    // If pageX/Y aren't available and clientX/Y are,
-    // calculate pageX/Y - logic taken from jQuery.
-    // (This is to support old IE)
-    if (event.pageX == null && event.clientX != null) {
-        eventDoc = (event.target && event.target.ownerDocument) || document;
-        doc = eventDoc.documentElement;
-        body = eventDoc.body;
-
-        event.pageX = event.clientX +
-          (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-          (doc && doc.clientLeft || body && body.clientLeft || 0);
-        event.pageY = event.clientY +
-          (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-          (doc && doc.clientTop  || body && body.clientTop  || 0 );
+    const elem = getCursorHitElem();
+    if (!elem.classList.contains("frame-in-grid")){
+      return;
     }
-    console.log(`X: ${event.pageX}, Y: ${event.pageY}`)
+    replayStripe.classList.add("active");
 
+    // Get cursor pos in the window
+    const curX = event.clientX;
+    const curY = event.clientY;
+
+    const vpH = window.innerHeight;
+    const vpW = window.innerWidth;
+    const halfVpH = vpH / 2;
+
+    frameWPix = window.innerWidth * (frameWPerc / 100);
+    
+    const frameId = Number(elem.dataset.frameId);
+
+    // Adjust the offset
     if (
       event.originalEvent.wheelDelta > 0 ||
       event.originalEvent.detail < 0
     ) {
       // scroll up
-      console.log("playing the video back ...");
+      console.log("playing the video back ..." + frameId);
+      replayOffsetY += scrollSpeed;
     } else {
       // scroll down
-      console.log("playing the video forward...");
+      console.log("playing the video forward..." + frameId);
+      replayOffsetY -= scrollSpeed;
     }
+
+    // If frame changed => reset pos
+    if (frameId !== prevFrameId) {
+      fillInReplayStripe(frameId);
+      prevFrameId = frameId;
+    } else {
+      replayGrid.style.marginLeft = `${replayOffsetY}px`;
+    }
+
+    handleVideoReplayAction(frameId);
+
+    // Position the stripe
+    replayStripe.style.left = 0;
+    if (curY > halfVpH)
+    {
+      replayStripe.style.top = 0;
+      replayStripe.style.bottom = "initial";
+    } else {
+      replayStripe.style.top = "initial";
+      replayStripe.style.bottom = 0;
+    }
+
+    
   }
 }
 

@@ -529,4 +529,34 @@ margin-top: 20px;
 display: block;
 }
 
-ca
+/** Replay window */
+.replay-window {
+  opacity: 0;
+  transition: 0.1s ease-in-out;
+  background: #ff9800de;
+  position: absolute;
+  display: inline-flex;
+  width: 100vw;
+  height: 160px;
+  /*! align-content: center; */
+  /*! justify-content: center; */
+  z-index: 99;
+  overflow: hidden;
+}
+
+.replay-window.active {
+  opacity: 1;
+}
+.replay-grid {
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  left: 50vw;
+}
+
+.replay-grid .frame-in-grid{
+  display: inline-block;
+  width: 12.3vw;
+  margin-top: 0.8rem;
+}
