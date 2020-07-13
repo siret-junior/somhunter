@@ -542,6 +542,7 @@ display: block;
   /*! justify-content: center; */
   z-index: 99;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .replay-window.active {
