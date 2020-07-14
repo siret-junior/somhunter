@@ -89,9 +89,9 @@ public:
 	                              ImageId selected_image = 0,
 	                              PageId page = 0);
 
-	void add_likes(const std::vector<ImageId> &likes);
-
-	void remove_likes(const std::vector<ImageId> &likes);
+	/** Inverts the like states of the provided frames and returns the new
+	 * states. */
+	std::vector<bool> like_frames(const std::vector<ImageId> &likes);
 
 	std::vector<const Keyword *> autocomplete_keywords(
 	  const std::string &prefix,
@@ -116,6 +116,8 @@ public:
 	void log_video_replay(ImageId frame_ID);
 
 	void log_scroll(float dir_Y);
+
+	void log_text_query_change(const std::string &text_query);
 
 private:
 	/**

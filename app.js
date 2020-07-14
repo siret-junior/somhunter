@@ -204,7 +204,6 @@ app.post("/reset_search_session", endpoints.resetSearchSession);
 
 app.post("/rescore", endpoints.rescore);
 app.post("/like_frame", endpoints.likeFrame);
-app.post("/unlike_frame", endpoints.unlikeFrame);
 app.post("/login_to_dres", endpoints.loginToDres);
 
 // 404 fallback

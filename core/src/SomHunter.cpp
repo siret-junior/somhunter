@@ -63,32 +63,44 @@ SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page)
 	return FramePointerRange();
 }
 
-void
-SomHunter::add_likes(const std::vector<ImageId> &likes)
+std::vector<bool>
+SomHunter::like_frames(const std::vector<ImageId> &likes)
 {
 	submitter.poll();
 
-	for (auto ii : likes) {
-		this->likes.insert(ii);
+	// Prepare the result flags vector
+	std::vector<bool> res;
+	res.reserve(likes.size());
 
-		frames.get_frame(ii).liked = true;
+	for (auto &&fr_ID : likes) {
 
-		submitter.log_like(frames, current_display_type, ii);
+		// Find the item in the set
+		size_t count{ this->likes.count(fr_ID) };
+
+		// If item is not present (NOT LIKED)
+		if (count == 0) {
+			// Like it
+			assert(frames.get_frame(fr_ID).liked == false);
+
+			this->likes.insert(fr_ID);
+			frames.get_frame(fr_ID).liked = true;
+			res.emplace_back(true);
+			submitter.log_like(frames, current_display_type, fr_ID);
+		}
+		// If the item is present (LIKED)
+		else {
+			// Unlike it
+			assert(frames.get_frame(fr_ID).liked == true);
+
+			this->likes.erase(fr_ID);
+			frames.get_frame(fr_ID).liked = false;
+			res.emplace_back(false);
+			submitter.log_unlike(
+			  frames, current_display_type, fr_ID);
+		}
 	}
-}
 
-void
-SomHunter::remove_likes(const std::vector<ImageId> &likes)
-{
-	submitter.poll();
-
-	for (auto ii : likes) {
-		this->likes.erase(ii);
-
-		frames.get_frame(ii).liked = false;
-
-		submitter.log_dislike(frames, current_display_type, ii);
-	}
+	return res;
 }
 
 std::vector<const Keyword *>
@@ -124,12 +136,6 @@ SomHunter::rescore(const std::string &text_query)
 	// Update search context
 	shown_images.clear();
 
-	// Reset likes
-	likes.clear();
-	for (auto &fr : frames) {
-		fr.liked = false;
-	}
-
 	auto top_n = scores.top_n(frames,
 	                          TOPN_LIMIT,
 	                          config.topn_frames_per_video,
@@ -140,12 +146,19 @@ SomHunter::rescore(const std::string &text_query)
 	debug("used_tools.bayes_used = " << used_tools.bayes_used);
 	submitter.submit_and_log_rescore(frames,
 	                                 scores,
+	                                 likes,
 	                                 used_tools,
 	                                 current_display_type,
 	                                 top_n,
 	                                 last_text_query,
 	                                 config.topn_frames_per_video,
 	                                 config.topn_frames_per_shot);
+
+	// Reset likes
+	likes.clear();
+	for (auto &fr : frames) {
+		fr.liked = false;
+	}
 }
 
 bool
@@ -189,6 +202,12 @@ SomHunter::log_scroll(float dir_Y)
 }
 
 void
+SomHunter::log_text_query_change(const std::string &text_query)
+{
+	submitter.log_text_query_change(text_query);
+}
+
+void
 SomHunter::rescore_keywords(const std::string &query)
 {
 	// Do not rescore if query did not change
@@ -202,8 +221,6 @@ SomHunter::rescore_keywords(const std::string &query)
 
 	last_text_query = query;
 	used_tools.KWs_used = true;
-
-	submitter.log_add_keywords(query);
 }
 
 void
@@ -360,14 +377,13 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 {
 	// Another display or first page -> load
 	if (current_display_type != DisplayType::DTopKNN || page == 0) {
-		debug("Getting KNN for image " << selected_image);
+
 		// Get ids
 		auto ids = features.get_top_knn(frames,
 		                                selected_image,
 		                                config.topn_frames_per_video,
 		                                config.topn_frames_per_shot);
 
-		debug("Got result of size " << ids.size());
 		// Log
 		submitter.log_show_topknn_display(frames, selected_image, ids);
 
@@ -375,22 +391,19 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 		current_display = frames.ids_to_video_frame(ids);
 		current_display_type = DisplayType::DTopKNN;
 
-		debug("Context is ready");
-
 		// KNN is query by example so we NEED to log a rerank
 		UsedTools ut;
 		ut.topknn_used = true;
 
 		submitter.submit_and_log_rescore(frames,
 		                                 scores,
+		                                 likes,
 		                                 ut,
 		                                 current_display_type,
 		                                 ids,
 		                                 last_text_query,
 		                                 config.topn_frames_per_video,
 		                                 config.topn_frames_per_shot);
-
-		debug("Logging is done");
 	}
 
 	return get_page_from_last(page);

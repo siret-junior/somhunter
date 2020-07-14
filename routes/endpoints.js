@@ -110,19 +110,10 @@ exports.rescore = function (req, res) {
 
   SessionState.setTextQueries(sess.state, q0, q1);
 
-  const likes = SessionState.getLikes(sess.state);
-  const unlikes = SessionState.getUnlikes(sess.state);
-
   // -------------------------------
   // Call the core
-  global.core.addLikes(likes);
-  global.core.removeLikes(unlikes);
   global.core.rescore(textQuery);
   // -------------------------------
-
-  // Reset likes
-  SessionState.resetLikes(sess.state);
-  SessionState.resetUnlikes(sess.state);
 
   res.status(200).jsonp({});
 };
@@ -178,25 +169,15 @@ exports.resetSearchSession = function (req, res) {
 exports.likeFrame = function (req, res) {
   const sess = req.session;
 
-  const body = req.body;
-  const frameId = body.frameId;
+  const frameId = req.body.frameId;
+  const likes = [frameId];
 
-  // Handle and check the validity
-  const succ = SessionState.likeFrame(sess.state, frameId);
+  // -------------------------------
+  // Call the core
+  const res_flags = global.core.likeFrames(likes);
+  // -------------------------------
 
-  res.status(200).jsonp({ isLiked: succ });
-};
-
-exports.unlikeFrame = function (req, res) {
-  const sess = req.session;
-
-  const body = req.body;
-  const frameId = body.frameId;
-
-  // Handle and check the validity
-  const succ = SessionState.unlikeFrame(sess.state, frameId);
-
-  res.status(200).jsonp({ isLiked: false });
+  res.status(200).jsonp({ frameId: frameId, isLiked: res_flags[0] });
 };
 
 exports.loginToDres = function (req, res) {

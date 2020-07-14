@@ -35,10 +35,11 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	  env,
 	  "SomHunterNapi",
 	  { InstanceMethod("getDisplay", &SomHunterNapi::get_display),
-	    InstanceMethod("addLikes", &SomHunterNapi::add_likes),
+	    InstanceMethod("likeFrames", &SomHunterNapi::like_frames),
 	    InstanceMethod("rescore", &SomHunterNapi::rescore),
+	    InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
+	    InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
 	    InstanceMethod("resetAll", &SomHunterNapi::reset_all),
-	    InstanceMethod("removeLikes", &SomHunterNapi::remove_likes),
 	    InstanceMethod("autocompleteKeywords",
 	                   &SomHunterNapi::autocomplete_keywords),
 	    InstanceMethod("isSomReady", &SomHunterNapi::is_som_ready),
@@ -300,7 +301,7 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::add_likes(const Napi::CallbackInfo &info)
+SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -323,16 +324,30 @@ SomHunterNapi::add_likes(const Napi::CallbackInfo &info)
 		fr_IDs.emplace_back(fr_ID);
 	}
 
+	std::vector<bool> like_flags;
 	try {
-		debug("API: CALL \n\t add_likes\n\t\fr_IDs.size() = "
+		debug("API: CALL \n\t like_frames\n\t\fr_IDs.size() = "
 		      << fr_IDs.size() << std::endl);
 
-		somhunter->add_likes(fr_IDs);
+		like_flags = somhunter->like_frames(fr_IDs);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
-	return Napi::Object{};
+	// Return structure
+	napi_value result_arr;
+	napi_create_array(env, &result_arr);
+
+	size_t i{ 0 };
+	for (auto &&flag : like_flags) {
+		napi_value res;
+		napi_get_boolean(env, flag, &res);
+
+		napi_set_element(env, result_arr, i, res);
+	}
+
+	return Napi::Object(env, result_arr);
+	;
 }
 
 Napi::Value
@@ -391,7 +406,7 @@ SomHunterNapi::reset_all(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::remove_likes(const Napi::CallbackInfo &info)
+SomHunterNapi::log_video_replay(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -404,20 +419,41 @@ SomHunterNapi::remove_likes(const Napi::CallbackInfo &info)
 		  .ThrowAsJavaScriptException();
 	}
 
-	std::vector<ImageId> fr_IDs;
-	Napi::Array arr = info[0].As<Napi::Array>();
-	for (size_t i{ 0 }; i < arr.Length(); ++i) {
-		Napi::Value val = arr[i];
-
-		size_t fr_ID{ val.As<Napi::Number>().Uint32Value() };
-		fr_IDs.emplace_back(fr_ID);
-	}
+	ImageId fr_ID{ info[0].As<Napi::Number>().Uint32Value() };
 
 	try {
-		debug("API: CALL \n\t add_likes\n\t\fr_IDs.size() = "
-		      << fr_IDs.size() << std::endl);
+		debug("API: CALL \n\t log_video_replay\n\t frame_ID = "
+		      << ffr_ID << std::endl);
 
-		somhunter->add_likes(fr_IDs);
+		somhunter->log_video_replay(fr_ID);
+	} catch (const std::exception &e) {
+		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	}
+
+	return Napi::Object{};
+}
+
+Napi::Value
+SomHunterNapi::log_scroll(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	Napi::HandleScope scope(env);
+
+	// Process arguments
+	int length = info.Length();
+
+	if (length != 1) {
+		Napi::TypeError::New(env, "Wrong number of parameters")
+		  .ThrowAsJavaScriptException();
+	}
+
+	float delta_Y{ float(info[0].As<Napi::Number>().DoubleValue()) };
+
+	try {
+		debug("API: CALL \n\t log_scroll\n\t delta_Y = " << delta_Y
+		                                                 << std::endl);
+
+		somhunter->log_scroll(delta_Y);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}

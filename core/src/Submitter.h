@@ -22,13 +22,24 @@
 #ifndef _SUBMITTER_H
 #define _SUBMITTER_H
 
-//#define LOG_CURL_REQUESTS
+//#define DEBUG_CURL_REQUESTS
+#define LOG_LOGS
+#ifdef LOG_LOGS
+#define LOG_LOGS_DIR "logs/actions/"s
+#endif // LOG_LOGS
+
+#define LOG_CURL_REQUESTS
+#ifdef LOG_CURL_REQUESTS
+#define LOG_CURL_REQUESTS_DIR "logs/requests/"s
+#endif // LOG_CURL_REQUESTS
 
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
 using namespace std::literals;
+#include <filesystem>
+#include <fstream>
 
 #include "json11.hpp"
 
@@ -54,6 +65,30 @@ class Submitter
 
 	const SubmitterConfig cfg;
 
+#ifdef LOG_LOGS
+
+	std::ofstream act_log;
+	/** Just a shortcut so we have the unified log prefix. */
+	auto &alog()
+	{
+		return act_log << get_formated_timestamp("%H:%M:%S") << "\t"
+		               << timestamp() << "\t";
+	}
+
+#endif // LOG_LOGS
+
+#ifdef LOG_CURL_REQUESTS
+
+	std::ofstream req_log;
+	/** Just a shortcut so we have the unified log prefix. */
+	auto &rlog()
+	{
+		return req_log << get_formated_timestamp("%H:%M:%S") << "\t"
+		               << timestamp() << "\t";
+	}
+
+#endif // LOG_CURL_REQUESTS
+
 public:
 	Submitter(const SubmitterConfig &config);
 	// waits until the last thread submits
@@ -75,6 +110,7 @@ public:
 	/** Called whenever we rescore (Bayes/LD) */
 	void submit_and_log_rescore(const DatasetFrames &frames,
 	                            const ScoreModel &scores,
+	                            const std::set<ImageId> &likes,
 	                            const UsedTools &used_tools,
 	                            DisplayType disp_type,
 	                            const std::vector<ImageId> &topn_imgs,
@@ -82,15 +118,15 @@ public:
 	                            const size_t topn_frames_per_video,
 	                            const size_t topn_frames_per_shot);
 
-	void log_add_keywords(const std::string &query_sentence);
+	void log_text_query_change(const std::string &query_sentence);
 
 	void log_like(const DatasetFrames &frames,
 	              DisplayType disp_type,
 	              ImageId frame_ID);
 
-	void log_dislike(const DatasetFrames &frames,
-	                 DisplayType disp_type,
-	                 ImageId frame_ID);
+	void log_unlike(const DatasetFrames &frames,
+	                DisplayType disp_type,
+	                ImageId frame_ID);
 
 	void log_show_som_display(const DatasetFrames &frames,
 	                          const std::vector<ImageId> &imgs);

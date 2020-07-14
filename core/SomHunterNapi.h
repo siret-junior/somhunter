@@ -36,9 +36,11 @@ private:
 
 	Napi::Value get_display(const Napi::CallbackInfo &info);
 
-	Napi::Value add_likes(const Napi::CallbackInfo &info);
+	Napi::Value like_frames(const Napi::CallbackInfo &info);
 
-	Napi::Value remove_likes(const Napi::CallbackInfo &info);
+	Napi::Value log_video_replay(const Napi::CallbackInfo &info);
+
+	Napi::Value log_scroll(const Napi::CallbackInfo &info);
 
 	Napi::Value rescore(const Napi::CallbackInfo &info);
 

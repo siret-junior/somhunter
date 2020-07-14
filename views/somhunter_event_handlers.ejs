@@ -358,14 +358,8 @@ function like(el, frameId) {
     frameId: frameId,
   };
 
-  let url = "/like_frame";
-  // If unlike
-  if (el.classList.contains("liked")) {
-    url = "/unlike_frame";
-  }
-
   // Make the request
-  fetch(url, {
+  fetch("/like_frame", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -384,11 +378,7 @@ function like(el, frameId) {
         throw Error(data.error.message);
       }
 
-      if (data.isLiked) {
-        el.classList.add("liked");
-      } else {
-        el.classList.remove("liked");
-      }
+      putFrameTolikeState(data.frameId, data.isLiked);
     })
     .catch((e) => {
       console.log("Error: " + JSON.stringify(e.message));
@@ -810,6 +800,15 @@ function frameMouseScrollHandler(event)
     }
 
     
+  }
+}
+
+function putFrameTolikeState(frameId, liked) {
+  const elems = document.querySelectorAll(`li[data-frame-id='${frameId}']`);
+  if (liked) {
+    elems.forEach(function(el) {el.classList.add("liked")})
+  } else {
+    elems.forEach(function(el) {el.classList.remove("liked")})
   }
 }
 

@@ -65,6 +65,35 @@ enum class DisplayType
 	NumItems
 };
 
+inline std::string
+disp_type_to_str(DisplayType type)
+{
+	std::string disp_type;
+	switch (type) {
+		case DisplayType::DTopN:
+			disp_type = "topn_display";
+			break;
+
+		case DisplayType::DTopNContext:
+			disp_type = "topn_display_with_context";
+			break;
+
+		case DisplayType::DSom:
+			disp_type = "SOM_display";
+			break;
+
+		case DisplayType::DTopKNN:
+			disp_type = "topknn_display";
+			break;
+
+		case DisplayType::DVideoDetail:
+			disp_type = "video_detail";
+			break;
+	}
+
+	return disp_type;
+}
+
 /*!
  * User defined size literal.
  */

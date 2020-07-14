@@ -46,7 +46,7 @@ exports.checkGlobalSessionState = function (req, viewData) {
   const sess = req.session;
 
   if (typeof sess.state === "undefined" || sess.state == null) {
-    // xoxo
+    
     // Construct the session state here
     sess.state = sessState.Construct();
   }
