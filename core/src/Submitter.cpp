@@ -161,18 +161,9 @@ poster_thread(const std::string &submit_url,
 		if (!o) {
 			warn("Could not write a log file!");
 		} else {
-			o << "{"
-			  << "\"query_string\": \"" << query << "\","
-			  << std::endl
-			  << "\"submit_url\": \"" << submit_url << "\""
-			  << std::endl;
-
 			// Only print this if not empty
 			if (!data.empty())
-				o << ","
-				  << "\"data\":" << data << std::endl;
-
-			o << "}" << std::endl;
+				o << data << std::endl;
 		}
 	}
 
@@ -244,12 +235,14 @@ poster_thread(const std::string &submit_url,
 			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
 		}
 
-		bool curl_ok = curl_easy_perform(curl) == 0u;
+		auto res = curl_easy_perform(curl);
 
-		if (curl_ok)
-			info("Submit OK");
-		else
-			warn("Submit failed!");
+		if (res == CURLE_OK) {
+			info("GET request OK: " << url);
+		} else {
+			warn("GET request failed with cURL error: "
+			     << curl_easy_strerror(res));
+		}
 
 		if (cfg.extra_verbose_log) {
 			std::cout << std::endl
@@ -319,6 +312,7 @@ getter_thread(const std::string &submit_url,
 
 		std::string url = submit_url;
 		url += "?" + query;
+
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
@@ -340,12 +334,14 @@ getter_thread(const std::string &submit_url,
 			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
 		}
 
-		bool curl_ok = curl_easy_perform(curl) == 0u;
+		auto res = curl_easy_perform(curl);
 
-		if (curl_ok)
-			info("Submit OK");
-		else
-			warn("Submit failed!");
+		if (res == CURLE_OK) {
+			info("GET request OK: " << url);
+		} else {
+			warn("GET request failed with cURL error: "
+			     << curl_easy_strerror(res));
+		}
 
 		if (cfg.extra_verbose_log) {
 			std::cout << std::endl
@@ -371,6 +367,7 @@ Submitter::login_to_DRES() const
 	std::string res_buffer;
 
 	if (curl) {
+
 #ifdef LOG_CURL_REQUESTS
 
 		curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, trace_fn);
@@ -391,7 +388,7 @@ Submitter::login_to_DRES() const
 			                    s_cfg.username +
 			                    "\" ,\"password\": \""s +
 			                    s_cfg.password + "\" }" };
-		std::cout << data_str << std::endl;
+
 		const char *data = data_str.c_str();
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
 
@@ -404,23 +401,31 @@ Submitter::login_to_DRES() const
 		  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
 
 		res = curl_easy_perform(curl);
-	}
-	curl_easy_cleanup(curl);
 
-	if (res == CURLE_OK) {
-		info("DRES server login OK.");
-		return true;
-	} else {
-		warn("DRES server login request returned cURL error: " << curl_easy_strerror(res));
-		return false;
+		if (cfg.extra_verbose_log) {
+			std::cout << std::endl
+			          << "RESPONSE:" << std::endl
+			          << res_buffer << std::endl
+			          << "**********************" << std::endl;
+		}
+
+		curl_easy_cleanup(curl);
+
+		if (res == CURLE_OK) {
+			info("DRES server login OK.");
+			return true;
+		} else {
+			warn("DRES server login request returned cURL error: "
+			     << curl_easy_strerror(res));
+		}
 	}
+	return false;
 }
 
 Submitter::Submitter(const SubmitterConfig &config)
   : last_submit_timestamp(timestamp())
   , cfg(config)
-{
-}
+{}
 
 Submitter::~Submitter()
 {
@@ -442,7 +447,7 @@ Submitter::submit_and_log_submit(const DatasetFrames &frames,
 	std::stringstream query_ss;
 
 	if (is_DRES_server()) {
-		query_ss << "&item=" << std::setfill('0') << std::setw(5)
+		query_ss << "item=" << std::setfill('0') << std::setw(5)
 		         << (vf.video_ID + 1) //< !! VBS videos start from 1
 		         << "&frame="
 		         << vf.frame_number; //< !! VBS frame numbers start at 0
@@ -480,7 +485,9 @@ Submitter::send_backlog_only()
 	if (!backlog.empty()) {
 		Json a = Json::object{ { "timestamp", double(timestamp()) },
 			               { "events", std::move(backlog) },
-			               { "type", "interaction" } };
+			               { "type", "interaction" },
+			               { "teamId", int(cfg.team_ID) },
+			               { "memberId", int(cfg.member_ID) } };
 		backlog.clear();
 		start_poster(get_interaction_URL(), ""s, a.dump());
 	}
@@ -503,13 +510,17 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 	std::vector<Json> results;
 	results.reserve(topn_imgs.size());
 
-	for (auto &&img_ID : topn_imgs) {
-		auto vf = frames.get_frame(img_ID);
-		results.push_back(Json::object{
-		  { "video", int(vf.video_ID + 1) },
-		  { "frame", int(vf.frame_number) },
-		  { "score", double(scores[img_ID]) },
-		});
+	{
+		size_t i{ 0 };
+		for (auto &&img_ID : topn_imgs) {
+			auto vf = frames.get_frame(img_ID);
+			results.push_back(Json::object{
+			  { "video", std::to_string(vf.video_ID + 1) },
+			  { "frame", int(vf.frame_number) },
+			  { "score", double(scores[img_ID]) },
+			  { "rank", int(i) } });
+			++i;
+		}
 	}
 
 	std::vector<Json> used_cats;
@@ -554,6 +565,9 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 
 	Json result_json_arr = Json::array(results);
 
+	std::vector<Json> values{query_val};
+	Json values_arr = Json::array(values);
+
 	Json top = Json::object{ { "teamId", int(cfg.team_ID) },
 		                 { "memberId", int(cfg.member_ID) },
 		                 { "timestamp", double(timestamp()) },
@@ -562,7 +576,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 		                 { "sortType", sort_types },
 		                 { "resultSetAvailability", "top" },
 		                 { "type", "result" },
-		                 { "value", query_val },
+		                 { "values", values_arr },
 		                 { "results", std::move(result_json_arr) } };
 
 	start_poster(get_rerank_URL(), "", top.dump());
@@ -796,11 +810,13 @@ Submitter::push_event(const std::string &cat,
                       const std::string &type,
                       const std::string &value)
 {
-	Json a = Json::object{ { "teamId", int(cfg.team_ID) },
-		               { "memberId", int(cfg.member_ID) },
-		               { "timestamp", double(timestamp()) },
+
+	std::vector<Json> types{type};
+	Json types_arr = Json::array(types);
+
+	Json a = Json::object{ { "timestamp", double(timestamp()) },
 		               { "category", cat },
-		               { "type", type },
+		               { "type", types_arr },
 		               { "value", value } };
 
 	backlog.emplace_back(std::move(a));
