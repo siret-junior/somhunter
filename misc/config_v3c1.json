@@ -25,12 +25,13 @@
 		"team_ID": 4,
 		"member_ID": 1,
 	  
-		"VBS_submit_archive_dir": "vbs-log",
+		"VBS_submit_archive_dir": "logs/submitted_logs/",
 		"VBS_submit_archive_log_suffix": ".json",
 		"extra_verbose_log": false,
 	  
 		"send_logs_to_server_period": 10000,
-		"log_replay_timeout": 1000
+		"apply_log_action_timeout_in_core": false,
+		"log_action_timeout": 1000
 	},
 
     "max_frame_filename_len": 64,

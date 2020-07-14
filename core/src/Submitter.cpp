@@ -672,6 +672,15 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 void
 Submitter::log_text_query_change(const std::string &text_query)
 {
+	static int64_t last_logged{ 0 };
+
+	// If timeout should be handled here
+	if (cfg.apply_log_action_timeout) {
+		// If no need to log now
+		if (last_logged + cfg.log_action_timeout > size_t(timestamp()))
+			return;
+	}
+
 #ifdef LOG_LOGS
 
 	alog() << "text_query\t"
@@ -824,11 +833,14 @@ Submitter::log_show_video_replay(const DatasetFrames &frames, ImageId frame_ID)
 	static int64_t last_replay_submit = 0;
 	static ImageId last_frame_ID = IMAGE_ID_ERR_VAL;
 
-	// If no need to log now
-
-	if (last_replay_submit + cfg.log_replay_timeout > size_t(timestamp()) &&
-	    frame_ID == last_frame_ID)
-		return;
+	// If timeout should be handled here
+	if (cfg.apply_log_action_timeout) {
+		// If no need to log now
+		if (last_replay_submit + cfg.log_action_timeout >
+		      size_t(timestamp()) &&
+		    frame_ID == last_frame_ID)
+			return;
+	}
 
 	last_replay_submit = timestamp();
 	last_frame_ID = frame_ID;
@@ -887,11 +899,14 @@ Submitter::log_scroll(const DatasetFrames & /*frames*/,
 	static int64_t last_logged = 0;
 	static DisplayType last_disp_type = DisplayType::DNull;
 
-	// If no need to log now
-
-	if (last_logged + cfg.log_replay_timeout > size_t(timestamp()) &&
-	    from_disp_type == last_disp_type)
-		return;
+	// If timeout should be handled here
+	if (cfg.apply_log_action_timeout) {
+		// If no need to log now
+		if (last_logged + cfg.log_action_timeout >
+		      size_t(timestamp()) &&
+		    from_disp_type == last_disp_type)
+			return;
+	}
 
 	last_logged = timestamp();
 	last_disp_type = from_disp_type;

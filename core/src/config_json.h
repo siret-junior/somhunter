@@ -93,7 +93,8 @@ struct SubmitterConfig
 	bool extra_verbose_log;
 
 	size_t send_logs_to_server_period;
-	size_t log_replay_timeout;
+	bool apply_log_action_timeout;
+	size_t log_action_timeout;
 };
 
 /** Parsed current config of the core.
@@ -231,7 +232,10 @@ Config::parse_submitter_config(const json11::Json &json)
 
 	res.send_logs_to_server_period =
 	  size_t(json["send_logs_to_server_period"].int_value());
-	res.log_replay_timeout = size_t(json["log_replay_timeout"].int_value());
+
+	res.apply_log_action_timeout =
+	  json["apply_log_action_timeout_in_core"].bool_value();
+	res.log_action_timeout = size_t(json["log_action_timeout"].int_value());
 
 	// Parse a type of the submit server
 	std::string server_type{ json["submit_server"].string_value() };
