@@ -551,6 +551,7 @@ display: block;
 
 .replay-window.active {
   opacity: 1;
+  pointer-events: initial;
 }
 .replay-grid {
   width: auto;

@@ -536,8 +536,8 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 		query_val += "show_knn;";
 
 		used_cats.push_back("image");
-		used_types.push_back("feedbackModel");
-		sort_types.push_back("feedbackModel");
+		used_types.push_back("globalFeatures");
+		sort_types.push_back("globalFeatures");
 	}
 	// Else normal rescore
 	else {
