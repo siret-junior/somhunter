@@ -502,7 +502,7 @@ function setupImageGrid(viewData) {
   // Iterate over all the frames
   for (let i = 0; i < frames.length; ++i) {
     if (frames[i].id == null) {
-      elemHtml += getNoThumbPrototype(frames[i].src);
+      elem.appendChild(getNoThumbPrototype(frames[i].src));
       continue;
     }
 
@@ -551,16 +551,10 @@ function getNoThumbPrototype(src) {
   
   let e = document.createElement("li");
   {
-    e.className = `no-frame small-6 medium-4 large-2 cell ${likedStr}`;
+    e.className = `no-frame frame-in-grid small-6 medium-4 large-2 cell`;
     e.style.backgroundImage = `url('${src}')`;
-    e.onclick = function () { like(this, id) };
-    e.dataset.frameId = id;
   }
-  e.appendChild(span0);
-  e.appendChild(btn0);
-  e.appendChild(btn1);
-  e.appendChild(btn2);
-
+  
   let frag = document.createDocumentFragment();
   frag.appendChild(e);
 

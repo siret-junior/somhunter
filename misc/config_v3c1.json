@@ -4,21 +4,19 @@
 
 		"submit_server": "dres",
 		"server_config": {
-			"vbs": {
-				"submit_interaction_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit",
-				"submit_rerank_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/log",
-				"submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
-			},
-			"dres": {
-				"submit_interaction_URL": "127.0.0.1:8080/log/query",
-				"submit_rerank_URL": "127.0.0.1:8080/log/result",
-				"submit_URL": "127.0.0.1:8080/submit",
-
-				"cookie_file": "cookie.txt",
-
-				"login_URL": "127.0.0.1:8080/api/login",
-				"username": "admin",
-				"password": "adminadmin"
+      "vbs": {
+        "submit_interaction_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit",
+        "submit_rerank_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/log",
+        "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
+      },
+      "dres": {
+        "submit_interaction_URL": "https://interactivevideoretrieval.com/log/query",
+        "submit_rerank_URL": "https://interactivevideoretrieval.com/log/result",
+        "submit_URL": "https://interactivevideoretrieval.com/submit",
+        "cookie_file": "cookie.txt",
+        "login_URL": "https://interactivevideoretrieval.com/api/login",
+        "username": "admin",
+        "password": "adminadmin"
 			}
 		},
 	

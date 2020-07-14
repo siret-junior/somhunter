@@ -60,15 +60,19 @@ KeywordRanker::parse_kw_classes_text_file(const std::string &filepath,
 
 		// Top exmaple images
 		std::vector<const VideoFrame *> top_ex_imgs;
-		{
-			std::string token;
-			for (std::stringstream top_ex_imgs_ss(tokens[2]);
-			     std::getline(top_ex_imgs_ss, token, '#');) {
+		if (tokens.size() > 2) {
+			{
+				std::string token;
+				for (std::stringstream top_ex_imgs_ss(
+				       tokens[2]);
+				     std::getline(
+				       top_ex_imgs_ss, token, '#');) {
 
-				ImageId img_ID{ str2<ImageId>(token) };
+					ImageId img_ID{ str2<ImageId>(token) };
 
-				top_ex_imgs.push_back(
-				  &frames.get_frame(img_ID));
+					top_ex_imgs.push_back(
+					  &frames.get_frame(img_ID));
+				}
 			}
 		}
 

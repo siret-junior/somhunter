@@ -402,6 +402,9 @@ Submitter::login_to_DRES() const
 
 		res = curl_easy_perform(curl);
 
+		long http_code{ 0 };
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+
 		if (cfg.extra_verbose_log) {
 			std::cout << std::endl
 			          << "RESPONSE:" << std::endl
@@ -411,13 +414,38 @@ Submitter::login_to_DRES() const
 
 		curl_easy_cleanup(curl);
 
-		if (res == CURLE_OK) {
-			info("DRES server login OK.");
-			return true;
-		} else {
+		if (res != CURLE_OK) {
 			warn("DRES server login request returned cURL error: "
 			     << curl_easy_strerror(res));
+			return false;
+		} else {
+			info(
+			  "DRES server login request returned: " << http_code);
 		}
+
+		// Parse the response
+		std::string err;
+		auto res_json{ json11::Json::parse(res_buffer, err) };
+		if (!err.empty()) {
+			std::string msg{ "Error parsing JSON response: " +
+				         res_buffer };
+			warn(msg);
+			throw std::runtime_error(msg);
+		}
+
+		bool login_status{ res_json["status"].bool_value() };
+		std::string login_status_desc{
+			res_json["description"].string_value()
+		};
+
+		// If login failed
+		if (!login_status) {
+			warn("DRES server login failed! Message: "
+			     << login_status_desc);
+			return false;
+		}
+		info("DRES server login OK... Message: " << login_status_desc);
+		return true;
 	}
 	return false;
 }
