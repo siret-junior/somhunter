@@ -124,6 +124,9 @@ SomHunter::rescore(const std::string &text_query)
 {
 	submitter.poll();
 
+	// Store likes for the logging purposees
+	auto old_likes{ likes };
+
 	// Rescore text query
 	rescore_keywords(text_query);
 
@@ -141,24 +144,24 @@ SomHunter::rescore(const std::string &text_query)
 	                          config.topn_frames_per_video,
 	                          config.topn_frames_per_shot);
 
+	// Reset likes
+	likes.clear();
+	for (auto &fr : frames) {
+		fr.liked = false;
+	}
+
 	debug("used_tools.topknn_used = " << used_tools.topknn_used);
 	debug("used_tools.KWs_used = " << used_tools.KWs_used);
 	debug("used_tools.bayes_used = " << used_tools.bayes_used);
 	submitter.submit_and_log_rescore(frames,
 	                                 scores,
-	                                 likes,
+	                                 old_likes,
 	                                 used_tools,
 	                                 current_display_type,
 	                                 top_n,
 	                                 last_text_query,
 	                                 config.topn_frames_per_video,
 	                                 config.topn_frames_per_shot);
-
-	// Reset likes
-	likes.clear();
-	for (auto &fr : frames) {
-		fr.liked = false;
-	}
 }
 
 bool
