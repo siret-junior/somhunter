@@ -671,6 +671,11 @@ function infiniteScroll() {
 
 grid.addEventListener("scroll", infiniteScroll, false);
 
+// To avoid being stuck due to infinit scroll limit
+setInterval(function() {
+  grid.dispatchEvent(new Event("scroll"));
+}, 2000);
+
 /**
  * This function modifies current page HTML according to state data.
  */
