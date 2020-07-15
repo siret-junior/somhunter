@@ -68,16 +68,16 @@ exports.getTopScreen = function (req, res) {
 
   let type = global.strs.displayTypes.topn;
 
-  if (req.query && req.query.type)
-    type = req.query.type;
+  if (req.body && req.body.type)
+    type = req.body.type;
 
   let pageId = 0;
-  if (req.query && req.query.pageId)
-    pageId = Number(req.query.pageId);
+  if (req.body && req.body.pageId)
+    pageId = Number(req.body.pageId);
 
   let frameId = 0;
-  if (req.query && req.query.frameId)
-    frameId = Number(req.query.frameId);
+  if (req.body && req.body.frameId)
+    frameId = Number(req.body.frameId);
 
   let frames = [];
   // -------------------------------

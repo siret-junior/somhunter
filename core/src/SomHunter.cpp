@@ -302,7 +302,8 @@ SomHunter::get_topn_context_display(PageId page)
 		                            config.topn_frames_per_shot);
 
 		// Log
-		submitter.log_show_topn_context_display(frames, ids);
+		if (page == 0)
+			submitter.log_show_topn_context_display(frames, ids);
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);

@@ -33,16 +33,18 @@ let shouldRescore = false;
 
 function showNextTopDisplay(id, thisFilename) {
   pageId++;
-  let url =
-    "/get_top_screen?pageId=" +
-    pageId +
-    "&type=" +
-    vd.somhunter.screen.type +
-    "&frameId=" +
-    vd.somhunter.frameContext.frameId;
+  let url = "/get_top_screen";
+
+  const data = {
+    pageId: pageId,
+    type: vd.somhunter.screen.type,
+    frameId: vd.somhunter.frameContext.frameId
+  };
+
   // Make the request
   fetch(url, {
-    method: "GET",
+    method: "POST",
+    body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
     },
@@ -83,13 +85,19 @@ function showTopDisplay(type, id, thisFilename) {
 
   if (type === undefined) type = "<%- strs.displayTypes.topn %>";
 
-  let url = "/get_top_screen?pageId=" + pageId + "&type=" + type;
+  let url = "/get_top_screen";
 
-  if (id !== undefined) url += "&frameId=" + id;
+  //if (id !== undefined) url += "&frameId=" + id;
+  let data = {
+    pageId: pageId,
+    type: type,
+    frameId: id
+  };
 
   // Make the request
   fetch(url, {
-    method: "GET",
+    method: "POST",
+    body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
     },
@@ -526,7 +534,7 @@ function setupImageGrid(viewData) {
   // Iterate over all the frames
   for (let i = 0; i < frames.length; ++i) {
     if (frames[i].id == null) {
-      elem.appendChild(getNoThumbPrototype(frames[i].src));
+      elem.appendChild(getNoThumbPrototype());
       continue;
     }
 
@@ -552,7 +560,7 @@ function appendImageGrid(viewData, fromIndex) {
   // Iterate over all the frames
   for (let i = fromIndex; i < frames.length; ++i) {
     if (frames[i].id == null) {
-      elem.appendChild(getNoThumbPrototype(frames[i].src));
+      elem.appendChild(getNoThumbPrototype());
       continue;
     }
 
@@ -571,12 +579,12 @@ function appendImageGrid(viewData, fromIndex) {
   }
 }
 
-function getNoThumbPrototype(src) {
+function getNoThumbPrototype() {
   
   let e = document.createElement("li");
   {
     e.className = `no-frame frame-in-grid small-6 medium-4 large-2 cell`;
-    e.style.backgroundImage = `url('${src}')`;
+    //e.style.backgroundImage = `url('${src}')`;
   }
   
   let frag = document.createDocumentFragment();
@@ -840,6 +848,7 @@ function getScreenType() {
 
 function getCursorHitElem() {
   const elems = document.querySelectorAll(":hover"); 
+  if (elems.length == 0) return;
 
   const topElem = elems[elems.length - 1];
 
