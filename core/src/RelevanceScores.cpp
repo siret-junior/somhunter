@@ -117,7 +117,7 @@ ScoreModel::top_n_with_context(const DatasetFrames &frames,
 			if (frames.get_video_id(selected + i) == video_id) {
 				result.push_back(selected + i);
 			} else {
-				result.push_back(0);
+				result.push_back(IMAGE_ID_ERR_VAL);
 			}
 		}
 	}

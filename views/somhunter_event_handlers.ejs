@@ -333,6 +333,8 @@ function rescore(targetScreen) {
       // Now request new display
       if (targetScreen == "<%- strs.displayTypes.topn %>") {
         showTopDisplay();
+      } else if (targetScreen == "<%- strs.displayTypes.topnContext %>") {
+        showTopDisplay("<%- strs.displayTypes.topnContext %>");
       } else {
         showSomDisplay();
       }
@@ -468,9 +470,11 @@ function resetSearchSession() {
 function setupPanelButtons(viewData) {
   const elBtnSom = document.getElementById("btnSom");
   const elBtnTopn = document.getElementById("btnTopn");
+  const elBtnTopnCtx = document.getElementById("btnTopnCtx");
 
   elBtnSom.classList.remove("active");
   elBtnTopn.classList.remove("active");
+  elBtnTopnCtx.classList.remove("active");
 
   switch (viewData.somhunter.screen.type) {
     case "<%- strs.displayTypes.som %>":
@@ -479,6 +483,10 @@ function setupPanelButtons(viewData) {
 
     case "<%- strs.displayTypes.topn %>":
       elBtnTopn.classList.add("active");
+      break;
+
+    case "<%- strs.displayTypes.topnContext %>":
+    elBtnTopnCtx.classList.add("active");
       break;
   }
 }
@@ -638,7 +646,8 @@ function infiniteScroll() {
     lastPageTime = Date.now();
     if (
       vd.somhunter.screen.type == "<%- strs.displayTypes.topn %>" ||
-      vd.somhunter.screen.type == "<%- strs.displayTypes.topknn %>"
+      vd.somhunter.screen.type == "<%- strs.displayTypes.topknn %>" ||
+      vd.somhunter.screen.type == "<%- strs.displayTypes.topnContext %>"
     ) {
       showNextTopDisplay();
     }
@@ -703,7 +712,7 @@ $(document).keyup(function(e) {
     if (ignoreNextEnter){
       ignoreNextEnter = false;
     } else {
-      rescore("<%- strs.displayTypes.topn %>");
+      rescore("<%- strs.displayTypes.topnContext %>");
     }
 
   }
@@ -729,7 +738,13 @@ $(document).keyup(function(e) {
     handleEscapeKey();
   // T key
   } else if (e.keyCode === 84) {
-    showTopDisplay("<%- strs.displayTypes.topn %>");
+    
+    if (e.shiftKey) {
+      showTopDisplay("<%- strs.displayTypes.topn %>");
+    } else {
+      showTopDisplay("<%- strs.displayTypes.topnContext %>");
+    }
+      
 
   // S key
   } else if (e.keyCode === 83) {

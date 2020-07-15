@@ -2,7 +2,7 @@
     "displayTypes": {
         "som": "SOM_display",
         "topn": "topn_display",
-        "topnContext": "topn_display_with_context",
+        "topnContext": "topn_context_display",
         "topknn": "topknn_display",
         "detail": "video_detail",
         "replay": "video_replay"

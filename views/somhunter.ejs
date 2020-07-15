@@ -68,7 +68,7 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
         <%- include autocomplete_logic.ejs %>
 
         <div class="autocomplete-input-cont small-12 cell">
-          <a class="button block-btn rescore-btn" onclick="rescore('<%- strs.displayTypes.topn %>')">Rescore to TOP N <br />[Enter]</a>
+          <a class="button block-btn rescore-btn" onclick="rescore('<%- strs.displayTypes.topn %>')">Rescore to TOP N context<br />[Enter]</a>
           <a class="button block-btn rescore-btn" onclick="rescore('<%- strs.displayTypes.som %>')">Rescore to SOM</a>
         </div>
       </div>
@@ -89,8 +89,15 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
         </div>
         
         <div class="small-6 cell">
-          <a id="btnTopn" onclick="showTopDisplay()" class="active button block-btn top-ranked-btn">Top-ranked [T]</a>
+          <a id="btnTopn" onclick="showTopDisplay()" class="active button block-btn top-ranked-btn">Top-ranked [SHIFT+T]</a>
         </div>
+        <div class="small-6 cell">
+        </div>
+        <div class="small-6 cell">
+          <a id="btnTopnCtx" onclick='showTopDisplay("<%- strs.displayTypes.topnContext %>")' class="active button block-btn top-ranked-btn">Top-ranked context [T]</a>
+        </div>
+
+        
 
       </div>
 
