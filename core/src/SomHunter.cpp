@@ -19,8 +19,8 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
 #include <chrono>
+#include <stdexcept>
 
 #include "SomHunter.h"
 
@@ -326,7 +326,7 @@ SomHunter::get_som_display()
 	for (size_t i = 0; i < SOM_DISPLAY_GRID_WIDTH; ++i) {
 		for (size_t j = 0; j < SOM_DISPLAY_GRID_HEIGHT; ++j) {
 			if (!asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j)
-			      .empty()) {
+			       .empty()) {
 				ImageId id = scores.weighted_example(
 				  asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j));
 				ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
@@ -336,7 +336,8 @@ SomHunter::get_som_display()
 
 	auto begin = std::chrono::steady_clock::now();
 	// Fix empty cluster
-	std::vector<size_t> stolen_count(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT, 1);
+	std::vector<size_t> stolen_count(
+	  SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT, 1);
 	for (size_t i = 0; i < SOM_DISPLAY_GRID_WIDTH; ++i) {
 		for (size_t j = 0; j < SOM_DISPLAY_GRID_HEIGHT; ++j) {
 			if (asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j)
@@ -371,7 +372,11 @@ SomHunter::get_som_display()
 		}
 	}
 	auto end = std::chrono::steady_clock::now();
-	debug("Fixing clusters took " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << " [ms]");
+	debug(
+	  "Fixing clusters took "
+	  << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin)
+	       .count()
+	  << " [ms]");
 
 	// Log
 	submitter.log_show_som_display(frames, ids);
@@ -473,7 +478,9 @@ SomHunter::get_page_from_last(PageId page)
 
 	// Update context
 	for (auto iter = res.begin(); iter != res.end(); ++iter)
-		shown_images.insert((*iter)->frame_ID);
+		// Skip "empty" frames
+		if (*iter != nullptr)
+			shown_images.insert((*iter)->frame_ID);
 
 	return res;
 }
