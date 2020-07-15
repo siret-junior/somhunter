@@ -121,6 +121,7 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 
 	} else if (disp_type == DisplayType::DTopKNN) {
 		selected_image = info[3].As<Napi::Number>().Uint32Value();
+		page_num = info[2].As<Napi::Number>().Uint32Value();
 	}
 
 	bool log_it{ true };
