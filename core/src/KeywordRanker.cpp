@@ -352,7 +352,7 @@ KeywordRanker::rank_query(const std::vector<std::vector<KeywordId>> &positive,
 
 	// Update the model
 	for (auto &&[frame_ID, dist] : sorted_frames) {
-		model.adjust(frame_ID, std::exp(dist * -42));
+		model.adjust(frame_ID, std::exp(dist * -25));
 	}
 
 	model.normalize();
