@@ -175,14 +175,15 @@ som(size_t /*n*/,
 
 /* this serves for classification into small clusters */
 void
-mapPointsToKohos(size_t n,
+mapPointsToKohos(size_t start,
+                 size_t end,
                  size_t k,
                  size_t dim,
                  const std::vector<float> &points,
                  const std::vector<float> &koho,
                  std::vector<size_t> &mapping)
 {
-	for (size_t point = 0; point < n; ++point) {
+	for (size_t point = start; point < end; ++point) {
 		size_t nearest = 0;
 		float nearestd =
 		  DIST_FUNC(points.data() + dim * point, koho.data(), dim);

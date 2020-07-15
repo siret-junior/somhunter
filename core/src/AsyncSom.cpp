@@ -26,6 +26,7 @@
 
 #include <random>
 #include <chrono>
+#include <thread>
 
 #include "config_json.h"
 #include "log.h"
@@ -129,17 +130,32 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 
 		if (parent->new_data || parent->terminate)
 			continue;
+
 		std::vector<size_t> mapping(n);
-
-
 		begin = std::chrono::high_resolution_clock::now();
-		mapPointsToKohos(n,
-							SOM_DISPLAY_GRID_WIDTH *
-							SOM_DISPLAY_GRID_HEIGHT,
-							cfg.features_dim,
-							points,
-							koho,
-							mapping);
+		{
+			size_t n_threads = std::thread::hardware_concurrency();
+			std::vector<std::thread> threads(n_threads);
+
+			auto worker = [&](size_t id) {
+				size_t start = id * n / n_threads;
+				size_t end = (id + 1) * n / n_threads;
+				mapPointsToKohos(start,
+				                 end,
+				                 SOM_DISPLAY_GRID_WIDTH *
+				                   SOM_DISPLAY_GRID_HEIGHT,
+				                 cfg.features_dim,
+				                 points,
+				                 koho,
+				                 mapping);
+			};
+
+			for (size_t i = 0; i < n_threads; ++i)
+				threads[i] = std::thread(worker, i);
+
+			for (size_t i = 0; i < n_threads; ++i)
+				threads[i].join();
+		}
 		end = std::chrono::high_resolution_clock::now();
 		debug("Mapping took " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << " [ms]");
 		

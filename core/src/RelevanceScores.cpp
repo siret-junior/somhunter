@@ -319,7 +319,7 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 
 	auto end = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = end - start;
-	info("Bayes took " << elapsed.count());
+	debug("Bayes took " << elapsed.count());
 
 	normalize();
 }

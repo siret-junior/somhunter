@@ -41,7 +41,8 @@ som(size_t n,
     std::mt19937 &rng);
 
 void
-mapPointsToKohos(size_t n,
+mapPointsToKohos(size_t start,
+                 size_t end,
                  size_t k,
                  size_t dim,
                  const std::vector<float> &points,
