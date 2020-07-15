@@ -39,6 +39,8 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	    InstanceMethod("rescore", &SomHunterNapi::rescore),
 	    InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
 	    InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
+	    InstanceMethod("logTextQueryChange",
+	                   &SomHunterNapi::log_text_query_change),
 	    InstanceMethod("resetAll", &SomHunterNapi::reset_all),
 	    InstanceMethod("autocompleteKeywords",
 	                   &SomHunterNapi::autocomplete_keywords),
@@ -90,46 +92,52 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 
 	// Process arguments
 	int length = info.Length();
-	if (length > 4) {
+	if (length > 5) {
 		Napi::TypeError::New(env,
 		                     "Wrong number of parameters "
 		                     "(SomHunterNapi::get_display)")
 		  .ThrowAsJavaScriptException();
 	}
 
-	DisplayType disp_type{ DisplayType::DTopN };
 	ImageId selected_image{ IMAGE_ID_ERR_VAL };
 	size_t page_num{ 0 };
 
 	std::string path_prefix{ info[0].As<Napi::String>().Utf8Value() };
 	// Get the display type
 	std::string display_string{ info[1].As<Napi::String>().Utf8Value() };
-	if (display_string == "topn") {
-		disp_type = DisplayType::DTopN;
+
+	DisplayType disp_type = str_to_disp_type(display_string);
+
+	if (disp_type == DisplayType::DTopN) {
 		page_num = info[2].As<Napi::Number>().Uint32Value();
 
-	} else if (display_string == "som") {
-		disp_type = DisplayType::DSom;
+	} else if (disp_type == DisplayType::DTopNContext) {
+		page_num = info[2].As<Napi::Number>().Uint32Value();
 
-	} else if (display_string == "detail") {
-		disp_type = DisplayType::DVideoDetail;
+	} else if (disp_type == DisplayType::DSom) {
+
+	} else if (disp_type == DisplayType::DVideoDetail) {
 		selected_image = info[3].As<Napi::Number>().Uint32Value();
-	} else if (display_string == "topknn") {
-		disp_type = DisplayType::DTopKNN;
+
+	} else if (disp_type == DisplayType::DTopKNN) {
 		selected_image = info[3].As<Napi::Number>().Uint32Value();
+	}
+
+	bool log_it{ true };
+	if (length >= 5) {
+		log_it = info[4].As<Napi::Boolean>().Value();
 	}
 
 	// Call native method
 	FramePointerRange display_frames;
 	try {
-		debug("API: CALL \n\t get_display\n\t\tdisp_type = "
-		      << int(disp_type) << std::endl
-		      << "n\t\t selected_image = " << selected_image
-		      << std::endl
-		      << "n\t\t page_num = " << page_num);
+		debug("API: CALL \n\t get_display\n\t\tdisp_type="
+		      << display_string << std::endl
+		      << "n\t\t selected_image=" << selected_image << std::endl
+		      << "n\t\t page_num=" << page_num);
 
-		display_frames =
-		  somhunter->get_display(disp_type, selected_image, page_num);
+		display_frames = somhunter->get_display(
+		  disp_type, selected_image, page_num, log_it);
 
 		debug("API: RETURN \n\t get_display\n\t\tframes.size() = "
 		      << display_frames.size());
@@ -414,18 +422,19 @@ SomHunterNapi::log_video_replay(const Napi::CallbackInfo &info)
 	// Process arguments
 	int length = info.Length();
 
-	if (length != 1) {
+	if (length != 2) {
 		Napi::TypeError::New(env, "Wrong number of parameters")
 		  .ThrowAsJavaScriptException();
 	}
 
 	ImageId fr_ID{ info[0].As<Napi::Number>().Uint32Value() };
+	float delta{ float(info[1].As<Napi::Number>().DoubleValue()) };
 
 	try {
-		debug("API: CALL \n\t log_video_replay\n\t frame_ID = "
-		      << ffr_ID << std::endl);
+		debug("API: CALL \n\t log_video_replay\n\t frame_ID="
+		      << fr_ID << "\n\t delta=" << delta << std::endl);
 
-		somhunter->log_video_replay(fr_ID);
+		somhunter->log_video_replay(fr_ID, delta);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -442,18 +451,49 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo &info)
 	// Process arguments
 	int length = info.Length();
 
+	if (length != 2) {
+		Napi::TypeError::New(env, "Wrong number of parameters")
+		  .ThrowAsJavaScriptException();
+	}
+
+	std::string disp_type{ info[0].As<Napi::String>().Utf8Value() };
+	float delta_Y{ float(info[1].As<Napi::Number>().DoubleValue()) };
+
+	DisplayType dt{ str_to_disp_type(disp_type) };
+
+	try {
+		debug("API: CALL \n\t log_scroll\n\t disp_type="
+		      << disp_type << "\n\tdeltaY=" << delta_Y << std::endl);
+
+		somhunter->log_scroll(dt, delta_Y);
+	} catch (const std::exception &e) {
+		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	}
+
+	return Napi::Object{};
+}
+
+Napi::Value
+SomHunterNapi::log_text_query_change(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	Napi::HandleScope scope(env);
+
+	// Process arguments
+	int length = info.Length();
+
 	if (length != 1) {
 		Napi::TypeError::New(env, "Wrong number of parameters")
 		  .ThrowAsJavaScriptException();
 	}
 
-	float delta_Y{ float(info[0].As<Napi::Number>().DoubleValue()) };
+	std::string query{ info[0].As<Napi::String>().Utf8Value() };
 
 	try {
-		debug("API: CALL \n\t log_scroll\n\t delta_Y = " << delta_Y
-		                                                 << std::endl);
+		debug("API: CALL \n\t log_text_query_change\n\t query="
+		      << query << std::endl);
 
-		somhunter->log_scroll(delta_Y);
+		somhunter->log_text_query_change(query);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}

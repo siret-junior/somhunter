@@ -68,8 +68,8 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
         <%- include autocomplete_logic.ejs %>
 
         <div class="autocomplete-input-cont small-12 cell">
-          <a class="button block-btn rescore-btn" onclick="rescore('topn')">Rescore to TOP N <br />[Enter]</a>
-          <a class="button block-btn rescore-btn" onclick="rescore('som')">Rescore to SOM</a>
+          <a class="button block-btn rescore-btn" onclick="rescore('<%- strs.displayTypes.topn %>')">Rescore to TOP N <br />[Enter]</a>
+          <a class="button block-btn rescore-btn" onclick="rescore('<%- strs.displayTypes.som %>')">Rescore to SOM</a>
         </div>
       </div>
     </form>

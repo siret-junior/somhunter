@@ -42,6 +42,8 @@ private:
 
 	Napi::Value log_scroll(const Napi::CallbackInfo &info);
 
+	Napi::Value log_text_query_change(const Napi::CallbackInfo &info);
+
 	Napi::Value rescore(const Napi::CallbackInfo &info);
 
 	Napi::Value reset_all(const Napi::CallbackInfo &info);

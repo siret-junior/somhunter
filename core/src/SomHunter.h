@@ -87,7 +87,8 @@ public:
 	 */
 	FramePointerRange get_display(DisplayType d_type,
 	                              ImageId selected_image = 0,
-	                              PageId page = 0);
+	                              PageId page = 0,
+	                              bool log_it = true);
 
 	/** Inverts the like states of the provided frames and returns the new
 	 * states. */
@@ -113,9 +114,9 @@ public:
 	/** Resets current search context and starts new search */
 	void reset_search_session();
 
-	void log_video_replay(ImageId frame_ID);
+	void log_video_replay(ImageId frame_ID, float delta_X);
 
-	void log_scroll(float dir_Y);
+	void log_scroll(DisplayType t, float delta_Y);
 
 	void log_text_query_change(const std::string &text_query);
 
@@ -144,7 +145,8 @@ private:
 
 	FramePointerRange get_som_display();
 
-	FramePointerRange get_video_detail_display(ImageId selected_image);
+	FramePointerRange get_video_detail_display(ImageId selected_image,
+	                                           bool log_it = true);
 
 	FramePointerRange get_topKNN_display(ImageId selected_image,
 	                                     PageId page);

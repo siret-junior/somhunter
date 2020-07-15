@@ -61,13 +61,14 @@ router.get("/", function (req, res, next) {
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, "topn", 0);
+  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.topn, 0);
   frames = displayFrames.frames;
   // -------------------------------
 
-  SessionState.switchScreenTo(sess.state, "topn", frames, 0);
+  SessionState.switchScreenTo(sess.state, global.strs.displayTypes.topn, frames, 0);
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
   viewData.coreCfg = global.coreCfg;
+  viewData.strs = global.strs;
 
   // Resolve and render dedicated template
   res.render(routeSettings.slug, viewData);

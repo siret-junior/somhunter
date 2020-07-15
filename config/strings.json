@@ -1,0 +1,11 @@
+{
+    "displayTypes": {
+        "som": "SOM_display",
+        "topn": "topn_display",
+        "topnContext": "topn_display_with_context",
+        "topknn": "topknn_display",
+        "detail": "video_detail",
+        "replay": "video_replay"
+    }
+
+}

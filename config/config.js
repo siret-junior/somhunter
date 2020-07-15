@@ -24,6 +24,7 @@ const moduleLodaSh = require("lodash");
 
 // Get config file
 const config = require("./config.json");
+const strings = require("./strings.json");
 
 exports.initConfig = function() {
   // Default things are in development
@@ -45,4 +46,5 @@ exports.initConfig = function() {
 
   // Store final config in globals
   global.cfg = finalConfig;
+  global.strs = strings;
 };

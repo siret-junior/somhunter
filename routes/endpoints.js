@@ -29,11 +29,12 @@ exports.getFrameDetailData = function (req, res) {
   const sess = req.session;
 
   const frameId = Number(req.query.frameId);
+  const logIt = req.query.logIt === "true" ? true : false;
 
   let frameData = {};
   // -------------------------------
   // Call the core
-  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, "detail", null, frameId);
+  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.detail, null, frameId, logIt);
   // -------------------------------
 
   res.status(200).jsonp(frameData);
@@ -51,10 +52,10 @@ exports.getSomScreen = function (req, res) {
 
   // -------------------------------
   // Call the core
-  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, "som");
+  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.som);
   // -------------------------------
 
-  SessionState.switchScreenTo(sess.state, "som", frameData.frames, 0);
+  SessionState.switchScreenTo(sess.state, global.strs.displayTypes.som, frameData.frames, 0);
 
   let viewData = {};
   viewData.somhunter = SessionState.getSomhunterUiState(sess.state);
@@ -65,8 +66,8 @@ exports.getSomScreen = function (req, res) {
 exports.getTopScreen = function (req, res) {
   const sess = req.session;
 
-  global.logger.log("info", req.query)
-  let type = 'topn'
+  let type = global.strs.displayTypes.topn;
+
   if (req.query && req.query.type)
     type = req.query.type;
 
@@ -195,3 +196,28 @@ exports.loginToDres = function (req, res) {
   res.status(200).jsonp({ result: result });
 };
 
+exports.logScroll = function (req, res) {
+  const sess = req.session;
+
+  const scrollArea = req.query.scrollArea;
+  const delta = req.query.delta < 0 ? -1.0 : 1.0;
+  const frameId = Number(req.query.frameId);
+
+  // If replay
+  if (frameId){
+    // -------------------------------
+    // Call the core
+    global.core.logVideoReplay(frameId, delta);
+    // -------------------------------
+  } 
+  // Else rest of the displays
+  else {
+    // -------------------------------
+    // Call the core
+    global.core.logScroll(scrollArea, delta);
+    // -------------------------------
+  }
+  
+
+  res.status(200).jsonp({});
+};

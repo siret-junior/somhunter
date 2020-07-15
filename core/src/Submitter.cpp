@@ -856,7 +856,9 @@ Submitter::log_show_detail_display(const DatasetFrames &frames,
 }
 
 void
-Submitter::log_show_video_replay(const DatasetFrames &frames, ImageId frame_ID)
+Submitter::log_show_video_replay(const DatasetFrames &frames,
+                                 ImageId frame_ID,
+                                 float delta)
 {
 	static int64_t last_replay_submit = 0;
 	static ImageId last_frame_ID = IMAGE_ID_ERR_VAL;
@@ -885,7 +887,9 @@ Submitter::log_show_video_replay(const DatasetFrames &frames, ImageId frame_ID)
 
 	alog() << "replay_video\t"
 	       << "frame_ID=" << frame_ID << "\t"
-	       << "video_ID=" << vf.video_ID << std::endl;
+	       << "video_ID=" << vf.video_ID << "\t"
+	       << "dir=" << (delta > 0.0F ? "forward" : "backwards")
+	       << std::endl;
 
 #endif // LOG_LOGS
 }
