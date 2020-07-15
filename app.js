@@ -201,6 +201,7 @@ app.get("/get_top_screen", endpoints.getTopScreen);
 app.get("/get_som_screen", endpoints.getSomScreen);
 
 app.get("/log_scroll", endpoints.logScroll);
+app.get("/log_text_query_change", endpoints.logTextQueryChange);
 
 app.post("/submit_frame", endpoints.submitFrame);
 app.post("/reset_search_session", endpoints.resetSearchSession);

@@ -221,3 +221,16 @@ exports.logScroll = function (req, res) {
 
   res.status(200).jsonp({});
 };
+
+exports.logTextQueryChange = function (req, res) {
+  const sess = req.session;
+
+  const query = req.query.query;
+
+  // -------------------------------
+  // Call the core
+  global.core.logTextQueryChange(query);
+  // -------------------------------
+
+  res.status(200).jsonp({});
+};

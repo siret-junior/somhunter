@@ -745,6 +745,48 @@ function handleVideoReplayAction(frameId, deltaX) {
   }
 }
 
+
+function handleLogTextQueryChange(query) {
+  let url =`/log_text_query_change?query=${query}`;
+
+  // Make the request
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    })
+    .then((data) => {  })
+    .catch((e) => {
+      
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Log query change request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+function handleTextQueryChange() {
+  const now = Date.now();
+  if (lastQueryLog + scrollLogTimeout < now) {
+
+    const val0 = document.getElementById("textQueryInput0").value
+    const val1 = document.getElementById("textQueryInput1").value
+
+    handleLogTextQueryChange(`${val0} << ${val1}`);
+    lastQueryLog = Date.now();
+  }
+}
+
 function getScreenType() {
   return vd.somhunter.screen.type;
 }
@@ -797,6 +839,7 @@ function unsetWorkingState(){
 const scrollLogTimeout = <%- coreCfg.submitter_config.log_action_timeout %>;
 let lastScrollLog = Date.now();
 let lastReplayLog = Date.now();
+let lastQueryLog = Date.now();
 let lastScrollPos = 0;
 
 /*********************************
@@ -959,6 +1002,10 @@ onDocumentReady(function () {
   // Rewrite foundation tabindices
   document.getElementById("openHelpBtn").tabIndex = -1;
   document.getElementById("dataToolsBtn").tabIndex = -1;
+
+
+  document.getElementById("textQueryInput0").oninput = handleTextQueryChange;
+  document.getElementById("textQueryInput1").oninput = handleTextQueryChange;
   
 });
 
