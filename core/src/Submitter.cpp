@@ -712,7 +712,7 @@ Submitter::log_text_query_change(const std::string &text_query)
 #ifdef LOG_LOGS
 
 	alog() << "text_query\t"
-	       << "text_query=" << text_query << std::endl;
+	       << "text_query=\"" << text_query << "\"" << std::endl;
 
 #endif // LOG_LOGS
 
