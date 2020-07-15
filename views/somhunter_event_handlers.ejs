@@ -299,10 +299,10 @@ function showVideoDetail(id, thisFilename) {
 }
 function rescore(targetScreen) {
   if (!shouldRescore) return;
+  shouldRescore = false;
 
   // Communicate with the user
   showGlobalMessage("Working...", "", 5000, "w");
-
   closeAllLists();
 
   // Get current queries
@@ -356,6 +356,8 @@ function rescore(targetScreen) {
         5000,
         "e"
       );
+
+      shouldRescore = true;
     });
 }
 
