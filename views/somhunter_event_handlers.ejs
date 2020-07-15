@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License along with
 SOMHunter. If not, see <https://www.gnu.org/licenses/>.
 -->
 <script>
+
+// Global state
 let vd = {};
 vd.somhunter = <%- JSON.stringify(somhunter) %>;
 vd.strs = <%- JSON.stringify(strs) %>;
@@ -27,6 +29,7 @@ vd.coreCfg = <%- JSON.stringify(coreCfg) %>;
 let pageId = 0;
 let lastPageTime = 0;
 let pageLoadSpan = 1500;
+let shouldRescore = false;
 
 function showNextTopDisplay(id, thisFilename) {
   pageId++;
@@ -295,6 +298,8 @@ function showVideoDetail(id, thisFilename) {
     $('#modalDetail').foundation('open');
 }
 function rescore(targetScreen) {
+  if (!shouldRescore) return;
+
   // Communicate with the user
   showGlobalMessage("Working...", "", 5000, "w");
 
@@ -355,6 +360,9 @@ function rescore(targetScreen) {
 }
 
 function like(el, frameId) {
+
+  // Rescore must act
+  shouldRescore = true;
 
   // Request input data
   const reqData = {
@@ -804,6 +812,10 @@ function handleLogTextQueryChange(query) {
 }
 
 function handleTextQueryChange() {
+
+  // Rescore must act
+  shouldRescore = true;
+
   const now = Date.now();
   if (lastQueryLog + scrollLogTimeout < now) {
 
