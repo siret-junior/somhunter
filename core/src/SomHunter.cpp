@@ -435,8 +435,11 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 		                                config.topn_frames_per_video,
 		                                config.topn_frames_per_shot);
 
-		// Log
-		submitter.log_show_topknn_display(frames, selected_image, ids);
+		// Log only if the first page
+		if (page == 0) {
+			submitter.log_show_topknn_display(
+			  frames, selected_image, ids);
+		}
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
