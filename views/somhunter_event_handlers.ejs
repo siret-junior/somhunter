@@ -294,7 +294,6 @@ function showVideoDetail(id, thisFilename) {
 
     $('#modalDetail').foundation('open');
 }
-
 function rescore(targetScreen) {
   // Communicate with the user
   showGlobalMessage("Working...", "", 5000, "w");
@@ -690,9 +689,30 @@ function globalKeysCanPoll() {
 }
 
 $(document).keyup(function(e) {
+
+  // Priority keys
+
+  // Escape
+  if (e.key === "Escape") { 
+    closeAllLists();
+    document.body.focus();
+  }
+  // Tab
+  else if (e.key === "Tab") { 
+      closeAllLists();
+
+      // Tab only cycles between the 
+      const el1 = document.getElementById("textQueryInput0");
+      const el2 = document.getElementById("textQueryInput1");
+
+      if (document.activeElement != el1 && document.activeElement != el2) el1.focus();
+    }
+
   if (!globalKeysCanPoll()) {
     return;
   }
+
+  // Low prio keys
 
   // Detect escape
   if (e.key === "Escape") { 
@@ -935,6 +955,11 @@ onDocumentReady(function () {
   putDocumentToState(vd);
 
   $(document).bind("mousewheel DOMMouseScroll", frameMouseScrollHandler);
+
+  // Rewrite foundation tabindices
+  document.getElementById("openHelpBtn").tabIndex = -1;
+  document.getElementById("dataToolsBtn").tabIndex = -1;
+  
 });
 
 </script>

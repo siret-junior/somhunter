@@ -29,7 +29,7 @@
 	  
 		"send_logs_to_server_period": 10000,
 		"apply_log_action_timeout_in_core": false,
-		"log_action_timeout": 1000
+		"log_action_timeout": 500
 	},
 
     "max_frame_filename_len": 64,
