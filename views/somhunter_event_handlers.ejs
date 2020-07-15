@@ -696,6 +696,16 @@ $(document).keyup(function(e) {
   if (e.key === "Escape") { 
     closeAllLists();
     document.body.focus();
+  } 
+  // Enter key
+  else if (e.key === "Enter") {
+    
+    if (ignoreNextEnter){
+      ignoreNextEnter = false;
+    } else {
+      rescore("<%- strs.displayTypes.topn %>");
+    }
+
   }
   // Tab
   else if (e.key === "Tab") { 
@@ -717,10 +727,6 @@ $(document).keyup(function(e) {
   // Detect escape
   if (e.key === "Escape") { 
     handleEscapeKey();
-
-  } else if (e.key === "Enter") {
-    rescore("<%- strs.displayTypes.topn %>");
-  
   // T key
   } else if (e.keyCode === 84) {
     showTopDisplay("<%- strs.displayTypes.topn %>");

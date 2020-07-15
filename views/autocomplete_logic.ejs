@@ -20,9 +20,13 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script>
-  function autocomplete(inp, queryIdx) {
-  let currentFocus;
-  let lastTimeoutHandle;
+  /** Flag that is true after selection of item in autocomplete 
+   * using ENTER key to prevent immediate rescore */
+  let ignoreNextEnter = false;
+
+function autocomplete(inp, queryIdx) {
+    let currentFocus;
+    let lastTimeoutHandle;
 
   inp.addEventListener("input", function (e) {
     clearTimeout(lastTimeoutHandle);
@@ -30,7 +34,7 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
   });
 
   inp.addEventListener("keydown", function (e) {
-    let x = document.getElementById(this.id + "autocomplete-list");
+    let x = document.getElementById("autocompleteList");
     
     if (x) {
       x = x.getElementsByTagName("div");
@@ -52,10 +56,14 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
     } else if (e.keyCode == 13) {
       
       e.preventDefault();
+
+      // Select it
       if (currentFocus > -1) {
-        /*and simulate a click on the "active" item:*/
         if (x) x[currentFocus].click();
+        ignoreNextEnter = true;
       }
+
+      currentFocus = -1;
     }
   });
 
