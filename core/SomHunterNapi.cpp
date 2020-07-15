@@ -423,7 +423,7 @@ SomHunterNapi::log_video_replay(const Napi::CallbackInfo &info)
 
 	try {
 		debug("API: CALL \n\t log_video_replay\n\t frame_ID = "
-		      << ffr_ID << std::endl);
+		      << fr_ID << std::endl);
 
 		somhunter->log_video_replay(fr_ID);
 	} catch (const std::exception &e) {

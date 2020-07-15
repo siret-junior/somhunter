@@ -25,6 +25,7 @@
 #include "SOM.h"
 
 #include <random>
+#include <chrono>
 
 #include "config_json.h"
 #include "log.h"
@@ -106,31 +107,42 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 			            0.1f };
 		float radiiB[2] = { negRadius * radiiA[0],
 			            negRadius * radiiA[1] };
+
+		
+		std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
 		som(n,
-		    SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT,
-		    cfg.features_dim,
-		    SOM_ITERS,
-		    points,
-		    koho,
-		    nhbrdist,
-		    alphasA,
-		    radiiA,
-		    alphasB,
-		    radiiB,
-		    scores,
-		    rng);
+			SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT,
+			cfg.features_dim,
+			SOM_ITERS,
+			points,
+			koho,
+			nhbrdist,
+			alphasA,
+			radiiA,
+			alphasB,
+			radiiB,
+			scores,
+			rng);
+		std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+		debug("SOM took " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << " [ms]");
+		
 
 		if (parent->new_data || parent->terminate)
 			continue;
 		std::vector<size_t> mapping(n);
 
+
+		begin = std::chrono::high_resolution_clock::now();
 		mapPointsToKohos(n,
-		                 SOM_DISPLAY_GRID_WIDTH *
-		                   SOM_DISPLAY_GRID_HEIGHT,
-		                 cfg.features_dim,
-		                 points,
-		                 koho,
-		                 mapping);
+							SOM_DISPLAY_GRID_WIDTH *
+							SOM_DISPLAY_GRID_HEIGHT,
+							cfg.features_dim,
+							points,
+							koho,
+							mapping);
+		end = std::chrono::high_resolution_clock::now();
+		debug("Mapping took " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << " [ms]");
+		
 
 		if (parent->new_data || parent->terminate)
 			continue;
@@ -140,6 +152,8 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 		                       SOM_DISPLAY_GRID_HEIGHT);
 		for (ImageId im = 0; im < mapping.size(); ++im)
 			parent->mapping[mapping[im]].push_back(im);
+
+		parent->koho = std::move(koho);
 
 		std::atomic_thread_fence(std::memory_order_release);
 		parent->m_ready = true;

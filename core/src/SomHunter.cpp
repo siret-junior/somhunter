@@ -20,6 +20,7 @@
  */
 
 #include <stdexcept>
+#include <chrono>
 
 #include "SomHunter.h"
 
@@ -317,19 +318,56 @@ SomHunter::get_som_display()
 	std::vector<ImageId> ids;
 	ids.resize(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT);
 
+	// Select weighted example from cluster
 	for (size_t i = 0; i < SOM_DISPLAY_GRID_WIDTH; ++i) {
 		for (size_t j = 0; j < SOM_DISPLAY_GRID_HEIGHT; ++j) {
-			if (asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j)
+			if (!asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j)
 			      .empty()) {
-				ids[i + SOM_DISPLAY_GRID_WIDTH * j] =
-				  IMAGE_ID_ERR_VAL;
-			} else {
 				ImageId id = scores.weighted_example(
 				  asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j));
 				ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
 			}
 		}
 	}
+
+	auto begin = std::chrono::steady_clock::now();
+	// Fix empty cluster
+	std::vector<size_t> stolen_count(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT, 1);
+	for (size_t i = 0; i < SOM_DISPLAY_GRID_WIDTH; ++i) {
+		for (size_t j = 0; j < SOM_DISPLAY_GRID_HEIGHT; ++j) {
+			if (asyncSom.map(i + SOM_DISPLAY_GRID_WIDTH * j)
+			      .empty()) {
+				debug("Fixing cluster "
+				      << i + SOM_DISPLAY_GRID_WIDTH * j);
+
+				// Get SOM node of empty cluster
+				auto k = asyncSom.get_koho(
+				  i + SOM_DISPLAY_GRID_WIDTH * j);
+
+				// Get nearest cluster with enough elements
+				size_t clust =
+				  asyncSom.nearest_cluster_with_atleast(
+				    k, stolen_count);
+
+				stolen_count[clust]++;
+				std::vector<ImageId> ci = asyncSom.map(clust);
+
+				for (ImageId ii : ids) {
+					auto fi =
+					  std::find(ci.begin(), ci.end(), ii);
+					if (fi != ci.end())
+						ci.erase(fi);
+				}
+
+				assert(!ci.empty());
+
+				ImageId id = scores.weighted_example(ci);
+				ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
+			}
+		}
+	}
+	auto end = std::chrono::steady_clock::now();
+	debug("Fixing clusters took " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << " [ms]");
 
 	// Log
 	submitter.log_show_som_display(frames, ids);
