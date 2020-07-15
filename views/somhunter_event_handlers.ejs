@@ -395,6 +395,11 @@ function like(el, frameId) {
 }
 
 function submitImage(frameId) {
+
+  // Ensure
+  if (!showEnsurePopUp(`Do you really want to submit the frame with ID ${frameId}?`))
+    return;
+
   // Request input data
   const reqData = {
     frameId: frameId,

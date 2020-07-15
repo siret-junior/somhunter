@@ -72,6 +72,10 @@ function onDocumentReady(fn) {
   }
 }
 
+function showEnsurePopUp(msg) {
+  return confirm(msg);
+}
+
 function boldString(str, find) {
   const re = new RegExp(find, "gi");
   return str.replace(re, "<strong>" + find + "</strong>");
