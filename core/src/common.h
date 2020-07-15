@@ -62,8 +62,28 @@ enum class DisplayType
 	DTopNContext,
 	DRand,
 	DVideoDetail,
+	DVideoReplay,
 	NumItems
 };
+
+inline DisplayType
+str_to_disp_type(const std::string &type_str)
+{
+	if (type_str == "topn_display")
+		return DisplayType::DTopN;
+	if (type_str == "topn_context_display")
+		return DisplayType::DTopNContext;
+	if (type_str == "SOM_display")
+		return DisplayType::DSom;
+	if (type_str == "topknn_display")
+		return DisplayType::DTopKNN;
+	if (type_str == "video_detail")
+		return DisplayType::DVideoDetail;
+	if (type_str == "video_replay")
+		return DisplayType::DVideoReplay;
+
+	return DisplayType::NumItems;
+}
 
 inline std::string
 disp_type_to_str(DisplayType type)
@@ -75,7 +95,7 @@ disp_type_to_str(DisplayType type)
 			break;
 
 		case DisplayType::DTopNContext:
-			disp_type = "topn_display_with_context";
+			disp_type = "topn_context_display";
 			break;
 
 		case DisplayType::DSom:
@@ -88,6 +108,10 @@ disp_type_to_str(DisplayType type)
 
 		case DisplayType::DVideoDetail:
 			disp_type = "video_detail";
+			break;
+
+		case DisplayType::DVideoReplay:
+			disp_type = "video_replay";
 			break;
 	}
 

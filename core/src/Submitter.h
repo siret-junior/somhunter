@@ -148,7 +148,8 @@ public:
 	                             ImageId frame_ID);
 
 	void log_show_video_replay(const DatasetFrames &frames,
-	                           ImageId frame_ID);
+	                           ImageId frame_ID,
+	                           float delta);
 
 	void log_scroll(const DatasetFrames &frames,
 	                DisplayType from_disp_type,

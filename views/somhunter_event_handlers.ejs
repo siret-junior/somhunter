@@ -22,10 +22,11 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
 <script>
 let vd = {};
 vd.somhunter = <%- JSON.stringify(somhunter) %>;
+vd.strs = <%- JSON.stringify(strs) %>;
+vd.coreCfg = <%- JSON.stringify(coreCfg) %>;
 let pageId = 0;
 let lastPageTime = 0;
 let pageLoadSpan = 1500;
-let ignoreNextLike = false;
 
 function showNextTopDisplay(id, thisFilename) {
   pageId++;
@@ -76,9 +77,13 @@ function showNextTopDisplay(id, thisFilename) {
 
 function showTopDisplay(type, id, thisFilename) {
   pageId = 0;
-  if (type === undefined) type = "topn";
+
+  if (type === undefined) type = "<%- strs.displayTypes.topn %>";
+
   let url = "/get_top_screen?pageId=" + pageId + "&type=" + type;
+
   if (id !== undefined) url += "&frameId=" + id;
+
   // Make the request
   fetch(url, {
     method: "GET",
@@ -221,7 +226,7 @@ function puReplayModelToState(screenData, targetId) {
 function fillInReplayStripe(id) {
   pageId = 0;
   // Make the request
-  fetch("/get_frame_detail_data?frameId=" + id, {
+  fetch("/get_frame_detail_data?frameId=" + id +"&logIt=false", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -238,8 +243,6 @@ function fillInReplayStripe(id) {
       if (data.error) {
         throw Error(data.error.message);
       }
-
-      ignoreNextLike = true;
 
       // Get modal data
       puReplayModelToState(data, id);
@@ -258,7 +261,7 @@ function fillInReplayStripe(id) {
 function showVideoDetail(id, thisFilename) {
   pageId = 0;
   // Make the request
-  fetch("/get_frame_detail_data?frameId=" + id, {
+  fetch("/get_frame_detail_data?frameId=" + id  +"&logIt=true", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -276,7 +279,6 @@ function showVideoDetail(id, thisFilename) {
         throw Error(data.error.message);
       }
 
-      ignoreNextLike = true;
       // Get modal data
       putDetailModelToState(data, id);
     })
@@ -289,8 +291,9 @@ function showVideoDetail(id, thisFilename) {
         "e"
       );
     });
-}
 
+    $('#modalDetail').foundation('open');
+}
 function rescore(targetScreen) {
   // Communicate with the user
   showGlobalMessage("Working...", "", 5000, "w");
@@ -328,7 +331,7 @@ function rescore(targetScreen) {
       clearGlobalMesssage();
 
       // Now request new display
-      if (targetScreen == "topn") {
+      if (targetScreen == "<%- strs.displayTypes.topn %>") {
         showTopDisplay();
       } else {
         showSomDisplay();
@@ -348,10 +351,6 @@ function rescore(targetScreen) {
 }
 
 function like(el, frameId) {
-  if (ignoreNextLike) {
-    ignoreNextLike = false;
-    return;
-  }
 
   // Request input data
   const reqData = {
@@ -474,11 +473,11 @@ function setupPanelButtons(viewData) {
   elBtnTopn.classList.remove("active");
 
   switch (viewData.somhunter.screen.type) {
-    case "som":
+    case "<%- strs.displayTypes.som %>":
       elBtnSom.classList.add("active");
       break;
 
-    case "topn":
+    case "<%- strs.displayTypes.topn %>":
       elBtnTopn.classList.add("active");
       break;
   }
@@ -491,7 +490,7 @@ function setupImageGrid(viewData) {
   elem.classList.remove("topn-grid");
   elem.classList.remove("som-grid");
 
-  if (viewData.somhunter.screen.type == "som") {
+  if (viewData.somhunter.screen.type == "<%- strs.displayTypes.som %>") {
     elem.classList.add("som-grid");
   } else {
     elem.classList.add("topn-grid");
@@ -581,7 +580,7 @@ function getThumbPrototype(likedStr, id, src, vidId) {
   {
     btn1.innerText = "Detail";
     btn1.className = "button frame-in-grid-hover-btn show-detail";
-    btn1.onclick = function() { showVideoDetail(id, src) };
+    btn1.onclick = function(e) { showVideoDetail(id, src); e.stopPropagation(); };
     btn1.title = "Show the detail of this frame."
     btn1.dataset.open = "modalDetail";
   }
@@ -590,7 +589,7 @@ function getThumbPrototype(likedStr, id, src, vidId) {
   {
     btn2.innerText = "KNN";
     btn2.className = "button frame-in-grid-hover-btn show-knn";
-    btn2.onclick = function() { showTopDisplay('topknn', id); event.cancelBubble=true; }
+    btn2.onclick = function() { showTopDisplay("<%- strs.displayTypes.topknn %>", id); event.cancelBubble=true; }
     btn2.title = "Show most similiar frames."
   }
 
@@ -638,8 +637,8 @@ function infiniteScroll() {
   ) {
     lastPageTime = Date.now();
     if (
-      vd.somhunter.screen.type == "topn" ||
-      vd.somhunter.screen.type == "topknn"
+      vd.somhunter.screen.type == "<%- strs.displayTypes.topn %>" ||
+      vd.somhunter.screen.type == "<%- strs.displayTypes.topknn %>"
     ) {
       showNextTopDisplay();
     }
@@ -690,20 +689,41 @@ function globalKeysCanPoll() {
 }
 
 $(document).keyup(function(e) {
+
+  // Priority keys
+
+  // Escape
+  if (e.key === "Escape") { 
+    closeAllLists();
+    document.body.focus();
+  }
+  // Tab
+  else if (e.key === "Tab") { 
+      closeAllLists();
+
+      // Tab only cycles between the 
+      const el1 = document.getElementById("textQueryInput0");
+      const el2 = document.getElementById("textQueryInput1");
+
+      if (document.activeElement != el1 && document.activeElement != el2) el1.focus();
+    }
+
   if (!globalKeysCanPoll()) {
     return;
   }
+
+  // Low prio keys
 
   // Detect escape
   if (e.key === "Escape") { 
     handleEscapeKey();
 
   } else if (e.key === "Enter") {
-    rescore("topn");
+    rescore("<%- strs.displayTypes.topn %>");
   
   // T key
   } else if (e.keyCode === 84) {
-    showTopDisplay("topn");
+    showTopDisplay("<%- strs.displayTypes.topn %>");
 
   // S key
   } else if (e.keyCode === 83) {
@@ -717,15 +737,114 @@ function handleEscapeKey() {
   replayStripe.classList.remove("active");
 }
 
-function handleVideoReplayAction(frameId) {
-  // \todo
+function handleVideoReplayAction(frameId, deltaX) {
+  const now = Date.now();
+  if (lastReplayLog + scrollLogTimeout < now) {
+    handleLogScroll("<%- strs.displayTypes.replay %>", frameId, deltaX);
+    lastReplayLog = Date.now();
+  }
+}
+
+
+function handleLogTextQueryChange(query) {
+  let url =`/log_text_query_change?query=${query}`;
+
+  // Make the request
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    })
+    .then((data) => {  })
+    .catch((e) => {
+      
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Log query change request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+}
+
+function handleTextQueryChange() {
+  const now = Date.now();
+  if (lastQueryLog + scrollLogTimeout < now) {
+
+    const val0 = document.getElementById("textQueryInput0").value
+    const val1 = document.getElementById("textQueryInput1").value
+
+    handleLogTextQueryChange(`${val0} << ${val1}`);
+    lastQueryLog = Date.now();
+  }
+}
+
+function getScreenType() {
+  return vd.somhunter.screen.type;
 }
 
 function getCursorHitElem() {
   const elems = document.querySelectorAll(":hover"); 
-  return elems[elems.length - 1];
+
+  const topElem = elems[elems.length - 1];
+
+  let scrollArea = null;
+  let elem = topElem;
+  while(elem = elem.parentElement) {
+    if (elem.id == "modalDetail")
+    {
+      scrollArea = "<%- strs.displayTypes.detail %>";
+      break;
+    }
+
+    if (elem.id == "frameGridWrapper"){
+      scrollArea = getScreenType();
+    }
+    
+  }
+  
+
+  return {topElem: topElem, scrollArea: scrollArea };
 }
 
+let workingFlag = false;
+
+function setWorkingState(){
+  if (workingFlag) {
+    return  false;
+  }
+  workingFlag = true;
+  return true;
+}
+
+function unsetWorkingState(){
+  const tmp = workingFlag;
+  workingFlag = true;
+  return tmp;
+}
+
+
+
+/*********************************
+ * Scroll handlers' state
+ *********************************/
+const scrollLogTimeout = <%- coreCfg.submitter_config.log_action_timeout %>;
+let lastScrollLog = Date.now();
+let lastReplayLog = Date.now();
+let lastQueryLog = Date.now();
+let lastScrollPos = 0;
+
+/*********************************
+ * Replay handlers' state
+ *********************************/
 const replayStripe = document.getElementById("replayWindow");
 const replayGrid = document.getElementById("replayWindowFrameGrid");
 let prevFrameId = null;
@@ -734,14 +853,8 @@ const scrollSpeed = 100;
 const frameWPerc = 12.3;
 let frameWPix = window.innerWidth * (frameWPerc / 100);
 
-function frameMouseScrollHandler(event) 
-{
-  // If a SHIFT key is down
-  if (event.shiftKey) {
-
-    // Get cursor hit
-    const elem = getCursorHitElem();
-    if (!elem.classList.contains("frame-in-grid")){
+function frameShiftMouseScrollHandler(event, elem) {
+  if (!elem.classList.contains("frame-in-grid")){
       return;
     }
     replayStripe.classList.add("active");
@@ -757,19 +870,19 @@ function frameMouseScrollHandler(event)
     frameWPix = window.innerWidth * (frameWPerc / 100);
     
     const frameId = Number(elem.dataset.frameId);
-
+    let delta = 0;
     // Adjust the offset
     if (
       event.originalEvent.wheelDelta > 0 ||
       event.originalEvent.detail < 0
     ) { 
       // scroll up
-      console.log("playing the video back ..." + frameId);
       replayOffsetY += scrollSpeed;
+      delta = -scrollSpeed;
     } else {
       // scroll down
-      console.log("playing the video forward..." + frameId);
       replayOffsetY -= scrollSpeed;
+      delta = scrollSpeed;
     }
 
     // If frame changed => reset pos
@@ -780,7 +893,7 @@ function frameMouseScrollHandler(event)
       replayGrid.style.marginLeft = `${replayOffsetY}px`;
     }
 
-    handleVideoReplayAction(frameId);
+    handleVideoReplayAction(frameId, delta);
 
     // Position the stripe
     replayStripe.style.left = 0;
@@ -792,9 +905,83 @@ function frameMouseScrollHandler(event)
       replayStripe.style.top = "initial";
       replayStripe.style.bottom = 0;
     }
+}
 
-    
+function frameMouseScrollHandler(event) 
+{
+  // Get cursor hit
+  const {topElem, scrollArea} = getCursorHitElem();
+
+  // If a SHIFT key is down
+  if (event.shiftKey) {
+    frameShiftMouseScrollHandler(event, topElem);    
+    return;
   }
+
+  // If scrolling in area of no interest
+  if (scrollArea === null){
+    return;
+  }
+
+  handleScrollMain(event, scrollArea);
+}
+
+function handleScrollMain(event, scrollArea) {
+   
+  const now = Date.now();
+  if (lastScrollLog + scrollLogTimeout < now) {
+
+    let delta = 0;
+    if (
+      event.originalEvent.wheelDelta > 0 ||
+      event.originalEvent.detail < 0
+    ) { 
+      // scroll up
+      delta = scrollSpeed;
+    } else {
+      // scroll down
+      delta = -scrollSpeed;
+    }
+
+    handleLogScroll(scrollArea, null, delta);
+    lastScrollLog = Date.now();
+  }
+}
+
+function handleLogScroll(scrollArea, frameId = null, delta) {
+  
+  // Ignore SOM for now
+  if (scrollArea == "<%- strs.displayTypes.som %>") {
+    return;
+  }
+
+  let url =
+    `/log_scroll?scrollArea=${scrollArea}&frameId=${frameId}&delta=${delta}`;
+  // Make the request
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+      return res.json();
+    })
+    .then((data) => {  })
+    .catch((e) => {
+      
+      console.log("Error: " + JSON.stringify(e.message));
+      showGlobalMessage(
+        "Log scroll request failed!",
+        JSON.stringify(e.message),
+        5000,
+        "e"
+      );
+    });
+
 }
 
 function putFrameTolikeState(frameId, liked) {
@@ -811,6 +998,15 @@ onDocumentReady(function () {
   putDocumentToState(vd);
 
   $(document).bind("mousewheel DOMMouseScroll", frameMouseScrollHandler);
+
+  // Rewrite foundation tabindices
+  document.getElementById("openHelpBtn").tabIndex = -1;
+  document.getElementById("dataToolsBtn").tabIndex = -1;
+
+
+  document.getElementById("textQueryInput0").oninput = handleTextQueryChange;
+  document.getElementById("textQueryInput1").oninput = handleTextQueryChange;
+  
 });
 
 </script>

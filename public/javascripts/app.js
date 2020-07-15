@@ -20,6 +20,8 @@
  */
 $(document).foundation();
 
+
+let globMsgTimeoutHandle = null;
 function showGlobalMessage(messagePrimary, messageSecondary, time, type = "i") {
   let cls = "";
   if (type == "w") {
@@ -43,12 +45,14 @@ function showGlobalMessage(messagePrimary, messageSecondary, time, type = "i") {
   $primary.html(messagePrimary);
   $secondary.html(messageSecondary);
 
-  setTimeout(() => {
+  globMsgTimeoutHandle = window.setTimeout(() => {
     clearGlobalMesssage();
   }, time);
 }
 
 function clearGlobalMesssage() {
+  window.clearTimeout(globMsgTimeoutHandle);
+
   $mainGlobalMessageCont = $("#mainGlobalMessageCont");
   $primary = $($mainGlobalMessageCont.children(".primary")[0]);
   $secondary = $($mainGlobalMessageCont.children(".secondary")[0]);

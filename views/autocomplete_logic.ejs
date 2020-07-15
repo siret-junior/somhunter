@@ -151,7 +151,7 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
           b.innerHTML +=
             "<input type='hidden' name='wordnetId' value='" + data[i].id + "'>";
 
-          // Execute a function when someone clicks on the item value (DIV element)
+          // On CLICK at some option -> select it
           b.addEventListener("click", function (e) {
             
             for (let i = 0; i < this.childNodes.length; i++) {
@@ -171,6 +171,7 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
 
             // Close the list of autocompleted values,(or any other open lists of autocompleted values)
             closeAllLists();
+            inp.focus();
           });
 
           a.appendChild(b);
@@ -206,21 +207,18 @@ SOMHunter. If not, see <https://www.gnu.org/licenses/>.
     }
   }
 
-  function closeAllLists(elmnt) {
+  
+}
+
+function closeAllLists(elmnt) {
     let x = document.getElementsByClassName("autocomplete-items");
 
     const length = x.length;
     $(".autocomplete-items").remove();
   }
 
-  document.addEventListener("click", function (e) {
-    closeAllLists(e.target);
-  });
-}
-
 // Call autocomplete on desired input field
 autocomplete(document.getElementById("textQueryInput0"), 0);
 autocomplete(document.getElementById("textQueryInput1"), 1);
-
 
 </script>

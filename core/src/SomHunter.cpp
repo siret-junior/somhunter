@@ -28,7 +28,10 @@
 #include "utils.h"
 
 FramePointerRange
-SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page)
+SomHunter::get_display(DisplayType d_type,
+                       ImageId selected_image,
+                       PageId page,
+                       bool log_it)
 {
 	submitter.poll();
 
@@ -46,7 +49,7 @@ SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page)
 			return get_som_display();
 
 		case DisplayType::DVideoDetail:
-			return get_video_detail_display(selected_image);
+			return get_video_detail_display(selected_image, log_it);
 
 		case DisplayType::DTopKNN:
 			return get_topKNN_display(selected_image, page);
@@ -194,15 +197,15 @@ SomHunter::reset_search_session()
 }
 
 void
-SomHunter::log_video_replay(ImageId frame_ID)
+SomHunter::log_video_replay(ImageId frame_ID, float delta_X)
 {
-	submitter.log_show_video_replay(frames, frame_ID);
+	submitter.log_show_video_replay(frames, frame_ID, delta_X);
 }
 
 void
-SomHunter::log_scroll(float dir_Y)
+SomHunter::log_scroll(DisplayType t, float dir_Y)
 {
-	submitter.log_scroll(frames, current_display_type, dir_Y);
+	submitter.log_scroll(frames, t, dir_Y);
 }
 
 void
@@ -273,8 +276,9 @@ SomHunter::get_topn_display(PageId page)
 		                        config.topn_frames_per_video,
 		                        config.topn_frames_per_shot);
 
-		// Log
-		submitter.log_show_topn_display(frames, ids);
+		// Log only if page 0
+		if (page == 0)
+			submitter.log_show_topn_display(frames, ids);
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
@@ -386,7 +390,7 @@ SomHunter::get_som_display()
 }
 
 FramePointerRange
-SomHunter::get_video_detail_display(ImageId selected_image)
+SomHunter::get_video_detail_display(ImageId selected_image, bool log_it)
 {
 	VideoId v_id = frames.get_video_id(selected_image);
 
@@ -399,7 +403,8 @@ SomHunter::get_video_detail_display(ImageId selected_image)
 	FrameRange video_frames = frames.get_all_video_frames(v_id);
 
 	// Log
-	submitter.log_show_detail_display(frames, selected_image);
+	if (log_it)
+		submitter.log_show_detail_display(frames, selected_image);
 
 	// Update context
 	for (auto iter = video_frames.begin(); iter != video_frames.end();

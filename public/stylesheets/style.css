@@ -492,7 +492,7 @@ width: 80vw;
 max-width: 800px;
 display: none;
 top: 140px;
-z-index: 5;
+z-index: 1500;
 text-align: center;
 }
 
@@ -544,7 +544,7 @@ display: block;
   height: 160px;
   /*! align-content: center; */
   /*! justify-content: center; */
-  z-index: 99;
+  z-index: 1099;
   overflow: hidden;
   pointer-events: none;
 }
