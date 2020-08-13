@@ -89,7 +89,7 @@ public:
 	                         config.pre_PCA_features_dim))
 	  , kw_pca_mat(parse_float_matrix(config.kw_PCA_mat_file,
 	                                  config.pre_PCA_features_dim))
-	  , kw_pca_mean_vec(parse_float_vector(config.kw_bias_vec_file,
+	  , kw_pca_mean_vec(parse_float_vector(config.kw_PCA_mean_vec_file,
 	                                       config.pre_PCA_features_dim))
 	{}
 
