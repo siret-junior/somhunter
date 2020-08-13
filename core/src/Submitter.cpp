@@ -278,15 +278,7 @@ getter_thread(const std::string &submit_url,
 		std::ofstream o(path.c_str(), std::ios::app);
 		if (!o) {
 			warn("Could not write a log file!");
-		} else {
-			o << "{"
-			  << "\"query_string\": \"" << query << "\","
-			  << std::endl
-			  << "\"submit_url\": \"" << submit_url << "\""
-			  << std::endl;
-
-			o << "}" << std::endl;
-		}
+		} 
 	}
 
 	if (cfg.extra_verbose_log) {
