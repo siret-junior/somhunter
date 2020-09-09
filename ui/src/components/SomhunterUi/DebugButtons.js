@@ -6,8 +6,6 @@ import * as CS from "../../constants";
 import { showGlobalNotification } from "../../actions";
 
 function DebugButtons(props) {
-  console.log(props.notifications);
-
   return (
     <Container className="overlay debug-buttons">
       <Button

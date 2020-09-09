@@ -5,7 +5,7 @@ import coreApi from "../apis/coreApi";
 
 import * as CS from "../constants";
 
-function loadMainWindowFrames(pageId, type, frameId) {
+function loadMainWindowFrames(type, pageId, frameId) {
   return async (dispatch, getState) => {
     const reqData = {
       pageId: pageId,
@@ -67,8 +67,8 @@ function loadMainWindowFrames(pageId, type, frameId) {
   };
 }
 
-export function showTopNDisplay() {
-  return loadMainWindowFrames(0, CS.DISP_TYPE_TOP_N, 0);
+export function showDisplay(type, pageId, frameId) {
+  return loadMainWindowFrames(type, pageId, frameId);
 }
 
 export function showGlobalNotification(
@@ -77,7 +77,7 @@ export function showGlobalNotification(
   text,
   duration
 ) {
-  console.log("Adding global notification...");
+  console.debug("showGlobalNotification: Adding global notification...");
 
   // We send this function to the thunk MW to dispatch both actions
   return (dispatch, getState) => {
@@ -86,7 +86,9 @@ export function showGlobalNotification(
     // Reset previous cancel timer
     if (currState.notifications !== null) {
       const timeoutHandle = currState.notifications.timeoutHandle;
-      console.log(`CLEARING TIMEOUT ${timeoutHandle}`);
+      console.debug(
+        `showGlobalNotification: Clearing timeout '${timeoutHandle}'`
+      );
       window.clearTimeout(timeoutHandle);
     }
 

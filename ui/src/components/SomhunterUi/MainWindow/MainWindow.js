@@ -6,7 +6,7 @@ import FrameGrid from "./FrameGrid";
 
 function MainWindow(props) {
   return (
-    <Container fluid className="main-window window">
+    <Container fluid className="main-window window p-0">
       <FrameGrid />
     </Container>
   );

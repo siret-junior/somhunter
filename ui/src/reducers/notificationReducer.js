@@ -4,7 +4,7 @@ import * as CS from "../constants";
  * interface notificationState {
  *    type: string;
  *    heading: string;
- *    test: text;
+ *    text: text;
  *    timeoutHandle: number;
  * }
  */

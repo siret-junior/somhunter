@@ -4,12 +4,14 @@ import { connect } from "react-redux";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 
+import * as CS from "../../../constants";
+
 import ControlsPanel from "./ControlsPanel";
 import TextSearchPanel from "./TextSearchPanel";
 import HistoryPanel from "./HistoryPanel";
 import NotificationPanel from "./NotificationPanel";
 
-import { showTopNDisplay } from "../../../actions";
+import { showDisplay } from "../../../actions";
 
 function MainPanel(props) {
   return (
@@ -32,7 +34,9 @@ function MainPanel(props) {
 
       <ControlsPanel>
         <Button>SOM Screen</Button>
-        <Button onClick={props.showTopNDisplay}>Top N</Button>
+        <Button onClick={() => props.showDisplay(CS.DISP_TYPE_TOP_N, 0, 0)}>
+          Top N
+        </Button>
         <Button>Top N Context</Button>
       </ControlsPanel>
 
@@ -54,7 +58,7 @@ const stateToProps = (state) => {
 };
 
 const actionCreators = {
-  showTopNDisplay,
+  showDisplay,
 };
 
 export default connect(stateToProps, actionCreators)(MainPanel);

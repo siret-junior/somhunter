@@ -1,17 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { showGlobalNotification } from "../../actions";
+import { showGlobalNotification, showDisplay } from "../../actions";
 
 import MainPanel from "./MainPanel/MainPanel";
 import MainWindow from "./MainWindow/MainWindow";
 import GlobalNotificationOverlay from "./GlobalNotificationOverlay";
 import DebugButtons from "./DebugButtons";
 
+//console.debug = () => {};
+
 function SomhunterUi(props) {
+  // Initial setup
+  useEffect(() => {
+    console.debug("Running initial load...");
+    props.showDisplay(CS.DISP_TYPE_TOP_N, 0, 0);
+  });
+
   return (
     <Container
       fluid
@@ -40,6 +48,7 @@ const stateToProps = (state) => {
 
 const actionCreators = {
   showGlobalNotification,
+  showDisplay,
 };
 
 export default connect(stateToProps, actionCreators)(SomhunterUi);
