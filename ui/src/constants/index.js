@@ -1,5 +1,16 @@
 /**
- * Action types.
+ * Notification action types.
+ */
+export const SHOW_GLOBAL_NOTIFICATION = "SHOW_GLOBAL_NOTIFICATION";
+export const HIDE_GLOBAL_NOTIFICATION = "HIDE_GLOBAL_NOTIFICATION";
+
+export const GLOB_NOTIF_ERR = "GLOB_NOTIF_ERR";
+export const GLOB_NOTIF_WARN = "GLOB_NOTIF_WARN";
+export const GLOB_NOTIF_INFO = "GLOB_NOTIF_INFO";
+export const GLOB_NOTIF_SUCC = "GLOB_NOTIF_SUCC";
+
+/**
+ * Main window action types.
  */
 export const SHOW_DISPLAY_TOP_N = "SHOW_DISPLAY_TOP_N";
 export const SHOW_DISPLAY_TOP_KNN = "SHOW_DISPLAY_TOP_KNN";

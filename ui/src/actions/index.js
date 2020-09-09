@@ -46,11 +46,18 @@ function loadMainWindowFrames(pageId, type, frameId) {
     try {
       response = await coreApi.post("/get_top_screen", reqData);
     } catch (e) {
-      console.log(e.message);
+      console.log(e);
+      dispatch(
+        showGlobalNotification(
+          CS.GLOB_NOTIF_ERR,
+          "Core request failed!",
+          e.message,
+          5000
+        )
+      );
       return;
     }
 
-    console.log(response);
     // Create the action Object
     const action = {
       type: CS.SHOW_DISPLAY_TOP_N,
@@ -62,6 +69,46 @@ function loadMainWindowFrames(pageId, type, frameId) {
 
 export function showTopNDisplay() {
   return loadMainWindowFrames(0, CS.DISP_TYPE_TOP_N, 0);
+}
+
+export function showGlobalNotification(
+  type = CS.GLOB_NOTIF_INFO,
+  heading,
+  text,
+  duration
+) {
+  console.log("Adding global notification...");
+
+  // We send this function to the thunk MW to dispatch both actions
+  return (dispatch, getState) => {
+    const currState = getState();
+
+    // Reset previous cancel timer
+    if (currState.notifications !== null) {
+      const timeoutHandle = currState.notifications.timeoutHandle;
+      console.log(`CLEARING TIMEOUT ${timeoutHandle}`);
+      window.clearTimeout(timeoutHandle);
+    }
+
+    // Dispatch cancel action
+    const timeoutHandle = setTimeout(() => {
+      dispatch({
+        type: CS.HIDE_GLOBAL_NOTIFICATION,
+        payload: null,
+      });
+    }, duration);
+
+    // Dispatch show action
+    dispatch({
+      type: CS.SHOW_GLOBAL_NOTIFICATION,
+      payload: {
+        type: type,
+        heading: heading,
+        text: text,
+        timeoutHandle: timeoutHandle,
+      },
+    });
+  };
 }
 
 /**
