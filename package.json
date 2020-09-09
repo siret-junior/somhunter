@@ -18,6 +18,7 @@
   "dependencies": {
     "all": "0.0.0",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "debug": "^2.6.9",
     "ejs": "^2.7.4",
     "eslint-config-prettier": "^6.11.0",

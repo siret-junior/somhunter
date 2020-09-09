@@ -28,6 +28,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const fs = require("fs");
+const cors = require("cors");
 
 const { createLogger, format, transports } = require("winston");
 const { combine, timestamp, printf } = format;
@@ -119,27 +120,27 @@ app.use(morgan("dev"));
 /*
  * HTTP authentication
  */
-app.use((req, res, next) => {
-  // Get auth credentials
-  const auth = {
-    login: global.cfg.authName,
-    password: global.cfg.authPassword,
-  };
+// app.use((req, res, next) => {
+//   // Get auth credentials
+//   const auth = {
+//     login: global.cfg.authName,
+//     password: global.cfg.authPassword,
+//   };
 
-  // Parse login and password from headers
-  const b64auth = (req.headers.authorization || "").split(" ")[1] || "";
-  const [login, password] = new Buffer(b64auth, "base64").toString().split(":");
+//   // Parse login and password from headers
+//   const b64auth = (req.headers.authorization || "").split(" ")[1] || "";
+//   const [login, password] = new Buffer(b64auth, "base64").toString().split(":");
 
-  // Verify login and password are set and correct
-  if (login && password && login === auth.login && password === auth.password) {
-    // Access granted
-    return next();
-  }
+//   // Verify login and password are set and correct
+//   if (login && password && login === auth.login && password === auth.password) {
+//     // Access granted
+//     return next();
+//   }
 
-  // Access denied
-  res.set("WWW-Authenticate", "Basic realm='401'");
-  res.status(401).send("Authentication required.");
-});
+//   // Access denied
+//   res.set("WWW-Authenticate", "Basic realm='401'");
+//   res.status(401).send("Authentication required.");
+// });
 
 /*
  * Turn on sessions
@@ -188,6 +189,10 @@ if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.su
   global.coreCfg.submitter_config.server_config.dres.loggedIn = logRes;
 }
 global.logger.log("info", "SOMHunter is ready...");
+
+app.use(cors({
+  credentials: true,
+}));
 
 /*
  * Push all routers into express middleware stack

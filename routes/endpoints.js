@@ -24,6 +24,7 @@ const fs = require("fs");
 const path = require("path");
 
 const SessionState = require("./common/SessionState");
+const stateCheck = require("./common/state_checkers");
 
 exports.getFrameDetailData = function (req, res) {
   const sess = req.session;
@@ -42,6 +43,9 @@ exports.getFrameDetailData = function (req, res) {
 
 exports.getSomScreen = function (req, res) {
   const sess = req.session;
+
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
 
   let frameData = {};
 
@@ -66,6 +70,9 @@ exports.getSomScreen = function (req, res) {
 exports.getTopScreen = function (req, res) {
   const sess = req.session;
 
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  
   let type = global.strs.displayTypes.topn;
 
   if (req.body && req.body.type)

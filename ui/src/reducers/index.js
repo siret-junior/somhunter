@@ -1,23 +1,9 @@
 import { combineReducers } from "redux";
 
-const songsReducer = () => {
-  return [
-    { title: "No Scrubs", duration: "4:05" },
-    { title: "Macarena", duration: "2:30" },
-    { title: "All Star", duration: "3:15" },
-    { title: "I Want it That Way", duration: "1:45" },
-  ];
-};
+// Main window state
+import mainWindowReducer from "./mainWindowReducer";
 
-const selectedSongReducer = (selectedSong = null, action) => {
-  if (action.type === "SONG_SELECTED") {
-    return action.payload;
-  }
-
-  return selectedSong;
-};
-
+// Combine all the reducers
 export default combineReducers({
-  songs: songsReducer,
-  selectedSong: selectedSongReducer,
+  mainWindow: mainWindowReducer,
 });

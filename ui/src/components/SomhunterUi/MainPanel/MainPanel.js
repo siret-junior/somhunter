@@ -9,6 +9,8 @@ import TextSearchPanel from "./TextSearchPanel";
 import HistoryPanel from "./HistoryPanel";
 import NotificationPanel from "./NotificationPanel";
 
+import { showTopNDisplay } from "../../../actions";
+
 function MainPanel(props) {
   return (
     <Container
@@ -30,7 +32,7 @@ function MainPanel(props) {
 
       <ControlsPanel>
         <Button>SOM Screen</Button>
-        <Button>Top N</Button>
+        <Button onClick={props.showTopNDisplay}>Top N</Button>
         <Button>Top N Context</Button>
       </ControlsPanel>
 
@@ -51,4 +53,8 @@ const stateToProps = (state) => {
   return {};
 };
 
-export default connect(stateToProps)(MainPanel);
+const actionCreators = {
+  showTopNDisplay,
+};
+
+export default connect(stateToProps, actionCreators)(MainPanel);

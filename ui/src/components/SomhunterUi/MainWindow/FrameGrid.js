@@ -5,15 +5,20 @@ import { Container, Row, Col } from "react-bootstrap";
 
 import Frame from "./Frame";
 
-function getFrames(props) {
+function getFrames({ mainWindow }) {
+  console.log(mainWindow);
   // \todo PH
-  return Array(6 * 6)
-    .fill(null)
-    .map((_, i) => (
-      <Col key={i} xs={2}>
-        <Frame id={i} />
-      </Col>
-    ));
+  return mainWindow.frames.map((frame) => (
+    <Col
+      className="frame"
+      key={frame.id}
+      data-frame-id={frame.id}
+      xs={2}
+      style={{ backgroundImage: `url("${frame.src}")` }}
+    >
+      <Frame id={frame.id} />
+    </Col>
+  ));
 }
 
 function FrameGrid(props) {
@@ -24,8 +29,8 @@ function FrameGrid(props) {
   );
 }
 
-const stateToProps = (state) => {
-  return {};
+const stateToProps = ({ mainWindow }) => {
+  return { mainWindow };
 };
 
 export default connect(stateToProps)(FrameGrid);
