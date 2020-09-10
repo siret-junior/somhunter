@@ -1,12 +1,17 @@
 import axios from "axios";
 
 import config from "../config/config";
+import { dispNameToAction } from "../constants";
 import coreApi from "../apis/coreApi";
 
 import * as CS from "../constants";
 
 function loadMainWindowFrames(type, pageId, frameId) {
   return async (dispatch, getState) => {
+    const state = getState();
+
+    if (state.mainWindow.activeDisplay == type && pageId == 0) return;
+
     const reqData = {
       pageId: pageId,
       type: type,
@@ -44,6 +49,9 @@ function loadMainWindowFrames(type, pageId, frameId) {
     let response = null;
 
     try {
+      console.debug(
+        "=> loadMainWindowFrames: POST request to '/get_top_screen'"
+      );
       response = await coreApi.post("/get_top_screen", reqData);
     } catch (e) {
       console.log(e);
@@ -58,17 +66,99 @@ function loadMainWindowFrames(type, pageId, frameId) {
       return;
     }
 
+    console.debug("=> loadMainWindowFrames: Got response:", response);
+
     // Create the action Object
     const action = {
-      type: CS.SHOW_DISPLAY_TOP_N,
-      payload: response.data.viewData.somhunter.screen,
+      type: dispNameToAction(type),
+      payload: {
+        frames: response.data.viewData.somhunter.screen.frames,
+        currentPage: pageId,
+      },
+    };
+    dispatch(action);
+  };
+}
+
+function loadSomFrames() {
+  return async (dispatch, getState) => {
+    const state = getState();
+
+    /*response: { 
+        viewData: {
+          somhunter: {
+            frameContext: {
+              frameId: number;
+              frames: number[]
+            },
+            screen: {
+              type: string;
+              frames: [{
+                id: number;
+                liked: bool;
+                sId: number;
+                vId: number;
+                src: string;
+
+              }]
+            },
+            textQueries: {
+              q0: {value: string;},
+              q1: {value: string;}
+            }
+          }
+        }
+        error: {
+          message: string;
+        }
+      } */
+    let response = null;
+
+    try {
+      console.debug("=> loadSomFrames: GET request to '/get_som_screen'");
+      response = await coreApi.get("/get_som_screen");
+    } catch (e) {
+      console.log(e);
+      dispatch(
+        showGlobalNotification(
+          CS.GLOB_NOTIF_ERR,
+          "Core request failed!",
+          e.message,
+          5000
+        )
+      );
+      return;
+    }
+
+    console.debug("=> loadSomFrames: Got response:", response);
+
+    // Create the action Object
+    const action = {
+      type: dispNameToAction(CS.DISP_TYPE_SOM),
+      payload: {
+        frames: response.data.viewData.somhunter.screen.frames,
+        currentPage: 0,
+      },
     };
     dispatch(action);
   };
 }
 
 export function showDisplay(type, pageId, frameId) {
-  return loadMainWindowFrames(type, pageId, frameId);
+  console.debug(
+    `=> showDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
+  );
+
+  switch (type) {
+    case CS.DISP_TYPE_SOM:
+      return loadSomFrames();
+
+    case CS.DISP_TYPE_TOP_KNN:
+    case CS.DISP_TYPE_TOP_N:
+    case CS.DISP_TYPE_TOP_N_CONTEXT:
+      return loadMainWindowFrames(type, pageId, frameId);
+  }
+  return null;
 }
 
 export function showGlobalNotification(
@@ -77,7 +167,7 @@ export function showGlobalNotification(
   text,
   duration
 ) {
-  console.debug("showGlobalNotification: Adding global notification...");
+  console.debug("=> showGlobalNotification: Adding global notification...");
 
   // We send this function to the thunk MW to dispatch both actions
   return (dispatch, getState) => {
@@ -87,7 +177,7 @@ export function showGlobalNotification(
     if (currState.notifications !== null) {
       const timeoutHandle = currState.notifications.timeoutHandle;
       console.debug(
-        `showGlobalNotification: Clearing timeout '${timeoutHandle}'`
+        `=> showGlobalNotification: Clearing timeout '${timeoutHandle}'`
       );
       window.clearTimeout(timeoutHandle);
     }

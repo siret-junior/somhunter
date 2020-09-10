@@ -1,3 +1,37 @@
+export const actionToDispName = (showType) => {
+  switch (showType) {
+    case SHOW_DISPLAY_TOP_N:
+      return DISP_TYPE_TOP_N;
+    case SHOW_DISPLAY_TOP_KNN:
+      return DISP_TYPE_TOP_KNN;
+    case SHOW_DISPLAY_TOP_N_CONTEXT:
+      return DISP_TYPE_TOP_N_CONTEXT;
+    case SHOW_DISPLAY_SOM:
+      return DISP_TYPE_SOM;
+    case SHOW_DISPLAY_DETAIL:
+      return DISP_TYPE_DETAIL;
+    case SHOW_DISPLAY_REPLAY:
+      return DISP_TYPE_REPLAY;
+  }
+};
+
+export const dispNameToAction = (showType) => {
+  switch (showType) {
+    case DISP_TYPE_TOP_N:
+      return SHOW_DISPLAY_TOP_N;
+    case DISP_TYPE_TOP_KNN:
+      return SHOW_DISPLAY_TOP_KNN;
+    case DISP_TYPE_TOP_N_CONTEXT:
+      return SHOW_DISPLAY_TOP_N_CONTEXT;
+    case DISP_TYPE_SOM:
+      return SHOW_DISPLAY_SOM;
+    case DISP_TYPE_DETAIL:
+      return SHOW_DISPLAY_DETAIL;
+    case DISP_TYPE_REPLAY:
+      return SHOW_DISPLAY_REPLAY;
+  }
+};
+
 /**
  * Notification action types.
  */
@@ -17,6 +51,7 @@ export const SHOW_DISPLAY_TOP_KNN = "SHOW_DISPLAY_TOP_KNN";
 export const SHOW_DISPLAY_TOP_N_CONTEXT = "SHOW_DISPLAY_TOP_N_CONTEXT";
 export const SHOW_DISPLAY_DETAIL = "SHOW_DISPLAY_DETAIL";
 export const SHOW_DISPLAY_REPLAY = "SHOW_DISPLAY_REPLAY";
+export const SHOW_DISPLAY_SOM = "SHOW_DISPLAY_SOM";
 
 /**
  * Main screen types.
@@ -26,3 +61,7 @@ export const DISP_TYPE_NULL = "DISP_TYPE_NULL";
 export const DISP_TYPE_TOP_N = "topn_display";
 export const DISP_TYPE_TOP_N_CONTEXT = "topn_context_display";
 export const DISP_TYPE_TOP_KNN = "topknn_display";
+export const DISP_TYPE_SOM = "SOM_display";
+
+export const DISP_TYPE_DETAIL = "video_detail";
+export const DISP_TYPE_REPLAY = "video_replay";

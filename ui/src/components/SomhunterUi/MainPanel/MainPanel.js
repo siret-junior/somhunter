@@ -33,11 +33,17 @@ function MainPanel(props) {
       </ControlsPanel>
 
       <ControlsPanel>
-        <Button>SOM Screen</Button>
+        <Button onClick={() => props.showDisplay(CS.DISP_TYPE_SOM, 0, 0)}>
+          SOM Screen
+        </Button>
         <Button onClick={() => props.showDisplay(CS.DISP_TYPE_TOP_N, 0, 0)}>
           Top N
         </Button>
-        <Button>Top N Context</Button>
+        <Button
+          onClick={() => props.showDisplay(CS.DISP_TYPE_TOP_N_CONTEXT, 0, 0)}
+        >
+          Top N Context
+        </Button>
       </ControlsPanel>
 
       <HistoryPanel />

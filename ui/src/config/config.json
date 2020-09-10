@@ -1,5 +1,9 @@
 {
   "backendUrl": "http://localhost:8888",
   "coreUsername": "som",
-  "corePassword": "hunter"
+  "corePassword": "hunter",
+  "frameGrid": {
+    "infiniteScrollThreshold": 1000,
+    "infiniteScrollTimeout": 1000
+  }
 }

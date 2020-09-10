@@ -16,7 +16,7 @@ import DebugButtons from "./DebugButtons";
 function SomhunterUi(props) {
   // Initial setup
   useEffect(() => {
-    console.debug("Running initial load...");
+    console.debug("<SomhunterUi>: Running initial load...");
     props.showDisplay(CS.DISP_TYPE_TOP_N, 0, 0);
   });
 
