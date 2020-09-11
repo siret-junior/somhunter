@@ -26,7 +26,6 @@ class Autocomplete extends Component {
     // Bind this to the methods
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.onClickHandler = this.onClickHandler.bind(this);
-    this.onSubmitHandler = this.onSubmitHandler.bind(this);
     this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
     this.getAutocompleteSuggestions = this.getAutocompleteSuggestions.bind(
       this
@@ -86,6 +85,8 @@ class Autocomplete extends Component {
       userInput,
       currentWord: currentWord,
     });
+
+    this.props.setIsAcOpen(true);
   }
 
   onClickHandler(e) {
@@ -95,10 +96,8 @@ class Autocomplete extends Component {
       showSuggestions: false,
       userInput: e.currentTarget.innerText,
     });
-  }
 
-  onSubmitHandler(e) {
-    e.preventDefault();
+    this.props.setIsAcOpen(false);
   }
 
   onKeyDownHandler(e) {
@@ -107,6 +106,17 @@ class Autocomplete extends Component {
 
     // Key: "ENTER"
     if (e.keyCode === 13) {
+
+      if (filteredSuggestions.length <= activeSuggestion)
+        return;
+
+      if (!this.state.showSuggestions){
+        console.warn("=> onKeyDownHandler: Trigger RESCORE with the ENTER key!");
+        this.props.triggerRescore();
+        return;
+      }
+
+      console.warn(`=> onKeyDownHandler: Selecting suggestion ${activeSuggestion}`);
       const inputPrefix = userInput.split(" ").slice(0, -1).join(" ");
 
       this.setState({
@@ -115,6 +125,8 @@ class Autocomplete extends Component {
         userInput: `${inputPrefix} ${filteredSuggestions[activeSuggestion].wordString} `,
         currentWord: "",
       });
+
+      this.props.setIsAcOpen(false);
     }
     // Key: "ARROW UP"
     else if (e.keyCode === 38) {
@@ -139,7 +151,6 @@ class Autocomplete extends Component {
       onChangeHandler,
       onClickHandler,
       onKeyDownHandler,
-      onSubmitHandler,
       state: {
         activeSuggestion,
         filteredSuggestions,
@@ -193,11 +204,11 @@ class Autocomplete extends Component {
       <Fragment>
         <div className="text-search-input" id="textQuery0">
           <Form.Control
+            ref={this.props.inputRef}
             type="text"
             onChange={onChangeHandler}
             onKeyDown={onKeyDownHandler}
             value={userInput}
-            onSubmit={onSubmitHandler}
           />
           {suggestionsListComponent}
         </div>
