@@ -5,7 +5,7 @@ import { Container, Row, Col } from "react-bootstrap";
 
 function HistoryPanel(props) {
   return (
-    <Container fluid className="history panel p-0">
+    <Container fluid className="history panel">
       <Row>
         <Col xs={12}>History panel...</Col>
       </Row>

@@ -15,11 +15,7 @@ import { showDisplay } from "../../../actions";
 
 function MainPanel(props) {
   return (
-    <Container
-      fluid
-      className="panel main p-0"
-      style={{ backgroundColor: "cyan" }}
-    >
+    <Container fluid className="panel main p-0">
       <ControlsPanel>
         <Button>Help</Button>
         <Button>New search</Button>

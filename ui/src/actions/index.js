@@ -58,7 +58,7 @@ function loadMainWindowFrames(type, pageId, frameId) {
       dispatch(
         showGlobalNotification(
           CS.GLOB_NOTIF_ERR,
-          "Core request failed!",
+          "Core request to '/get_top_screen' failed!",
           e.message,
           5000
         )
@@ -122,7 +122,7 @@ function loadSomFrames() {
       dispatch(
         showGlobalNotification(
           CS.GLOB_NOTIF_ERR,
-          "Core request failed!",
+          "Core request to '/get_som_screen' failed!",
           e.message,
           5000
         )

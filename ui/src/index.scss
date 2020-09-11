@@ -1,5 +1,35 @@
 @import "~bootstrap/scss/bootstrap";
 
+$theme-colors: (
+  "primary": #bf1736,
+  "secondary": #0d1440,
+  "third": #0e2773,
+  "fourth": #1438a6,
+  "fifth": #1455d9,
+  "white": #fff,
+  "black": #222,
+);
+
+
+.btn {
+  margin: 0 0.2em 0 0;
+  &.btn-primary {
+    background-color: map-get($theme-colors, "fifth");
+    border: 0px;
+    transition: 0.1s ease-in-out;
+
+    &:hover,
+    &:focus {
+      background-color: map-get($theme-colors, "fourth");
+    }
+  }
+}
+
+.somhunter-ui {
+  max-height: 100vh;
+  overflow: hidden;
+}
+
 .overlay {
   position: absolute;
   z-index: 100;
@@ -24,7 +54,6 @@
   }
 }
 
-
 .frame {
   position: relative;
   cursor: pointer;
@@ -32,11 +61,10 @@
   * {
     position: absolute;
     z-index: 1;
-
   }
 
   &:after {
-    content: '';
+    content: "";
     display: block;
     position: relative;
     padding-top: 56.5%;
@@ -71,4 +99,89 @@
   }
 }
 
+.global-notification-overlay {
+  left: 50%;
+  top: 10%;
+  transform: translate(-50%, 0);
+}
 
+.panel {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+
+  &.controls-panel {
+
+  }
+
+  &.notification-panel {
+
+  }
+
+  .panel-title {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    text-align: center;
+  }
+}
+
+.panel.main {
+  height: 100%;
+  background-color: map-get($theme-colors, "secondary");
+
+  * {
+    color: map-get($theme-colors, "white");
+  }
+}
+
+.text-search-form {
+  .indented {
+    padding-left: 1rem;
+  }
+}
+
+.text-search-input {
+  position: relative;
+
+  input {
+    color: map-get($theme-colors, "black") !important;
+    background: map-get($theme-colors, "white");
+  }
+  .suggestions {
+    margin: 0;
+    padding: 0rem;
+    list-style: none;
+    position: absolute;
+    z-index: 2;
+    background: rgba(theme-color-level($color-name: "primary", $level: -5), 0.9);
+    width: 120%;
+
+    li {
+      padding: 0.3rem 1rem 0.3rem 1rem;
+
+      &.active {
+        background: theme-color-level($color-name: "primary", $level: 0);
+      }
+
+      .keyword {
+        font-size: 1.6em;
+        margin: 0.1em 0 0.1em 0;
+        padding: 0;
+      }
+    }
+
+    .description {
+      font-size: 0.8em;
+      margin: 0;
+      padding: 0;
+    }
+
+    .example-images {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      img {
+        max-width: 20%;
+      }
+    }
+  }
+}

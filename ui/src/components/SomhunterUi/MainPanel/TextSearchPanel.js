@@ -2,24 +2,24 @@ import React from "react";
 import { connect } from "react-redux";
 
 import { Container, Row, Col, Form } from "react-bootstrap";
+import Autocomplete from "../Autocomplete";
 
 function TextSearchPanel(props) {
   return (
-    <Container fluid className="text-search panel p-0">
+    <Container fluid className="text-search panel">
       <Row>
         <Col xs={12}>
-          <Form>
+          <h1 className="panel-title"> Text query</h1>
+          <Form
+            className="panel-content text-search-form"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <Form.Group>
-              <Form.Control
-                name="textSearchQuery0"
-                key="textSearchQuery0"
-                type="text"
-              />
-              <Form.Control
-                name="textSearchQuery1"
-                key="textSearchQuery1"
-                type="text"
-              />
+              <Autocomplete />
+              <span className="query-joiner"> ... and then ...</span>
+              <div className="indented">
+                <Autocomplete />
+              </div>
             </Form.Group>
           </Form>
         </Col>

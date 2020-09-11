@@ -2,6 +2,9 @@
   "backendUrl": "http://localhost:8888",
   "coreUsername": "som",
   "corePassword": "hunter",
+  "textSearchPanel": {
+    "autocompleteDelay": 500
+  },
   "frameGrid": {
     "infiniteScrollThreshold": 1000,
     "infiniteScrollTimeout": 1000

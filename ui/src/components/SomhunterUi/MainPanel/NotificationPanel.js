@@ -5,7 +5,7 @@ import { Container, Row, Col } from "react-bootstrap";
 
 function NotificationPanel(props) {
   return (
-    <Container fluid className="controls notification p-0">
+    <Container fluid className="controls notification">
       <Row>
         <Col xs={12}>NotificationPanel...</Col>
       </Row>

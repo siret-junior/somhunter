@@ -21,11 +21,7 @@ function SomhunterUi(props) {
   });
 
   return (
-    <Container
-      fluid
-      className="section somhunter-ui p-0"
-      style={{ backgroundColor: "#aaa" }}
-    >
+    <Container fluid className="section somhunter-ui p-0">
       <GlobalNotificationOverlay />
 
       <DebugButtons />
