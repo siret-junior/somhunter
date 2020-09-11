@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { showGlobalNotification, showDisplay } from "../../actions";
+import { showDisplay } from "../../actions/mainWindowCreator";
+import { showGlobalNotification } from "../../actions/notificationCreator";
 
 import MainPanel from "./MainPanel/MainPanel";
 import MainWindow from "./MainWindow/MainWindow";

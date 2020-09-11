@@ -6,7 +6,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import config from "../../../config/config";
 import Frame from "./Frame";
 
-import { showDisplay } from "../../../actions";
+import { showDisplay } from "../../../actions/mainWindowCreator";
 import * as CS from "../../../constants";
 
 function getFrames({ mainWindow }) {

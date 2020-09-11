@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { showGlobalNotification } from "../../actions";
+import { showGlobalNotification } from "../../actions/notificationCreator";
 
 function DebugButtons(props) {
   return (

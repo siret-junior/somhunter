@@ -7,7 +7,7 @@ import config from "../../config/config";
 import * as CS from "../../constants";
 
 import coreApi from "../../apis/coreApi";
-import { showGlobalNotification } from "../../actions";
+import { showGlobalNotification } from "../../actions/notificationCreator";
 
 class Autocomplete extends Component {
   constructor(props) {

@@ -11,7 +11,7 @@ import TextSearchPanel from "./TextSearchPanel";
 import HistoryPanel from "./HistoryPanel";
 import NotificationPanel from "./NotificationPanel";
 
-import { showDisplay } from "../../../actions";
+import { showDisplay } from "../../../actions/mainWindowCreator";
 
 function MainPanel(props) {
   return (

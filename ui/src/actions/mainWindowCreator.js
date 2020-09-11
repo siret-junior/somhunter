@@ -1,11 +1,41 @@
 import axios from "axios";
 
 import config from "../config/config";
+import * as CS from "../constants";
 import { dispNameToAction } from "../constants";
 import coreApi from "../apis/coreApi";
+import { showGlobalNotification } from "./notificationCreator";
 
-import * as CS from "../constants";
+/* 
+Core API docs:
+interface Response = { 
+    viewData: {
+      somhunter: {
+        frameContext: {
+          frameId: number;
+          frames: number[]
+        },
+        screen: {
+          type: string;
+          frames: [{
+            id: number;
+            liked: bool;
+            sId: number;
+            vId: number;
+            src: string;
 
+          }]
+        },
+        textQueries: {
+          q0: { value: string; },
+          q1: { value: string; }
+        }
+      }
+    },
+    error: {
+      message: string;
+    }
+  } */
 function loadMainWindowFrames(type, pageId, frameId) {
   return async (dispatch, getState) => {
     const state = getState();
@@ -18,36 +48,7 @@ function loadMainWindowFrames(type, pageId, frameId) {
       frameId: frameId,
     };
 
-    /*response: { 
-        viewData: {
-          somhunter: {
-            frameContext: {
-              frameId: number;
-              frames: number[]
-            },
-            screen: {
-              type: string;
-              frames: [{
-                id: number;
-                liked: bool;
-                sId: number;
-                vId: number;
-                src: string;
-
-              }]
-            },
-            textQueries: {
-              q0: {value: string;},
-              q1: {value: string;}
-            }
-          }
-        }
-        error: {
-          message: string;
-        }
-      } */
     let response = null;
-
     try {
       console.debug(
         "=> loadMainWindowFrames: POST request to '/get_top_screen'"
@@ -160,67 +161,3 @@ export function showDisplay(type, pageId, frameId) {
   }
   return null;
 }
-
-export function showGlobalNotification(
-  type = CS.GLOB_NOTIF_INFO,
-  heading,
-  text,
-  duration
-) {
-  console.debug("=> showGlobalNotification: Adding global notification...");
-
-  // We send this function to the thunk MW to dispatch both actions
-  return (dispatch, getState) => {
-    const currState = getState();
-
-    // Reset previous cancel timer
-    if (currState.notifications !== null) {
-      const timeoutHandle = currState.notifications.timeoutHandle;
-      console.debug(
-        `=> showGlobalNotification: Clearing timeout '${timeoutHandle}'`
-      );
-      window.clearTimeout(timeoutHandle);
-    }
-
-    // Dispatch cancel action
-    const timeoutHandle = setTimeout(() => {
-      dispatch({
-        type: CS.HIDE_GLOBAL_NOTIFICATION,
-        payload: null,
-      });
-    }, duration);
-
-    // Dispatch show action
-    dispatch({
-      type: CS.SHOW_GLOBAL_NOTIFICATION,
-      payload: {
-        type: type,
-        heading: heading,
-        text: text,
-        timeoutHandle: timeoutHandle,
-      },
-    });
-  };
-}
-
-/**
- * Example fetch action creator that uses redux-thunk middleware.
- */
-export function fetchPosts() {
-  // Return function to be invoded my the thunk MW
-  return async function (dispatch) {
-    const response = await coreApi.get("/posts");
-    dispatch({ type: "FETCH_POSTS", payload: response.data });
-  };
-}
-
-/**
- * Example fetch action creator that uses redux-thunk middleware.
- *
- * Arrow function (closure) variant.
- */
-export const fetchUser = (id) => async (dispatch) => {
-  const response = await coreApi.get(`/users/${id}`);
-
-  dispatch({ type: "FETCH_USER", payload: response.data });
-};
