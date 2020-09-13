@@ -7,6 +7,7 @@ import * as CS from "../../../constants";
 import coreApi from "../../../apis/coreApi";
 
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
+import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
 
 function onLikeHandler(e, onLikeHandler) {
   const frameId = Number(e.target.dataset.frameId);
@@ -68,7 +69,7 @@ function Frame(props) {
       xs={2}
       style={{ backgroundImage: `url("${props.frame.src}")` }}
     >
-      <span className="video-id-label top left">{props.id}</span>
+      <span className="video-id-label top left">{props.frame.id}</span>
       <Button
         onClick={(e) => {
           onSubmitHandler(this.props);
@@ -90,7 +91,14 @@ function Frame(props) {
       >
         KNN
       </Button>
-      <Button className="bottom right blue" variant="primary">
+      <Button
+        onClick={(e) => {
+          props.createShowDetailWindow(props.frame.id);
+          e.stopPropagation();
+        }}
+        className="bottom right blue"
+        variant="primary"
+      >
         Detail
       </Button>
     </Col>
@@ -103,6 +111,7 @@ const stateToProps = (state) => {
 
 const actionCreators = {
   createShowDisplay,
+  createShowDetailWindow,
 };
 
 export default connect(stateToProps, actionCreators)(Frame);

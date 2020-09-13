@@ -60,11 +60,6 @@ function mainWindowReducer(
         currentPage: action.payload.currentPage,
         frames: [...action.payload.frames],
       };
-
-    // \todo
-    case CS.SHOW_DISPLAY_DETAIL:
-    case CS.SHOW_DISPLAY_REPLAY:
-      return state;
   }
   return state;
 }

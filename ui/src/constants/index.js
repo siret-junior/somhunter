@@ -8,9 +8,9 @@ export const actionToDispName = (showType) => {
       return DISP_TYPE_TOP_N_CONTEXT;
     case SHOW_DISPLAY_SOM:
       return DISP_TYPE_SOM;
-    case SHOW_DISPLAY_DETAIL:
+    case SHOW_DETAIL_WINDOW:
       return DISP_TYPE_DETAIL;
-    case SHOW_DISPLAY_REPLAY:
+    case SHOW_REPLAY_WINDOW:
       return DISP_TYPE_REPLAY;
   }
 };
@@ -26,9 +26,9 @@ export const dispNameToAction = (showType) => {
     case DISP_TYPE_SOM:
       return SHOW_DISPLAY_SOM;
     case DISP_TYPE_DETAIL:
-      return SHOW_DISPLAY_DETAIL;
+      return SHOW_DETAIL_WINDOW;
     case DISP_TYPE_REPLAY:
-      return SHOW_DISPLAY_REPLAY;
+      return SHOW_REPLAY_WINDOW;
   }
 };
 
@@ -49,8 +49,6 @@ export const GLOB_NOTIF_SUCC = "GLOB_NOTIF_SUCC";
 export const SHOW_DISPLAY_TOP_N = "SHOW_DISPLAY_TOP_N";
 export const SHOW_DISPLAY_TOP_KNN = "SHOW_DISPLAY_TOP_KNN";
 export const SHOW_DISPLAY_TOP_N_CONTEXT = "SHOW_DISPLAY_TOP_N_CONTEXT";
-export const SHOW_DISPLAY_DETAIL = "SHOW_DISPLAY_DETAIL";
-export const SHOW_DISPLAY_REPLAY = "SHOW_DISPLAY_REPLAY";
 export const SHOW_DISPLAY_SOM = "SHOW_DISPLAY_SOM";
 
 /**
@@ -62,6 +60,16 @@ export const DISP_TYPE_TOP_N = "topn_display";
 export const DISP_TYPE_TOP_N_CONTEXT = "topn_context_display";
 export const DISP_TYPE_TOP_KNN = "topknn_display";
 export const DISP_TYPE_SOM = "SOM_display";
+
+/**
+ * Off-canvas windows action types.
+ */
+export const SHOW_DETAIL_WINDOW = "SHOW_DETAIL_WINDOW";
+export const HIDE_DETAIL_WINDOW = "HIDE_DETAIL_WINDOW";
+
+export const SHOW_REPLAY_WINDOW = "SHOW_REPLAY_WINDOW";
+export const HIDE_REPLAY_WINDOW = "HIDE_REPLAY_WINDOW";
+export const SCROLL_REPLAY_WINDOW = "SCROLL_REPLAY_WINDOW";
 
 export const DISP_TYPE_DETAIL = "video_detail";
 export const DISP_TYPE_REPLAY = "video_replay";

@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { connect } from "react-redux";
 
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -8,8 +7,6 @@ import * as CS from "../../../constants";
 import { isOk } from "../../../utils/utils";
 
 import coreApi from "../../../apis/coreApi";
-import { createShowGlobalNotification } from "../../../actions/notificationCreator";
-import { createShowDisplay } from "../../../actions/mainWindowCreator";
 
 import Frame from "./Frame";
 
@@ -92,8 +89,17 @@ function FrameGrid(props) {
   const [prevFetch, setPrevFetch] = useState(new Date().getTime() - 100000);
   const grid = useRef();
 
-  const rowClass =
+  let rowClass =
     props.mainWindow.activeDisplay === CS.DISP_TYPE_SOM ? "som" : "";
+
+  let _onScrollFn = (e) => {
+    handleOnScroll(e, props, prevFetch, setPrevFetch);
+  };
+
+  if (typeof props.mainWindow.activeDisplay === "undefined") {
+    rowClass = "detail";
+    _onScrollFn = null;
+  }
 
   return (
     <Container fluid className="p-0">
@@ -101,9 +107,7 @@ function FrameGrid(props) {
         ref={grid}
         className={`frame-grid ${rowClass}`}
         noGutters
-        onScroll={(e) => {
-          handleOnScroll(e, props, prevFetch, setPrevFetch);
-        }}
+        onScroll={_onScrollFn}
       >
         {getFrames(props, grid)}
       </Row>
@@ -111,13 +115,4 @@ function FrameGrid(props) {
   );
 }
 
-const stateToProps = ({ mainWindow }) => {
-  return { mainWindow };
-};
-
-const actionCreators = {
-  createShowDisplay,
-  createShowGlobalNotification,
-};
-
-export default connect(stateToProps, actionCreators)(FrameGrid);
+export default FrameGrid;

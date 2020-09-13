@@ -53,12 +53,19 @@ $theme-colors: (
     flex: 0 0 12.5%;
     max-width: 12.5%;
   }
+  &.detail{
+    height: auto;
+  }
+  &.replay {
+    height: 20vh;
+  }
 }
 
 .frame {
   position: relative;
   cursor: pointer;
   background-size: cover;
+  height: min-content;
 
   * {
     position: absolute;

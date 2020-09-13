@@ -1,21 +1,27 @@
 import React from "react";
-import { connect } from "react-redux";
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Modal, Button, Container } from "react-bootstrap";
 
 function DetailWindow(props) {
   return (
-    <section
-      className="section somhunter-ui"
-      style={{ backgroundColor: "magenta" }}
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      className="detail-window off-canvas-window window"
     >
-      <h3>DetailWindow</h3>
-    </section>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Modal heading
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{props.children}</Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 
-const stateToProps = (state) => {
-  return {};
-};
-
-export default connect(stateToProps)(DetailWindow);
+export default DetailWindow;
