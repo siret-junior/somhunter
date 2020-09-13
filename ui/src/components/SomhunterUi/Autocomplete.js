@@ -7,7 +7,7 @@ import config from "../../config/config";
 import * as CS from "../../constants";
 
 import coreApi from "../../apis/coreApi";
-import { showGlobalNotification } from "../../actions/notificationCreator";
+import { createShowGlobalNotification } from "../../actions/notificationCreator";
 
 class Autocomplete extends Component {
   constructor(props) {
@@ -48,7 +48,7 @@ class Autocomplete extends Component {
       });
     } catch (e) {
       console.log(e);
-      this.props.showGlobalNotification(
+      this.props.createShowGlobalNotification(
         CS.GLOB_NOTIF_ERR,
         "Core request to '/get_autocomplete_results' failed!",
         e.message,
@@ -222,7 +222,7 @@ const stateToProps = (state) => {
 };
 
 const actionCreators = {
-  showGlobalNotification,
+  createShowGlobalNotification,
 };
 
 export default connect(stateToProps, actionCreators)(Autocomplete);

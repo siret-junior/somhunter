@@ -57,6 +57,7 @@ $theme-colors: (
 .frame {
   position: relative;
   cursor: pointer;
+  background-size: cover;
 
   * {
     position: absolute;

@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { showDisplay } from "../../actions/mainWindowCreator";
-import { showGlobalNotification } from "../../actions/notificationCreator";
+import { createShowDisplay } from "../../actions/mainWindowCreator";
+import { createShowGlobalNotification } from "../../actions/notificationCreator";
 
 import MainPanel from "./MainPanel/MainPanel";
 import MainWindow from "./MainWindow/MainWindow";
@@ -18,7 +18,7 @@ function SomhunterUi(props) {
   // Initial setup
   useEffect(() => {
     console.debug("<SomhunterUi>: Running initial load...");
-    props.showDisplay(CS.DISP_TYPE_TOP_N, 0, 0);
+    props.createShowDisplay(CS.DISP_TYPE_TOP_N, 0, 0);
   });
 
   return (
@@ -44,8 +44,8 @@ const stateToProps = (state) => {
 };
 
 const actionCreators = {
-  showGlobalNotification,
-  showDisplay,
+  createShowGlobalNotification,
+  createShowDisplay,
 };
 
 export default connect(stateToProps, actionCreators)(SomhunterUi);

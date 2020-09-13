@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { showGlobalNotification } from "../../actions/notificationCreator";
+import { createShowGlobalNotification } from "../../actions/notificationCreator";
 
 function DebugButtons(props) {
   return (
@@ -11,7 +11,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.showGlobalNotification(
+          props.createShowGlobalNotification(
             CS.GLOB_NOTIF_ERR,
             "It's an error",
             "yeah yeah",
@@ -25,7 +25,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.showGlobalNotification(
+          props.createShowGlobalNotification(
             CS.GLOB_NOTIF_WARN,
             "It's an 222 error",
             "yeah yeah 222",
@@ -39,7 +39,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.showGlobalNotification(
+          props.createShowGlobalNotification(
             CS.GLOB_NOTIF_INFO,
             "It's an 222 error",
             "yeah yeah 222",
@@ -53,7 +53,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.showGlobalNotification(
+          props.createShowGlobalNotification(
             CS.GLOB_NOTIF_SUCC,
             "It's an 222 error",
             "yeah yeah 222",
@@ -72,7 +72,7 @@ const stateToProps = ({ notifications }) => {
 };
 
 const actionCreators = {
-  showGlobalNotification,
+  createShowGlobalNotification,
 };
 
 export default connect(stateToProps, actionCreators)(DebugButtons);

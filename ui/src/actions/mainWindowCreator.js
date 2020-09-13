@@ -1,10 +1,14 @@
 import axios from "axios";
 
+import * as utils from "../utils/utils";
 import config from "../config/config";
 import * as CS from "../constants";
 import { dispNameToAction } from "../constants";
 import coreApi from "../apis/coreApi";
-import { showGlobalNotification } from "./notificationCreator";
+import {
+  createShowGlobalNotification,
+  createHideGlobalNotification,
+} from "./notificationCreator";
 
 /* 
 Core API docs:
@@ -40,7 +44,7 @@ function loadMainWindowFrames(type, pageId, frameId) {
   return async (dispatch, getState) => {
     const state = getState();
 
-    if (state.mainWindow.activeDisplay == type && pageId == 0) return;
+    //if (state.mainWindow.activeDisplay == type && pageId == 0) return;
 
     const reqData = {
       pageId: pageId,
@@ -57,7 +61,7 @@ function loadMainWindowFrames(type, pageId, frameId) {
     } catch (e) {
       console.log(e);
       dispatch(
-        showGlobalNotification(
+        createShowGlobalNotification(
           CS.GLOB_NOTIF_ERR,
           "Core request to '/get_top_screen' failed!",
           e.message,
@@ -85,53 +89,43 @@ function loadSomFrames() {
   return async (dispatch, getState) => {
     const state = getState();
 
-    /*response: { 
-        viewData: {
-          somhunter: {
-            frameContext: {
-              frameId: number;
-              frames: number[]
-            },
-            screen: {
-              type: string;
-              frames: [{
-                id: number;
-                liked: bool;
-                sId: number;
-                vId: number;
-                src: string;
-
-              }]
-            },
-            textQueries: {
-              q0: {value: string;},
-              q1: {value: string;}
-            }
-          }
-        }
-        error: {
-          message: string;
-        }
-      } */
     let response = null;
 
-    try {
-      console.debug("=> loadSomFrames: GET request to '/get_som_screen'");
-      response = await coreApi.get("/get_som_screen");
-    } catch (e) {
-      console.log(e);
-      dispatch(
-        showGlobalNotification(
-          CS.GLOB_NOTIF_ERR,
-          "Core request to '/get_som_screen' failed!",
-          e.message,
-          5000
-        )
-      );
-      return;
-    }
+    dispatch(
+      createShowGlobalNotification(
+        CS.GLOB_NOTIF_WARN,
+        "SOM working...",
+        "",
+        500
+      )
+    );
 
-    console.debug("=> loadSomFrames: Got response:", response);
+    do {
+      try {
+        console.debug("=> loadSomFrames: GET request to '/get_som_screen'");
+        response = await coreApi.get("/get_som_screen");
+
+        console.warn("=> loadSomFrames: Got response:", response);
+      } catch (e) {
+        console.log(e);
+        dispatch(
+          createShowGlobalNotification(
+            CS.GLOB_NOTIF_ERR,
+            "Core request to '/get_som_screen' failed!",
+            e.message,
+            5000
+          )
+        );
+        return;
+      }
+
+      // 105 means that SOM not ready
+      if (response.status === 222) {
+        await utils.delay(500);
+      }
+    } while (response.status === 222);
+
+    dispatch(createHideGlobalNotification());
 
     // Create the action Object
     const action = {
@@ -142,12 +136,13 @@ function loadSomFrames() {
       },
     };
     dispatch(action);
+    return;
   };
 }
 
-export function showDisplay(type, pageId, frameId) {
+export function createShowDisplay(type, pageId, frameId) {
   console.debug(
-    `=> showDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
+    `=> createShowDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
   );
 
   switch (type) {

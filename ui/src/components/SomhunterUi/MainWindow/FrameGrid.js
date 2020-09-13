@@ -6,7 +6,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import config from "../../../config/config";
 import Frame from "./Frame";
 
-import { showDisplay } from "../../../actions/mainWindowCreator";
+import { createShowDisplay } from "../../../actions/mainWindowCreator";
 import * as CS from "../../../constants";
 
 function getFrames({ mainWindow }) {
@@ -29,7 +29,7 @@ function handleOnScroll(e, props, prevFetch, setPrevFetch) {
 
       if (diff < config.frameGrid.infiniteScrollThreshold) {
         console.debug(`handleOnScroll: DIFF = ${diff} => Loading next page`);
-        props.showDisplay(CS.DISP_TYPE_TOP_N, mainWindow.currentPage + 1, 0);
+        props.createShowDisplay(CS.DISP_TYPE_TOP_N, mainWindow.currentPage + 1, 0);
       }
     }
   }
@@ -61,7 +61,7 @@ const stateToProps = ({ mainWindow }) => {
 };
 
 const actionCreators = {
-  showDisplay,
+  createShowDisplay,
 };
 
 export default connect(stateToProps, actionCreators)(FrameGrid);
