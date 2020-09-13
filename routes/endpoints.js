@@ -50,7 +50,7 @@ exports.getSomScreen = function (req, res) {
   let frameData = {};
 
   if (!global.core.isSomReady()) {
-    res.status(200).jsonp({ viewData: null, error: { code: 1, message: "SOM not yet ready." } });
+    res.status(222).jsonp({ viewData: null, error: { code: 1, message: "SOM not yet ready." } });
     return;
   }
 
@@ -104,6 +104,10 @@ exports.getTopScreen = function (req, res) {
 exports.rescore = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
+
   const body = req.body;
   const q0 = body.q0;
   const q1 = body.q1;
@@ -143,6 +147,10 @@ exports.submitFrame = function (req, res) {
 exports.getAutocompleteResults = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
+
   const prefix = req.query.queryValue;
 
   // -------------------------------
@@ -161,6 +169,10 @@ exports.getAutocompleteResults = function (req, res) {
 exports.resetSearchSession = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
+
   // -------------------------------
   // Call the core
   global.core.resetAll();
@@ -177,6 +189,10 @@ exports.resetSearchSession = function (req, res) {
 exports.likeFrame = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
+
   const frameId = req.body.frameId;
   const likes = [frameId];
 
@@ -191,6 +207,10 @@ exports.likeFrame = function (req, res) {
 exports.loginToDres = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  
   // -------------------------------
   // Call the core
   const result = global.core.loginToDres();
@@ -205,6 +225,10 @@ exports.loginToDres = function (req, res) {
 
 exports.logScroll = function (req, res) {
   const sess = req.session;
+
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
 
   const scrollArea = req.query.scrollArea;
   const delta = req.query.delta < 0 ? -1.0 : 1.0;
@@ -231,6 +255,10 @@ exports.logScroll = function (req, res) {
 
 exports.logTextQueryChange = function (req, res) {
   const sess = req.session;
+
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld)
 
   const query = req.query.query;
 

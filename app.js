@@ -190,9 +190,16 @@ if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.su
 }
 global.logger.log("info", "SOMHunter is ready...");
 
-app.use(cors({
+const corsOptions = {
+  //To allow requests from client
+  origin: [
+    "http://localhost:3000",
+    "http://127.0.0.1",
+  ],
   credentials: true,
-}));
+  exposedHeaders: ["set-cookie"],
+};
+app.use(cors(corsOptions));
 
 /*
  * Push all routers into express middleware stack
