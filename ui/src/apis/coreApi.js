@@ -4,5 +4,5 @@ import config from "../config/config";
 
 export default axios.create({
   baseURL: config.backendUrl,
-  withCredentials: true
+  withCredentials: true,
 });

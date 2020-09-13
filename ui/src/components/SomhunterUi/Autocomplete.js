@@ -106,17 +106,19 @@ class Autocomplete extends Component {
 
     // Key: "ENTER"
     if (e.keyCode === 13) {
+      if (filteredSuggestions.length <= activeSuggestion) return;
 
-      if (filteredSuggestions.length <= activeSuggestion)
-        return;
-
-      if (!this.state.showSuggestions){
-        console.warn("=> onKeyDownHandler: Trigger RESCORE with the ENTER key!");
+      if (!this.state.showSuggestions) {
+        console.warn(
+          "=> onKeyDownHandler: Trigger RESCORE with the ENTER key!"
+        );
         this.props.triggerRescore();
         return;
       }
 
-      console.warn(`=> onKeyDownHandler: Selecting suggestion ${activeSuggestion}`);
+      console.warn(
+        `=> onKeyDownHandler: Selecting suggestion ${activeSuggestion}`
+      );
       const inputPrefix = userInput.split(" ").slice(0, -1).join(" ");
 
       this.setState({

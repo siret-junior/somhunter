@@ -8,6 +8,7 @@ $theme-colors: (
   "fifth": #1455d9,
   "white": #fff,
   "black": #222,
+  "success": #4BB543
 );
 
 
@@ -62,6 +63,16 @@ $theme-colors: (
   * {
     position: absolute;
     z-index: 1;
+  }
+
+  &.liked {
+    &:before {
+      content: '';
+      position: absolute;
+      width: 20%;
+      height: 20%;
+      background: map-get($theme-colors, "success");
+    }
   }
 
   &:after {

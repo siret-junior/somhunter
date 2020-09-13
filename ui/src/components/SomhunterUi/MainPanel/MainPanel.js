@@ -45,11 +45,11 @@ function onTriggerResetHandler(
   isAcOpen,
   refQuery0,
   refQuery1
-) {  
+) {
   console.debug("=> onTriggerResetHandler: Reseting the search with params:");
-  
+
   dispatch(createResetSearch(destDisplay));
-  
+
   refQuery0.current.value = "";
   refQuery1.current.value = "";
 }

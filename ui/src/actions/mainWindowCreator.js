@@ -119,7 +119,7 @@ function loadSomFrames() {
         return;
       }
 
-      // 105 means that SOM not ready
+      // 222 means that SOM not ready
       if (response.status === 222) {
         await utils.delay(500);
       }

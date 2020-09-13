@@ -6,7 +6,6 @@ import coreApi from "../apis/coreApi";
 
 import * as CS from "../constants";
 
-
 export function createHideGlobalNotification() {
   console.debug("=> hideGlobalNotification: Hiding global notification...");
 
@@ -22,7 +21,9 @@ export function createShowGlobalNotification(
   text,
   duration
 ) {
-  console.debug("=> createShowGlobalNotification: Adding global notification...");
+  console.debug(
+    "=> createShowGlobalNotification: Adding global notification..."
+  );
 
   // We send this function to the thunk MW to dispatch both actions
   return (dispatch, getState) => {
