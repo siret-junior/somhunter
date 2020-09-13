@@ -16,7 +16,10 @@ import DetailWindow from "./DetailWindow";
 function MainWindow(props, parProps) {
   return (
     <Container fluid className="main-window window p-0">
-      <FrameGrid mainWindow={props.mainWindow} />
+      <FrameGrid
+        createShowDisplay={props.createShowDisplay}
+        mainWindow={props.mainWindow}
+      />
 
       <DetailWindow
         show={props.detailWindow.show}
