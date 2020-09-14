@@ -6,6 +6,7 @@ import { isErrDef } from "../../../utils/utils";
 import * as CS from "../../../constants";
 import coreApi from "../../../apis/coreApi";
 
+import { createShowGlobalNotification } from "../../../actions/notificationCreator";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
 import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
 
@@ -17,7 +18,7 @@ function onLikeHandler(e, onLikeHandler) {
 }
 
 async function onSubmitHandler(props) {
-  const frameId = props.id;
+  const frameId = props.frame.id;
 
   // Create ensure popup
   const res = confirm(`Really submit the frame with ID '${frameId}'`);
@@ -46,6 +47,14 @@ async function onSubmitHandler(props) {
     );
     return;
   }
+
+  // Create success notification
+  props.createShowGlobalNotification(
+    CS.GLOB_NOTIF_SUCC,
+    `A frame with the ID '${frameId} was submitted.`,
+    "",
+    5000
+  );
 }
 
 function Frame(props) {
@@ -68,7 +77,7 @@ function Frame(props) {
       <span className="video-id-label top left">{props.frame.id}</span>
       <Button
         onClick={(e) => {
-          onSubmitHandler(this.props);
+          onSubmitHandler(props);
           e.stopPropagation();
           return;
         }}
@@ -108,6 +117,7 @@ const stateToProps = (state) => {
 const actionCreators = {
   createShowDisplay,
   createShowDetailWindow,
+  createShowGlobalNotification,
 };
 
 export default connect(stateToProps, actionCreators)(Frame);
