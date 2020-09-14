@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Container, Button, Row, Col } from "react-bootstrap";
 
-import { isOk } from "../../../utils/utils";
+import { isErrDef } from "../../../utils/utils";
 import * as CS from "../../../constants";
 import coreApi from "../../../apis/coreApi";
 
@@ -36,19 +36,12 @@ async function onSubmitHandler(props) {
     response = await coreApi.post("/submit_frame", {
       frameId: frameId,
     });
-
-    // Check the response code
-    if (!isOk(response.status)) {
-      throw Error(
-        `=> onLikeHandler: POST request to '/submit_frame' succeeded, but returned unexpected code ${response.status}!`
-      );
-    }
   } catch (e) {
-    console.log(e);
+    const msg = isErrDef(e) ? e.response.data.error.message : e.message;
     props.createShowGlobalNotification(
       CS.GLOB_NOTIF_ERR,
       "Core request to '/submit_frame' failed!",
-      e.message,
+      msg,
       5000
     );
     return;
@@ -59,6 +52,9 @@ function Frame(props) {
   let classNameStr = "frame p-0";
   if (props.frame.liked) {
     classNameStr += " liked";
+  }
+  if (props.isPivot) {
+    classNameStr += " pivot";
   }
 
   return (

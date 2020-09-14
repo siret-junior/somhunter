@@ -1,6 +1,10 @@
 export const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-/** Checks it HTTP response code is OK. */
-export function isOk(code) {
-  return Math.floor(code / 100) === 2;
+/** Checks if a custom response error defined. */
+export function isErrDef(e) {
+  if (typeof e.response !== "undefined")
+    if (typeof e.response.data !== "undefined")
+      if (typeof e.response.data.error !== "undefined") return true;
+
+  return false;
 }

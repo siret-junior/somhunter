@@ -31,11 +31,15 @@ exports.getFrameDetailData = function (req, res) {
 
   const frameId = Number(req.query.frameId);
   const logIt = req.query.logIt === "true" ? true : false;
+  
+  if (!frameId){
+    res.status(400).jsonp({ error: { message: "Invalid `frameId` argument." }});
+    return;
+  }
 
-  let frameData = {};
   // -------------------------------
   // Call the core
-  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.detail, null, frameId, logIt);
+  const frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.detail, null, frameId, logIt);
   // -------------------------------
 
   res.status(200).jsonp(frameData);
@@ -44,19 +48,18 @@ exports.getFrameDetailData = function (req, res) {
 exports.getSomScreen = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
   stateCheck.checkGlobalSessionState(req, viewDataOld)
 
-  let frameData = {};
-
   if (!global.core.isSomReady()) {
-    res.status(222).jsonp({ viewData: null, error: { code: 1, message: "SOM not yet ready." } });
+    res.status(222).jsonp({ viewData: null, error: { message: "SOM not yet ready." } });
     return;
   }
 
   // -------------------------------
   // Call the core
-  frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.som);
+  const frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.som);
   // -------------------------------
 
   SessionState.switchScreenTo(sess.state, global.strs.displayTypes.som, frameData.frames, 0);
@@ -70,6 +73,7 @@ exports.getSomScreen = function (req, res) {
 exports.getTopScreen = function (req, res) {
   const sess = req.session;
 
+  // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
   stateCheck.checkGlobalSessionState(req, viewDataOld)
   

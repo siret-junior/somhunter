@@ -6,7 +6,7 @@ import coreApi from "../apis/coreApi";
 
 import * as CS from "../constants";
 
-import { isOk } from "../utils/utils";
+import { isErrDef } from "../utils/utils";
 import { createShowGlobalNotification } from "./notificationCreator";
 
 export function createHideDetailWindow() {
@@ -19,7 +19,7 @@ export function createHideDetailWindow() {
 }
 
 export function createShowDetailWindow(frameId) {
-  return async (dispatch, getState) => {
+  return async (dispatch, _) => {
     console.debug(
       `=> createShowDetailWindow: Showing the detail for frame '${frameId}' ...`
     );
@@ -31,26 +31,18 @@ export function createShowDetailWindow(frameId) {
 
     let response = null;
     try {
-      console.debug(
+      console.info(
         "=> createShowDetailWindow: GET request to '/get_frame_detail_data'"
       );
-
-      response = await coreApi.get("/get_frame_detail_data", params);
-
-      // Check the response code
-      if (!isOk(response.status)) {
-        throw Error(
-          `=> createShowDetailWindow: POST request to '/get_frame_detail_data' 
-          succeeded, but returned unexpected code ${response.status}!`
-        );
-      }
+      response = await coreApi.get("/get_frame_detail_data", { params });
     } catch (e) {
-      console.log(e);
+      const msg = isErrDef(e) ? e.response.data.error.message : e.message;
+
       dispatch(
         createShowGlobalNotification(
           CS.GLOB_NOTIF_ERR,
           "Core request to '/get_frame_detail_data' failed!",
-          e.message,
+          msg,
           5000
         )
       );

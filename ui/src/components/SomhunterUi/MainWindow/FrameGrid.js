@@ -4,7 +4,7 @@ import { Container, Row, Col } from "react-bootstrap";
 
 import config from "../../../config/config";
 import * as CS from "../../../constants";
-import { isOk } from "../../../utils/utils";
+import { isErrDef } from "../../../utils/utils";
 
 import coreApi from "../../../apis/coreApi";
 
@@ -18,19 +18,13 @@ async function onLikeHandler(props, gridElRef, frameId) {
     response = await coreApi.post("/like_frame", {
       frameId: frameId,
     });
-
-    // Check the response code
-    if (!isOk(response.status)) {
-      throw Error(
-        `=> onLikeHandler: POST request to '/like_frame' succeeded, but returned unexpected code ${response.status}!`
-      );
-    }
   } catch (e) {
-    console.log(e);
+    const msg = isErrDef(e) ? e.response.data.error.message : e.message;
+
     props.createShowGlobalNotification(
       CS.GLOB_NOTIF_ERR,
       "Core request to '/like_frame' failed!",
-      e.message,
+      msg,
       5000
     );
     return;
@@ -54,6 +48,7 @@ async function onLikeHandler(props, gridElRef, frameId) {
 function getFrames(props, gridEl) {
   return props.mainWindow.frames.map((frame, i) => (
     <Frame
+      isPivot={frame.id === props.mainWindow.targetFrameId}
       onLikeHandler={(frameId) => onLikeHandler(props, gridEl, frameId)}
       key={frame.id + i * Math.pow(2, 32)}
       frame={frame}
@@ -87,8 +82,6 @@ function handleOnScroll(e, props, prevFetch, setPrevFetch) {
 
 function FrameGrid(props) {
   const [prevFetch, setPrevFetch] = useState(new Date().getTime() - 100000);
-  const grid = useRef();
-
   let rowClass =
     props.mainWindow.activeDisplay === CS.DISP_TYPE_SOM ? "som" : "";
 
@@ -104,12 +97,12 @@ function FrameGrid(props) {
   return (
     <Container fluid className="p-0">
       <Row
-        ref={grid}
+        ref={props.gridRef}
         className={`frame-grid ${rowClass}`}
         noGutters
         onScroll={_onScrollFn}
       >
-        {getFrames(props, grid)}
+        {getFrames(props, props.gridRef)}
       </Row>
     </Container>
   );
