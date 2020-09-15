@@ -94,12 +94,18 @@ function FrameGrid(props) {
     _onScrollFn = null;
   }
 
+  let styles = {};
+  if (typeof props.leftOffset !== "undefined") {
+    styles = { ...styles, left: `${props.leftOffset}px` };
+  }
+
   return (
     <Container fluid className="p-0">
       <Row
         ref={props.gridRef}
         className={`frame-grid ${rowClass}`}
         noGutters
+        style={styles}
         onScroll={_onScrollFn}
       >
         {getFrames(props, props.gridRef)}
