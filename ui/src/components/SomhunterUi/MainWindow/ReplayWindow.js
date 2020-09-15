@@ -1,21 +1,29 @@
 import React from "react";
-import { connect } from "react-redux";
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Modal, Button, Container } from "react-bootstrap";
 
 function ReplayWindow(props) {
   return (
-    <section
-      className="section somhunter-ui"
-      style={{ backgroundColor: "magenta" }}
+    <Modal
+      {...props}
+      backdrop={false}
+      enforceFocus={false}
+      keyboard={false}
+      autoFocus={false}
+      animation={false}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      className="replay-window off-canvas-window window"
     >
-      <h3>ReplayWindow</h3>
-    </section>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Video replay
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{props.children}</Modal.Body>
+    </Modal>
   );
 }
 
-const stateToProps = (state) => {
-  return {};
-};
-
-export default connect(stateToProps)(ReplayWindow);
+export default ReplayWindow;

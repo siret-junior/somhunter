@@ -275,3 +275,18 @@ $theme-colors: (
   }
   
 }
+
+.replay-window {
+  position: absolute;
+  width: 100vw;
+  height: auto;
+  .modal-dialog {
+    width: 100%;
+    height: 200px;
+    max-width: 100%;
+
+    .modal-header {
+      display: none;
+    }
+  }
+}

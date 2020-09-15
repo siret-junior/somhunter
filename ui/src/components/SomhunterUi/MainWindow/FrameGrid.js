@@ -48,7 +48,7 @@ async function onLikeHandler(props, gridElRef, frameId) {
 function getFrames(props, gridEl) {
   return props.mainWindow.frames.map((frame, i) => (
     <Frame
-      isPivot={frame.id === props.mainWindow.targetFrameId}
+      isPivot={frame.id === props.mainWindow.pivotFrameId}
       onLikeHandler={(frameId) => onLikeHandler(props, gridEl, frameId)}
       key={frame.id + i * Math.pow(2, 32)}
       frame={frame}

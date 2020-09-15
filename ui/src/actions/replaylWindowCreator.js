@@ -9,35 +9,47 @@ import * as CS from "../constants";
 import { isErrDef } from "../utils/utils";
 import { createShowGlobalNotification } from "./notificationCreator";
 
-export function createHideDetailWindow() {
-  console.debug("=> createHideDetailWindow: Hiding global notification...");
+export function createHideReplayWindow() {
+  console.debug("=> createHideReplayWindow: Hiding replay window...");
 
   return {
-    type: CS.HIDE_DETAIL_WINDOW,
+    type: CS.HIDE_REPLAY_WINDOW,
     payload: null,
   };
 }
 
-export function createShowDetailWindow(frameId) {
+export function createScrollReplayWindow(deltaX) {
+  console.debug(
+    `=> createScrollReplayWindow: Scrolling replay window by '${deltaX}'...`
+  );
+
+  return {
+    type: CS.SCROLL_REPLAY_WINDOW,
+    payload: {
+      deltaX: deltaX,
+    },
+  };
+}
+
+export function createShowReplayWindow(frameId) {
   return async (dispatch, _) => {
     console.debug(
-      `=> createShowDetailWindow: Showing the detail for frame '${frameId}' ...`
+      `=> createShowReplayWindow: Showing the detail for frame '${frameId}' ...`
     );
 
     const params = {
       frameId: frameId,
-      logIt: true,
+      logIt: false, // This is just exploitation of the detail fetch, don't log it!
     };
 
     let response = null;
     try {
       console.info(
-        "=> createShowDetailWindow: GET request to '/get_frame_detail_data'"
+        "=> createShowReplayWindow: GET request to '/get_frame_detail_data'"
       );
       response = await coreApi.get("/get_frame_detail_data", { params });
     } catch (e) {
       const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-
       dispatch(
         createShowGlobalNotification(
           CS.GLOB_NOTIF_ERR,
@@ -54,16 +66,15 @@ export function createShowDetailWindow(frameId) {
 
     // Create the action
     const action = {
-      type: CS.SHOW_DETAIL_WINDOW,
+      type: CS.SHOW_REPLAY_WINDOW,
       payload: {
         pivotFrameId: frameId,
-        videoId: null, // \todo Not send from the core
         frames: response.data.frames,
       },
     };
 
     dispatch(action);
 
-    console.debug("=> createShowDetailWindow: Got response:", response);
+    console.debug("=> createShowReplayWindow: Got response:", response);
   };
 }

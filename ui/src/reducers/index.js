@@ -19,3 +19,55 @@ export default combineReducers({
   detailWindow: detailWindowReducer,
   replayWindow: replayWindowReducer,
 });
+
+/********************
+ * TYPES:
+ ********************
+
+interface state {
+  mainWindow: mainWindowState;
+  notifications: notificationState;
+  detailWindow: detailWindowState;
+  replayWindow: mainWindowState;
+}
+
+interface mainWindowState {
+  activeDisplay: string;
+  frames: {
+    id: number;
+    videoId: number;
+    src: string;
+  }[];
+}
+
+interface notificationState {
+  type: string;
+  heading: string;
+  text: string;
+  timeoutHandle: number;
+}
+
+interface detailWindowState {
+  show: boolean;
+  pivotFrameId: number;
+  videoId: number;
+  frames: {
+    liked: boolean;
+    vId: number;
+    sId: number;
+    src: string;
+  };
+}
+
+interface replayWindowState {
+  show: boolean;
+  pivotFrameId: number;
+  deltaX: number;
+  frames: {
+    liked: boolean;
+    vId: number;
+    sId: number;
+    src: string;
+  }[];
+}
+*/

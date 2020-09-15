@@ -8,10 +8,12 @@ import {
   createShowDetailWindow,
 } from "../../../actions/detailWindowCreator";
 import { createShowGlobalNotification } from "../../../actions/notificationCreator";
+import { createHideReplayWindow } from "../../../actions/replaylWindowCreator";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
 
 import FrameGrid from "./FrameGrid";
 import DetailWindow from "./DetailWindow";
+import ReplayWindow from "./ReplayWindow";
 
 function scrollToPivot(gridElRef, pivotFrameId) {
   console.debug(
@@ -36,7 +38,7 @@ function scrollToPivot(gridElRef, pivotFrameId) {
   });
 }
 
-function MainWindow(props, parProps) {
+function MainWindow(props) {
   // Pointer to the detail frame grid
   const detailGridElRef = useRef();
 
@@ -54,12 +56,20 @@ function MainWindow(props, parProps) {
       <DetailWindow
         show={props.detailWindow.show}
         onShow={() =>
-          scrollToPivot(detailGridElRef, props.detailWindow.targetFrameId)
+          scrollToPivot(detailGridElRef, props.detailWindow.pivotFrameId)
         }
         onHide={() => props.createHideDetailWindow()}
       >
         <FrameGrid gridRef={detailGridElRef} mainWindow={props.detailWindow} />
       </DetailWindow>
+
+      <ReplayWindow
+        show={props.replayWindow.show}
+        onShow={() => console.info("Opening the replay...")}
+        onHide={() => props.createHideReplayWindow()}
+      >
+        <FrameGrid gridRef={detailGridElRef} mainWindow={props.replayWindow} />
+      </ReplayWindow>
     </Container>
   );
 }
@@ -67,7 +77,7 @@ function MainWindow(props, parProps) {
 const stateToProps = (state) => {
   return {
     detailWindow: state.detailWindow,
-    replayWindow: state.replaylWindow,
+    replayWindow: state.replayWindow,
     mainWindow: state.mainWindow,
   };
 };
@@ -77,6 +87,7 @@ const actionCreators = {
   createShowDetailWindow,
   createShowDisplay,
   createShowGlobalNotification,
+  createHideReplayWindow,
 };
 
 export default connect(stateToProps, actionCreators)(MainWindow);

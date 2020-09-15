@@ -4,7 +4,7 @@ import * as CS from "../constants";
  * interface detailWindowState {
  *    detailWindow: {
  *      show: bool;
- *      targetFrameId: number;
+ *      pivotFrameId: number;
  *      videoId: number;
  *      frames: {
  *        liked: bool;
@@ -17,7 +17,7 @@ import * as CS from "../constants";
 
 const defaultState = {
   show: false,
-  targetFrameId: null,
+  pivotFrameId: null,
   videoId: null,
   frames: [],
 };
@@ -27,7 +27,7 @@ function detailWindowReducer(state = defaultState, action) {
     case CS.SHOW_DETAIL_WINDOW:
       return {
         show: true,
-        targetFrameId: action.payload.targetFrameId,
+        pivotFrameId: action.payload.pivotFrameId,
         videoId: action.payload.videoId,
         frames: action.payload.frames,
       };

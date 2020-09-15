@@ -1,30 +1,40 @@
 import * as CS from "../constants";
 
 /*
- * interface replayWindowReducer {
- *    detailWindow: {
+ * interface replayWindowState {
  *      show: bool;
- *      targetFrameId: number;
- *      videoId: number;
+ *      pivotFrameId: number;
+ *      deltaX: number;
  *      frames: {
  *        liked: bool;
  *        vId: number;
  *        sId: number;
  *        src: string;
- *      }
- *    };
+ *      }[]
+ *  };
  */
-function replayWindowReducer(state = null, action) {
+const defaultState = {
+  show: false,
+  pivotFrameId: null,
+  videoId: null,
+  frames: [],
+};
+
+function replayWindowReducer(state = defaultState, action) {
   switch (action.type) {
-    case CS.SHOW_DETAIL_WINDOW:
+    case CS.SHOW_REPLAY_WINDOW:
       return {
         show: true,
-        targetFrameId: action.payload.targetFrameId,
-        videoId: action.payload.videoId,
+        pivotFrameId: action.payload.pivotFrameId,
+        deltaX: 0,
         frames: action.payload.frames,
       };
 
-    case CS.HIDE_DETAIL_WINDOW:
+    case CS.SCROLL_REPLAY_WINDOW:
+      return { ...state, deltaX: action.payload.deltaX };
+
+    case CS.HIDE_REPLAY_WINDOW:
+      console.log("reducer hide");
       return { ...state, show: false };
 
     default:

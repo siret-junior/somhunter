@@ -9,6 +9,7 @@ import coreApi from "../../../apis/coreApi";
 import { createShowGlobalNotification } from "../../../actions/notificationCreator";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
 import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
+import { createShowReplayWindow } from "../../../actions/replaylWindowCreator";
 
 function onLikeHandler(e, onLikeHandler) {
   const frameId = Number(e.target.dataset.frameId);
@@ -57,6 +58,16 @@ async function onSubmitHandler(props) {
   );
 }
 
+function onWheellHandler(props, e) {
+  const frameId = props.frame.id;
+
+  // If SHIFT key down
+  if (e.shiftKey) {
+    console.log(`Replaying through frame '${frameId}'...`);
+    props.createShowReplayWindow(frameId);
+  }
+}
+
 function Frame(props) {
   let classNameStr = "frame p-0";
   if (props.frame.liked) {
@@ -70,6 +81,10 @@ function Frame(props) {
     <Col
       className={classNameStr}
       onClick={(e) => onLikeHandler(e, props.onLikeHandler)}
+      onWheel={(e) => {
+        onWheellHandler(props, e);
+        e.stopPropagation();
+      }}
       data-frame-id={props.frame.id}
       xs={2}
       style={{ backgroundImage: `url("${props.frame.src}")` }}
@@ -118,6 +133,7 @@ const actionCreators = {
   createShowDisplay,
   createShowDetailWindow,
   createShowGlobalNotification,
+  createShowReplayWindow,
 };
 
 export default connect(stateToProps, actionCreators)(Frame);
