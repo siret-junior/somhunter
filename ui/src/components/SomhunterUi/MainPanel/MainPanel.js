@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { FaCog } from "react-icons/fa";
 
 import * as CS from "../../../constants";
 
@@ -17,6 +16,8 @@ import {
   createResetSearch,
   createRescore,
 } from "../../../actions//rescoreCreator";
+import HelpWindow from "./HelpWindow";
+import SettingsWindow from "./SettingsWindow";
 
 function onTriggerRescoretHandler(dispatch, destDisplay, isAcOpen) {
   // Make sure that autocomplete popup is not shown
@@ -56,7 +57,7 @@ function MainPanel(props) {
   return (
     <Container fluid className="panel main p-0">
       <ControlsPanel>
-        <Button>Help</Button>
+        <HelpWindow />
         <Button
           onClick={() =>
             onTriggerResetHandler(
@@ -137,9 +138,7 @@ function MainPanel(props) {
       <NotificationPanel />
 
       <ControlsPanel>
-        <Button>
-          <FaCog />
-        </Button>
+        <SettingsWindow />
       </ControlsPanel>
     </Container>
   );
