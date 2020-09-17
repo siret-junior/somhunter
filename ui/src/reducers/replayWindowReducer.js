@@ -28,6 +28,7 @@ function replayWindowReducer(state = defaultState, action) {
         pivotFrameId: action.payload.pivotFrameId,
         deltaX: 0,
         frames: action.payload.frames,
+        cursorPos: action.payload.cursorPos,
       };
 
     case CS.SCROLL_REPLAY_WINDOW:

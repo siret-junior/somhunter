@@ -31,10 +31,12 @@ export function createScrollReplayWindow(deltaX) {
   };
 }
 
-export function createShowReplayWindow(frameId) {
+export function createShowReplayWindow(frameId, curPos) {
   return async (dispatch, _) => {
     console.debug(
-      `=> createShowReplayWindow: Showing the detail for frame '${frameId}' ...`
+      `=> createShowReplayWindow: Showing the detail for frame '${frameId}, curPos=${JSON.stringify(
+        curPos
+      )}' ...`
     );
 
     const params = {
@@ -70,6 +72,7 @@ export function createShowReplayWindow(frameId) {
       payload: {
         pivotFrameId: frameId,
         frames: response.data.frames,
+        cursorPos: curPos,
       },
     };
 

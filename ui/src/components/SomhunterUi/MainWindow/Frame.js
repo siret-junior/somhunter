@@ -67,7 +67,7 @@ function onWheellHandler(props, e) {
   if (e.shiftKey) {
     // If just a scroll
     if (props.replayWindow.pivotFrameId === frameId) {
-      const delta = e.deltaY > 0 ? 1 : -1;
+      const delta = e.deltaY > 0 ? -1 : 1;
       console.log(
         `Showing replay through frame '${frameId}' with delta=${delta}...`
       );
@@ -76,7 +76,12 @@ function onWheellHandler(props, e) {
     // Else new frame ID
     else {
       console.log(`Scrolling replay through NEW frame '${frameId}'...`);
-      props.createShowReplayWindow(frameId);
+
+      const vpW = window.innerWidth;
+      const vpH = window.innerHeight;
+
+      const cursorPos = { x: e.clientX / vpW, y: e.clientY / vpH };
+      props.createShowReplayWindow(frameId, cursorPos);
     }
   }
 }

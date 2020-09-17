@@ -46,6 +46,14 @@ function MainWindow(props) {
   // Pointer to the main screen frame grid
   const mainGridElRef = useRef();
 
+  let replayWindowStyles = { top: "0", bottom: "initial" };
+  if (
+    typeof props.replayWindow.cursorPos !== "undefined" &&
+    props.replayWindow.cursorPos.y < 0.5
+  ) {
+    replayWindowStyles = { top: "initial", bottom: "0" };
+  }
+
   return (
     <Container fluid className="main-window window p-0">
       <FrameGrid
@@ -66,6 +74,7 @@ function MainWindow(props) {
 
       <ReplayWindow
         show={props.replayWindow.show}
+        styles={replayWindowStyles}
         onShow={() => null}
         onHide={() => props.createHideReplayWindow()}
       >

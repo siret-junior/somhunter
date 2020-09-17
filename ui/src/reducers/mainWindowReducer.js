@@ -64,6 +64,7 @@ function mainWindowReducer(
     default:
       return state;
   }
+  return state;
 }
 
 export default mainWindowReducer;

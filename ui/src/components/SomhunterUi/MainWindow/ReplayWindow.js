@@ -15,6 +15,7 @@ function ReplayWindow(props) {
       aria-labelledby="contained-modal-title-vcenter"
       centered
       className="replay-window off-canvas-window window"
+      style={props.styles}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
