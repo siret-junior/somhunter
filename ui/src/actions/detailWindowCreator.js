@@ -50,7 +50,7 @@ export function createShowDetailWindow(frameId) {
     }
 
     // If empty array returned
-    if (response.data.frames.length == 0) return;
+    if (response.data.frames.length === 0) return;
 
     // Create the action
     const action = {

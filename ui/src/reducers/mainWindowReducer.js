@@ -24,7 +24,7 @@ function mainWindowReducer(
     case CS.SHOW_DISPLAY_TOP_N:
     case CS.SHOW_DISPLAY_TOP_N_CONTEXT:
     case CS.SHOW_DISPLAY_TOP_KNN:
-      if (action.payload.frames.length == 0) break;
+      if (action.payload.frames.length === 0) break;
 
       // If screen switch
       if (action.payload.currentPage === 0) {
@@ -38,7 +38,7 @@ function mainWindowReducer(
       }
 
       if (
-        state.frames.length == 0 ||
+        state.frames.length === 0 ||
         state.frames[state.frames.length - 1].id !==
           action.payload.frames[action.payload.frames.length - 1].id
       ) {
@@ -52,7 +52,7 @@ function mainWindowReducer(
       break;
 
     case CS.SHOW_DISPLAY_SOM:
-      if (action.payload.frames.length == 0) break;
+      if (action.payload.frames.length === 0) break;
 
       return {
         ...state,
@@ -60,8 +60,10 @@ function mainWindowReducer(
         currentPage: action.payload.currentPage,
         frames: [...action.payload.frames],
       };
+
+    default:
+      return state;
   }
-  return state;
 }
 
 export default mainWindowReducer;

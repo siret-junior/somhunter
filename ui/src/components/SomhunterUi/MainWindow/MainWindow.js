@@ -38,27 +38,6 @@ function scrollToPivot(gridElRef, pivotFrameId) {
   });
 }
 
-function scrollReplayWindow(setReplayLeft, gridElRef, pivotFrameId, deltaX = 0) {
-  console.debug(
-    `=> scrollReplayWindow: Scrolling to the pivot frame ID '${pivotFrameId}'...`
-  );
-
-  const gridEl = gridElRef.current;
-
-  // Find children elements by data value
-  const targetEl = gridEl.querySelector(`[data-frame-id='${pivotFrameId}']`);
-
-  const viewportWidth = window.innerWidth;
-
-  const offsetToParent = targetEl.offsetLeft;
-  console.info(`offsetToParent = ${offsetToParent}`);
-  console.info(`deltaX = ${deltaX}`);
-  const unitWidth = targetEl.clientWidth;
-  const leftOffset = -offsetToParent + (viewportWidth / 2) + (deltaX * unitWidth);
-  console.info(`leftOffset = ${leftOffset}`);
-  setReplayLeft(leftOffset);
-}
-
 function MainWindow(props) {
   // Pointer to the detail frame grid
   const detailGridElRef = useRef();
@@ -66,8 +45,6 @@ function MainWindow(props) {
 
   // Pointer to the main screen frame grid
   const mainGridElRef = useRef();
-
-  const [replayLeft, setReplayLeft] = useState(0);
 
   return (
     <Container fluid className="main-window window p-0">
@@ -84,15 +61,15 @@ function MainWindow(props) {
         }
         onHide={() => props.createHideDetailWindow()}
       >
-        <FrameGrid gridRef={replayGridElRef} mainWindow={props.detailWindow} />
+        <FrameGrid gridRef={detailGridElRef} mainWindow={props.detailWindow} />
       </DetailWindow>
 
       <ReplayWindow
         show={props.replayWindow.show}
-        onShow={() => scrollReplayWindow(setReplayLeft, replayGridElRef, props.replayWindow.pivotFrameId, 0) }
+        onShow={() => null}
         onHide={() => props.createHideReplayWindow()}
       >
-        <FrameGrid leftOffset={replayLeft} gridRef={replayGridElRef} mainWindow={props.replayWindow} />
+        <FrameGrid gridRef={replayGridElRef} mainWindow={props.replayWindow} />
       </ReplayWindow>
     </Container>
   );

@@ -177,9 +177,7 @@ class Autocomplete extends Component {
               }
 
               let exampleImagesElems = suggestion.exampleFrames.map(
-                (frame, i) => (
-                  <img key={`ei_${i}`} src={frame} alt="Example image." />
-                )
+                (frame, i) => <img key={`ei_${i}`} src={frame} alt="Example." />
               );
 
               return (

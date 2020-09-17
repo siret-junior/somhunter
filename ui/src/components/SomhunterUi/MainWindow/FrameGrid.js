@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -80,8 +80,50 @@ function handleOnScroll(e, props, prevFetch, setPrevFetch) {
   }
 }
 
+function calcReplayLeftOffset(gridElRef, pivotFrameId, deltaX = 0) {
+  console.debug(
+    `=> scrollReplayWindow: Scrolling to the pivot frame ID '${pivotFrameId}'...`
+  );
+
+  const gridEl = gridElRef.current;
+  if (typeof gridEl === "undefined") {
+    return 0;
+  }
+
+  // Find children elements by data value
+  const targetEl = gridEl.querySelector(`[data-frame-id='${pivotFrameId}']`);
+  if (!targetEl) {
+    return 0;
+  }
+
+  const viewportWidth = window.innerWidth;
+
+  const offsetToParent = targetEl.offsetLeft;
+  console.info(`offsetToParent = ${offsetToParent}`);
+  console.info(`deltaX = ${deltaX}`);
+  const unitWidth = targetEl.clientWidth;
+  const leftOffset = -offsetToParent + viewportWidth / 2 + deltaX * unitWidth;
+
+  console.info(`leftOffset = ${leftOffset}`);
+  return leftOffset;
+}
+
 function FrameGrid(props) {
   const [prevFetch, setPrevFetch] = useState(new Date().getTime() - 100000);
+
+  // Recalculate offset of the grid after each re-render
+  useEffect(() => {
+    if (typeof props.mainWindow.deltaX !== "undefined") {
+      const left = calcReplayLeftOffset(
+        props.gridRef,
+        props.mainWindow.pivotFrameId,
+        props.mainWindow.deltaX
+      );
+
+      props.gridRef.current.style.left = `${left}px`;
+    }
+  });
+
   let rowClass =
     props.mainWindow.activeDisplay === CS.DISP_TYPE_SOM ? "som" : "";
 
@@ -94,19 +136,13 @@ function FrameGrid(props) {
     _onScrollFn = null;
   }
 
-  let styles = {};
-  if (typeof props.leftOffset !== "undefined") {
-    styles = { ...styles, left: `${props.leftOffset}px` };
-  }
-
   return (
     <Container fluid className="p-0">
       <Row
         ref={props.gridRef}
         className={`frame-grid ${rowClass}`}
-        noGutters
-        style={styles}
         onScroll={_onScrollFn}
+        noGutters
       >
         {getFrames(props, props.gridRef)}
       </Row>

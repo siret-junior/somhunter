@@ -31,7 +31,7 @@ function replayWindowReducer(state = defaultState, action) {
       };
 
     case CS.SCROLL_REPLAY_WINDOW:
-      return { ...state, deltaX: action.payload.deltaX };
+      return { ...state, deltaX: state.deltaX + action.payload.deltaX };
 
     case CS.HIDE_REPLAY_WINDOW:
       console.log("reducer hide");

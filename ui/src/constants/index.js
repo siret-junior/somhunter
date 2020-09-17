@@ -12,6 +12,8 @@ export const actionToDispName = (showType) => {
       return DISP_TYPE_DETAIL;
     case SHOW_REPLAY_WINDOW:
       return DISP_TYPE_REPLAY;
+    default:
+      throw Error("Invalid type.");
   }
 };
 
@@ -29,6 +31,8 @@ export const dispNameToAction = (showType) => {
       return SHOW_DETAIL_WINDOW;
     case DISP_TYPE_REPLAY:
       return SHOW_REPLAY_WINDOW;
+    default:
+      throw Error("Invalid type.");
   }
 };
 

@@ -1,17 +1,19 @@
 {
-  "name": "ui",
+  "name": "react_redux_ts_example",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/jest": "^24.9.1",
+    "@types/node": "^12.12.55",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-redux": "^7.1.9",
     "axios": "^0.20.0",
     "bootstrap": "^4.5.2",
-    "jquery": "^3.5.1",
     "node-sass": "^4.14.1",
-    "popper": "^1.0.1",
-    "prettier": "^2.1.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.3.0",
     "react-dom": "^16.13.1",
@@ -20,16 +22,13 @@
     "react-scripts": "3.4.3",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "universal-react-logger": "^1.0.6"
+    "typescript": "^3.9.7"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -44,7 +43,10 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^7.8.1",
-    "eslint-plugin-react": "^7.20.6"
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/parser": "^4.1.0",
+    "eslint-plugin-react": "^7.20.6",
+    "prettier": "^2.1.1",
+    "eslint": "^7.8.1"
   }
 }

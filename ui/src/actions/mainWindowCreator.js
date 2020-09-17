@@ -153,6 +153,7 @@ export function createShowDisplay(type, pageId, frameId) {
     case CS.DISP_TYPE_TOP_N:
     case CS.DISP_TYPE_TOP_N_CONTEXT:
       return loadMainWindowFrames(type, pageId, frameId);
+    default:
+      return null;
   }
-  return null;
 }

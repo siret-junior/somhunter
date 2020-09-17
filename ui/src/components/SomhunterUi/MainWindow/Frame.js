@@ -9,7 +9,10 @@ import coreApi from "../../../apis/coreApi";
 import { createShowGlobalNotification } from "../../../actions/notificationCreator";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
 import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
-import { createShowReplayWindow } from "../../../actions/replaylWindowCreator";
+import {
+  createShowReplayWindow,
+  createScrollReplayWindow,
+} from "../../../actions/replaylWindowCreator";
 
 function onLikeHandler(e, onLikeHandler) {
   const frameId = Number(e.target.dataset.frameId);
@@ -22,7 +25,7 @@ async function onSubmitHandler(props) {
   const frameId = props.frame.id;
 
   // Create ensure popup
-  const res = confirm(`Really submit the frame with ID '${frameId}'`);
+  const res = window.confirm(`Really submit the frame with ID '${frameId}'`);
 
   // Quit if false
   if (!res) {
@@ -31,11 +34,10 @@ async function onSubmitHandler(props) {
 
   console.warn(`Submitting frame '${frameId}'...`);
 
-  let response = null;
   try {
     console.debug("=> onLikeHandler: POST request to '/submit_frame'");
 
-    response = await coreApi.post("/submit_frame", {
+    await coreApi.post("/submit_frame", {
       frameId: frameId,
     });
   } catch (e) {
@@ -63,8 +65,19 @@ function onWheellHandler(props, e) {
 
   // If SHIFT key down
   if (e.shiftKey) {
-    console.log(`Replaying through frame '${frameId}'...`);
-    props.createShowReplayWindow(frameId);
+    // If just a scroll
+    if (props.replayWindow.pivotFrameId === frameId) {
+      const delta = e.deltaY > 0 ? 1 : -1;
+      console.log(
+        `Showing replay through frame '${frameId}' with delta=${delta}...`
+      );
+      props.createScrollReplayWindow(delta);
+    }
+    // Else new frame ID
+    else {
+      console.log(`Scrolling replay through NEW frame '${frameId}'...`);
+      props.createShowReplayWindow(frameId);
+    }
   }
 }
 
@@ -126,7 +139,7 @@ function Frame(props) {
 }
 
 const stateToProps = (state) => {
-  return {};
+  return { replayWindow: { pivotFrameId: state.replayWindow.pivotFrameId } };
 };
 
 const actionCreators = {
@@ -134,6 +147,7 @@ const actionCreators = {
   createShowDetailWindow,
   createShowGlobalNotification,
   createShowReplayWindow,
+  createScrollReplayWindow,
 };
 
 export default connect(stateToProps, actionCreators)(Frame);
