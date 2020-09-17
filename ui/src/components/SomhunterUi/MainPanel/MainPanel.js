@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 
 import { Container, Row, Col, Button } from "react-bootstrap";
@@ -12,30 +12,16 @@ import HistoryPanel from "./HistoryPanel";
 import NotificationPanel from "./NotificationPanel";
 import config from "../../../config/config";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
+import { createAddQueryRef } from "../../../actions/settingsCreator";
 import {
   createResetSearch,
   createRescore,
 } from "../../../actions//rescoreCreator";
 
-function onTriggerRescoretHandler(
-  dispatch,
-  destDisplay,
-  isAcOpen,
-  refQuery0,
-  refQuery1
-) {
+function onTriggerRescoretHandler(dispatch, destDisplay, isAcOpen) {
   // Make sure that autocomplete popup is not shown
   if (!isAcOpen) {
-    const query0 = refQuery0.current.value;
-    const query1 = refQuery1.current.value;
-
-    console.debug("=> onSubmitHandler: Rescoring with params:", {
-      destDisplay,
-      query0,
-      query1,
-    });
-
-    dispatch(createRescore(destDisplay, query0, query1));
+    dispatch(createRescore(destDisplay));
   }
 }
 
@@ -59,6 +45,11 @@ function MainPanel(props) {
   const refQuery1 = useRef(null);
 
   const [isAcOpen, setIsAcOpen] = useState(false);
+
+  useEffect(() => {
+    props.createAddQueryRef(refQuery0);
+    props.createAddQueryRef(refQuery1);
+  }, []);
 
   const dispatch = useDispatch();
 
@@ -89,9 +80,7 @@ function MainPanel(props) {
           onTriggerRescoretHandler(
             dispatch,
             config.frameGrid.defaultRescoreDisplay,
-            isAcOpen,
-            refQuery0,
-            refQuery1
+            isAcOpen
           )
         }
       />
@@ -164,6 +153,7 @@ const actionCreators = {
   createShowDisplay,
   createResetSearch,
   createRescore,
+  createAddQueryRef,
 };
 
 export default connect(stateToProps, actionCreators)(MainPanel);

@@ -8,6 +8,7 @@ import * as CS from "../../constants";
 
 import coreApi from "../../apis/coreApi";
 import { createShowGlobalNotification } from "../../actions/notificationCreator";
+import { createRescore } from "../../actions/rescoreCreator";
 
 class Autocomplete extends Component {
   constructor(props) {
@@ -109,10 +110,13 @@ class Autocomplete extends Component {
       if (filteredSuggestions.length <= activeSuggestion) return;
 
       if (!this.state.showSuggestions) {
-        console.warn(
-          "=> onKeyDownHandler: Trigger RESCORE with the ENTER key!"
-        );
-        this.props.triggerRescore();
+        if (e.shiftKey) {
+          this.props.createRescore(
+            config.frameGrid.defaultSecondaryRescoreDisplay
+          );
+        } else {
+          this.props.createRescore(config.frameGrid.defaultRescoreDisplay);
+        }
         return;
       }
 
@@ -223,6 +227,7 @@ const stateToProps = (state) => {
 
 const actionCreators = {
   createShowGlobalNotification,
+  createRescore,
 };
 
 export default connect(stateToProps, actionCreators)(Autocomplete);

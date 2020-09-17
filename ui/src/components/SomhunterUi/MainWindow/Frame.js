@@ -95,52 +95,55 @@ function Frame(props) {
     classNameStr += " pivot";
   }
 
-  return (
-    <Col
-      className={classNameStr}
-      onClick={(e) => onLikeHandler(e, props.onLikeHandler)}
-      onWheel={(e) => {
-        onWheellHandler(props, e);
-        e.stopPropagation();
-      }}
-      data-frame-id={props.frame.id}
-      xs={2}
-      style={{ backgroundImage: `url("${props.frame.src}")` }}
-    >
-      <span className="video-id-label top left">{props.frame.id}</span>
-      <Button
-        onClick={(e) => {
-          onSubmitHandler(props);
-          e.stopPropagation();
-          return;
-        }}
-        className="top right green"
-        variant="success"
-      >
-        ✓
-      </Button>
-      <Button
-        onClick={(e) => {
-          props.createShowDisplay(CS.DISP_TYPE_TOP_KNN, 0, props.frame.id);
+  if (props.frame.src === "")
+    return <Col className={classNameStr + " no-frame"} xs={2}></Col>;
+  else
+    return (
+      <Col
+        className={classNameStr}
+        onClick={(e) => onLikeHandler(e, props.onLikeHandler)}
+        onWheel={(e) => {
+          onWheellHandler(props, e);
           e.stopPropagation();
         }}
-        className="bottom left orange"
-        variant="secondary"
+        data-frame-id={props.frame.id}
+        xs={2}
+        style={{ backgroundImage: `url("${props.frame.src}")` }}
       >
-        KNN
-      </Button>
-      <Button
-        onClick={(e) => {
-          props.createShowDetailWindow(props.frame.id);
-          e.stopPropagation();
-        }}
-        className="bottom right blue"
-        variant="primary"
-      >
-        Detail
-      </Button>
-    </Col>
-  );
+        <span className="video-id-label top left">{props.frame.id}</span>
+        <Button
+          onClick={(e) => {
+            onSubmitHandler(props);
+            e.stopPropagation();
+            return;
+          }}
+          className="top right green"
+          variant="success"
+        >
+          ✓
+        </Button>
+        <Button
+          onClick={(e) => {
+            props.createShowDisplay(CS.DISP_TYPE_TOP_KNN, 0, props.frame.id);
+            e.stopPropagation();
+          }}
+          className="bottom left orange"
+          variant="secondary"
+        >
+          KNN
+        </Button>
+        <Button
+          onClick={(e) => {
+            props.createShowDetailWindow(props.frame.id);
+            e.stopPropagation();
+          }}
+          className="bottom right blue"
+          variant="primary"
+        >
+          Detail
+        </Button>
+      </Col>
+    );
 }
 
 const stateToProps = (state) => {

@@ -77,3 +77,14 @@ export const SCROLL_REPLAY_WINDOW = "SCROLL_REPLAY_WINDOW";
 
 export const DISP_TYPE_DETAIL = "video_detail";
 export const DISP_TYPE_REPLAY = "video_replay";
+
+/**
+ * Off-canvas windows action types.
+ */
+export const KEY_CODE_TAB = 9;
+export const KEY_CODE_ENTER = 13;
+export const KEY_CODE_ESC = 27;
+export const KEY_CODE_T = 84;
+export const KEY_CODE_S = 83;
+
+export const SETTINGS_ADD_QUERY_REF = "SETTINGS_ADD_QUERY_REF";

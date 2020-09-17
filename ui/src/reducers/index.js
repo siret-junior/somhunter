@@ -1,5 +1,8 @@
 import { combineReducers } from "redux";
 
+// Current app settings
+import settingsReducer from "./settingsReducer";
+
 // Main window state (frames, search queries, replay frames, etc.)
 import mainWindowReducer from "./mainWindowReducer";
 
@@ -18,6 +21,7 @@ export default combineReducers({
   notifications: notificationReducer,
   detailWindow: detailWindowReducer,
   replayWindow: replayWindowReducer,
+  settings: settingsReducer,
 });
 
 /********************

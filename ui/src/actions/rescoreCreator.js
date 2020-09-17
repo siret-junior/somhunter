@@ -10,9 +10,10 @@ import {
 } from "./notificationCreator";
 import { createShowDisplay } from "./mainWindowCreator";
 
-export function createRescore(destDisplay, query0, query1) {
+export function createRescore(destDisplay) {
   return async (dispatch, getState) => {
     console.debug("=> createRescore: Running rescore...");
+    console.debug(destDisplay);
     // Show working notification
     dispatch(
       createShowGlobalNotification(
@@ -22,6 +23,15 @@ export function createRescore(destDisplay, query0, query1) {
         1000000
       )
     );
+
+    const state = getState();
+    const queryRefs = state.settings.textQueryRefs;
+    if (queryRefs.length < 2) {
+      throw Error("Not enough `queryRefs` in the state.");
+    }
+
+    const query0 = state.settings.textQueryRefs[0].current.value;
+    const query1 = state.settings.textQueryRefs[1].current.value;
 
     const reqData = {
       q0: query0,

@@ -1,7 +1,7 @@
 @import "~bootstrap/scss/bootstrap";
 
 * {
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 $theme-colors: (
@@ -12,12 +12,13 @@ $theme-colors: (
   "fifth": #1455d9,
   "white": #fff,
   "black": #222,
-  "success": #4BB543
+  "success": #4bb543,
 );
-
 
 .btn {
   margin: 0 0.2em 0 0;
+  border-radius: 0;
+  border: 0;
   &.btn-primary {
     background-color: map-get($theme-colors, "fifth");
     border: 0px;
@@ -55,7 +56,7 @@ $theme-colors: (
   overflow: auto;
   align-items: flex-start;
   align-content: flex-start;
-  
+
   > .col-2 {
     align-self: flex-start;
   }
@@ -67,7 +68,7 @@ $theme-colors: (
     max-height: 100%;
     height: 100%;
   }
-  &.detail > .col-2{
+  &.detail > .col-2 {
     height: auto;
     flex: 0 0 12.5%;
     max-width: 12.5%;
@@ -88,9 +89,12 @@ $theme-colors: (
     z-index: 1;
   }
 
+  &.no-frame {
+    cursor: initial;
+  }
   &.pivot {
     &:before {
-      content: '';
+      content: "";
       width: 100%;
       height: 100%;
       position: absolute;
@@ -101,7 +105,7 @@ $theme-colors: (
 
   &.liked {
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       width: 20%;
       height: 20%;
@@ -145,8 +149,6 @@ $theme-colors: (
   }
 }
 
-
-
 .global-notification-overlay {
   left: 50%;
   top: 10%;
@@ -158,11 +160,9 @@ $theme-colors: (
   padding-bottom: 0.4rem;
 
   &.controls-panel {
-
   }
 
   &.notification-panel {
-
   }
 
   .panel-title {
@@ -200,7 +200,10 @@ $theme-colors: (
     list-style: none;
     position: absolute;
     z-index: 2;
-    background: rgba(theme-color-level($color-name: "primary", $level: -5), 0.9);
+    background: rgba(
+      theme-color-level($color-name: "primary", $level: -5),
+      0.9
+    );
     width: 120%;
 
     li {
@@ -242,8 +245,8 @@ $theme-colors: (
     max-height: 80vh;
     display: block;
     position: relative;
-    
-    .modal-content{
+
+    .modal-content {
       height: 100%;
       .modal-header {
         display: block;
@@ -251,8 +254,8 @@ $theme-colors: (
         height: 7%;
         text-align: center;
       }
-    
-     .modal-body {
+
+      .modal-body {
         display: block;
         position: relative;
         height: 82%;
@@ -262,18 +265,16 @@ $theme-colors: (
           .frame-gird {
             height: 100%;
             position: relative;
-            
           }
         }
-     }
-     
-     .modal-footer {
-      display: block;
-      position: relative;
+      }
+
+      .modal-footer {
+        display: block;
+        position: relative;
       }
     }
   }
-  
 }
 
 .replay-window {

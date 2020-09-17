@@ -140,7 +140,7 @@ function loadSomFrames() {
   };
 }
 
-export function createShowDisplay(type, pageId, frameId) {
+export function createShowDisplay(type, pageId = 0, frameId = 0) {
   console.debug(
     `=> createShowDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
   );
