@@ -1,5 +1,3 @@
-
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -54,6 +52,14 @@ const routerNotFound = require("./routes/404");
 
 // API endpoints
 const endpoints = require("./routes/endpoints");
+
+function addEndpoint(app, { type, endpoint }, handler) {
+  if (type === "GET") {
+    app.get(endpoint, handler);
+  } else if (type === "POST") {
+    app.post(endpoint, handler);
+  }
+}
 
 /*
  * Logging
@@ -180,7 +186,7 @@ const core = require(path.join(__dirname, "build/Release/somhunter_core.node"));
 global.core = new core.SomHunterNapi(dataConfigFilepath);
 if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.submitter_config.submit_to_VBS) {
   const logRes = global.core.loginToDres();
-  if (logRes){
+  if (logRes) {
     global.logger.log("info", "Login to DRES OK!");
   } else {
     global.logger.log("warn", "Login to DRES server failed! Submits will be rejected!");
@@ -191,12 +197,7 @@ if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.su
 global.logger.log("info", "SOMHunter is ready...");
 
 const corsOptions = {
-  //To allow requests from client
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:5000",
-    "http://127.0.0.1",
-  ],
+  origin: ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1"],
   credentials: true,
   exposedHeaders: ["set-cookie"],
 };
@@ -205,25 +206,26 @@ app.use(cors(corsOptions));
 /*
  * Push all routers into express middleware stack
  */
-app.use("/", somhunterRouter);
+const eps = global.apiCfg.endpoints;
 
 // SOMHunter endpoints
-app.get("/get_frame_detail_data", endpoints.getFrameDetailData);
-app.get("/get_autocomplete_results", endpoints.getAutocompleteResults);
-app.post("/get_top_screen", endpoints.getTopScreen);
-app.get("/get_som_screen", endpoints.getSomScreen);
+addEndpoint(app, eps.infoConfig, endpoints.getProgramSettings);
+addEndpoint(app, eps.frameDetail, endpoints.getFrameDetailData);
+addEndpoint(app, eps.textSearchSuggestions, endpoints.getAutocompleteResults);
+addEndpoint(app, eps.screenTop, endpoints.getTopScreen);
+addEndpoint(app, eps.screenSom, endpoints.getSomScreen);
 
-app.get("/log_scroll", endpoints.logScroll);
-app.get("/log_text_query_change", endpoints.logTextQueryChange);
+addEndpoint(app, eps.logBrowsingScroll, endpoints.logScroll);
+addEndpoint(app, eps.logTextChange, endpoints.logTextQueryChange);
 
-app.post("/submit_frame", endpoints.submitFrame);
-app.post("/reset_search_session", endpoints.resetSearchSession);
+addEndpoint(app, eps.serverSubmitFrame, endpoints.submitFrame);
+addEndpoint(app, eps.searchReset, endpoints.resetSearchSession);
 
-app.post("/rescore", endpoints.rescore);
-app.post("/like_frame", endpoints.likeFrame);
-app.post("/login_to_dres", endpoints.loginToDres);
+addEndpoint(app, eps.searchRescore, endpoints.rescore);
+addEndpoint(app, eps.searchLike, endpoints.likeFrame);
+addEndpoint(app, eps.serverLogin, endpoints.loginToDres);
 
-// 404 fallback
+app.use("/", somhunterRouter);
 app.use("/404", routerNotFound);
 
 // Error handler

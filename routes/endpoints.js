@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -26,20 +25,43 @@ const path = require("path");
 const SessionState = require("./common/SessionState");
 const stateCheck = require("./common/state_checkers");
 
+exports.getProgramSettings = function (req, res) {
+  const sess = req.session;
+
+  // \todo What do we need?
+
+  // \temp
+  const cfgData = {
+    strings: global.strs,
+    core: global.coreCfg,
+    server: global.cfg,
+    ui: global.uiCfg,
+    api: global.apiCfg,
+  };
+
+  res.status(200).jsonp(cfgData);
+};
+
 exports.getFrameDetailData = function (req, res) {
   const sess = req.session;
 
   const frameId = Number(req.query.frameId);
   const logIt = req.query.logIt === "true" ? true : false;
-  
-  if (!frameId){
-    res.status(400).jsonp({ error: { message: "Invalid `frameId` argument." }});
+
+  if (!frameId) {
+    res.status(400).jsonp({ error: { message: "Invalid `frameId` argument." } });
     return;
   }
 
   // -------------------------------
   // Call the core
-  const frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.detail, null, frameId, logIt);
+  const frameData = global.core.getDisplay(
+    global.cfg.framesPathPrefix,
+    global.strs.displayTypes.detail,
+    null,
+    frameId,
+    logIt
+  );
   // -------------------------------
 
   res.status(200).jsonp(frameData);
@@ -50,7 +72,7 @@ exports.getSomScreen = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   if (!global.core.isSomReady()) {
     res.status(222).jsonp({ viewData: null, error: { message: "SOM not yet ready." } });
@@ -75,20 +97,17 @@ exports.getTopScreen = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
-  
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
+
   let type = global.strs.displayTypes.topn;
 
-  if (req.body && req.body.type)
-    type = req.body.type;
+  if (req.body && req.body.type) type = req.body.type;
 
   let pageId = 0;
-  if (req.body && req.body.pageId)
-    pageId = Number(req.body.pageId);
+  if (req.body && req.body.pageId) pageId = Number(req.body.pageId);
 
   let frameId = 0;
-  if (req.body && req.body.frameId)
-    frameId = Number(req.body.frameId);
+  if (req.body && req.body.frameId) frameId = Number(req.body.frameId);
 
   let frames = [];
   // -------------------------------
@@ -110,7 +129,7 @@ exports.rescore = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   const body = req.body;
   const q0 = body.q0;
@@ -153,7 +172,7 @@ exports.getAutocompleteResults = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   const prefix = req.query.queryValue;
 
@@ -175,7 +194,7 @@ exports.resetSearchSession = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   // -------------------------------
   // Call the core
@@ -195,7 +214,7 @@ exports.likeFrame = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   const frameId = req.body.frameId;
   const likes = [frameId];
@@ -213,8 +232,8 @@ exports.loginToDres = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
-  
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
+
   // -------------------------------
   // Call the core
   const result = global.core.loginToDres();
@@ -223,7 +242,7 @@ exports.loginToDres = function (req, res) {
   if (global.coreCfg.submitter_config.submit_server == "dres") {
     global.coreCfg.submitter_config.server_config.dres.loggedIn = result;
   }
-  
+
   res.status(200).jsonp({ result: result });
 };
 
@@ -232,19 +251,19 @@ exports.logScroll = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   const scrollArea = req.query.scrollArea;
   const delta = req.query.delta < 0 ? -1.0 : 1.0;
   const frameId = Number(req.query.frameId);
 
   // If replay
-  if (frameId){
+  if (frameId) {
     // -------------------------------
     // Call the core
     global.core.logVideoReplay(frameId, delta);
     // -------------------------------
-  } 
+  }
   // Else rest of the displays
   else {
     // -------------------------------
@@ -252,7 +271,6 @@ exports.logScroll = function (req, res) {
     global.core.logScroll(scrollArea, delta);
     // -------------------------------
   }
-  
 
   res.status(200).jsonp({});
 };
@@ -262,7 +280,7 @@ exports.logTextQueryChange = function (req, res) {
 
   // Make sure that this session is initialized
   const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld)
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
 
   const query = req.query.query;
 

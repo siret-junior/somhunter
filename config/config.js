@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -22,21 +21,26 @@
 // Require Lodash module
 const moduleLodaSh = require("lodash");
 
-// Get config file
-const config = require("./config.json");
+// Get serverConfig file
+const serverConfig = require("./serverConfig.json");
+const uiConfig = require("./uiConfig.json");
+const apiConfig = require("./apiConfig.json");
 const strings = require("./strings.json");
 
-exports.initConfig = function() {
-  // Default things are in development
-  const defaultConfig = config.development;
-
+exports.initConfig = function () {
   // Get current env setup
   const environment = process.env.NODE_ENV || "development";
 
-  // Create enviroment config
-  const environmentConfig = config[environment];
+  /*
+   * Server config
+   */
+  // Default things are in development
+  const defaultConfig = serverConfig.development;
 
-  // Merge to the final config
+  // Create enviroment serverConfig
+  const environmentConfig = serverConfig[environment];
+
+  // Merge to the final serverConfig
   const finalConfig = moduleLodaSh.merge(defaultConfig, environmentConfig);
   const cred = require("./user.json");
 
@@ -44,7 +48,26 @@ exports.initConfig = function() {
   finalConfig.authPassword = cred.authPassword;
   finalConfig.authName = cred.authName;
 
-  // Store final config in globals
+  /*
+   * UI config
+   */
+  const defaultUiConfig = uiConfig.development;
+  const environmentUiConfig = uiConfig[environment];
+  const finalUiConfig = moduleLodaSh.merge(defaultUiConfig, environmentUiConfig);
+
+  /*
+   * API config
+   */
+  const defaultApiConfig = apiConfig.development;
+  const environmentApiConfig = apiConfig[environment];
+  const finalApiConfig = moduleLodaSh.merge(defaultApiConfig, environmentApiConfig);
+
+  /*
+   * Global store
+   */
+  // Store final serverConfig in globals
   global.cfg = finalConfig;
   global.strs = strings;
+  global.uiCfg = finalUiConfig;
+  global.apiCfg = finalApiConfig;
 };

@@ -1,0 +1,56 @@
+{
+    "development": {
+        "endpoints": {
+            "infoConfig": {
+                "type": "GET",
+                "endpoint": "/info/settings"
+            },
+            "frameDetail": {
+                "type": "GET",
+                "endpoint": "/get_frame_detail_data"
+            },
+            "textSearchSuggestions": {
+                "type": "GET",
+                "endpoint": "/get_autocomplete_results"
+            },
+            "screenTop": {
+                "type": "POST",
+                "endpoint": "/get_top_screen"
+            },
+            "screenSom": {
+                "type": "POST",
+                "endpoint": "/get_som_screen"
+            },
+            "logBrowsingScroll": {
+                "type": "GET",
+                "endpoint": "/log_scroll"
+            },
+            "logTextChange": {
+                "type": "GET",
+                "endpoint": "/log_text_query_change"
+            },
+            "serverSubmitFrame": {
+                "type": "POST",
+                "endpoint": "/submit_frame"
+            },
+            "searchReset": {
+                "type": "POST",
+                "endpoint": "/reset_search_session"
+            },
+            "searchRescore": {
+                "type": "POST",
+                "endpoint": "/rescore"
+            },
+            "searchLike": {
+                "type": "POST",
+                "endpoint": "/like_frame"
+            },
+            "serverLogin": {
+                "type": "POST",
+                "endpoint": "/login_to_dres"
+            }
+        }
+    },
+    "staging": {},
+    "production": {}
+}
