@@ -3,6 +3,7 @@ import * as CS from "../constants";
 import { dispNameToAction } from "../constants";
 import { post } from "../apis/coreApi";
 import { createNotif, createDenotif } from "./notificationCreator";
+import { resetMainGridScroll } from "../utils/utils";
 
 /* 
 Core API docs:
@@ -46,6 +47,8 @@ function loadMainWindowFrames(settings, type, pageId, frameId) {
     // << Core API >>
     const response = await post(dispatch, requestSettings.url, reqData);
     // << Core API >>
+
+    if (pageId === 0) resetMainGridScroll();
 
     dispatch({
       type: dispNameToAction(type),

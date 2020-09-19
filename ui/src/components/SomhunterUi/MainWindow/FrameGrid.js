@@ -142,12 +142,13 @@ function FrameGrid(props) {
 
   if (typeof props.mainWindow.activeDisplay === "undefined") {
     rowClass = "detail";
-    onScrollFnThrottled = null;
+    onScrollFnThrottled = (e) => null;
   }
 
   return (
     <Container fluid className="p-0">
       <Row
+        id={props.id}
         ref={props.gridRef}
         className={`frame-grid ${rowClass}`}
         onScroll={(e) => {

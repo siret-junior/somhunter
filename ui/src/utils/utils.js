@@ -8,3 +8,7 @@ export function isErrDef(e) {
 
   return false;
 }
+
+export function resetMainGridScroll() {
+  document.getElementById("mainGrid").scrollTop = 0;
+}

@@ -57,6 +57,7 @@ function MainWindow(props) {
   return (
     <Container fluid className="main-window window p-0">
       <FrameGrid
+        id="mainGrid"
         gridRef={mainGridElRef}
         createShowDisplay={props.createShowDisplay}
         mainWindow={props.mainWindow}
@@ -69,7 +70,11 @@ function MainWindow(props) {
         }
         onHide={() => props.createHideDetailWindow()}
       >
-        <FrameGrid gridRef={detailGridElRef} mainWindow={props.detailWindow} />
+        <FrameGrid
+          id="detailGrid"
+          gridRef={detailGridElRef}
+          mainWindow={props.detailWindow}
+        />
       </DetailWindow>
 
       <ReplayWindow
@@ -78,7 +83,11 @@ function MainWindow(props) {
         onShow={() => null}
         onHide={() => props.createHideReplayWindow()}
       >
-        <FrameGrid gridRef={replayGridElRef} mainWindow={props.replayWindow} />
+        <FrameGrid
+          id="replayGrid"
+          gridRef={replayGridElRef}
+          mainWindow={props.replayWindow}
+        />
       </ReplayWindow>
     </Container>
   );
