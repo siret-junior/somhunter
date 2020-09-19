@@ -8,7 +8,7 @@ import * as CS from "../constants";
  *    timeoutHandle: number;
  * }
  */
-function notificationReducer(_, action) {
+function notificationReducer(state = null, action) {
   switch (action.type) {
     case CS.SHOW_GLOBAL_NOTIFICATION:
       return {
@@ -22,8 +22,9 @@ function notificationReducer(_, action) {
       return null;
 
     default:
-      return null;
+      return state;
   }
+  return state;
 }
 
 export default notificationReducer;

@@ -31,6 +31,32 @@ $theme-colors: (
   }
 }
 
+
+.critical-error-window {
+  width: 100vw;
+  min-width: 100vw;
+  padding: 2rem;
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 1.3rem;
+    margin-top: 2rem;
+  }
+}
+.alert {
+  text-align: center;
+  padding: 2rem;
+
+  .alert-heading {
+    font-size: 2rem;
+    margin: 0 0 0.4rem 0;
+  }
+  p {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+}
+
 .somhunter-ui {
   max-height: 100vh;
   overflow: hidden;

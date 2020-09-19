@@ -5,7 +5,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import config from "../../../config/config";
 import * as CS from "../../../constants";
 import { isErrDef } from "../../../utils/utils";
-
+import { dispNameToAction } from "../../../constants";
+import { useSettings } from "../../../hooks/useSettings";
 import coreApi from "../../../apis/coreApi";
 
 import Frame from "./Frame";
@@ -21,7 +22,7 @@ async function onLikeHandler(props, gridElRef, frameId) {
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
 
-    props.createShowGlobalNotification(
+    props.createNotif(
       CS.GLOB_NOTIF_ERR,
       "Core request to '/like_frame' failed!",
       msg,
@@ -56,13 +57,14 @@ function getFrames(props, gridEl) {
   ));
 }
 
-function handleOnScroll(e, props, prevFetch, setPrevFetch) {
+function handleOnScroll(settings, e, props, prevFetch, setPrevFetch) {
   const tarEl = e.target;
   const diff = tarEl.scrollHeight - tarEl.scrollTop - tarEl.clientHeight;
   const mainWindow = props.mainWindow;
   if (
     mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N ||
-    mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N_CONTEXT
+    mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N_CONTEXT ||
+    mainWindow.activeDisplay === CS.DISP_TYPE_TOP_KNN
   ) {
     const t = new Date().getTime();
     if (prevFetch + config.frameGrid.infiniteScrollTimeout < t) {
@@ -71,7 +73,8 @@ function handleOnScroll(e, props, prevFetch, setPrevFetch) {
       if (diff < config.frameGrid.infiniteScrollThreshold) {
         console.debug(`handleOnScroll: DIFF = ${diff} => Loading next page`);
         props.createShowDisplay(
-          CS.DISP_TYPE_TOP_N,
+          settings,
+          mainWindow.activeDisplay,
           mainWindow.currentPage + 1,
           0
         );
@@ -111,6 +114,8 @@ function calcReplayLeftOffset(gridElRef, pivotFrameId, deltaX = 0) {
 function FrameGrid(props) {
   const [prevFetch, setPrevFetch] = useState(new Date().getTime() - 100000);
 
+  const settings = useSettings();
+
   // Recalculate offset of the grid after each re-render
   useEffect(() => {
     if (typeof props.mainWindow.deltaX !== "undefined") {
@@ -128,7 +133,7 @@ function FrameGrid(props) {
     props.mainWindow.activeDisplay === CS.DISP_TYPE_SOM ? "som" : "";
 
   let _onScrollFn = (e) => {
-    handleOnScroll(e, props, prevFetch, setPrevFetch);
+    handleOnScroll(settings, e, props, prevFetch, setPrevFetch);
   };
 
   if (typeof props.mainWindow.activeDisplay === "undefined") {

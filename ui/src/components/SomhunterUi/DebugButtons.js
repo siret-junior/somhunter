@@ -3,15 +3,18 @@ import { connect } from "react-redux";
 import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { createShowGlobalNotification } from "../../actions/notificationCreator";
-
+import { createNotif } from "../../actions/notificationCreator";
+import { useSettings } from "../../hooks/useSettings";
 function DebugButtons(props) {
+  const settings = useSettings();
+
   return (
     <Container className="overlay debug-buttons">
       <Button
         variant="danger"
         onClick={() => {
-          props.createShowGlobalNotification(
+          props.createNotif(
+            settings,
             CS.GLOB_NOTIF_ERR,
             "It's an error",
             "yeah yeah",
@@ -25,7 +28,8 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createShowGlobalNotification(
+          props.createNotif(
+            settings,
             CS.GLOB_NOTIF_WARN,
             "It's an 222 error",
             "yeah yeah 222",
@@ -39,7 +43,8 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createShowGlobalNotification(
+          props.createNotif(
+            settings,
             CS.GLOB_NOTIF_INFO,
             "It's an 222 error",
             "yeah yeah 222",
@@ -53,7 +58,8 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createShowGlobalNotification(
+          props.createNotif(
+            settings,
             CS.GLOB_NOTIF_SUCC,
             "It's an 222 error",
             "yeah yeah 222",
@@ -72,7 +78,7 @@ const stateToProps = ({ notifications }) => {
 };
 
 const actionCreators = {
-  createShowGlobalNotification,
+  createNotif,
 };
 
 export default connect(stateToProps, actionCreators)(DebugButtons);

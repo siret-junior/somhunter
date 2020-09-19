@@ -28,7 +28,6 @@ function mainWindowReducer(
 
       // If screen switch
       if (action.payload.currentPage === 0) {
-        console.debug("=> mainWindowReducer: Reset `frames`");
         return {
           ...state,
           activeDisplay: actionToDispName(action.type),

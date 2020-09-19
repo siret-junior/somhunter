@@ -1,9 +1,9 @@
 import React from "react";
 
-import SomhunterUi from "./SomhunterUi/SomhunterUi";
+import ContextWrapper from "./SomhunterUi/ContextWrapper";
 
 const App = () => {
-  return <SomhunterUi />;
+  return <ContextWrapper />;
 };
 
 export default App;

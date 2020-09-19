@@ -1,49 +1,33 @@
-import axios from "axios";
-
-import config from "../config/config";
-import { dispNameToAction } from "../constants";
-import coreApi from "../apis/coreApi";
-
 import * as CS from "../constants";
 
-export function createHideGlobalNotification() {
-  console.debug("=> hideGlobalNotification: Hiding global notification...");
-
+export function createDenotif(settings) {
   return {
     type: CS.HIDE_GLOBAL_NOTIFICATION,
     payload: null,
   };
 }
 
-export function createShowGlobalNotification(
+export function createNotif(
+  settings,
   type = CS.GLOB_NOTIF_INFO,
   heading,
-  text,
-  duration
+  text = "",
+  duration = 100000
 ) {
-  console.debug(
-    "=> createShowGlobalNotification: Adding global notification..."
-  );
-
   // We send this function to the thunk MW to dispatch both actions
   return (dispatch, getState) => {
-    const currState = getState();
-
     // Reset previous cancel timer
+    const currState = getState();
     if (currState.notifications !== null) {
       const timeoutHandle = currState.notifications.timeoutHandle;
-      console.debug(
-        `=> createShowGlobalNotification: Clearing timeout '${timeoutHandle}'`
-      );
       window.clearTimeout(timeoutHandle);
     }
 
     // Dispatch cancel action
     const timeoutHandle = setTimeout(() => {
-      dispatch(createHideGlobalNotification());
+      dispatch(createDenotif());
     }, duration);
 
-    // Dispatch show action
     dispatch({
       type: CS.SHOW_GLOBAL_NOTIFICATION,
       payload: {
@@ -54,4 +38,13 @@ export function createShowGlobalNotification(
       },
     });
   };
+}
+export function createReqFailNot(settings, ep, msg) {
+  return createNotif(
+    settings,
+    CS.GLOB_NOTIF_ERR,
+    `Core request to '${ep}'`,
+    msg,
+    5000
+  );
 }

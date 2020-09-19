@@ -3,51 +3,51 @@
         "endpoints": {
             "infoConfig": {
                 "type": "GET",
-                "endpoint": "/info/settings"
+                "url": "/info/settings"
             },
             "frameDetail": {
                 "type": "GET",
-                "endpoint": "/get_frame_detail_data"
+                "url": "/get_frame_detail_data"
             },
             "textSearchSuggestions": {
                 "type": "GET",
-                "endpoint": "/get_autocomplete_results"
+                "url": "/get_autocomplete_results"
             },
             "screenTop": {
                 "type": "POST",
-                "endpoint": "/get_top_screen"
+                "url": "/get_top_screen"
             },
             "screenSom": {
                 "type": "POST",
-                "endpoint": "/get_som_screen"
+                "url": "/get_som_screen"
             },
             "logBrowsingScroll": {
                 "type": "GET",
-                "endpoint": "/log_scroll"
+                "url": "/log_scroll"
             },
             "logTextChange": {
                 "type": "GET",
-                "endpoint": "/log_text_query_change"
+                "url": "/log_text_query_change"
             },
             "serverSubmitFrame": {
                 "type": "POST",
-                "endpoint": "/submit_frame"
+                "url": "/submit_frame"
             },
             "searchReset": {
                 "type": "POST",
-                "endpoint": "/reset_search_session"
+                "url": "/reset_search_session"
             },
             "searchRescore": {
                 "type": "POST",
-                "endpoint": "/rescore"
+                "url": "/rescore"
             },
             "searchLike": {
                 "type": "POST",
-                "endpoint": "/like_frame"
+                "url": "/like_frame"
             },
             "serverLogin": {
                 "type": "POST",
-                "endpoint": "/login_to_dres"
+                "url": "/login_to_dres"
             }
         }
     },

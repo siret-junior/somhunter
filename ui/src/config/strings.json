@@ -1,0 +1,8 @@
+{
+  "UNABLE_TO_FETCH_CORE_SETTINGS_HEADING": "Unable to fetch core settings!",
+  "UNABLE_TO_FETCH_CORE_SETTINGS_DESC": "Check if the SOMHunter Core API server is running at ",
+  "UNABLE_TO_FETCH_CORE_SETTINGS_ACTION": "Reload",
+
+  "LOADING_CORE_SETTINGS_HEADING":  "Loading Core API settings.",
+  "LOADING_CORE_SETTINGS_DESC":  "This may take a while."
+}

@@ -1,14 +1,8 @@
-import axios from "axios";
-
 import * as utils from "../utils/utils";
-import config from "../config/config";
 import * as CS from "../constants";
 import { dispNameToAction } from "../constants";
-import coreApi from "../apis/coreApi";
-import {
-  createShowGlobalNotification,
-  createHideGlobalNotification,
-} from "./notificationCreator";
+import { post } from "../apis/coreApi";
+import { createNotif, createDenotif } from "./notificationCreator";
 
 /* 
 Core API docs:
@@ -40,84 +34,41 @@ interface Response = {
       message: string;
     }
   } */
-function loadMainWindowFrames(type, pageId, frameId) {
-  return async (dispatch, getState) => {
-    const state = getState();
-
-    //if (state.mainWindow.activeDisplay == type && pageId == 0) return;
-
+function loadMainWindowFrames(settings, type, pageId, frameId) {
+  return async (dispatch, _) => {
     const reqData = {
       pageId: pageId,
       type: type,
       frameId: frameId,
     };
 
-    let response = null;
-    try {
-      console.debug(
-        "=> loadMainWindowFrames: POST request to '/get_top_screen'"
-      );
-      response = await coreApi.post("/get_top_screen", reqData);
-    } catch (e) {
-      console.log(e);
-      dispatch(
-        createShowGlobalNotification(
-          CS.GLOB_NOTIF_ERR,
-          "Core request to '/get_top_screen' failed!",
-          e.message,
-          5000
-        )
-      );
-      return;
-    }
+    const requestSettings = settings.coreSettings.api.endpoints.screenTop;
+    // << Core API >>
+    const response = await post(dispatch, requestSettings.url, reqData);
+    // << Core API >>
 
-    console.debug("=> loadMainWindowFrames: Got response:", response);
-
-    // Create the action Object
-    const action = {
+    dispatch({
       type: dispNameToAction(type),
       payload: {
         frames: response.data.viewData.somhunter.screen.frames,
         currentPage: pageId,
       },
-    };
-    dispatch(action);
+    });
   };
 }
 
-function loadSomFrames() {
-  return async (dispatch, getState) => {
-    const state = getState();
-
-    let response = null;
-
+function loadSomFrames(settings) {
+  return async (dispatch, _) => {
     dispatch(
-      createShowGlobalNotification(
-        CS.GLOB_NOTIF_WARN,
-        "SOM working...",
-        "",
-        500
-      )
+      createNotif(settings, CS.GLOB_NOTIF_WARN, "SOM working...", "", 500)
     );
 
+    const requestSettings = settings.coreSettings.api.endpoints.screenSom;
+    let response = null;
     do {
-      try {
-        console.debug("=> loadSomFrames: GET request to '/get_som_screen'");
-        response = await coreApi.get("/get_som_screen");
-
-        console.warn("=> loadSomFrames: Got response:", response);
-      } catch (e) {
-        console.log(e);
-        dispatch(
-          createShowGlobalNotification(
-            CS.GLOB_NOTIF_ERR,
-            "Core request to '/get_som_screen' failed!",
-            e.message,
-            5000
-          )
-        );
-        return;
-      }
+      // << Core API >>
+      response = await post(dispatch, requestSettings.url);
+      // << Core API >>
 
       // 222 means that SOM not ready
       if (response.status === 222) {
@@ -125,34 +76,31 @@ function loadSomFrames() {
       }
     } while (response.status === 222);
 
-    dispatch(createHideGlobalNotification());
+    dispatch(createDenotif(settings));
 
-    // Create the action Object
-    const action = {
+    dispatch({
       type: dispNameToAction(CS.DISP_TYPE_SOM),
       payload: {
         frames: response.data.viewData.somhunter.screen.frames,
         currentPage: 0,
       },
-    };
-    dispatch(action);
-    return;
+    });
   };
 }
 
-export function createShowDisplay(type, pageId = 0, frameId = 0) {
+export function createShowDisplay(settings, type, pageId = 0, frameId = 0) {
   console.debug(
     `=> createShowDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
   );
 
   switch (type) {
     case CS.DISP_TYPE_SOM:
-      return loadSomFrames();
+      return loadSomFrames(settings);
 
     case CS.DISP_TYPE_TOP_KNN:
     case CS.DISP_TYPE_TOP_N:
     case CS.DISP_TYPE_TOP_N_CONTEXT:
-      return loadMainWindowFrames(type, pageId, frameId);
+      return loadMainWindowFrames(settings, type, pageId, frameId);
     default:
       return null;
   }

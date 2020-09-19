@@ -1,5 +1,9 @@
 {
-    "development": {},
+    "development": {
+        "textSearch": {
+            "autocompleteDelay": 200
+        }
+    },
     "staging": {},
     "production": {}
 }

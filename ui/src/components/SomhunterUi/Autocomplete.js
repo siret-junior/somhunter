@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useContext } from "react";
 import { connect } from "react-redux";
 
 import { Container, Row, Col, Form } from "react-bootstrap";
@@ -7,13 +7,14 @@ import config from "../../config/config";
 import * as CS from "../../constants";
 
 import coreApi from "../../apis/coreApi";
-import { createShowGlobalNotification } from "../../actions/notificationCreator";
+import { createNotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
+
+import SettingsContext from "../../contexts/settingsContext";
 
 class Autocomplete extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       activeSuggestion: 0,
       filteredSuggestions: [],
@@ -33,7 +34,7 @@ class Autocomplete extends Component {
     );
   }
 
-  async getAutocompleteSuggestions(prefix) {
+  async getAutocompleteSuggestions(settings, prefix) {
     console.debug(`=> getAutocompleteSuggestions: prefix ${prefix}`);
 
     this.currToHandle = null;
@@ -49,7 +50,8 @@ class Autocomplete extends Component {
       });
     } catch (e) {
       console.log(e);
-      this.props.createShowGlobalNotification(
+      this.props.createNotif(
+        settings,
         CS.GLOB_NOTIF_ERR,
         "Core request to '/get_autocomplete_results' failed!",
         e.message,
@@ -66,7 +68,7 @@ class Autocomplete extends Component {
     this.setState({ ...this.state, filteredSuggestions: suggestions });
   }
 
-  onChangeHandler(e) {
+  onChangeHandler(settings, e) {
     const userInput = e.currentTarget.value;
 
     const currentWord = userInput.split(" ").slice(-1)[0];
@@ -74,9 +76,10 @@ class Autocomplete extends Component {
     if (this.currToHandle !== null) {
       clearTimeout(this.currToHandle);
     }
+
     this.currToHandle = setTimeout(
-      () => this.getAutocompleteSuggestions(currentWord),
-      config.textSearchPanel.autocompleteDelay
+      () => this.getAutocompleteSuggestions(this.context, currentWord),
+      settings.coreSettings.ui.textSearch.autocompleteDelay
     );
 
     this.setState({
@@ -101,7 +104,7 @@ class Autocomplete extends Component {
     this.props.setIsAcOpen(false);
   }
 
-  onKeyDownHandler(e) {
+  onKeyDownHandler(settings, e) {
     const { activeSuggestion, filteredSuggestions } = this.state;
     const userInput = this.state.userInput;
 
@@ -112,10 +115,14 @@ class Autocomplete extends Component {
       if (!this.state.showSuggestions) {
         if (e.shiftKey) {
           this.props.createRescore(
+            settings,
             config.frameGrid.defaultSecondaryRescoreDisplay
           );
         } else {
-          this.props.createRescore(config.frameGrid.defaultRescoreDisplay);
+          this.props.createRescore(
+            settings,
+            config.frameGrid.defaultRescoreDisplay
+          );
         }
         return;
       }
@@ -166,6 +173,8 @@ class Autocomplete extends Component {
       },
     } = this;
 
+    const settings = this.context;
+
     let suggestionsListComponent;
 
     if (showSuggestions && userInput) {
@@ -210,8 +219,8 @@ class Autocomplete extends Component {
           <Form.Control
             ref={this.props.inputRef}
             type="text"
-            onChange={onChangeHandler}
-            onKeyDown={onKeyDownHandler}
+            onChange={(e) => onChangeHandler(settings, e)}
+            onKeyDown={(e) => onKeyDownHandler(settings, e)}
             value={userInput}
           />
           {suggestionsListComponent}
@@ -220,13 +229,14 @@ class Autocomplete extends Component {
     );
   }
 }
+Autocomplete.contextType = SettingsContext;
 
 const stateToProps = (state) => {
   return {};
 };
 
 const actionCreators = {
-  createShowGlobalNotification,
+  createNotif,
   createRescore,
 };
 

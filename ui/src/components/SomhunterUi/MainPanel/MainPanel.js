@@ -3,13 +3,14 @@ import { connect, useDispatch } from "react-redux";
 
 import { Container, Row, Col, Button } from "react-bootstrap";
 
+import config from "../../../config/config";
 import * as CS from "../../../constants";
+import { useSettings } from "../../../hooks/useSettings";
 
 import ControlsPanel from "./ControlsPanel";
 import TextSearchPanel from "./TextSearchPanel";
 import HistoryPanel from "./HistoryPanel";
 import NotificationPanel from "./NotificationPanel";
-import config from "../../../config/config";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
 import { createAddQueryRef } from "../../../actions/settingsCreator";
 import {
@@ -19,15 +20,17 @@ import {
 import HelpWindow from "./HelpWindow";
 import SettingsWindow from "./SettingsWindow";
 
-function onTriggerRescoretHandler(dispatch, destDisplay, isAcOpen) {
+function onTriggerRescoretHandler(settings, destDisplay, isAcOpen) {
+  const dispatch = settings.dispatch;
+
   // Make sure that autocomplete popup is not shown
   if (!isAcOpen) {
-    dispatch(createRescore(destDisplay));
+    dispatch(createRescore(settings, destDisplay));
   }
 }
 
 function onTriggerResetHandler(
-  dispatch,
+  settings,
   destDisplay,
   isAcOpen,
   refQuery0,
@@ -35,24 +38,26 @@ function onTriggerResetHandler(
 ) {
   console.debug("=> onTriggerResetHandler: Reseting the search with params:");
 
-  dispatch(createResetSearch(destDisplay));
+  const dispatch = settings.dispatch;
+
+  dispatch(createResetSearch(settings, destDisplay));
 
   refQuery0.current.value = "";
   refQuery1.current.value = "";
 }
 
 function MainPanel(props) {
+  const settings = useSettings();
+
   const refQuery0 = useRef(null);
   const refQuery1 = useRef(null);
 
   const [isAcOpen, setIsAcOpen] = useState(false);
 
   useEffect(() => {
-    props.createAddQueryRef(refQuery0);
-    props.createAddQueryRef(refQuery1);
+    props.createAddQueryRef(settings, refQuery0);
+    props.createAddQueryRef(settings, refQuery1);
   }, []);
-
-  const dispatch = useDispatch();
 
   return (
     <Container fluid className="panel main p-0">
@@ -61,7 +66,7 @@ function MainPanel(props) {
         <Button
           onClick={() =>
             onTriggerResetHandler(
-              dispatch,
+              settings,
               config.frameGrid.defaultRescoreDisplay,
               isAcOpen,
               refQuery0,
@@ -79,7 +84,7 @@ function MainPanel(props) {
         refQuery1={refQuery1}
         triggerRescore={() =>
           onTriggerRescoretHandler(
-            dispatch,
+            settings,
             config.frameGrid.defaultRescoreDisplay,
             isAcOpen
           )
@@ -90,7 +95,7 @@ function MainPanel(props) {
         <Button
           onClick={() =>
             onTriggerRescoretHandler(
-              dispatch,
+              settings,
               config.frameGrid.defaultRescoreDisplay,
               isAcOpen,
               refQuery0,
@@ -103,7 +108,7 @@ function MainPanel(props) {
         <Button
           onClick={() =>
             onTriggerRescoretHandler(
-              dispatch,
+              settings,
               CS.DISP_TYPE_SOM,
               isAcOpen,
               refQuery0,
@@ -116,17 +121,23 @@ function MainPanel(props) {
       </ControlsPanel>
 
       <ControlsPanel>
-        <Button onClick={() => props.createShowDisplay(CS.DISP_TYPE_SOM, 0, 0)}>
+        <Button
+          onClick={() =>
+            props.createShowDisplay(settings, CS.DISP_TYPE_SOM, 0, 0)
+          }
+        >
           SOM Screen
         </Button>
         <Button
-          onClick={() => props.createShowDisplay(CS.DISP_TYPE_TOP_N, 0, 0)}
+          onClick={() =>
+            props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0)
+          }
         >
           Top N
         </Button>
         <Button
           onClick={() =>
-            props.createShowDisplay(CS.DISP_TYPE_TOP_N_CONTEXT, 0, 0)
+            props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT, 0, 0)
           }
         >
           Top N Context

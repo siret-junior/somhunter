@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { connect } from "react-redux";
 import { Container, Button, Row, Col } from "react-bootstrap";
 
-import { isErrDef } from "../../../utils/utils";
 import * as CS from "../../../constants";
+import { isErrDef } from "../../../utils/utils";
 import coreApi from "../../../apis/coreApi";
+import { useSettings } from "../../../hooks/useSettings";
 
-import { createShowGlobalNotification } from "../../../actions/notificationCreator";
+import { createNotif } from "../../../actions/notificationCreator";
 import { createShowDisplay } from "../../../actions/mainWindowCreator";
 import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
 import {
@@ -14,14 +15,14 @@ import {
   createScrollReplayWindow,
 } from "../../../actions/replaylWindowCreator";
 
-function onLikeHandler(e, onLikeHandler) {
+function onLikeHandler(settings, props, e, onLikeHandler) {
   const frameId = Number(e.target.dataset.frameId);
 
   // Trigger the handler
   onLikeHandler(frameId);
 }
 
-async function onSubmitHandler(props) {
+async function onSubmitHandler(settings, props) {
   const frameId = props.frame.id;
 
   // Create ensure popup
@@ -42,7 +43,8 @@ async function onSubmitHandler(props) {
     });
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-    props.createShowGlobalNotification(
+    props.createNotif(
+      settings,
       CS.GLOB_NOTIF_ERR,
       "Core request to '/submit_frame' failed!",
       msg,
@@ -52,7 +54,8 @@ async function onSubmitHandler(props) {
   }
 
   // Create success notification
-  props.createShowGlobalNotification(
+  props.createNotif(
+    settings,
     CS.GLOB_NOTIF_SUCC,
     `A frame with the ID '${frameId} was submitted.`,
     "",
@@ -60,7 +63,7 @@ async function onSubmitHandler(props) {
   );
 }
 
-function onWheellHandler(props, e) {
+function onWheellHandler(settings, props, e) {
   const frameId = props.frame.id;
 
   // If SHIFT key down
@@ -71,7 +74,7 @@ function onWheellHandler(props, e) {
       console.log(
         `Showing replay through frame '${frameId}' with delta=${delta}...`
       );
-      props.createScrollReplayWindow(delta);
+      props.createScrollReplayWindow(settings, delta);
     }
     // Else new frame ID
     else {
@@ -81,12 +84,14 @@ function onWheellHandler(props, e) {
       const vpH = window.innerHeight;
 
       const cursorPos = { x: e.clientX / vpW, y: e.clientY / vpH };
-      props.createShowReplayWindow(frameId, cursorPos);
+      props.createShowReplayWindow(settings, frameId, cursorPos);
     }
   }
 }
 
 function Frame(props) {
+  const settings = useSettings();
+
   let classNameStr = "frame p-0";
   if (props.frame.liked) {
     classNameStr += " liked";
@@ -101,9 +106,9 @@ function Frame(props) {
     return (
       <Col
         className={classNameStr}
-        onClick={(e) => onLikeHandler(e, props.onLikeHandler)}
+        onClick={(e) => onLikeHandler(settings, props, e, props.onLikeHandler)}
         onWheel={(e) => {
-          onWheellHandler(props, e);
+          onWheellHandler(settings, props, e);
           e.stopPropagation();
         }}
         data-frame-id={props.frame.id}
@@ -113,7 +118,7 @@ function Frame(props) {
         <span className="video-id-label top left">{props.frame.id}</span>
         <Button
           onClick={(e) => {
-            onSubmitHandler(props);
+            onSubmitHandler(settings, props);
             e.stopPropagation();
             return;
           }}
@@ -124,7 +129,12 @@ function Frame(props) {
         </Button>
         <Button
           onClick={(e) => {
-            props.createShowDisplay(CS.DISP_TYPE_TOP_KNN, 0, props.frame.id);
+            props.createShowDisplay(
+              settings,
+              CS.DISP_TYPE_TOP_KNN,
+              0,
+              props.frame.id
+            );
             e.stopPropagation();
           }}
           className="bottom left orange"
@@ -134,7 +144,7 @@ function Frame(props) {
         </Button>
         <Button
           onClick={(e) => {
-            props.createShowDetailWindow(props.frame.id);
+            props.createShowDetailWindow(settings, props.frame.id);
             e.stopPropagation();
           }}
           className="bottom right blue"
@@ -153,7 +163,7 @@ const stateToProps = (state) => {
 const actionCreators = {
   createShowDisplay,
   createShowDetailWindow,
-  createShowGlobalNotification,
+  createNotif,
   createShowReplayWindow,
   createScrollReplayWindow,
 };

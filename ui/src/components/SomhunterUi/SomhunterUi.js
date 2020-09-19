@@ -1,26 +1,33 @@
 import React, { useEffect } from "react";
-import { connect, useStore } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Alert, Container, Row, Col, Button } from "react-bootstrap";
 
 import config from "../../config/config";
+import STRS from "../../config/strings";
 import * as CS from "../../constants";
+
+import { useSettings } from "../../hooks/useSettings";
+
 import { createShowDisplay } from "../../actions/mainWindowCreator";
-import { createShowGlobalNotification } from "../../actions/notificationCreator";
+import { createNotif, createDenotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
-import { createFocusTextQuery } from "../../actions/settingsCreator";
+import {
+  createFocusTextQuery,
+  createSetCoreSettings,
+} from "../../actions/settingsCreator";
 
 import MainPanel from "./MainPanel/MainPanel";
 import MainWindow from "./MainWindow/MainWindow";
 import GlobalNotificationOverlay from "./GlobalNotificationOverlay";
 import DebugButtons from "./DebugButtons";
 
-function handleGlobalKeyDown(e, props) {
+function handleGlobalKeyDown(settings, props, e) {
   const activeElement = document.activeElement;
 
   switch (e.keyCode) {
     case CS.KEY_CODE_TAB:
-      props.createFocusTextQuery();
+      props.createFocusTextQuery(settings);
       e.preventDefault();
       e.stopPropagation();
       break;
@@ -29,9 +36,12 @@ function handleGlobalKeyDown(e, props) {
       // If NOT in a text input
       if (activeElement.tagName !== "INPUT") {
         if (e.shiftKey) {
-          props.createRescore(config.frameGrid.defaultSecondaryRescoreDisplay);
+          props.createRescore(
+            settings,
+            config.frameGrid.defaultSecondaryRescoreDisplay
+          );
         } else {
-          props.createRescore(config.frameGrid.defaultRescoreDisplay);
+          props.createRescore(settings, config.frameGrid.defaultRescoreDisplay);
         }
       }
       break;
@@ -40,9 +50,9 @@ function handleGlobalKeyDown(e, props) {
       // If NOT in a text input
       if (activeElement.tagName !== "INPUT") {
         if (e.shiftKey) {
-          props.createShowDisplay(CS.DISP_TYPE_TOP_N_CONTEXT);
+          props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT);
         } else {
-          props.createShowDisplay(CS.DISP_TYPE_TOP_N);
+          props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N);
         }
       }
       break;
@@ -50,7 +60,7 @@ function handleGlobalKeyDown(e, props) {
     case CS.KEY_CODE_S:
       // If NOT in a text input
       if (activeElement.tagName !== "INPUT") {
-        props.createShowDisplay(CS.DISP_TYPE_SOM);
+        props.createShowDisplay(settings, CS.DISP_TYPE_SOM);
       }
       break;
 
@@ -64,22 +74,28 @@ function handleGlobalKeyDown(e, props) {
   }
 }
 
-function setupGlobalListeners(props) {
-  document.addEventListener("keydown", (e) => handleGlobalKeyDown(e, props));
+function setupGlobalListeners(settings, props) {
+  document.addEventListener("keydown", (e) =>
+    handleGlobalKeyDown(settings, props, e)
+  );
+}
+
+/** Initialization of the program. */
+function initializeUi(settings, props) {
+  console.info("<SomhunterUi>: Initializing the UI...");
+
+  setupGlobalListeners(settings, props);
+
+  props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0);
 }
 
 function SomhunterUi(props) {
+  const settings = useSettings();
+
   // Initial setup
-  useEffect(() => {
-    console.debug("<SomhunterUi>: Running initial load...");
+  useEffect(() => initializeUi(settings, props), []);
 
-    // Setup global keydown listeners
-    setupGlobalListeners(props);
-
-    // Show the first display
-    props.createShowDisplay(CS.DISP_TYPE_TOP_N, 0, 0);
-  }, []);
-
+  console.warn("<SomhunterUi>: Rendering...");
   return (
     <Container fluid className="section somhunter-ui p-0">
       <GlobalNotificationOverlay />
@@ -99,15 +115,16 @@ function SomhunterUi(props) {
 }
 
 const stateToProps = (state) => {
-  console.warn(state.settings.textQueryRefs);
-  return { textQueryRefs: state.settings.textQueryRefs };
+  return {};
 };
 
 const actionCreators = {
-  createShowGlobalNotification,
+  createNotif,
+  createDenotif,
   createShowDisplay,
   createRescore,
   createFocusTextQuery,
+  createSetCoreSettings,
 };
 
 export default connect(stateToProps, actionCreators)(SomhunterUi);

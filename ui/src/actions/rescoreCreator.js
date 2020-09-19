@@ -1,116 +1,54 @@
-import axios from "axios";
-
-import config from "../config/config";
 import * as CS from "../constants";
-import { dispNameToAction } from "../constants";
-import coreApi from "../apis/coreApi";
-import {
-  createShowGlobalNotification,
-  createHideGlobalNotification,
-} from "./notificationCreator";
+import { post } from "../apis/coreApi";
+import { createNotif, createDenotif } from "./notificationCreator";
 import { createShowDisplay } from "./mainWindowCreator";
 
-export function createRescore(destDisplay) {
-  return async (dispatch, getState) => {
+export function createRescore(settings, destDisplay) {
+  return async (dispatch, _) => {
     console.debug("=> createRescore: Running rescore...");
-    console.debug(destDisplay);
-    // Show working notification
-    dispatch(
-      createShowGlobalNotification(
-        CS.GLOB_NOTIF_INFO,
-        "Working...",
-        "",
-        1000000
-      )
-    );
 
-    const state = getState();
-    const queryRefs = state.settings.textQueryRefs;
+    dispatch(createNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
+
+    const queryRefs = settings.textQueryRefs;
     if (queryRefs.length < 2) {
       throw Error("Not enough `queryRefs` in the state.");
     }
 
-    const query0 = state.settings.textQueryRefs[0].current.value;
-    const query1 = state.settings.textQueryRefs[1].current.value;
+    // Current text queries
+    const query0 = settings.textQueryRefs[0].current.value;
+    const query1 = settings.textQueryRefs[1].current.value;
 
+    // POST data
     const reqData = {
       q0: query0,
       q1: query1,
     };
 
-    let response = null;
-    try {
-      console.debug("=> doRequestRescore: POST request to '/rescore'");
-      response = await coreApi.post("/rescore", reqData);
-    } catch (e) {
-      console.log(e);
-      dispatch(
-        createShowGlobalNotification(
-          CS.GLOB_NOTIF_ERR,
-          "Core request to '/rescore' failed!",
-          e.message,
-          5000
-        )
-      );
-      return;
-    }
+    const requestSettings = settings.coreSettings.api.endpoints.searchRescore;
+    // << Core API >>
+    await post(dispatch, requestSettings.url, reqData);
+    // << Core API >>
 
-    console.debug("=> doRequestRescore: Got response:", response);
-
-    // Dispatch hide notification
-    dispatch(createHideGlobalNotification());
-
-    // Dispatch switch to target
-    dispatch(createShowDisplay(destDisplay, 0, 0));
+    dispatch(createDenotif(settings));
+    dispatch(createShowDisplay(settings, destDisplay, 0, 0));
   };
 }
 
-export function createResetSearch(destDisplay) {
-  return async (dispatch, getState) => {
+export function createResetSearch(settings, destDisplay) {
+  return async (dispatch, _) => {
     console.debug("=> createResetSearch: Running reset...");
 
-    // Show working notification
+    dispatch(createNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
+
+    const requestSettings = settings.coreSettings.api.endpoints.searchReset;
+    // << Core API >>
+    await post(dispatch, requestSettings.url);
+    // << Core API >>
+
     dispatch(
-      createShowGlobalNotification(
-        CS.GLOB_NOTIF_INFO,
-        "Working...",
-        "",
-        1000000
-      )
+      createNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000)
     );
 
-    let response = null;
-    try {
-      console.debug(
-        "=> doRequestRescore: POST request to '/reset_search_session'"
-      );
-      response = await coreApi.post("/reset_search_session", {});
-    } catch (e) {
-      console.log(e);
-      dispatch(
-        createShowGlobalNotification(
-          CS.GLOB_NOTIF_ERR,
-          "Core request to '/reset_search_session' failed!",
-          e.message,
-          5000
-        )
-      );
-      return;
-    }
-
-    console.debug("=> createResetSearch: Got response:", response);
-
-    // Dispatch success notification
-    dispatch(
-      createShowGlobalNotification(
-        CS.GLOB_NOTIF_SUCC,
-        "Search reset.",
-        "",
-        2000
-      )
-    );
-
-    // Dispatch switch to target
-    dispatch(createShowDisplay(destDisplay, 0, 0));
+    dispatch(createShowDisplay(settings, destDisplay, 0, 0));
   };
 }

@@ -88,3 +88,4 @@ export const KEY_CODE_T = 84;
 export const KEY_CODE_S = 83;
 
 export const SETTINGS_ADD_QUERY_REF = "SETTINGS_ADD_QUERY_REF";
+export const SETTINGS_SET_CORE = "SETTINGS_SET_CORE";

@@ -35,7 +35,6 @@ function replayWindowReducer(state = defaultState, action) {
       return { ...state, deltaX: state.deltaX + action.payload.deltaX };
 
     case CS.HIDE_REPLAY_WINDOW:
-      console.log("reducer hide");
       return { ...state, show: false };
 
     default:

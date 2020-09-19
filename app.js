@@ -53,11 +53,11 @@ const routerNotFound = require("./routes/404");
 // API endpoints
 const endpoints = require("./routes/endpoints");
 
-function addEndpoint(app, { type, endpoint }, handler) {
+function addEndpoint(app, { type, url }, handler) {
   if (type === "GET") {
-    app.get(endpoint, handler);
+    app.get(url, handler);
   } else if (type === "POST") {
-    app.post(endpoint, handler);
+    app.post(url, handler);
   }
 }
 
