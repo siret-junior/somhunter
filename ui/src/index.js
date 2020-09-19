@@ -10,11 +10,32 @@ import App from "./components/App";
 
 import "./index.scss";
 
-// Turn on browser support for dev tools extension
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+function disableProdLogging() {
+  window.console.debug = () => null;
+  window.console.log = () => null;
+  window.console.info = () => null;
+  window.console.warn = () => null;
+}
+
+let middleware = null;
+
+// If in "development" env
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  // Turn on browser support for dev tools extension
+  const composeEnhancers =
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+  middleware = composeEnhancers(applyMiddleware(thunk));
+}
+// "production" env
+else {
+  disableProdLogging();
+
+  middleware = applyMiddleware(thunk);
+}
 
 // Create the Redux state store
-const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(reducers, middleware);
 
 ReactDOM.render(
   <React.StrictMode>

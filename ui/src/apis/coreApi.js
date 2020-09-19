@@ -2,6 +2,7 @@ import axios from "axios";
 
 import config from "../config/config";
 import { isErrDef } from "../utils/utils";
+import { createReqFailNot } from "../actions/notificationCreator";
 
 const coreApi = axios.create({
   baseURL: config.backendUrl,
@@ -18,7 +19,7 @@ export function post(dispatch, url, data = {}, cfg = {}) {
     console.info("<<--->> POST request res:", res);
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-    dispatch(createReqFailNot(settings, requestSettings.endpoint, msg));
+    dispatch(createReqFailNot({}, url, msg));
     return null;
   }
 
@@ -34,7 +35,7 @@ export function get(dispatch, url, cfg = {}) {
     console.info("<<--->> GET request res:", res);
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-    dispatch(createReqFailNot(settings, requestSettings.endpoint, msg));
+    dispatch(createReqFailNot({}, url, msg));
     return null;
   }
 
