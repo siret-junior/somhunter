@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { connect } from "react-redux";
+import _ from "lodash";
 import { Container, Button, Row, Col } from "react-bootstrap";
 
 import * as CS from "../../../constants";
@@ -64,6 +65,8 @@ async function onSubmitHandler(settings, props) {
 }
 
 function onWheellHandler(settings, props, e) {
+  e.stopPropagation();
+
   const frameId = props.frame.id;
 
   // If SHIFT key down
@@ -89,6 +92,8 @@ function onWheellHandler(settings, props, e) {
   }
 }
 
+const onWheelHandlerThrottled = _.throttle(onWheellHandler, 100);
+
 function Frame(props) {
   const settings = useSettings();
 
@@ -108,8 +113,8 @@ function Frame(props) {
         className={classNameStr}
         onClick={(e) => onLikeHandler(settings, props, e, props.onLikeHandler)}
         onWheel={(e) => {
-          onWheellHandler(settings, props, e);
-          e.stopPropagation();
+          e.persist();
+          onWheelHandlerThrottled(settings, props, e);
         }}
         data-frame-id={props.frame.id}
         xs={2}

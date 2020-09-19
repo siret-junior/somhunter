@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import _ from "lodash";
 
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -60,17 +61,18 @@ function getFrames(props, gridEl) {
 function handleOnScroll(settings, e, props, prevFetch, setPrevFetch) {
   const tarEl = e.target;
   const diff = tarEl.scrollHeight - tarEl.scrollTop - tarEl.clientHeight;
-  const mainWindow = props.mainWindow;
-  if (
-    mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N ||
-    mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N_CONTEXT ||
-    mainWindow.activeDisplay === CS.DISP_TYPE_TOP_KNN
-  ) {
-    const t = new Date().getTime();
-    if (prevFetch + config.frameGrid.infiniteScrollTimeout < t) {
-      setPrevFetch(t);
 
-      if (diff < config.frameGrid.infiniteScrollThreshold) {
+  if (diff < config.frameGrid.infiniteScrollThreshold) {
+    const mainWindow = props.mainWindow;
+    if (
+      mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N ||
+      mainWindow.activeDisplay === CS.DISP_TYPE_TOP_N_CONTEXT ||
+      mainWindow.activeDisplay === CS.DISP_TYPE_TOP_KNN
+    ) {
+      const t = new Date().getTime();
+      if (prevFetch + config.frameGrid.infiniteScrollTimeout < t) {
+        setPrevFetch(t);
+
         console.debug(`handleOnScroll: DIFF = ${diff} => Loading next page`);
         props.createShowDisplay(
           settings,
@@ -132,13 +134,15 @@ function FrameGrid(props) {
   let rowClass =
     props.mainWindow.activeDisplay === CS.DISP_TYPE_SOM ? "som" : "";
 
-  let _onScrollFn = (e) => {
+  const _onScrollFn = (e) => {
     handleOnScroll(settings, e, props, prevFetch, setPrevFetch);
   };
 
+  let onScrollFnThrottled = _.throttle(_onScrollFn, 500);
+
   if (typeof props.mainWindow.activeDisplay === "undefined") {
     rowClass = "detail";
-    _onScrollFn = null;
+    onScrollFnThrottled = null;
   }
 
   return (
@@ -146,7 +150,10 @@ function FrameGrid(props) {
       <Row
         ref={props.gridRef}
         className={`frame-grid ${rowClass}`}
-        onScroll={_onScrollFn}
+        onScroll={(e) => {
+          e.persist();
+          onScrollFnThrottled(e);
+        }}
         noGutters
       >
         {getFrames(props, props.gridRef)}

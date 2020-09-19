@@ -4,19 +4,23 @@ import { createNotif, createDenotif } from "./notificationCreator";
 import { createShowDisplay } from "./mainWindowCreator";
 
 export function createRescore(settings, destDisplay) {
-  return async (dispatch, _) => {
+  return async (dispatch, getState) => {
     console.debug("=> createRescore: Running rescore...");
+
+    const state = getState();
 
     dispatch(createNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
 
-    const queryRefs = settings.textQueryRefs;
+    console.debug(settings);
+
+    const queryRefs = state.settings.textQueryRefs;
     if (queryRefs.length < 2) {
       throw Error("Not enough `queryRefs` in the state.");
     }
 
     // Current text queries
-    const query0 = settings.textQueryRefs[0].current.value;
-    const query1 = settings.textQueryRefs[1].current.value;
+    const query0 = state.settings.textQueryRefs[0].current.value;
+    const query1 = state.settings.textQueryRefs[1].current.value;
 
     // POST data
     const reqData = {
