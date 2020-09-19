@@ -67,6 +67,8 @@ function handleGlobalKeyDown(settings, props, e) {
     case CS.KEY_CODE_ESC:
       // Loose any focus
       document.activeElement.blur();
+
+      // Close autocomplete
       break;
 
     default:

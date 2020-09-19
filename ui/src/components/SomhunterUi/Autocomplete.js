@@ -18,7 +18,7 @@ class Autocomplete extends Component {
     this.state = {
       activeSuggestion: 0,
       filteredSuggestions: [],
-      showSuggestions: false,
+      showSuggestions: props.isAcOpen,
       userInput: "",
       currentWord: "",
     };
@@ -94,13 +94,38 @@ class Autocomplete extends Component {
   }
 
   onClickHandler(e) {
+    const tarElIndex = e.currentTarget.dataset.index;
+    this.selectSuggestion(tarElIndex);
+  }
+
+  selectSuggestion(idx) {
+    const { activeSuggestion, filteredSuggestions } = this.state;
+    const userInput = this.state.userInput;
+
+    let suggestionIndex = idx;
+    if (idx === null) {
+      suggestionIndex = activeSuggestion;
+    }
+
+    console.info(
+      `=> onKeyDownHandler: Selecting suggestion ${activeSuggestion}`
+    );
+
+    if (suggestionIndex >= filteredSuggestions.length) {
+      return;
+    }
+
+    let inputPrefix = userInput.split(" ").slice(0, -1).join(" ");
+    if (inputPrefix !== "") {
+      inputPrefix += " ";
+    }
+
     this.setState({
       activeSuggestion: 0,
-      filteredSuggestions: [],
       showSuggestions: false,
-      userInput: e.currentTarget.innerText,
+      userInput: `${inputPrefix}${filteredSuggestions[suggestionIndex].wordString} `,
+      currentWord: "",
     });
-
     this.props.setIsAcOpen(false);
   }
 
@@ -112,6 +137,7 @@ class Autocomplete extends Component {
     if (e.keyCode === 13) {
       if (filteredSuggestions.length <= activeSuggestion) return;
 
+      // If suggestions not open => RESCORE
       if (!this.state.showSuggestions) {
         if (e.shiftKey) {
           this.props.createRescore(
@@ -127,19 +153,7 @@ class Autocomplete extends Component {
         return;
       }
 
-      console.warn(
-        `=> onKeyDownHandler: Selecting suggestion ${activeSuggestion}`
-      );
-      const inputPrefix = userInput.split(" ").slice(0, -1).join(" ");
-
-      this.setState({
-        activeSuggestion: 0,
-        showSuggestions: false,
-        userInput: `${inputPrefix} ${filteredSuggestions[activeSuggestion].wordString} `,
-        currentWord: "",
-      });
-
-      this.props.setIsAcOpen(false);
+      this.selectSuggestion(null);
     }
     // Key: "ARROW UP"
     else if (e.keyCode === 38) {
@@ -157,6 +171,19 @@ class Autocomplete extends Component {
 
       this.setState({ activeSuggestion: activeSuggestion + 1 });
     }
+  }
+
+  onBlurHandler(e) {
+    const relTar = e.relatedTarget;
+
+    // If suggestion click
+    if (relTar != null && typeof relTar.dataset.index !== "undefined") {
+      return;
+    }
+
+    console.debug("=> onBlurHandler: Hiding suggestions...");
+    this.setState({ ...this.state, showSuggestions: false });
+    this.props.setIsAcOpen(false);
   }
 
   render() {
@@ -195,10 +222,14 @@ class Autocomplete extends Component {
 
               return (
                 <li
+                  tabIndex="-1"
+                  data-index={index}
                   className={className}
                   key={`suggestion_${suggestion.id}`}
                   data-synset-id={suggestion.id}
-                  onClick={() => onClickHandler}
+                  onClick={(e) => {
+                    onClickHandler(e);
+                  }}
                 >
                   <h4 className="keyword">{suggestion.wordString}</h4>
                   <p className="description">{suggestion.description}</p>
@@ -215,7 +246,11 @@ class Autocomplete extends Component {
 
     return (
       <Fragment>
-        <div className="text-search-input" id="textQuery0">
+        <div
+          className="text-search-input"
+          id="textQuery0"
+          onBlur={(e) => this.onBlurHandler(e)}
+        >
           <Form.Control
             ref={this.props.inputRef}
             type="text"

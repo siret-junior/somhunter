@@ -23,6 +23,7 @@ const defaultState = {
 function replayWindowReducer(state = defaultState, action) {
   switch (action.type) {
     case CS.SHOW_REPLAY_WINDOW:
+      console.debug("=> (REDUCER) replayWindowReducer:", action);
       return {
         show: true,
         pivotFrameId: action.payload.pivotFrameId,
@@ -32,9 +33,11 @@ function replayWindowReducer(state = defaultState, action) {
       };
 
     case CS.SCROLL_REPLAY_WINDOW:
+      console.debug("=> (REDUCER) replayWindowReducer:", action);
       return { ...state, deltaX: state.deltaX + action.payload.deltaX };
 
     case CS.HIDE_REPLAY_WINDOW:
+      console.debug("=> (REDUCER) replayWindowReducer:", action);
       return { ...state, show: false };
 
     default:

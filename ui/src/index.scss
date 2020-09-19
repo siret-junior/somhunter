@@ -31,6 +31,12 @@ $theme-colors: (
   }
 }
 
+.form-control {
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0.5rem 0.6rem map-get($theme-colors, "primary");
+  }
+}
 
 .critical-error-window {
   width: 100vw;
@@ -234,6 +240,11 @@ $theme-colors: (
 
     li {
       padding: 0.3rem 1rem 0.3rem 1rem;
+      cursor: pointer;
+      &:hover,
+      &:focus {
+        background: theme-color-level($color-name: "primary", $level: -2);
+      }
 
       &.active {
         background: theme-color-level($color-name: "primary", $level: 0);

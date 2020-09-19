@@ -11,6 +11,7 @@ import * as CS from "../constants";
 function notificationReducer(state = null, action) {
   switch (action.type) {
     case CS.SHOW_GLOBAL_NOTIFICATION:
+      console.debug("=> (REDUCER) notificationReducer:", action);
       return {
         type: action.payload.type,
         heading: action.payload.heading,
@@ -19,10 +20,11 @@ function notificationReducer(state = null, action) {
       };
 
     case CS.HIDE_GLOBAL_NOTIFICATION:
+      console.debug("=> (REDUCER) notificationReducer:", action);
       return null;
 
     default:
-      return state;
+      break;
   }
   return state;
 }

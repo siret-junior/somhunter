@@ -18,12 +18,11 @@ function mainWindowReducer(
   },
   action
 ) {
-  console.debug("=> mainWindowReducer: Got action: ", action);
-
   switch (action.type) {
     case CS.SHOW_DISPLAY_TOP_N:
     case CS.SHOW_DISPLAY_TOP_N_CONTEXT:
     case CS.SHOW_DISPLAY_TOP_KNN:
+      console.debug("=> (REDUCER) mainWindowReducer:", action);
       if (action.payload.frames.length === 0) break;
 
       // If screen switch
@@ -54,6 +53,7 @@ function mainWindowReducer(
       break;
 
     case CS.SHOW_DISPLAY_SOM:
+      console.debug("=> (REDUCER) mainWindowReducer:", action);
       if (action.payload.frames.length === 0) break;
 
       return {

@@ -80,6 +80,7 @@ function MainPanel(props) {
 
       <TextSearchPanel
         setIsAcOpen={setIsAcOpen}
+        isAcOpen={isAcOpen}
         refQuery0={refQuery0}
         refQuery1={refQuery1}
         triggerRescore={() =>

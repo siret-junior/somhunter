@@ -14,12 +14,14 @@ function TextSearchPanel(props) {
           <Form className="panel-content text-search-form">
             <Form.Group>
               <Autocomplete
+                isAcOpen={props.isAcOpen}
                 setIsAcOpen={props.setIsAcOpen}
                 inputRef={props.refQuery0}
               />
               <span className="query-joiner"> ... and then ...</span>
               <div className="indented">
                 <Autocomplete
+                  isAcOpen={props.isAcOpen}
                   setIsAcOpen={props.setIsAcOpen}
                   inputRef={props.refQuery1}
                 />
