@@ -10,11 +10,11 @@
         "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
       },
       "dres": {
-        "submit_interaction_URL": "https://interactivevideoretrieval.com/log/query",
-        "submit_rerank_URL": "https://interactivevideoretrieval.com/log/result",
-        "submit_URL": "https://interactivevideoretrieval.com/submit",
+        "submit_interaction_URL": "http://localhost:8080/log/query",
+        "submit_rerank_URL": "http://localhost:8080/log/result",
+        "submit_URL": "http://localhost:8080/submit",
         "cookie_file": "cookie.txt",
-        "login_URL": "https://interactivevideoretrieval.com/api/login",
+        "login_URL": "http://localhost:8080/api/login",
         "username": "admin",
         "password": "adminadmin"
 			}

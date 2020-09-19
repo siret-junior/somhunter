@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Col } from "react-bootstrap";
 
 import { BiHelpCircle } from "react-icons/bi";
 
@@ -12,10 +12,12 @@ function SettingsWindow(props) {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        <BiHelpCircle />
-        Help
-      </Button>
+      <Col xs={6} className="cont-btn">
+        <Button variant="secondary" onClick={handleShow}>
+          <BiHelpCircle />
+          Help
+        </Button>
+      </Col>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

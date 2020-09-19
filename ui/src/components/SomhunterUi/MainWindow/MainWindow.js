@@ -9,7 +9,7 @@ import {
 } from "../../../actions/detailWindowCreator";
 import { createNotif } from "../../../actions/notificationCreator";
 import { createHideReplayWindow } from "../../../actions/replaylWindowCreator";
-import { createShowDisplay } from "../../../actions/mainWindowCreator";
+import { crShowDisplay } from "../../../actions/mainWindowCreator";
 
 import FrameGrid from "./FrameGrid";
 import DetailWindow from "./DetailWindow";
@@ -59,7 +59,7 @@ function MainWindow(props) {
       <FrameGrid
         id="mainGrid"
         gridRef={mainGridElRef}
-        createShowDisplay={props.createShowDisplay}
+        crShowDisplay={props.crShowDisplay}
         mainWindow={props.mainWindow}
       />
 
@@ -104,7 +104,7 @@ const stateToProps = (state) => {
 const actionCreators = {
   createHideDetailWindow,
   createShowDetailWindow,
-  createShowDisplay,
+  crShowDisplay,
   createNotif,
   createHideReplayWindow,
 };

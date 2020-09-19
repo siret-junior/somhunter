@@ -15,6 +15,9 @@ import detailWindowReducer from "./detailWindowReducer";
 // Replay window
 import replayWindowReducer from "./replayWindowReducer";
 
+// Indicators (not logged in, not sending, etc)
+import indicatorReducer from "./indicatorReducer";
+
 // Combine all the reducers
 export default combineReducers({
   mainWindow: mainWindowReducer,
@@ -22,6 +25,7 @@ export default combineReducers({
   detailWindow: detailWindowReducer,
   replayWindow: replayWindowReducer,
   settings: settingsReducer,
+  indicators: indicatorReducer,
 });
 
 /********************
@@ -33,6 +37,12 @@ interface state {
   notifications: notificationState;
   detailWindow: detailWindowState;
   replayWindow: mainWindowState;
+  indicators: indicatorState;
+}
+
+interface indicatorState {
+  loginWarning: boolean;
+  notSendingWarning: boolean;
 }
 
 interface mainWindowState {

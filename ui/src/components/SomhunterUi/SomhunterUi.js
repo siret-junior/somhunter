@@ -9,7 +9,7 @@ import * as CS from "../../constants";
 
 import { useSettings } from "../../hooks/useSettings";
 
-import { createShowDisplay } from "../../actions/mainWindowCreator";
+import { crShowDisplay } from "../../actions/mainWindowCreator";
 import { createNotif, createDenotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
 import {
@@ -50,9 +50,9 @@ function handleGlobalKeyDown(settings, props, e) {
       // If NOT in a text input
       if (activeElement.tagName !== "INPUT") {
         if (e.shiftKey) {
-          props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT);
+          props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT);
         } else {
-          props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N);
+          props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N);
         }
       }
       break;
@@ -60,7 +60,7 @@ function handleGlobalKeyDown(settings, props, e) {
     case CS.KEY_CODE_S:
       // If NOT in a text input
       if (activeElement.tagName !== "INPUT") {
-        props.createShowDisplay(settings, CS.DISP_TYPE_SOM);
+        props.crShowDisplay(settings, CS.DISP_TYPE_SOM);
       }
       break;
 
@@ -88,7 +88,7 @@ function initializeUi(settings, props) {
 
   setupGlobalListeners(settings, props);
 
-  props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0);
+  props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0);
 }
 
 function SomhunterUi(props) {
@@ -102,7 +102,7 @@ function SomhunterUi(props) {
     <Container fluid className="section somhunter-ui p-0">
       <GlobalNotificationOverlay />
 
-      <DebugButtons />
+      {/* <DebugButtons /> */}
 
       <Row noGutters>
         <Col xs={3}>
@@ -123,7 +123,7 @@ const stateToProps = (state) => {
 const actionCreators = {
   createNotif,
   createDenotif,
-  createShowDisplay,
+  crShowDisplay,
   createRescore,
   createFocusTextQuery,
   createSetCoreSettings,

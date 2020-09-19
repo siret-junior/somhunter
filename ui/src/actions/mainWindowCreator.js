@@ -91,9 +91,9 @@ function loadSomFrames(settings) {
   };
 }
 
-export function createShowDisplay(settings, type, pageId = 0, frameId = 0) {
+export function crShowDisplay(settings, type, pageId = 0, frameId = 0) {
   console.debug(
-    `=> createShowDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
+    `=> crShowDisplay: type=${type}, pageId=${pageId}, frameId=${frameId}`
   );
 
   switch (type) {

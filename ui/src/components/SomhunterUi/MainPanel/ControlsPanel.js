@@ -5,10 +5,8 @@ import { Container, Row, Col } from "react-bootstrap";
 
 function ControlsPanel(props) {
   return (
-    <Container fluid className="controls panel">
-      <Row>
-        <Col xs={12}>{props.children}</Col>
-      </Row>
+    <Container fluid className={`controls-panel panel ${props.className}`}>
+      <Row>{props.children}</Row>
     </Container>
   );
 }

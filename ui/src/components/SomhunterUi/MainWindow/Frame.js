@@ -9,7 +9,7 @@ import coreApi from "../../../apis/coreApi";
 import { useSettings } from "../../../hooks/useSettings";
 
 import { createNotif } from "../../../actions/notificationCreator";
-import { createShowDisplay } from "../../../actions/mainWindowCreator";
+import { crShowDisplay } from "../../../actions/mainWindowCreator";
 import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
 import {
   createShowReplayWindow,
@@ -134,7 +134,7 @@ function Frame(props) {
         </Button>
         <Button
           onClick={(e) => {
-            props.createShowDisplay(
+            props.crShowDisplay(
               settings,
               CS.DISP_TYPE_TOP_KNN,
               0,
@@ -166,7 +166,7 @@ const stateToProps = (state) => {
 };
 
 const actionCreators = {
-  createShowDisplay,
+  crShowDisplay,
   createShowDetailWindow,
   createNotif,
   createShowReplayWindow,

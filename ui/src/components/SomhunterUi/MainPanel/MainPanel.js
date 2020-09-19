@@ -11,7 +11,7 @@ import ControlsPanel from "./ControlsPanel";
 import TextSearchPanel from "./TextSearchPanel";
 import HistoryPanel from "./HistoryPanel";
 import NotificationPanel from "./NotificationPanel";
-import { createShowDisplay } from "../../../actions/mainWindowCreator";
+import { crShowDisplay } from "../../../actions/mainWindowCreator";
 import { createAddQueryRef } from "../../../actions/settingsCreator";
 import {
   createResetSearch,
@@ -59,23 +59,28 @@ function MainPanel(props) {
     props.createAddQueryRef(settings, refQuery1);
   }, []);
 
+  const activeDisplay = props.activeDisplay;
+
   return (
     <Container fluid className="panel main p-0">
       <ControlsPanel>
         <HelpWindow />
-        <Button
-          onClick={() =>
-            onTriggerResetHandler(
-              settings,
-              config.frameGrid.defaultRescoreDisplay,
-              isAcOpen,
-              refQuery0,
-              refQuery1
-            )
-          }
-        >
-          New search
-        </Button>
+        <Col xs={6} className="cont-btn">
+          <Button
+            variant="danger"
+            onClick={() =>
+              onTriggerResetHandler(
+                settings,
+                config.frameGrid.defaultRescoreDisplay,
+                isAcOpen,
+                refQuery0,
+                refQuery1
+              )
+            }
+          >
+            New search
+          </Button>
+        </Col>
       </ControlsPanel>
 
       <TextSearchPanel
@@ -93,75 +98,97 @@ function MainPanel(props) {
       />
 
       <ControlsPanel>
-        <Button
-          onClick={() =>
-            onTriggerRescoretHandler(
-              settings,
-              config.frameGrid.defaultRescoreDisplay,
-              isAcOpen,
-              refQuery0,
-              refQuery1
-            )
-          }
-        >
-          Rescore to Top N
-        </Button>
-        <Button
-          onClick={() =>
-            onTriggerRescoretHandler(
-              settings,
-              CS.DISP_TYPE_SOM,
-              isAcOpen,
-              refQuery0,
-              refQuery1
-            )
-          }
-        >
-          Rescore to SOM
-        </Button>
+        <Col xs={6} className="cont-btn">
+          <Button
+            variant="primary"
+            className="enlarge"
+            onClick={() =>
+              onTriggerRescoretHandler(
+                settings,
+                config.frameGrid.defaultRescoreDisplay,
+                isAcOpen,
+                refQuery0,
+                refQuery1
+              )
+            }
+          >
+            Rescore to Top N
+          </Button>
+        </Col>
+        <Col xs={6} className="cont-btn">
+          <Button
+            className="enlarge"
+            variant="primary"
+            onClick={() =>
+              onTriggerRescoretHandler(
+                settings,
+                CS.DISP_TYPE_SOM,
+                isAcOpen,
+                refQuery0,
+                refQuery1
+              )
+            }
+          >
+            Rescore to SOM
+          </Button>
+        </Col>
       </ControlsPanel>
 
       <ControlsPanel>
-        <Button
-          onClick={() =>
-            props.createShowDisplay(settings, CS.DISP_TYPE_SOM, 0, 0)
-          }
-        >
-          SOM Screen
-        </Button>
-        <Button
-          onClick={() =>
-            props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0)
-          }
-        >
-          Top N
-        </Button>
-        <Button
-          onClick={() =>
-            props.createShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT, 0, 0)
-          }
-        >
-          Top N Context
-        </Button>
+        <Col xs={12} className="cont-btn">
+          <Button
+            variant="secondary"
+            className={activeDisplay === CS.DISP_TYPE_SOM ? "active" : ""}
+            onClick={() =>
+              props.crShowDisplay(settings, CS.DISP_TYPE_SOM, 0, 0)
+            }
+          >
+            SOM Screen
+          </Button>
+        </Col>
+        <Col xs={6} className="cont-btn">
+          <Button
+            variant="secondary"
+            className={activeDisplay === CS.DISP_TYPE_TOP_N ? "active" : ""}
+            onClick={() =>
+              props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0)
+            }
+          >
+            Top N
+          </Button>
+        </Col>
+        <Col xs={6} className="cont-btn">
+          <Button
+            variant="secondary"
+            className={
+              activeDisplay === CS.DISP_TYPE_TOP_N_CONTEXT ? "active" : ""
+            }
+            onClick={() =>
+              props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT, 0, 0)
+            }
+          >
+            Top N Context
+          </Button>
+        </Col>
       </ControlsPanel>
 
       <HistoryPanel />
 
       <NotificationPanel />
 
-      <ControlsPanel>
+      <ControlsPanel className="bottom">
         <SettingsWindow />
       </ControlsPanel>
     </Container>
   );
 }
 
-const stateToProps = (state) => {
-  return {};
+const stateToProps = ({ mainWindow }) => {
+  return { activeDisplay: mainWindow.activeDisplay };
 };
 
 const actionCreators = {
-  createShowDisplay,
+  crShowDisplay,
   createResetSearch,
   createRescore,
   createAddQueryRef,

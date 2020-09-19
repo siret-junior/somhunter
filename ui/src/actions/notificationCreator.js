@@ -7,6 +7,20 @@ export function createDenotif(settings) {
   };
 }
 
+export function createShowLoginWarning(settings) {
+  return {
+    type: CS.SHOW_LOGIN_WARNING,
+    payload: null,
+  };
+}
+
+export function createShowNotSendingWarning(settings) {
+  return {
+    type: CS.SHOW_NOT_SENDING_WARNING,
+    payload: null,
+  };
+}
+
 export function createNotif(
   settings,
   type = CS.GLOB_NOTIF_INFO,

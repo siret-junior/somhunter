@@ -74,7 +74,7 @@ function handleOnScroll(settings, e, props, prevFetch, setPrevFetch) {
         setPrevFetch(t);
 
         console.debug(`handleOnScroll: DIFF = ${diff} => Loading next page`);
-        props.createShowDisplay(
+        props.crShowDisplay(
           settings,
           mainWindow.activeDisplay,
           mainWindow.currentPage + 1,

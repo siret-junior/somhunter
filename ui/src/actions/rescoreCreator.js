@@ -1,7 +1,7 @@
 import * as CS from "../constants";
 import { post } from "../apis/coreApi";
 import { createNotif, createDenotif } from "./notificationCreator";
-import { createShowDisplay } from "./mainWindowCreator";
+import { crShowDisplay } from "./mainWindowCreator";
 
 export function createRescore(settings, destDisplay) {
   return async (dispatch, getState) => {
@@ -34,7 +34,7 @@ export function createRescore(settings, destDisplay) {
     // << Core API >>
 
     dispatch(createDenotif(settings));
-    dispatch(createShowDisplay(settings, destDisplay, 0, 0));
+    dispatch(crShowDisplay(settings, destDisplay, 0, 0));
   };
 }
 
@@ -53,6 +53,6 @@ export function createResetSearch(settings, destDisplay) {
       createNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000)
     );
 
-    dispatch(createShowDisplay(settings, destDisplay, 0, 0));
+    dispatch(crShowDisplay(settings, destDisplay, 0, 0));
   };
 }
