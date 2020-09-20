@@ -46,7 +46,7 @@ async function onSubmitHandler(s, props) {
   // << Core API >>
 
   // Create success notification
-  props.crSuccNotif(s, `A frame with the ID '${frameId} submitted.`, "", 5000);
+  dispatch(crSuccNotif(s, `A frame '${frameId} has been submitted.`, "", 5000));
 }
 
 const triggerLogs = (s, props, e, frameId, delta) => {

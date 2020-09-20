@@ -13,9 +13,7 @@ export async function post(dispatch, url, data = {}, cfg = {}) {
   let res = null;
   try {
     console.info(`--->> POST requsest => '${url}'`);
-    console.time("requestTimer");
     res = await coreApi.post(url, data, cfg);
-    console.timeEnd("requestTimer");
     console.info(`<<--- POST request => '${url}', res:`, res);
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
@@ -31,9 +29,7 @@ export async function get(dispatch, url, cfg = {}) {
 
   try {
     console.info(`--->> GET requsest => '${url}'`);
-    console.time("requestTimer");
     res = await coreApi.get(url, cfg);
-    console.timeEnd("requestTimer");
     console.info(`<<--- GET request => '${url}', res:`, res);
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;

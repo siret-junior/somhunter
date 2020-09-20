@@ -6,10 +6,12 @@
   },
   "extends": [
     "react-app",
+    "react-hooks",
+    "plugin:react/recommended",
     "prettier/@typescript-eslint"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "react-hooks"],
   "env": {
     "browser": true,
     "jest": true
@@ -18,15 +20,19 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
+    },
+    "rules": {
+      "react-hooks/exhaustive-deps": 0
     }
   },
   "rules": {
     "max-len": [2, 120, 4, { "ignoreUrls": true }],
     "quotes": [2, "double", { "avoidEscape": false }],
-    "require-jsdoc": 0,
-    "react/prop-types": 0,
-    "no-unused-vars": 0,
-    "@typescript-eslint/no-unused-vars": 0,
-    "no-use-before-define": 0
+    "require-jsdoc": "off",
+    "react/prop-types": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-use-before-define": "off",
+    "react-hooks/exhaustive-deps": 0
   }
 }

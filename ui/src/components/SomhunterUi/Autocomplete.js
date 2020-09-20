@@ -7,6 +7,7 @@ import config from "../../config/config";
 import * as CS from "../../constants";
 
 import coreApi from "../../apis/coreApi";
+import { get, post } from "../../apis/coreApi";
 import { crNotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
 
@@ -69,8 +70,10 @@ class Autocomplete extends Component {
   }
 
   onChangeHandler(settings, e) {
-    const userInput = e.currentTarget.value;
+    // Trigger log system
+    this.props.triggerLogTextChange();
 
+    const userInput = e.currentTarget.value;
     const currentWord = userInput.split(" ").slice(-1)[0];
 
     if (this.currToHandle !== null) {
@@ -119,14 +122,18 @@ class Autocomplete extends Component {
     if (inputPrefix !== "") {
       inputPrefix += " ";
     }
-
+    const newUserInput = `${inputPrefix}${filteredSuggestions[suggestionIndex].wordString} `;
     this.setState({
       activeSuggestion: 0,
       showSuggestions: false,
-      userInput: `${inputPrefix}${filteredSuggestions[suggestionIndex].wordString} `,
+      userInput: newUserInput,
       currentWord: "",
     });
     this.props.setIsAcOpen(false);
+
+    // Trigger log system
+    this.props.inputRef.current.value = newUserInput;
+    this.props.triggerLogTextChange();
   }
 
   onKeyDownHandler(settings, e) {

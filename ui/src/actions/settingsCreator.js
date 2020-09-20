@@ -11,7 +11,6 @@ export function createFocusTextQuery(settings, queryRef) {
   return (_, getState) => {
     const state = getState();
     const textQueryRefs = state.settings.textQueryRefs;
-    console.warn(textQueryRefs);
 
     if (textQueryRefs.length !== 0) {
       textQueryRefs[0].current.focus();

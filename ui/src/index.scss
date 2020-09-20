@@ -54,21 +54,23 @@ $theme-colors: (
 
   &.btn-primary {
     background-color: map-get($theme-colors, "primary");
-    border: 0.2rem solid theme-color-level($color-name: "primary", $level: 0);
+    border: 0.4rem solid theme-color-level($color-name: "primary", $level: 0);
     transition: 0.1s ease-in-out;
 
     &:hover,
-    &:focus {
+    &:focus,
+    &:active {
       background-color: theme-color-level($color-name: "primary", $level: -2);
       border-color: theme-color-level($color-name: "primary", $level: -2);
     }
     &.active {
       background-color: map-get($theme-colors, "primary") !important;
-      border: 0.2rem solid
+      border: 0.4rem solid
         theme-color-level($color-name: "secondary", $level: 0) !important;
 
       &:hover,
-      &:focus {
+      &:focus,
+      &:active {
         background-color: theme-color-level(
           $color-name: "primary",
           $level: 0
@@ -79,20 +81,28 @@ $theme-colors: (
 
   &.btn-secondary {
     background-color: map-get($theme-colors, "fifth");
-    border: 0.2rem solid theme-color-level($color-name: "fifth", $level: 0);
+    border: 0.4rem solid theme-color-level($color-name: "fifth", $level: 0);
     transition: 0.1s ease-in-out;
 
     &:hover,
-    &:focus {
-      background-color: theme-color-level($color-name: "fifth", $level: -2);
-      border-color: theme-color-level($color-name: "fifth", $level: -2);
+    &:focus,
+    &:active {
+      background-color: theme-color-level(
+        $color-name: "fifth",
+        $level: -2
+      ) !important;
+      border-color: theme-color-level(
+        $color-name: "fifth",
+        $level: -2
+      ) !important;
     }
 
     &.active {
       background-color: map-get($theme-colors, "fifth") !important;
-      border: 0.2rem solid theme-color-level($color-name: "primary", $level: 0) !important;
+      border: 0.4rem solid theme-color-level($color-name: "primary", $level: 0) !important;
       &:hover,
-      &:focus {
+      &:focus,
+      &:active {
         background-color: theme-color-level(
           $color-name: "fifth",
           $level: 0
@@ -171,16 +181,21 @@ $theme-colors: (
   align-items: flex-start;
   align-content: flex-start;
 
+  &.som {
+    align-content: stretch;
+  }
   .btn {
     font-size: 0.6rem;
   }
 
   > .col-2 {
-    align-self: flex-start;
+    align-self: stretch;
   }
+
   &.som > .col-2 {
     flex: 0 0 12.5%;
     max-width: 12.5%;
+    height: auto;
   }
   &.detail {
     max-height: 100%;
@@ -485,6 +500,7 @@ $theme-colors: (
         flex: 0 0 100px;
         max-width: 100px;
         min-width: 100px;
+        align-self: stretch;
       }
     }
   }

@@ -62,9 +62,7 @@ function loadMainWindowFrames(settings, type, pageId, frameId) {
 
 function loadSomFrames(settings) {
   return async (dispatch, _) => {
-    dispatch(
-      crNotif(settings, CS.GLOB_NOTIF_WARN, "SOM working...", "", 500)
-    );
+    dispatch(crNotif(settings, CS.GLOB_NOTIF_WARN, "SOM working...", "", 500));
 
     const requestSettings = settings.coreSettings.api.endpoints.screenSom;
     let response = null;

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
 import _ from "lodash";
+import React, { useState, useRef, useEffect } from "react";
 
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -92,12 +92,9 @@ function calcReplayLeftOffset(gridElRef, pivotFrameId, deltaX = 0) {
   const viewportWidth = window.innerWidth;
 
   const offsetToParent = targetEl.offsetLeft;
-  console.info(`offsetToParent = ${offsetToParent}`);
-  console.info(`deltaX = ${deltaX}`);
   const unitWidth = targetEl.clientWidth;
   const leftOffset = -offsetToParent + viewportWidth / 2 + deltaX * unitWidth;
 
-  console.info(`leftOffset = ${leftOffset}`);
   return leftOffset;
 }
 

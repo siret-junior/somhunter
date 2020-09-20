@@ -49,9 +49,7 @@ export function createResetSearch(settings, destDisplay) {
     await post(dispatch, requestSettings.url);
     // << Core API >>
 
-    dispatch(
-      crNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000)
-    );
+    dispatch(crNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000));
 
     dispatch(crShowDisplay(settings, destDisplay, 0, 0));
   };

@@ -35,8 +35,6 @@ function mainWindowReducer(
         };
       }
 
-      console.warn(action.payload.frames[action.payload.frames.length - 1].id);
-
       if (
         state.frames.length === 0 ||
         state.frames[state.frames.length - 1].id !==
