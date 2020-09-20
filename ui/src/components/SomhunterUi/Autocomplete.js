@@ -7,7 +7,7 @@ import config from "../../config/config";
 import * as CS from "../../constants";
 
 import coreApi from "../../apis/coreApi";
-import { createNotif } from "../../actions/notificationCreator";
+import { crNotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
 
 import SettingsContext from "../../contexts/settingsContext";
@@ -50,7 +50,7 @@ class Autocomplete extends Component {
       });
     } catch (e) {
       console.log(e);
-      this.props.createNotif(
+      this.props.crNotif(
         settings,
         CS.GLOB_NOTIF_ERR,
         "Core request to '/get_autocomplete_results' failed!",
@@ -271,7 +271,7 @@ const stateToProps = (state) => {
 };
 
 const actionCreators = {
-  createNotif,
+  crNotif,
   createRescore,
 };
 

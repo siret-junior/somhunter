@@ -2,40 +2,42 @@ import axios from "axios";
 
 import config from "../config/config";
 import { isErrDef } from "../utils/utils";
-import { createReqFailNot } from "../actions/notificationCreator";
+import { crReqFailNotif } from "../actions/notificationCreator";
 
 const coreApi = axios.create({
   baseURL: config.backendUrl,
   withCredentials: true,
 });
 
-console.info = () => null;
-
-export function post(dispatch, url, data = {}, cfg = {}) {
+export async function post(dispatch, url, data = {}, cfg = {}) {
   let res = null;
   try {
-    console.info(`<<--->> POST requsest => '${url}'`);
-    res = coreApi.post(url, data, cfg);
-    console.info("<<--->> POST request res:", res);
+    console.info(`--->> POST requsest => '${url}'`);
+    console.time("requestTimer");
+    res = await coreApi.post(url, data, cfg);
+    console.timeEnd("requestTimer");
+    console.info(`<<--- POST request => '${url}', res:`, res);
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-    dispatch(createReqFailNot({}, url, msg));
+    dispatch(crReqFailNotif({}, url, msg));
     return null;
   }
 
   return res;
 }
 
-export function get(dispatch, url, cfg = {}) {
+export async function get(dispatch, url, cfg = {}) {
   let res = null;
 
   try {
-    console.info(`<<--->> GET requsest => '${url}'`);
-    res = coreApi.get(url, cfg);
-    console.info("<<--->> GET request res:", res);
+    console.info(`--->> GET requsest => '${url}'`);
+    console.time("requestTimer");
+    res = await coreApi.get(url, cfg);
+    console.timeEnd("requestTimer");
+    console.info(`<<--- GET request => '${url}', res:`, res);
   } catch (e) {
     const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-    dispatch(createReqFailNot({}, url, msg));
+    dispatch(crReqFailNotif({}, url, msg));
     return null;
   }
 

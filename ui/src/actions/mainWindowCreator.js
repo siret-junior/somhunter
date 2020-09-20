@@ -2,7 +2,7 @@ import * as utils from "../utils/utils";
 import * as CS from "../constants";
 import { dispNameToAction } from "../constants";
 import { post } from "../apis/coreApi";
-import { createNotif, createDenotif } from "./notificationCreator";
+import { crNotif, crHideNotif } from "./notificationCreator";
 import { resetMainGridScroll } from "../utils/utils";
 
 /* 
@@ -63,7 +63,7 @@ function loadMainWindowFrames(settings, type, pageId, frameId) {
 function loadSomFrames(settings) {
   return async (dispatch, _) => {
     dispatch(
-      createNotif(settings, CS.GLOB_NOTIF_WARN, "SOM working...", "", 500)
+      crNotif(settings, CS.GLOB_NOTIF_WARN, "SOM working...", "", 500)
     );
 
     const requestSettings = settings.coreSettings.api.endpoints.screenSom;
@@ -79,7 +79,7 @@ function loadSomFrames(settings) {
       }
     } while (response.status === 222);
 
-    dispatch(createDenotif(settings));
+    dispatch(crHideNotif(settings));
 
     dispatch({
       type: dispNameToAction(CS.DISP_TYPE_SOM),

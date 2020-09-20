@@ -29,7 +29,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "mv ./public/thumbs .", 
     "build": "react-scripts build",
+    "postbuild": "mv ./thumbs ./public",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

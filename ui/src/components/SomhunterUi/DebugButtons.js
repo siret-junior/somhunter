@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Container, Button, Row, Col, Alert } from "react-bootstrap";
 
 import * as CS from "../../constants";
-import { createNotif } from "../../actions/notificationCreator";
+import { crNotif } from "../../actions/notificationCreator";
 import { useSettings } from "../../hooks/useSettings";
 function DebugButtons(props) {
   const settings = useSettings();
@@ -13,7 +13,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createNotif(
+          props.crNotif(
             settings,
             CS.GLOB_NOTIF_ERR,
             "It's an error",
@@ -28,7 +28,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createNotif(
+          props.crNotif(
             settings,
             CS.GLOB_NOTIF_WARN,
             "It's an 222 error",
@@ -43,7 +43,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createNotif(
+          props.crNotif(
             settings,
             CS.GLOB_NOTIF_INFO,
             "It's an 222 error",
@@ -58,7 +58,7 @@ function DebugButtons(props) {
       <Button
         variant="danger"
         onClick={() => {
-          props.createNotif(
+          props.crNotif(
             settings,
             CS.GLOB_NOTIF_SUCC,
             "It's an 222 error",
@@ -78,7 +78,7 @@ const stateToProps = ({ notifications }) => {
 };
 
 const actionCreators = {
-  createNotif,
+  crNotif,
 };
 
 export default connect(stateToProps, actionCreators)(DebugButtons);

@@ -5,53 +5,41 @@ import { Container, Row, Col } from "react-bootstrap";
 
 import config from "../../../config/config";
 import * as CS from "../../../constants";
-import { isErrDef } from "../../../utils/utils";
-import { dispNameToAction } from "../../../constants";
 import { useSettings } from "../../../hooks/useSettings";
-import coreApi from "../../../apis/coreApi";
+import { get, post } from "../../../apis/coreApi";
 
 import Frame from "./Frame";
 
-async function onLikeHandler(props, gridElRef, frameId) {
-  let response = null;
-  try {
-    console.debug("=> onLikeHandler: POST request to '/like_frame'");
+async function onLikeHandler(s, props, gridElRef, frameId) {
+  const dispatch = s.dispatch;
+  const url = s.coreSettings.api.endpoints.searchLike.url;
 
-    response = await coreApi.post("/like_frame", {
-      frameId: frameId,
-    });
-  } catch (e) {
-    const msg = isErrDef(e) ? e.response.data.error.message : e.message;
+  const reqData = {
+    frameId: frameId,
+  };
 
-    props.createNotif(
-      CS.GLOB_NOTIF_ERR,
-      "Core request to '/like_frame' failed!",
-      msg,
-      5000
-    );
-    return;
-  }
+  const response = await post(dispatch, url, reqData);
 
-  console.warn(`isLiked = ${response.data.isLiked}`);
+  console.debug(`frameId='${frameId}', liked='${response.data.isLiked}'`);
 
+  // Flag ALL the frames accrodingly
   const grid = gridElRef.current;
-  if (response.data.isLiked)
+  if (response.data.isLiked) {
     grid
       .querySelectorAll(`[data-frame-id="${frameId}"]`)
       .forEach((x) => x.classList.add("liked"));
-  else
+  } else {
     grid
       .querySelectorAll(`[data-frame-id="${frameId}"]`)
       .forEach((x) => x.classList.remove("liked"));
-
-  console.debug("=> onLikeHandler: Got response:", response);
+  }
 }
 
-function getFrames(props, gridEl) {
+function getFrames(s, props, gridEl) {
   return props.mainWindow.frames.map((frame, i) => (
     <Frame
       isPivot={frame.id === props.mainWindow.pivotFrameId}
-      onLikeHandler={(frameId) => onLikeHandler(props, gridEl, frameId)}
+      onLikeHandler={(frameId) => onLikeHandler(s, props, gridEl, frameId)}
       key={frame.id + i * Math.pow(2, 32)}
       frame={frame}
     />
@@ -115,8 +103,10 @@ function calcReplayLeftOffset(gridElRef, pivotFrameId, deltaX = 0) {
 
 function FrameGrid(props) {
   const [prevFetch, setPrevFetch] = useState(new Date().getTime() - 100000);
+  const scrollYRef = useRef(0);
 
   const settings = useSettings();
+  const coreEndpoints = settings.coreSettings.api.endpoints;
 
   // Recalculate offset of the grid after each re-render
   useEffect(() => {
@@ -138,7 +128,32 @@ function FrameGrid(props) {
     handleOnScroll(settings, e, props, prevFetch, setPrevFetch);
   };
 
-  let onScrollFnThrottled = _.throttle(_onScrollFn, 500);
+  const triggerLogs = (s, props, e, prevScrollY) => {
+    const dispatch = s.dispatch;
+
+    const scrollY = e.target.scrollTop;
+    const delta = prevScrollY.current + scrollY;
+
+    prevScrollY.current = scrollY;
+
+    let params = {
+      scrollArea: props.mainWindow.activeDisplay,
+      frameId: props.mainWindow.pivotFrameId,
+      delta: delta,
+    };
+
+    if (typeof props.mainWindow.activeDisplay === "undefined") {
+      params.scrollArea = CS.DISP_TYPE_DETAIL;
+    }
+
+    get(dispatch, coreEndpoints.logBrowsingScroll.url, { params });
+  };
+
+  let onScrollFnThrottled = _.throttle(_onScrollFn, 1000);
+  let onScrollTriggerLogsThrottled = _.throttle(
+    triggerLogs,
+    settings.coreSettings.core.submitter_config.log_action_timeout
+  );
 
   if (typeof props.mainWindow.activeDisplay === "undefined") {
     rowClass = "detail";
@@ -154,10 +169,11 @@ function FrameGrid(props) {
         onScroll={(e) => {
           e.persist();
           onScrollFnThrottled(e);
+          onScrollTriggerLogsThrottled(settings, props, e, scrollYRef);
         }}
         noGutters
       >
-        {getFrames(props, props.gridRef)}
+        {getFrames(settings, props, props.gridRef)}
       </Row>
     </Container>
   );

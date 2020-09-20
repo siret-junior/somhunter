@@ -225,9 +225,12 @@ $theme-colors: (
     &:before {
       content: "";
       position: absolute;
-      width: 20%;
-      height: 20%;
-      background: map-get($theme-colors, "success");
+      width: 0;
+      height: 0;
+      border-right: 30px solid transparent;
+      border-bottom: 30px solid transparent;
+      border-top: 30px solid map-get($theme-colors, "success");
+      border-left: 30px solid map-get($theme-colors, "success");
     }
   }
 
@@ -245,6 +248,10 @@ $theme-colors: (
     }
   }
 
+  .video-id-label {
+    font-weight: 600;
+    color: map-get($theme-colors, "green");
+  }
   button {
     opacity: 0;
     &:hover,
@@ -296,8 +303,8 @@ $theme-colors: (
 
     &:before,
     &:after {
-      border: 1px solid  rgba(map-get($theme-colors, "white"), 0.7);
-      content: '';
+      border: 1px solid rgba(map-get($theme-colors, "white"), 0.7);
+      content: "";
       position: relative;
       display: block;
       width: 80%;
@@ -306,13 +313,13 @@ $theme-colors: (
 
     &:before {
       width: 80%;
-      border: 2px solid  rgba(map-get($theme-colors, "fifth"), 0.7);
+      border: 2px solid rgba(map-get($theme-colors, "fifth"), 0.7);
       top: -0.4rem;
     }
 
     &:after {
       width: 45%;
-      border: 1px solid  rgba(map-get($theme-colors, "white"), 0.7);
+      border: 1px solid rgba(map-get($theme-colors, "white"), 0.7);
       bottom: -0.4rem;
     }
   }
@@ -322,7 +329,7 @@ $theme-colors: (
   height: 100%;
   background-color: map-get($theme-colors, "secondary");
   display: flex;
-flex-direction: column;
+  flex-direction: column;
 
   * {
     color: map-get($theme-colors, "white");
@@ -499,7 +506,6 @@ flex-direction: column;
     cursor: pointer;
     opacity: 0.6;
 
-
     &:hover,
     &:focus {
       opacity: 1;
@@ -508,10 +514,10 @@ flex-direction: column;
     img {
       display: block;
       width: 100%;
-      max-height: 60px
+      max-height: 60px;
     }
     .title {
-      position:absolute;
+      position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);

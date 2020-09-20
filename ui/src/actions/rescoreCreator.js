@@ -1,6 +1,6 @@
 import * as CS from "../constants";
 import { post } from "../apis/coreApi";
-import { createNotif, createDenotif } from "./notificationCreator";
+import { crNotif, crHideNotif } from "./notificationCreator";
 import { crShowDisplay } from "./mainWindowCreator";
 
 export function createRescore(settings, destDisplay) {
@@ -9,7 +9,7 @@ export function createRescore(settings, destDisplay) {
 
     const state = getState();
 
-    dispatch(createNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
+    dispatch(crNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
 
     console.debug(settings);
 
@@ -33,7 +33,7 @@ export function createRescore(settings, destDisplay) {
     await post(dispatch, requestSettings.url, reqData);
     // << Core API >>
 
-    dispatch(createDenotif(settings));
+    dispatch(crHideNotif(settings));
     dispatch(crShowDisplay(settings, destDisplay, 0, 0));
   };
 }
@@ -42,7 +42,7 @@ export function createResetSearch(settings, destDisplay) {
   return async (dispatch, _) => {
     console.debug("=> createResetSearch: Running reset...");
 
-    dispatch(createNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
+    dispatch(crNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
 
     const requestSettings = settings.coreSettings.api.endpoints.searchReset;
     // << Core API >>
@@ -50,7 +50,7 @@ export function createResetSearch(settings, destDisplay) {
     // << Core API >>
 
     dispatch(
-      createNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000)
+      crNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000)
     );
 
     dispatch(crShowDisplay(settings, destDisplay, 0, 0));

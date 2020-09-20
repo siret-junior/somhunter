@@ -1,14 +1,13 @@
-import React, { useContext } from "react";
-import { connect } from "react-redux";
 import _ from "lodash";
-import { Container, Button, Row, Col } from "react-bootstrap";
+import React from "react";
+import { connect } from "react-redux";
+import { Button, Row, Col } from "react-bootstrap";
 
 import * as CS from "../../../constants";
-import { isErrDef } from "../../../utils/utils";
-import coreApi from "../../../apis/coreApi";
+import { get, post } from "../../../apis/coreApi";
 import { useSettings } from "../../../hooks/useSettings";
 
-import { createNotif } from "../../../actions/notificationCreator";
+import { crSuccNotif } from "../../../actions/notificationCreator";
 import { crShowDisplay } from "../../../actions/mainWindowCreator";
 import { createShowDetailWindow } from "../../../actions/detailWindowCreator";
 import {
@@ -16,53 +15,54 @@ import {
   createScrollReplayWindow,
 } from "../../../actions/replaylWindowCreator";
 
-function onLikeHandler(settings, props, e, onLikeHandler) {
-  const frameId = Number(e.target.dataset.frameId);
+function onLikeHandler(s, props, e, onLikeHandlerExt) {
+  const frameId = Number(e.currentTarget.dataset.frameId);
+
+  console.info(`Liking a frame '${frameId}'`);
 
   // Trigger the handler
-  onLikeHandler(frameId);
+  onLikeHandlerExt(frameId);
 }
 
-async function onSubmitHandler(settings, props) {
+async function onSubmitHandler(s, props) {
+  const dispatch = s.dispatch;
   const frameId = props.frame.id;
 
   // Create ensure popup
   const res = window.confirm(`Really submit the frame with ID '${frameId}'`);
-
-  // Quit if false
   if (!res) {
     return;
   }
 
-  console.warn(`Submitting frame '${frameId}'...`);
+  console.info(`Submitting frame '${frameId}'...`);
 
-  try {
-    console.debug("=> onLikeHandler: POST request to '/submit_frame'");
+  const url = s.coreSettings.api.endpoints.serverSubmitFrame.url;
+  const reqData = {
+    frameId,
+  };
 
-    await coreApi.post("/submit_frame", {
-      frameId: frameId,
-    });
-  } catch (e) {
-    const msg = isErrDef(e) ? e.response.data.error.message : e.message;
-    props.createNotif(
-      settings,
-      CS.GLOB_NOTIF_ERR,
-      "Core request to '/submit_frame' failed!",
-      msg,
-      5000
-    );
-    return;
-  }
+  // << Core API >>
+  await post(dispatch, url, reqData);
+  // << Core API >>
 
   // Create success notification
-  props.createNotif(
-    settings,
-    CS.GLOB_NOTIF_SUCC,
-    `A frame with the ID '${frameId} was submitted.`,
-    "",
-    5000
-  );
+  props.crSuccNotif(s, `A frame with the ID '${frameId} submitted.`, "", 5000);
 }
+
+const triggerLogs = (s, props, e, frameId, delta) => {
+  const dispatch = s.dispatch;
+  const url = s.coreSettings.api.endpoints.logBrowsingScroll.url;
+
+  let params = {
+    scrollArea: CS.DISP_TYPE_REPLAY,
+    frameId: frameId,
+    delta: -delta, // + means forward in time so we invert
+  };
+
+  // << Core API >>
+  get(dispatch, url, { params });
+  // << Core API >>
+};
 
 function onWheellHandler(settings, props, e) {
   e.stopPropagation();
@@ -73,7 +73,15 @@ function onWheellHandler(settings, props, e) {
   if (e.shiftKey) {
     // If just a scroll
     if (props.replayWindow.pivotFrameId === frameId) {
+      const triggerLogsThrottled = _.throttle(
+        triggerLogs,
+        settings.coreSettings.core.submitter_config.log_action_timeout
+      );
+
       const delta = e.deltaY > 0 ? -1 : 1;
+
+      triggerLogsThrottled(settings, props, e, frameId, delta);
+
       console.log(
         `Showing replay through frame '${frameId}' with delta=${delta}...`
       );
@@ -168,7 +176,6 @@ const stateToProps = (state) => {
 const actionCreators = {
   crShowDisplay,
   createShowDetailWindow,
-  createNotif,
   createShowReplayWindow,
   createScrollReplayWindow,
 };

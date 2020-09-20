@@ -10,7 +10,7 @@ import * as CS from "../../constants";
 import { useSettings } from "../../hooks/useSettings";
 
 import { crShowDisplay } from "../../actions/mainWindowCreator";
-import { createNotif, createDenotif } from "../../actions/notificationCreator";
+import { crNotif, crHideNotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
 import {
   createFocusTextQuery,
@@ -84,7 +84,7 @@ function setupGlobalListeners(settings, props) {
 
 /** Initialization of the program. */
 function initializeUi(settings, props) {
-  console.info("<SomhunterUi>: Initializing the UI...");
+  console.debug("=> initializeUi: Initializing the UI...");
 
   setupGlobalListeners(settings, props);
 
@@ -97,7 +97,7 @@ function SomhunterUi(props) {
   // Initial setup
   useEffect(() => initializeUi(settings, props), []);
 
-  console.warn("<SomhunterUi>: Rendering...");
+  console.info("<SomhunterUi>: Rendering...");
   return (
     <Container fluid className="section somhunter-ui p-0">
       <GlobalNotificationOverlay />
@@ -121,8 +121,8 @@ const stateToProps = (state) => {
 };
 
 const actionCreators = {
-  createNotif,
-  createDenotif,
+  crNotif,
+  crHideNotif,
   crShowDisplay,
   createRescore,
   createFocusTextQuery,

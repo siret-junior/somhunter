@@ -67,20 +67,20 @@ async function fetchSettings(dispatch, succ = (_) => null, fail = () => null) {
 
 /** Initialization of the program. */
 function initialize(dispatch) {
-  console.info("<ContextWrapper>: Loading Core API settings...");
+  console.debug("=> initialize: Loading Core API settings...");
 
   // Successfull callback
   const succ = (coreSettings) => {
     //
     document.title = `${coreSettings.server.appName} | ${coreSettings.server.appSubname}`;
-    console.info(
-      "<ContextWrapper>: The Core API settings loaded successfully."
+    console.debug(
+      "=> fetchSettings CB: The Core API settings loaded successfully."
     );
   };
 
   // Fail callback
   const fail = () =>
-    console.error("<ContextWrapper>: Loading the Core API settings failed!");
+    console.error("=> fetchSettings CB: Loading the Core API settings failed!");
 
   // Fetch the back-end settings
   fetchSettings(dispatch, succ, fail);
@@ -94,17 +94,17 @@ function ContextWrapper({ settings }) {
 
   // If initialize FAILED
   if (settings.coreSettings === null) {
-    console.warn("<ContextWrapper>: Rendering... (ERROR LOADING)");
+    console.info("<ContextWrapper>: Rendering... (ERROR LOADING)");
     return getErrorWindowJsx();
   }
   // If still LOADING
   else if (typeof settings.coreSettings === "undefined") {
-    console.warn("<ContextWrapper>: Rendering... (LOADING)");
+    console.info("<ContextWrapper>: Rendering... (LOADING)");
     return getLoadingJsx();
   }
   // Already LOADED
   else {
-    console.warn("<ContextWrapper>: Rendering... (LOADED)");
+    console.info("<ContextWrapper>: Rendering... (LOADED)");
     return (
       <SettingsProvider value={{ ...settings, dispatch }}>
         <SomhunterUi />

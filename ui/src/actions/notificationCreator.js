@@ -1,27 +1,13 @@
 import * as CS from "../constants";
 
-export function createDenotif(settings) {
+export function crHideNotif(settings) {
   return {
     type: CS.HIDE_GLOBAL_NOTIFICATION,
     payload: null,
   };
 }
 
-export function createShowLoginWarning(settings) {
-  return {
-    type: CS.SHOW_LOGIN_WARNING,
-    payload: null,
-  };
-}
-
-export function createShowNotSendingWarning(settings) {
-  return {
-    type: CS.SHOW_NOT_SENDING_WARNING,
-    payload: null,
-  };
-}
-
-export function createNotif(
+export function crNotif(
   settings,
   type = CS.GLOB_NOTIF_INFO,
   heading,
@@ -39,7 +25,7 @@ export function createNotif(
 
     // Dispatch cancel action
     const timeoutHandle = setTimeout(() => {
-      dispatch(createDenotif());
+      dispatch(crHideNotif());
     }, duration);
 
     dispatch({
@@ -53,12 +39,28 @@ export function createNotif(
     });
   };
 }
-export function createReqFailNot(settings, ep, msg) {
-  return createNotif(
+export function crReqFailNotif(settings, ep, msg) {
+  return crNotif(
     settings,
     CS.GLOB_NOTIF_ERR,
     `Core request to '${ep}'`,
     msg,
     5000
   );
+}
+
+export function crErrNotif(settings, heading, text = "", duration = 100000) {
+  return crNotif(settings, CS.GLOB_NOTIF_ERR, heading, text, duration);
+}
+
+export function crWarnNotif(settings, heading, text = "", duration = 100000) {
+  return crNotif(settings, CS.GLOB_NOTIF_WARN, heading, text, duration);
+}
+
+export function crInfoNotif(settings, heading, text = "", duration = 100000) {
+  return crNotif(settings, CS.GLOB_NOTIF_INFO, heading, text, duration);
+}
+
+export function crSuccNotif(settings, heading, text = "", duration = 100000) {
+  return crNotif(settings, CS.GLOB_NOTIF_SUCC, heading, text, duration);
 }

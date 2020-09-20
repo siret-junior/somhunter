@@ -7,7 +7,7 @@ import {
   createHideDetailWindow,
   createShowDetailWindow,
 } from "../../../actions/detailWindowCreator";
-import { createNotif } from "../../../actions/notificationCreator";
+import { crNotif } from "../../../actions/notificationCreator";
 import { createHideReplayWindow } from "../../../actions/replaylWindowCreator";
 import { crShowDisplay } from "../../../actions/mainWindowCreator";
 
@@ -105,7 +105,7 @@ const actionCreators = {
   createHideDetailWindow,
   createShowDetailWindow,
   crShowDisplay,
-  createNotif,
+  crNotif,
   createHideReplayWindow,
 };
 
