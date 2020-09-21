@@ -1,18 +1,22 @@
+import { Action } from "./index";
+
 import * as CS from "../constants";
 
-/*
- * interface indicatorState {
- *    loginWarning: boolean;
- *    notSendingWarning: boolean;
- * }
- */
+/** State type */
+export type IndicatorState = {
+  loginWarning: boolean;
+  notSendingWarning: boolean;
+};
 
-const defaultState = {
+const defaultState: IndicatorState = {
   loginWarning: false,
   notSendingWarning: false,
 };
 
-function indicatorReducer(state = defaultState, action) {
+function indicatorReducer(
+  state: IndicatorState = defaultState,
+  action: Action
+) {
   switch (action.type) {
     case CS.SHOW_LOGIN_WARNING:
       console.debug("=> (REDUCER) indicatorReducer:", action);

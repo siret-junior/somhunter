@@ -1,17 +1,15 @@
 /*
- * Types
+ * Core API types
  */
-export interface Action {
-  type: string;
-  payload: Song;
-}
 
-export interface Song {
-  title: string;
-  duration: string;
-}
+export type FrameRef = {
+  id: number;
+  src: string;
+  liked: boolean;
+  vId: number;
+  sId: number;
+};
 
-export interface StoreState {
-  songs: Song[];
-  selectedSong: Song;
-}
+export type Vec2 = { x: number; y: number };
+
+export type CoreApiSettings = any;

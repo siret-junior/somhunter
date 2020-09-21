@@ -1,23 +1,27 @@
+import React from "react";
+
+import {
+  Action,
+  SetCoreSettingsAction,
+  ScrollReplayAction,
+  HideReplayAction,
+} from "./index";
+
+import { FrameRef, Vec2, CoreApiSettings } from "../../types/index";
+
 import * as CS from "../constants";
 
-/*
- * interface configState {
- *      textQueryRefs: React.Ref[];
- *      coreSettings: {
- *          strings: 
-            core: 
-            server:
-            ui;
-            api;
- *      }
- *  };
- */
-const defaultState = {
+export type SettingsState = {
+  textQueryRefs: React.Ref<any>[];
+  coreSettings: CoreApiSettings | undefined | null;
+};
+
+const defaultState: SettingsState = {
   textQueryRefs: [],
   coreSettings: undefined,
 };
 
-function settingsReducer(state = defaultState, action) {
+function settingsReducer(state = defaultState, action: Action): SettingsState {
   switch (action.type) {
     case CS.SETTINGS_ADD_QUERY_REF:
       console.debug("=> (REDUCER) settingsReducer:", action);

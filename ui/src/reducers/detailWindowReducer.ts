@@ -1,19 +1,15 @@
+import { Action, ShowDetailAction } from "./index";
+import { FrameRef } from "../../types/index";
+
 import * as CS from "../constants";
 
-/*
- * interface detailWindowState {
- *    detailWindow: {
- *      show: bool;
- *      pivotFrameId: number;
- *      videoId: number;
- *      frames: {
- *        liked: bool;
- *        vId: number;
- *        sId: number;
- *        src: string;
- *      }
- *    };
- */
+/** State type */
+export type DetailWindowState = {
+  show: boolean;
+  pivotFrameId: number;
+  videoId: number;
+  frames: FrameRef[];
+};
 
 const defaultState = {
   show: false,
@@ -22,15 +18,20 @@ const defaultState = {
   frames: [],
 };
 
-function detailWindowReducer(state = defaultState, action) {
+function detailWindowReducer(state = defaultState, action: Action) {
+  let pl = undefined;
+
   switch (action.type) {
     case CS.SHOW_DETAIL_WINDOW:
       console.debug("=> (REDUCER) detailWindowReducer:", action);
+
+      pl = (<ShowDetailAction>action).payload;
+
       return {
         show: true,
-        pivotFrameId: action.payload.pivotFrameId,
-        videoId: action.payload.videoId,
-        frames: action.payload.frames,
+        pivotFrameId: pl.pivotFrameId,
+        videoId: pl.videoId,
+        frames: pl.frames,
       };
 
     case CS.HIDE_DETAIL_WINDOW:
