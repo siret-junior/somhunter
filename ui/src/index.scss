@@ -4,12 +4,28 @@
   box-sizing: border-box;
 }
 
+// Theme #1
+// $theme-colors: (
+//   "primary": #bf1736,
+//   "secondary": #0d1440,
+//   "third": #0e2773,
+//   "fourth": #1438a6,
+//   "fifth": #1455d9,
+//   "white": #fff,
+//   "black": #222,
+//   "success": #4bb543,
+//   "danger": #ff0000,
+//   "warning": #fa7500,
+//   "green": #00ff00,
+// );
+
+// Theme #2
 $theme-colors: (
-  "primary": #bf1736,
-  "secondary": #0d1440,
-  "third": #0e2773,
-  "fourth": #1438a6,
-  "fifth": #1455d9,
+  "primary": #043540,
+  "secondary": #0d0d0d,
+  "third": #1f6373,
+  "fourth": #6d96a6,
+  "fifth": #bacbd9,
   "white": #fff,
   "black": #222,
   "success": #4bb543,
@@ -18,8 +34,20 @@ $theme-colors: (
   "green": #00ff00,
 );
 
-.w-6 {
-}
+// Theme #3
+// $theme-colors: (
+//   "primary":#0442BF,
+//   "secondary":#011640,
+//   "third": #0476D9,
+//   "fourth": #0487D9,
+//   "fifth": #05AFF2,
+//   "white": #fff,
+//   "black": #222,
+//   "success": #4bb543,
+//   "danger": #ff0000,
+//   "warning": #fa7500,
+//   "green": #00ff00,
+// );
 
 .cont-btn {
   padding: 0.4rem 0.4rem 0 0;
@@ -37,6 +65,7 @@ $theme-colors: (
   border: 0;
   min-height: 2.9em;
   font-size: 1.2rem;
+  font-weight: 600;
   > svg {
     width: 1.5em;
     height: 1.5em;
@@ -60,13 +89,18 @@ $theme-colors: (
     &:hover,
     &:focus,
     &:active {
-      background-color: theme-color-level($color-name: "primary", $level: -2);
-      border-color: theme-color-level($color-name: "primary", $level: -2);
+      background-color: theme-color-level(
+        $color-name: "primary",
+        $level: -2
+      ) !important;
+      border-color: theme-color-level(
+        $color-name: "primary",
+        $level: -2
+      ) !important;
     }
     &.active {
       background-color: map-get($theme-colors, "primary") !important;
-      border: 0.4rem solid
-        theme-color-level($color-name: "secondary", $level: 0) !important;
+      border: 0.4rem solid theme-color-level($color-name: "primary", $level: 0) !important;
 
       &:hover,
       &:focus,
@@ -80,31 +114,31 @@ $theme-colors: (
   }
 
   &.btn-secondary {
-    background-color: map-get($theme-colors, "fifth");
-    border: 0.4rem solid theme-color-level($color-name: "fifth", $level: 0);
+    background-color: map-get($theme-colors, "fourth");
+    border: 0.4rem solid theme-color-level($color-name: "fourth", $level: 0);
     transition: 0.1s ease-in-out;
 
     &:hover,
     &:focus,
     &:active {
       background-color: theme-color-level(
-        $color-name: "fifth",
+        $color-name: "fourth",
         $level: -2
       ) !important;
       border-color: theme-color-level(
-        $color-name: "fifth",
+        $color-name: "fourth",
         $level: -2
       ) !important;
     }
 
     &.active {
-      background-color: map-get($theme-colors, "fifth") !important;
+      background-color: map-get($theme-colors, "fourth") !important;
       border: 0.4rem solid theme-color-level($color-name: "primary", $level: 0) !important;
       &:hover,
       &:focus,
       &:active {
         background-color: theme-color-level(
-          $color-name: "fifth",
+          $color-name: "fourth",
           $level: 0
         ) !important;
       }
@@ -219,7 +253,7 @@ $theme-colors: (
 
   * {
     position: absolute;
-    z-index: 1;
+    //z-index: 1;
   }
 
   &.no-frame {
@@ -311,6 +345,7 @@ $theme-colors: (
   }
 
   .panel-title {
+    display: none;
     font-size: 1.4rem;
     text-transform: uppercase;
     text-align: center;
@@ -337,6 +372,18 @@ $theme-colors: (
       border: 1px solid rgba(map-get($theme-colors, "white"), 0.7);
       bottom: -0.4rem;
     }
+  }
+}
+
+.modal-dialog {
+  .modal-header {
+    border-color: theme-color-level($color-name: "primary", $level: 0);
+  }
+  .modal-content {
+    background: theme-color-level($color-name: "fifth", $level: 0);
+  }
+  .modal-footer {
+    border-color: theme-color-level($color-name: "primary", $level: 0);
   }
 }
 
@@ -392,12 +439,13 @@ $theme-colors: (
     padding: 0rem;
     list-style: none;
     position: absolute;
-    z-index: 2;
+    z-index: 12;
     background: rgba(
       theme-color-level($color-name: "primary", $level: -5),
       0.9
     );
     width: 120%;
+    min-width: 600px;
 
     li {
       padding: 0.3rem 1rem 0.3rem 1rem;
@@ -542,14 +590,34 @@ $theme-colors: (
   }
 }
 
+.text-search-cont {
+  margin-left: -0.5rem;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 1rem;
+  &.smaller {
+    scale: 1 1;
+    transform-origin: left bottom;
+    bottom: -1rem;
+    z-index: 1;
+    .temp-connector {
+      position: absolute;
+      bottom: calc(100% + 0.1rem);
+      left: 1rem;
+    }
+  }
+}
 .text-query {
   display: flex;
+  flex-wrap: wrap;
   .text-search-input {
-    flex: 1 1 auto;
+    flex: 0 0 100%;
   }
   .sub-frame-text-query-cont {
-    flex: 0 0 20%;
-    max-width: 20%;
+    margin: 0.3rem 0 0 0;
+    background: theme-color-level($color-name: "black", $level: -5);
+    flex: 0 0 100%;
+    max-width: 100%;
   }
 }
 
@@ -559,61 +627,76 @@ $theme-colors: (
   flex-wrap: wrap;
   padding: 0 0 0 0.5rem;
 
-  
-  .sub-query-tile {
-    flex: 0 0 33.33%;
-    max-width: 33.33%;
+  &:before {
+    content: "";
+    width: 100%;
+    padding-top: 56.5%;
     position: relative;
-    border: 1px solid theme-color-level($color-name: "black", $level: 0);
-    background: theme-color-level($color-name: "black", $level: -5);
-    margin: -1px 0 0 -1px;
-    cursor: pointer;
+  }
 
-    &.active {
-      //background: theme-color-level($color-name: "green", $level: -3) !important;
+  .canvas-bg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    scale:1.1;
+  }
 
+  .sub-frame-canvas {
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    margin: 0;
+    padding: 0;
+    cursor: crosshair;
+    list-style: none;
+
+    .sub-frame-query-icon {
+      position:relative;
+      cursor: move;
+
+      .text-search-input {
+        input {
+          opacity: 0.7;
+          padding: 0.2rem;
+          font-size: 0.8rem;
+          height: auto;
+          text-align: center;
+        }
+      }
+      
+
+      .query-icon {
+        position: relative;
+        width: 2rem;
+        height: 2rem;  
+        z-index: 2;
+      }
+      .aoe {
+        position: absolute;
+        width: 70px;
+        height: 50px;
+        border: 3px solid theme-color-level($color-name: "danger", $level: 0);;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%; 
+        //z-index: 1;
+      }
       .toggle {
-        display: block;
-        display: flex;
-        width: 20rem;
-        background: rgba(theme-color-level($color-name: "primary", $level: 0), 0.7);
-        z-index: 4;
-        padding: 1rem 1rem;
-        bottom: 100%;
+        // position: absolute;
+        // bottom: calc(100% + 0.8rem);
+        // left: -1rem;
+        // width: 20rem;
+        // padding: 0.9rem;
+        // background: theme-color-level($color-name: "primary", $level: 0);
+        // display: none;
       }
-    }
-
-    &.edited {
-      background: theme-color-level($color-name: "green", $level: 0) !important;
-    }
-
-    &:hover,
-    &:focus {
-
-      background: theme-color-level($color-name: "black", $level: -3);
-
-
-
-      .label {
-        opacity: 0;
-      }
-    }
-
-    .label {
-      position: absolute;
-      opacity: 0;
-      width: 10rem;
-      display: block;
-      bottom: 100%;
-      pointer-events: none;
-      z-index: 3;
-      background-color: theme-color-level($color-name: "primary", $level: 0);
-      padding: 0.4rem 0.5rem;
-    }
-
-    .toggle {
-      position: absolute;
-      display: none;
     }
   }
 }

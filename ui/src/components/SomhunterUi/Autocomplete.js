@@ -19,7 +19,7 @@ class Autocomplete extends Component {
     this.state = {
       activeSuggestion: 0,
       filteredSuggestions: [],
-      showSuggestions: props.isAcOpen,
+      showSuggestions: false,
       userInput: "",
       currentWord: "",
     };
@@ -77,9 +77,8 @@ class Autocomplete extends Component {
     const currentWord = userInput.split(" ").slice(-1)[0];
 
     // Trigger subquery tile
-    console.warn(this.props.onInputChange)
-    if (typeof this.props.onInputChange !== "undefined")
-    {
+    console.warn(this.props.onInputChange);
+    if (typeof this.props.onInputChange !== "undefined") {
       this.props.onInputChange(userInput, this.props.index);
     }
 

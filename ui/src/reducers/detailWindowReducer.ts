@@ -1,5 +1,5 @@
 import { Action, ShowDetailAction } from "./index";
-import { FrameRef } from "../../types/index";
+import { FrameRef } from "../../types/coreApi";
 
 import * as CS from "../constants";
 

@@ -67,7 +67,7 @@ function MainPanel(props) {
         <HelpWindow />
         <Col xs={6} className="cont-btn">
           <Button
-            variant="danger"
+            variant="secondary"
             onClick={() =>
               onTriggerResetHandler(
                 settings,

@@ -49,7 +49,7 @@ function MainWindow(props) {
   let replayWindowStyles = { top: "0", bottom: "initial" };
   if (
     typeof props.replayWindow.cursorPos !== "undefined" &&
-    props.replayWindow.cursorPos !== null && 
+    props.replayWindow.cursorPos !== null &&
     props.replayWindow.cursorPos.y < 0.5
   ) {
     replayWindowStyles = { top: "initial", bottom: "0" };

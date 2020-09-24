@@ -7,12 +7,12 @@ import {
   HideReplayAction,
 } from "./index";
 
-import { FrameRef, Vec2, CoreApiSettings } from "../../types/index";
+import { FrameRef, Vec2, CoreApiSettings } from "../../types/coreApi";
 
 import * as CS from "../constants";
 
 export type SettingsState = {
-  textQueryRefs: React.Ref<any>[];
+  textQueryRefs: React.Ref<HTMLInputElement>[];
   coreSettings: CoreApiSettings | undefined | null;
 };
 

@@ -4,7 +4,7 @@ import {
   ScrollReplayAction,
   HideReplayAction,
 } from "./index";
-import { FrameRef, Vec2 } from "../../types/index";
+import { FrameRef, Vec2 } from "../../types/coreApi";
 
 import * as CS from "../constants";
 

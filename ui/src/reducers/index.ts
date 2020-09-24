@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 
-import { FrameRef, Vec2 } from "../../types";
+import { FrameRef, Vec2 } from "../../types/coreApi";
 
 // Current app settings
 import settingsReducer, { SettingsState } from "./settingsReducer";
@@ -21,7 +21,7 @@ import replayWindowReducer, { ReplayWindowState } from "./replayWindowReducer";
 import indicatorReducer, { IndicatorState } from "./indicatorReducer";
 
 /** State type */
-type StoreState = {
+export type StoreState = {
   mainWindow: MainWindowState;
   notifications: NotificationState;
   detailWindow: DetailWindowState;

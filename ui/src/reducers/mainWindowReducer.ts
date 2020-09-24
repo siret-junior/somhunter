@@ -1,5 +1,5 @@
 import { Action, ShowTopNDisplay, ShowSomDisplay } from "./index";
-import { FrameRef } from "../../types/index";
+import { FrameRef } from "../../types/coreApi";
 
 import * as CS from "../constants";
 import { actionToDispName } from "../constants";
