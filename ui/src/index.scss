@@ -541,3 +541,79 @@ $theme-colors: (
     }
   }
 }
+
+.text-query {
+  display: flex;
+  .text-search-input {
+    flex: 1 1 auto;
+  }
+  .sub-frame-text-query-cont {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+}
+
+.sub-frame-text-query-cont {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 0 0 0.5rem;
+
+  
+  .sub-query-tile {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+    position: relative;
+    border: 1px solid theme-color-level($color-name: "black", $level: 0);
+    background: theme-color-level($color-name: "black", $level: -5);
+    margin: -1px 0 0 -1px;
+    cursor: pointer;
+
+    &.active {
+      //background: theme-color-level($color-name: "green", $level: -3) !important;
+
+      .toggle {
+        display: block;
+        display: flex;
+        width: 20rem;
+        background: rgba(theme-color-level($color-name: "primary", $level: 0), 0.7);
+        z-index: 4;
+        padding: 1rem 1rem;
+        bottom: 100%;
+      }
+    }
+
+    &.edited {
+      background: theme-color-level($color-name: "green", $level: 0) !important;
+    }
+
+    &:hover,
+    &:focus {
+
+      background: theme-color-level($color-name: "black", $level: -3);
+
+
+
+      .label {
+        opacity: 0;
+      }
+    }
+
+    .label {
+      position: absolute;
+      opacity: 0;
+      width: 10rem;
+      display: block;
+      bottom: 100%;
+      pointer-events: none;
+      z-index: 3;
+      background-color: theme-color-level($color-name: "primary", $level: 0);
+      padding: 0.4rem 0.5rem;
+    }
+
+    .toggle {
+      position: absolute;
+      display: none;
+    }
+  }
+}

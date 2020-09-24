@@ -12,3 +12,9 @@ export function isErrDef(e) {
 export function resetMainGridScroll() {
   document.getElementById("mainGrid").scrollTop = 0;
 }
+
+export function hideAllSubQueries() {
+  document
+    .querySelectorAll(".sub-query-tile")
+    .forEach((x) => x.classList.remove("active"));
+}

@@ -6,6 +6,7 @@ import { Alert, Container, Row, Col, Button } from "react-bootstrap";
 import config from "../../config/config";
 import STRS from "../../config/strings";
 import * as CS from "../../constants";
+import { hideAllSubQueries } from "../../utils/utils";
 
 import { useSettings } from "../../hooks/useSettings";
 
@@ -69,6 +70,8 @@ function handleGlobalKeyDown(settings, props, e) {
       document.activeElement.blur();
 
       // Close autocomplete
+      hideAllSubQueries();
+
       break;
 
     default:
