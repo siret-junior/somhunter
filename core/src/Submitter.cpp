@@ -712,6 +712,7 @@ Submitter::log_text_query_change(const std::string &text_query)
 }
 void
 Submitter::log_like(const DatasetFrames &frames,
+                    const std::set<ImageId> &likes,
                     DisplayType /*disp_type*/,
                     ImageId frame_ID)
 {
@@ -721,7 +722,8 @@ Submitter::log_like(const DatasetFrames &frames,
 
 	alog() << "like\t"
 	       << "frame_ID=" << frame_ID << "\t"
-	       << "liked=" << vf.liked << "\t" << std::endl;
+	       << "liked=" << (likes.count(frame_ID) == 1 ? "true" : "false")
+	       << "\t" << std::endl;
 
 #endif // LOG_LOGS
 
@@ -734,6 +736,7 @@ Submitter::log_like(const DatasetFrames &frames,
 
 void
 Submitter::log_unlike(const DatasetFrames &frames,
+                      const std::set<ImageId> &likes,
                       DisplayType /*disp_type*/,
                       ImageId frame_ID)
 {
@@ -743,7 +746,8 @@ Submitter::log_unlike(const DatasetFrames &frames,
 
 	alog() << "unlike\t"
 	       << "frame_ID=" << frame_ID << "\t"
-	       << "liked=" << vf.liked << "\t" << std::endl;
+	       << "liked=" << (likes.count(frame_ID) == 1 ? "true" : "false")
+	       << "\t" << std::endl;
 
 #endif // LOG_LOGS
 

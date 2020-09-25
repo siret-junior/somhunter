@@ -33,6 +33,8 @@
 #include "RelevanceScores.h"
 #include "Submitter.h"
 
+class TESTER_SomHunter;
+
 /* This is the main backend class. */
 
 class SomHunter
@@ -56,7 +58,7 @@ class SomHunter
 
 	// Current display context
 	std::vector<VideoFramePointer> current_display;
-	DisplayType current_display_type{ DisplayType::DNull };
+	DisplayType curr_disp_type{ DisplayType::DNull };
 
 	// asynchronous SOM worker
 	AsyncSom asyncSom;
@@ -155,6 +157,8 @@ private:
 	FramePointerRange get_page_from_last(PageId page);
 
 	void reset_scores();
+
+	friend TESTER_SomHunter;
 };
 
 #endif

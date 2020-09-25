@@ -29,6 +29,7 @@
 #include <functional>
 #include <iomanip>
 #include <numeric>
+#include <random>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -315,6 +316,32 @@ timestamp()
 	return duration_cast<milliseconds>(
 	         system_clock::now().time_since_epoch())
 	  .count();
+}
+
+/** Returns pseudorandom integral number sampled from
+ *  the uniform distribution [from, to]. */
+template<typename T>
+T
+irand(T from, T to)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<T> dist(from, to);
+
+	return dist(gen);
+}
+
+/** Returns pseudorandom floating point number sampled from
+ *  the uniform distribution [from, to). */
+template<typename T>
+T
+frand(T from, T to)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<T> dist(from, to);
+
+	return dist(gen);
 }
 
 #endif // UTILS_H_

@@ -121,10 +121,12 @@ public:
 	void log_text_query_change(const std::string &query_sentence);
 
 	void log_like(const DatasetFrames &frames,
+	              const std::set<ImageId> &likes,
 	              DisplayType disp_type,
 	              ImageId frame_ID);
 
 	void log_unlike(const DatasetFrames &frames,
+	                const std::set<ImageId> &likes,
 	                DisplayType disp_type,
 	                ImageId frame_ID);
 

@@ -59,4 +59,18 @@
 #define debug(x) _dont_write_log
 #endif
 
-#endif
+#define print(x) std::cout << x << std::endl;
+
+#if NDEBUG
+#define ASSERT(cond, msg)
+#else
+#define ASSERT(cond, msg)                                                      \
+	do {                                                                   \
+		if (!(cond)) {                                                 \
+			std::cerr << msg << std::endl;                         \
+			throw std::logic_error(msg);                           \
+		}                                                              \
+	} while (false);
+#endif // NDEBUG
+
+#endif // log_h

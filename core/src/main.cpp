@@ -19,12 +19,14 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "SomHunter.h"
 #include <chrono>
 #include <stdio.h>
 #include <thread>
 
-#if 0
+#include "SomHunter.h"
+#include "tests.hpp"
+
+#if 1
 void
 print_display(const FramePointerRange &d)
 {
@@ -36,13 +38,18 @@ print_display(const FramePointerRange &d)
 int
 main()
 {
-#if 0
+	/* Assuming root of your project is `build/src/` and your config
+	   file lies in the server project root just above.
+
+	   Change this accordingly. */
+	const std::string cfg_fpth{ "../../../config.json" };
+
+	TESTER_SomHunter::run_all_tests(cfg_fpth);
+
+#if 1
 	debug("this is debug log");
 	info("this is info log");
 	warn("this is warn log");
-	// Assuming root of your project is `build/src/`...
-	// Change this accordingly
-	const std::string cfg_fpth{ "../../config.json" };
 
 	// Parse config file
 	auto config = Config::parse_json_config(cfg_fpth);
@@ -92,11 +99,11 @@ main()
 	d_rand_b++;
 	likes.push_back((*d_rand_b)->frame_ID);
 
-	core.add_likes(likes);
+	core.like_frames(likes);
 
 	likes.resize(1);
 
-	core.remove_likes(likes);
+	core.like_frames(likes);
 
 	std::cout << "Like " << likes[0] << std::endl;
 

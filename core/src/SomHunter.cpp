@@ -68,39 +68,36 @@ SomHunter::get_display(DisplayType d_type,
 }
 
 std::vector<bool>
-SomHunter::like_frames(const std::vector<ImageId> &likes)
+SomHunter::like_frames(const std::vector<ImageId> &new_likes)
 {
 	submitter.poll();
 
 	// Prepare the result flags vector
 	std::vector<bool> res;
-	res.reserve(likes.size());
+	res.reserve(new_likes.size());
 
-	for (auto &&fr_ID : likes) {
+	for (auto &&fr_ID : new_likes) {
 
 		// Find the item in the set
-		size_t count{ this->likes.count(fr_ID) };
+		size_t count{ likes.count(fr_ID) };
 
 		// If item is not present (NOT LIKED)
 		if (count == 0) {
 			// Like it
-			assert(frames.get_frame(fr_ID).liked == false);
-
 			this->likes.insert(fr_ID);
-			frames.get_frame(fr_ID).liked = true;
 			res.emplace_back(true);
-			submitter.log_like(frames, current_display_type, fr_ID);
+
+			submitter.log_like(
+			  frames, likes, curr_disp_type, fr_ID);
 		}
 		// If the item is present (LIKED)
 		else {
 			// Unlike it
-			assert(frames.get_frame(fr_ID).liked == true);
-
-			this->likes.erase(fr_ID);
-			frames.get_frame(fr_ID).liked = false;
+			likes.erase(fr_ID);
 			res.emplace_back(false);
+
 			submitter.log_unlike(
-			  frames, current_display_type, fr_ID);
+			  frames, likes, curr_disp_type, fr_ID);
 		}
 	}
 
@@ -150,9 +147,6 @@ SomHunter::rescore(const std::string &text_query)
 
 	// Reset likes
 	likes.clear();
-	for (auto &fr : frames) {
-		fr.liked = false;
-	}
 
 	debug("used_tools.topknn_used = " << used_tools.topknn_used);
 	debug("used_tools.KWs_used = " << used_tools.KWs_used);
@@ -161,7 +155,7 @@ SomHunter::rescore(const std::string &text_query)
 	                                 scores,
 	                                 old_likes,
 	                                 used_tools,
-	                                 current_display_type,
+	                                 curr_disp_type,
 	                                 top_n,
 	                                 last_text_query,
 	                                 config.topn_frames_per_video,
@@ -183,7 +177,7 @@ SomHunter::login_to_dres() const
 void
 SomHunter::submit_to_server(ImageId frame_id)
 {
-	submitter.submit_and_log_submit(frames, current_display_type, frame_id);
+	submitter.submit_and_log_submit(frames, curr_disp_type, frame_id);
 }
 
 void
@@ -259,7 +253,7 @@ SomHunter::get_random_display()
 	for (auto id : ids)
 		shown_images.insert(id);
 	current_display = frames.ids_to_video_frame(ids);
-	current_display_type = DisplayType::DRand;
+	curr_disp_type = DisplayType::DRand;
 
 	return FramePointerRange(current_display);
 }
@@ -268,7 +262,7 @@ FramePointerRange
 SomHunter::get_topn_display(PageId page)
 {
 	// Another display or first page -> load
-	if (current_display_type != DisplayType::DTopN || page == 0) {
+	if (curr_disp_type != DisplayType::DTopN || page == 0) {
 		debug("Loading top n display first page");
 		// Get ids
 		auto ids = scores.top_n(frames,
@@ -282,7 +276,7 @@ SomHunter::get_topn_display(PageId page)
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
-		current_display_type = DisplayType::DTopN;
+		curr_disp_type = DisplayType::DTopN;
 	}
 
 	return get_page_from_last(page);
@@ -292,7 +286,7 @@ FramePointerRange
 SomHunter::get_topn_context_display(PageId page)
 {
 	// Another display or first page -> load
-	if (current_display_type != DisplayType::DTopNContext || page == 0) {
+	if (curr_disp_type != DisplayType::DTopNContext || page == 0) {
 		debug("Loading top n context display first page");
 		// Get ids
 		auto ids =
@@ -307,7 +301,7 @@ SomHunter::get_topn_context_display(PageId page)
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
-		current_display_type = DisplayType::DTopNContext;
+		curr_disp_type = DisplayType::DTopNContext;
 	}
 
 	return get_page_from_last(page);
@@ -390,7 +384,7 @@ SomHunter::get_som_display()
 		shown_images.insert(id);
 	}
 	current_display = frames.ids_to_video_frame(ids);
-	current_display_type = DisplayType::DSom;
+	curr_disp_type = DisplayType::DSom;
 
 	return FramePointerRange(current_display);
 }
@@ -419,7 +413,7 @@ SomHunter::get_video_detail_display(ImageId selected_image, bool log_it)
 	}
 
 	current_display = frames.range_to_video_frame(video_frames);
-	current_display_type = DisplayType::DVideoDetail;
+	curr_disp_type = DisplayType::DVideoDetail;
 
 	return FramePointerRange(current_display);
 }
@@ -428,7 +422,7 @@ FramePointerRange
 SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 {
 	// Another display or first page -> load
-	if (current_display_type != DisplayType::DTopKNN || page == 0) {
+	if (curr_disp_type != DisplayType::DTopKNN || page == 0) {
 
 		// Get ids
 		auto ids = features.get_top_knn(frames,
@@ -444,7 +438,7 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 
 		// Update context
 		current_display = frames.ids_to_video_frame(ids);
-		current_display_type = DisplayType::DTopKNN;
+		curr_disp_type = DisplayType::DTopKNN;
 
 		// KNN is query by example so we NEED to log a rerank
 		UsedTools ut;
@@ -454,7 +448,7 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 		                                 scores,
 		                                 likes,
 		                                 ut,
-		                                 current_display_type,
+		                                 curr_disp_type,
 		                                 ids,
 		                                 last_text_query,
 		                                 config.topn_frames_per_video,
@@ -498,9 +492,6 @@ SomHunter::reset_scores()
 
 	// Reset likes
 	likes.clear();
-	for (auto &fr : frames) {
-		fr.liked = false;
-	}
 
 	last_text_query = "";
 

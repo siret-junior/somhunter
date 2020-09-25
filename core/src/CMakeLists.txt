@@ -24,6 +24,7 @@ SET(HEADERS
 	use_intrins.h
 	utils.h
 	log.h
+	tests.hpp
 	json11.hpp
 )
 

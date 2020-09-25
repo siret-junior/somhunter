@@ -54,8 +54,6 @@ struct VideoFrame
 	ShotId shot_ID;
 	ImageId frame_number;
 	ImageId frame_ID;
-
-	bool liked{ false };
 };
 
 /**

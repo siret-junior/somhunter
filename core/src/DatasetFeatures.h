@@ -94,7 +94,7 @@ public:
 		std::vector<size_t> per_vid_frame_hist(num_videos, 0);
 		std::map<VideoId, std::map<ShotId, size_t>> frames_per_shot;
 
-		while (res.size() < TOPKNN_LIMIT) {
+		while (res.size() < TOPKNN_LIMIT && !q3.empty()) {
 			auto [adept_ID, f]{ q3.top() };
 
 			if (q3.empty())
