@@ -16,7 +16,7 @@ import detailWindowReducer, { DetailWindowState } from "./detailWindowReducer";
 
 // Replay window
 import replayWindowReducer, { ReplayWindowState } from "./replayWindowReducer";
-``;
+
 // Indicators (not logged in, not sending, etc)
 import indicatorReducer, { IndicatorState } from "./indicatorReducer";
 

@@ -17,7 +17,7 @@ function TextSearchPanel(props) {
   /** Lets the Core know about text query change. */
   const triggerLogTextChange = () => {
     const dispatch = s.dispatch;
-    const url = s.coreSettings.api.endpoints.logTextChange.url;
+    const url = s.coreSettings.api.endpoints.logTextChange.get.url;
 
     let query = `${props.refQuery0.current.value} >> ${props.refQuery1.current.value}`;
 

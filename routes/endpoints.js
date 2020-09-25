@@ -42,6 +42,14 @@ exports.getProgramSettings = function (req, res) {
   res.status(200).jsonp(cfgData);
 };
 
+exports.searchGet = function (req, res) {
+  const sess = req.session;
+
+  const data = { ok: true };
+
+  res.status(200).jsonp(data);
+};
+
 exports.getFrameDetailData = function (req, res) {
   const sess = req.session;
 

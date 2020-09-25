@@ -12,7 +12,7 @@ import Frame from "./Frame";
 
 async function onLikeHandler(s, props, gridElRef, frameId) {
   const dispatch = s.dispatch;
-  const url = s.coreSettings.api.endpoints.searchLike.url;
+  const url = s.coreSettings.api.endpoints.searchLike.post.url;
 
   const reqData = {
     frameId: frameId,
@@ -143,7 +143,7 @@ function FrameGrid(props) {
       params.scrollArea = CS.DISP_TYPE_DETAIL;
     }
 
-    get(dispatch, coreEndpoints.logBrowsingScroll.url, { params });
+    get(dispatch, coreEndpoints.logBrowsingScroll.get.url, { params });
   };
 
   let onScrollFnThrottled = _.throttle(_onScrollFn, 1000);

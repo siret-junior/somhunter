@@ -7,18 +7,32 @@ import {
   HideReplayAction,
 } from "./index";
 
-import { FrameRef, Vec2, CoreApiSettings } from "../../types/coreApi";
+import {
+  FrameRef,
+  Vec2,
+  CoreApiSettings,
+  CoreSearchState,
+} from "../../types/coreApi";
 
 import * as CS from "../constants";
 
 export type SettingsState = {
   textQueryRefs: React.Ref<HTMLInputElement>[];
+
+  /* Static settings from the core
+   * undefined => fetching
+   * null => fetch failed
+   */
   coreSettings: CoreApiSettings | undefined | null;
+
+  // If state of the current search session has been fetched
+  searchState: CoreSearchState | undefined | null;
 };
 
 const defaultState: SettingsState = {
   textQueryRefs: [],
   coreSettings: undefined,
+  searchState: undefined,
 };
 
 function settingsReducer(state = defaultState, action: Action): SettingsState {
@@ -35,6 +49,13 @@ function settingsReducer(state = defaultState, action: Action): SettingsState {
       return {
         ...state,
         coreSettings: action.payload,
+      };
+
+    case CS.SET_SEARCH_STATE:
+      console.debug("=> (REDUCER) settingsReducer:", action);
+      return {
+        ...state,
+        searchState: action.payload,
       };
 
     default:

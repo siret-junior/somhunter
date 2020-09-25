@@ -22,7 +22,7 @@ export function createShowDetailWindow(settings, frameId) {
 
     const requestSettings = settings.coreSettings.api.endpoints.frameDetail;
     // << Core API >>
-    const response = await get(dispatch, requestSettings.url, { params });
+    const response = await get(dispatch, requestSettings.get.url, { params });
     // << Core API >>
 
     // If empty array returned

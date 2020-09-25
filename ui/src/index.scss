@@ -220,6 +220,8 @@ $theme-colors: (
   }
   .btn {
     font-size: 0.6rem;
+    z-index: 2;
+    padding: 0.0rem 0.6rem;
   }
 
   > .col-2 {

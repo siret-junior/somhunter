@@ -11,8 +11,8 @@ import { createSetCoreSettings } from "../../actions/settingsCreator";
 import { SettingsProvider } from "../../contexts/settingsContext";
 
 import CriticalErrorWindow from "./CriticalErrorWindow";
-import SomhunterUi from "./SomhunterUi";
 import LoadingWindow from "./LoadingWindow";
+import SomhunterUi from "./SomhunterUi";
 
 /** JSX informing the user about critical error. */
 function getErrorWindowJsx() {

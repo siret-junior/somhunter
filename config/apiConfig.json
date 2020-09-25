@@ -1,53 +1,70 @@
 {
     "development": {
         "endpoints": {
-            "infoConfig": {
-                "type": "GET",
-                "url": "/info/settings"
+            "config": {
+                "get": {
+                    "url": "/settings"
+                }
             },
             "frameDetail": {
-                "type": "GET",
-                "url": "/get_frame_detail_data"
+                "get": {
+                    "url": "/get_frame_detail_data"
+                }
             },
             "textSearchSuggestions": {
-                "type": "GET",
-                "url": "/get_autocomplete_results"
+                "get": {
+                    "url": "/get_autocomplete_results"
+                }
             },
             "screenTop": {
-                "type": "POST",
-                "url": "/get_top_screen"
+                "post": {
+                    "url": "/get_top_screen"
+                }
             },
             "screenSom": {
-                "type": "POST",
-                "url": "/get_som_screen"
+                "post": {
+                    "url": "/get_som_screen"
+                }
             },
             "logBrowsingScroll": {
-                "type": "GET",
-                "url": "/log_scroll"
+                "get": {
+                    "url": "/log_scroll"
+                }
             },
             "logTextChange": {
-                "type": "GET",
-                "url": "/log_text_query_change"
+                "get": {
+                    "url": "/log_text_query_change"
+                }
             },
             "serverSubmitFrame": {
-                "type": "POST",
-                "url": "/submit_frame"
-            },
-            "searchReset": {
-                "type": "POST",
-                "url": "/reset_search_session"
-            },
-            "searchRescore": {
-                "type": "POST",
-                "url": "/rescore"
-            },
-            "searchLike": {
-                "type": "POST",
-                "url": "/like_frame"
+                "get": {
+                    "url": "/submit_frame"
+                }
             },
             "serverLogin": {
-                "type": "POST",
-                "url": "/login_to_dres"
+                "post": {
+                    "url": "/login_to_dres"
+                }
+            },
+            "searchReset": {
+                "post": {
+                    "url": "/reset_search_session"
+                }
+            },
+            "searchRescore": {
+                "post": {
+                    "url": "/rescore"
+                }
+            },
+            "searchLike": {
+                "post": {
+                    "url": "/like_frame"
+                }
+            },
+            "search": {
+                "get": {
+                    "url": "/search"
+                }
             }
         }
     },

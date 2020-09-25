@@ -16,7 +16,7 @@ async function loginToDres(settings, onSucc = () => null, onFail = () => null) {
   const submitterConfig = settings.coreSettings.core.submitter_config;
   const coreEndpoints = settings.coreSettings.api.endpoints;
 
-  const url = coreEndpoints.serverLogin.url;
+  const url = coreEndpoints.serverLogin.post.url;
   const isServerDres = submitterConfig.submit_server === "dres" ? true : false;
   const shouldSend = submitterConfig.submit_to_VBS;
 

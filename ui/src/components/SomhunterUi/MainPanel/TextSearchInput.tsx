@@ -25,7 +25,7 @@ function TextSearchInput(props: Props) {
   return (
     <div className="text-query">
       <Autocomplete {...props} />
-      <SubFrameCanvas {...props} w={3} h={2} />
+      {/* <SubFrameCanvas {...props} w={3} h={2} /> */}
     </div>
   );
 }

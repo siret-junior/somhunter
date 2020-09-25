@@ -36,7 +36,7 @@ async function onSubmitHandler(s, props) {
 
   console.info(`Submitting frame '${frameId}'...`);
 
-  const url = s.coreSettings.api.endpoints.serverSubmitFrame.url;
+  const url = s.coreSettings.api.endpoints.serverSubmitFrame.post.url;
   const reqData = {
     frameId,
   };
@@ -51,7 +51,7 @@ async function onSubmitHandler(s, props) {
 
 const triggerLogs = (s, props, e, frameId, delta) => {
   const dispatch = s.dispatch;
-  const url = s.coreSettings.api.endpoints.logBrowsingScroll.url;
+  const url = s.coreSettings.api.endpoints.logBrowsingScroll.get.url;
 
   let params = {
     scrollArea: CS.DISP_TYPE_REPLAY,

@@ -53,11 +53,17 @@ const routerNotFound = require("./routes/404");
 // API endpoints
 const endpoints = require("./routes/endpoints");
 
-function addEndpoint(app, { type, url }, handler) {
-  if (type === "GET") {
-    app.get(url, handler);
-  } else if (type === "POST") {
-    app.post(url, handler);
+function addGet(app, ep, handler) {
+  // If GET set up
+  if ("get" in ep) {
+    app.get(ep.get.url, handler);
+  }
+}
+
+function addPost(app, ep, handler) {
+  // If POST set up
+  if ("post" in ep) {
+    app.post(ep.post.url, handler);
   }
 }
 
@@ -209,21 +215,22 @@ app.use(cors(corsOptions));
 const eps = global.apiCfg.endpoints;
 
 // SOMHunter endpoints
-addEndpoint(app, eps.infoConfig, endpoints.getProgramSettings);
-addEndpoint(app, eps.frameDetail, endpoints.getFrameDetailData);
-addEndpoint(app, eps.textSearchSuggestions, endpoints.getAutocompleteResults);
-addEndpoint(app, eps.screenTop, endpoints.getTopScreen);
-addEndpoint(app, eps.screenSom, endpoints.getSomScreen);
+addGet(app, eps.config, endpoints.getProgramSettings);
+addGet(app, eps.frameDetail, endpoints.getFrameDetailData);
+addGet(app, eps.textSearchSuggestions, endpoints.getAutocompleteResults);
+addPost(app, eps.screenTop, endpoints.getTopScreen);
+addPost(app, eps.screenSom, endpoints.getSomScreen);
 
-addEndpoint(app, eps.logBrowsingScroll, endpoints.logScroll);
-addEndpoint(app, eps.logTextChange, endpoints.logTextQueryChange);
+addGet(app, eps.logBrowsingScroll, endpoints.logScroll);
+addGet(app, eps.logTextChange, endpoints.logTextQueryChange);
 
-addEndpoint(app, eps.serverSubmitFrame, endpoints.submitFrame);
-addEndpoint(app, eps.searchReset, endpoints.resetSearchSession);
+addGet(app, eps.serverSubmitFrame, endpoints.submitFrame);
+addPost(app, eps.searchReset, endpoints.resetSearchSession);
+addGet(app, eps.search, endpoints.searchGet);
 
-addEndpoint(app, eps.searchRescore, endpoints.rescore);
-addEndpoint(app, eps.searchLike, endpoints.likeFrame);
-addEndpoint(app, eps.serverLogin, endpoints.loginToDres);
+addPost(app, eps.searchRescore, endpoints.rescore);
+addPost(app, eps.searchLike, endpoints.likeFrame);
+addPost(app, eps.serverLogin, endpoints.loginToDres);
 
 app.use("/", somhunterRouter);
 app.use("/404", routerNotFound);

@@ -30,7 +30,7 @@ export function createRescore(settings, destDisplay) {
 
     const requestSettings = settings.coreSettings.api.endpoints.searchRescore;
     // << Core API >>
-    await post(dispatch, requestSettings.url, reqData);
+    await post(dispatch, requestSettings.post.url, reqData);
     // << Core API >>
 
     dispatch(crHideNotif(settings));
@@ -46,7 +46,7 @@ export function createResetSearch(settings, destDisplay) {
 
     const requestSettings = settings.coreSettings.api.endpoints.searchReset;
     // << Core API >>
-    await post(dispatch, requestSettings.url);
+    await post(dispatch, requestSettings.post.url);
     // << Core API >>
 
     dispatch(crNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000));

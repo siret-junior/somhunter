@@ -45,7 +45,7 @@ function loadMainWindowFrames(settings, type, pageId, frameId) {
 
     const requestSettings = settings.coreSettings.api.endpoints.screenTop;
     // << Core API >>
-    const response = await post(dispatch, requestSettings.url, reqData);
+    const response = await post(dispatch, requestSettings.post.url, reqData);
     // << Core API >>
 
     if (pageId === 0) resetMainGridScroll();
@@ -68,7 +68,7 @@ function loadSomFrames(settings) {
     let response = null;
     do {
       // << Core API >>
-      response = await post(dispatch, requestSettings.url);
+      response = await post(dispatch, requestSettings.post.url);
       // << Core API >>
 
       // 222 means that SOM not ready

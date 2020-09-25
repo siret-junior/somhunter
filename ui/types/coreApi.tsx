@@ -14,15 +14,20 @@ export type FrameRef = {
 
 export type Vec2 = { x: number; y: number };
 
+export type CoreSearchState = any;
+
 export type CoreApiEndpoint = {
-  type: string;
-  url: string;
+  get?: { url: string };
+  post?: { url: string };
 };
 
+/** Type returned by the Core API `/search/info` endpoint. */
+
+/** Type returned by the Core API `/settings/info` endpoint. */
 export type CoreApiSettings = {
   api: {
     endpoints: {
-      infoConfig: CoreApiEndpoint;
+      config: CoreApiEndpoint;
       frameDetail: CoreApiEndpoint;
       textSearchSuggestions: CoreApiEndpoint;
       screenTop: CoreApiEndpoint;
@@ -30,10 +35,11 @@ export type CoreApiSettings = {
       logBrowsingScroll: CoreApiEndpoint;
       logTextChange: CoreApiEndpoint;
       serverSubmitFrame: CoreApiEndpoint;
+      serverLogin: CoreApiEndpoint;
       searchReset: CoreApiEndpoint;
       searchRescore: CoreApiEndpoint;
       searchLike: CoreApiEndpoint;
-      serverLogin: CoreApiEndpoint;
+      searchInfo: CoreApiEndpoint;
     };
   };
   core: {
