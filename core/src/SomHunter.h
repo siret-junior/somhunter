@@ -35,17 +35,41 @@
 
 class TESTER_SomHunter;
 
-/* This is the main backend class. */
+using LikesCont = std::set<ImageId>;
+using ShownFramesCont = std::set<ImageId>;
 
-class SomHunter
+struct GetDisplayResult
 {
-	// *** LOADED DATASET ***
-	DatasetFrames frames;
-	const DatasetFeatures features;
-	const KeywordRanker keywords;
-	const Config config;
+	FramePointerRange frames;
+	const LikesCont *p_likes;
+};
 
-	// *** SEARCH CONTEXT ***
+/** Represents exactly one momentary state of a search session.
+ *
+ * It can be DIFFERENT USERS or some point in HISTORY.
+ */
+class SearchContext
+{
+public:
+	SearchContext(const Config &cfg,
+	              const DatasetFrames &frames,
+	              const DatasetFeatures &features)
+	  : scores(frames)
+	  , asyncSom(cfg)
+	  , submitter(cfg.submitter_config)
+	{
+		asyncSom.start_work(features, scores);
+	}
+
+public:
+	// VBS logging
+	Submitter submitter;
+	UsedTools used_tools;
+
+	// Current display context
+	std::vector<VideoFramePointer> current_display;
+	DisplayType curr_disp_type{ DisplayType::DNull };
+
 	// Relevance scores
 	ScoreModel scores;
 
@@ -53,19 +77,25 @@ class SomHunter
 	std::string last_text_query;
 
 	// Relevance feedback context
-	std::set<ImageId> likes;
-	std::set<ImageId> shown_images;
-
-	// Current display context
-	std::vector<VideoFramePointer> current_display;
-	DisplayType curr_disp_type{ DisplayType::DNull };
+	LikesCont likes;
+	ShownFramesCont shown_images;
 
 	// asynchronous SOM worker
 	AsyncSom asyncSom;
+};
 
-	// VBS logging
-	Submitter submitter;
-	UsedTools used_tools;
+/* This is the main backend class. */
+
+class SomHunter
+{
+	// *** LOADED DATASET ***
+	const DatasetFrames frames;
+	const DatasetFeatures features;
+	const KeywordRanker keywords;
+	const Config config;
+
+	// *** SEARCH CONTEXT ***
+	SearchContext search_ctx;
 
 public:
 	SomHunter() = delete;
@@ -74,23 +104,19 @@ public:
 	  : config(cfg)
 	  , frames(cfg)
 	  , features(frames, cfg)
-	  , scores(frames)
 	  , keywords(cfg, frames)
-	  , asyncSom(cfg)
-	  , submitter(cfg.submitter_config)
-	{
-		asyncSom.start_work(features, scores);
-	}
+	  , search_ctx(cfg, frames, features)
+	{}
 
 	/** Returns display of desired type
 	 *
 	 *	Some diplays may even support paging (e.g. top_n) or
 	 * selection of one frame (e.g. top_knn)
 	 */
-	FramePointerRange get_display(DisplayType d_type,
-	                              ImageId selected_image = 0,
-	                              PageId page = 0,
-	                              bool log_it = true);
+	GetDisplayResult get_display(DisplayType d_type,
+	                             ImageId selected_image = 0,
+	                             PageId page = 0,
+	                             bool log_it = true);
 
 	/** Inverts the like states of the provided frames and returns the new
 	 * states. */

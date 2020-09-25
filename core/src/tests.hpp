@@ -26,6 +26,12 @@
 #include "log.h"
 #include "utils.h"
 
+// What dataset
+#define TESTING_ITEC_DATASET
+
+// What keywords
+#define TESTING_BOW_W2VV
+
 class TESTER_SomHunter
 {
 public:
@@ -43,6 +49,7 @@ public:
 		print("Running all the SomHunter class tests...");
 
 		TEST_like_frames(core);
+		TEST_autocomplete_keywords(core);
 
 		print("If you got here, all tests were OK...");
 	}
@@ -52,7 +59,8 @@ private:
 	{
 		print("\t Testing `SomHunter::like_frames` method...");
 
-		auto disp{ core.get_display(DisplayType::DTopN, 0, 0) };
+		auto [disp,
+		      likes]{ core.get_display(DisplayType::DTopN, 0, 0) };
 		size_t size{ disp.size() };
 		ASSERT(size > 0, "Top N display is empty!");
 
@@ -63,24 +71,24 @@ private:
 		using vec = std::vector<ImageId>;
 
 		core.like_frames(vec{ ff->frame_ID });
-		ASSERT(core.likes.count(ff->frame_ID) == 1,
+		ASSERT(likes->count(ff->frame_ID) == 1,
 		       "Frame SHOULD be liked.");
 		core.like_frames(std::vector<ImageId>{ ff->frame_ID });
-		ASSERT(core.likes.count(ff->frame_ID) == 0,
+		ASSERT(likes->count(ff->frame_ID) == 0,
 		       "Frame SHOULD NOT be liked.");
 
 		core.like_frames(vec{ fm->frame_ID });
-		ASSERT(core.likes.count(fm->frame_ID) == 1,
+		ASSERT(likes->count(fm->frame_ID) == 1,
 		       "Frame SHOULD be liked.");
 		core.like_frames(std::vector<ImageId>{ fm->frame_ID });
-		ASSERT(core.likes.count(fm->frame_ID) == 0,
+		ASSERT(likes->count(fm->frame_ID) == 0,
 		       "Frame SHOULD NOT be liked.");
 
 		core.like_frames(vec{ fl->frame_ID });
-		ASSERT(core.likes.count(fl->frame_ID) == 1,
+		ASSERT(likes->count(fl->frame_ID) == 1,
 		       "Frame SHOULD be liked.");
 		core.like_frames(std::vector<ImageId>{ fl->frame_ID });
-		ASSERT(core.likes.count(fl->frame_ID) == 0,
+		ASSERT(likes->count(fl->frame_ID) == 0,
 		       "Frame SHOULD NOT be liked.");
 
 		vec all;
@@ -88,11 +96,56 @@ private:
 			all.emplace_back(f->frame_ID);
 		}
 		core.like_frames(all);
-		ASSERT(core.likes.size() == size,
-		       "All frames SHOULD be liked.");
+		ASSERT(likes->size() == size, "All frames SHOULD be liked.");
 
 		core.like_frames(all);
-		ASSERT(core.likes.size() == 0,
-		       "All frames SHOULD NOT be liked.");
+		ASSERT(likes->size() == 0, "All frames SHOULD NOT be liked.");
+
+		print("\t Testing `SomHunter::like_frames` finished.");
+	}
+
+	static void TEST_autocomplete_keywords(SomHunter &core)
+	{
+		print(
+		  "\t Testing `SomHunter::autocomplete_keywords` method...");
+
+		/*
+		 * Non-empty cases
+		 */
+#ifdef TESTING_BOW_W2VV
+		std::map<std::string, std::vector<KeywordId>> correct{
+			{ "cat", { 44, 7725, 8225, 9712 } },
+			{ "z", { 1615, 9127, 8767, 4316 } }
+		};
+#else
+		std::vector<KeywordId> correct{};
+		warn("No test values for this dataset.");
+#endif
+		for (auto &&[key, val] : correct) {
+			auto ac_res{ core.autocomplete_keywords(key, 10) };
+
+			for (size_t i{ 0 }; i < val.size(); ++i) {
+				ASSERT(ac_res[i]->synset_ID == val[i],
+				       "Incorrect keyword");
+			}
+		}
+
+		/*
+		 * Non-empty cases
+		 */
+		auto ac_res{ core.autocomplete_keywords("iax", 10) };
+		ASSERT(ac_res.empty(), "Results should be empty!");
+
+		ac_res = core.autocomplete_keywords("\\/?!,.'\"", 10);
+		ASSERT(ac_res.empty(), "Results should be empty!");
+
+		ac_res = core.autocomplete_keywords("cat", 0);
+		ASSERT(ac_res.empty(), "Results should be empty!");
+
+		ac_res = core.autocomplete_keywords("", 10);
+		ASSERT(ac_res.empty(), "Results should be empty!");
+
+		print(
+		  "\t Testing `SomHunter::autocomplete_keywords` finished.");
 	}
 };

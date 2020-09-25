@@ -69,22 +69,22 @@ main()
 	core.rescore("dog park");
 
 	// Try different displays
-	auto d_topn = core.get_display(DisplayType::DTopN, 0, 0);
+	auto [d_topn, l0] = core.get_display(DisplayType::DTopN, 0, 0);
 	std::cout << "TOP N\n";
 	print_display(d_topn);
 
-	auto d_topknn = core.get_display(DisplayType::DTopKNN, 2, 0);
+	auto [d_topknn, l1] = core.get_display(DisplayType::DTopKNN, 2, 0);
 	std::cout << "TOP KNN\n";
 	print_display(d_topknn);
 
-	auto d_rand = core.get_display(DisplayType::DRand);
+	auto [d_rand, l2] = core.get_display(DisplayType::DRand);
 	std::cout << "RANDOM\n";
 	print_display(d_rand);
 
 	// Try keyword rescore
 	core.rescore("dog park");
 
-	d_topn = core.get_display(DisplayType::DTopN, 0, 0);
+	d_topn = core.get_display(DisplayType::DTopN, 0, 0).frames;
 	std::cout << "TOP N\n";
 	print_display(d_topn);
 
@@ -92,7 +92,7 @@ main()
 	core.reset_search_session();
 
 	// Try relevance feedback
-	d_rand = core.get_display(DisplayType::DRand);
+	d_rand = core.get_display(DisplayType::DRand).frames;
 	std::vector<ImageId> likes;
 	auto d_rand_b = d_rand.begin();
 	likes.push_back((*d_rand_b)->frame_ID);
@@ -109,14 +109,14 @@ main()
 
 	core.rescore("\\/?!,.'\"");
 
-	d_topn = core.get_display(DisplayType::DTopN, 0, 0);
+	d_topn = core.get_display(DisplayType::DTopN, 0, 0).frames;
 	std::cout << "TOP N\n";
 	print_display(d_topn);
 
 	std::cout << "Len of top n page 0 " << d_topn.size() << std::endl;
-	d_topn = core.get_display(DisplayType::DTopN, 0, 1);
+	d_topn = core.get_display(DisplayType::DTopN, 0, 1).frames;
 	std::cout << "Len of top n page 1 " << d_topn.size() << std::endl;
-	d_topn = core.get_display(DisplayType::DTopN, 0, 2);
+	d_topn = core.get_display(DisplayType::DTopN, 0, 2).frames;
 	std::cout << "Len of top n page 2 " << d_topn.size() << std::endl;
 
 	// Try SOM

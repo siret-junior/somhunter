@@ -130,7 +130,7 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 	}
 
 	// Call native method
-	FramePointerRange display_frames;
+	GetDisplayResult display_frames;
 	try {
 		debug("API: CALL \n\t get_display\n\t\tdisp_type="
 		      << display_string << std::endl
@@ -141,7 +141,7 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 		  disp_type, selected_image, page_num, log_it);
 
 		debug("API: RETURN \n\t get_display\n\t\tframes.size() = "
-		      << display_frames.size());
+		      << display_frames.frames.size());
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -171,8 +171,8 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 		napi_create_array(env, &arr);
 		{
 			size_t i{ 0_z };
-			for (auto it{ display_frames.begin() };
-			     it != display_frames.end();
+			for (auto it{ display_frames.frames.begin() };
+			     it != display_frames.frames.end();
 			     ++it) {
 
 				napi_value obj;
@@ -188,7 +188,11 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 						ID = (*it)->frame_ID;
 						v_ID = (*it)->video_ID;
 						s_ID = (*it)->shot_ID;
-						is_liked = (*it)->liked;
+						is_liked =
+						  (display_frames.p_likes
+						         ->count(ID) > 0
+						     ? true
+						     : false);
 						filename =
 						  path_prefix + (*it)->filename;
 					}
