@@ -55,15 +55,23 @@ public:
 	              const DatasetFrames &frames,
 	              const DatasetFeatures &features)
 	  : scores(frames)
-	  , asyncSom(cfg)
-	  , submitter(cfg.submitter_config)
+	{}
+
+	bool operator==(const SearchContext &other) const
 	{
-		asyncSom.start_work(features, scores);
+		return (used_tools == other.used_tools &&
+		        current_display == other.current_display &&
+		        curr_disp_type == other.curr_disp_type &&
+		        scores == other.scores &&
+		        last_text_query == other.last_text_query &&
+		        likes == other.likes &&
+		        shown_images == other.shown_images &&
+		        screenshot_fpth == other.screenshot_fpth);
 	}
 
 public:
 	// VBS logging
-	Submitter submitter;
+
 	UsedTools used_tools;
 
 	// Current display context
@@ -80,12 +88,15 @@ public:
 	LikesCont likes;
 	ShownFramesCont shown_images;
 
-	// asynchronous SOM worker
-	AsyncSom asyncSom;
+	std::string screenshot_fpth{};
+};
+
+struct RescoreResult
+{
+	const std::vector<SearchContext> *history;
 };
 
 /* This is the main backend class. */
-
 class SomHunter
 {
 	// *** LOADED DATASET ***
@@ -95,7 +106,10 @@ class SomHunter
 	const Config config;
 
 	// *** SEARCH CONTEXT ***
-	SearchContext search_ctx;
+	SearchContext ctx;
+	std::vector<SearchContext> history;
+	Submitter submitter;
+	AsyncSom asyncSom;
 
 public:
 	SomHunter() = delete;
@@ -105,8 +119,12 @@ public:
 	  , frames(cfg)
 	  , features(frames, cfg)
 	  , keywords(cfg, frames)
-	  , search_ctx(cfg, frames, features)
-	{}
+	  , ctx(cfg, frames, features)
+	  , submitter(cfg.submitter_config)
+	  , asyncSom(cfg)
+	{
+		asyncSom.start_work(features, ctx.scores);
+	}
 
 	/** Returns display of desired type
 	 *
@@ -127,10 +145,13 @@ public:
 	  size_t count) const;
 
 	/**
-	 * Applies all algorithms for score
-	 * computation and updates context.
+	 * Applies all algorithms for score computation and updates context.
+	 *
+	 * Returns references to existing history states that we can go back to
+	 * (including the current one).
 	 */
-	void rescore(const std::string &text_query);
+	RescoreResult rescore(const std::string &text_query,
+	                      const std::string &screenshot_fpth = ""s);
 
 	bool som_ready() const;
 
@@ -184,6 +205,9 @@ private:
 
 	void reset_scores();
 
+	const SearchContext *context_switch(size_t index);
+
+	/** The tester class */
 	friend TESTER_SomHunter;
 };
 

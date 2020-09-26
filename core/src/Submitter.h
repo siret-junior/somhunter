@@ -91,6 +91,7 @@ class Submitter
 
 public:
 	Submitter(const SubmitterConfig &config);
+
 	// waits until the last thread submits
 	~Submitter() noexcept;
 

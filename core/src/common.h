@@ -131,6 +131,12 @@ constexpr size_t operator""_z(unsigned long long int x)
  */
 struct UsedTools
 {
+	bool operator==(const UsedTools &other) const
+	{
+		return (KWs_used == other.KWs_used &&
+		        bayes_used == other.bayes_used &&
+		        topknn_used == other.topknn_used);
+	}
 	UsedTools()
 	  : KWs_used(false)
 	  , bayes_used(false)

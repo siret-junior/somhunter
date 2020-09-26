@@ -66,8 +66,10 @@ class AsyncSom
 	static void async_som_worker(AsyncSom *parent, const Config &cfg);
 
 public:
+	AsyncSom() = delete;
+	~AsyncSom() noexcept;
+
 	AsyncSom(const Config &cfg);
-	~AsyncSom();
 
 	void start_work(const DatasetFeatures &fs, const ScoreModel &sc);
 

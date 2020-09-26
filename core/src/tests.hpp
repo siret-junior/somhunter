@@ -27,7 +27,7 @@
 #include "utils.h"
 
 // What dataset
-#define TESTING_ITEC_DATASET
+#define TESTING_ITEC_DATASET // Filters v3s1
 
 // What keywords
 #define TESTING_BOW_W2VV
@@ -50,6 +50,7 @@ public:
 
 		TEST_like_frames(core);
 		TEST_autocomplete_keywords(core);
+		TEST_rescore(core);
 
 		print("If you got here, all tests were OK...");
 	}
@@ -147,5 +148,130 @@ private:
 
 		print(
 		  "\t Testing `SomHunter::autocomplete_keywords` finished.");
+	}
+
+	static void TEST_rescore(SomHunter &core)
+	{
+		print("\t Testing `SomHunter::TEST_rescore` method...");
+
+		FramePointerRange disp{};
+
+		/*
+		 * #1 Text
+		 */
+		auto h{ core.rescore("cat").history };
+		auto state1{ core.ctx };
+		ASSERT(h->back() == core.ctx, "Inconsistent data.");
+
+#ifdef TESTING_ITEC_DATASET
+		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
+		ASSERT(disp[0]->frame_ID == 80,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[1]->frame_ID == 130,
+		       "Incorrect frame in the display.");
+#else
+		warn("No test data for this dataset.");
+#endif
+
+		/*
+		 * #2 Temporal text
+		 */
+		core.like_frames(std::vector<ImageId>{ 0 });
+		h = core.rescore("dog catalog >> habitat ").history;
+		auto state2{ core.ctx };
+		ASSERT(h->back() == core.ctx, "Inconsistent data.");
+
+#ifdef TESTING_ITEC_DATASET
+		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
+		ASSERT(disp[0]->frame_ID == 25,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[1]->frame_ID == 224,
+		       "Incorrect frame in the display.");
+
+		ASSERT(disp[7]->frame_ID == 588,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[8]->frame_ID == 331,
+		       "Incorrect frame in the display.");
+#else
+		warn("No test data for this dataset.");
+#endif
+
+		/*
+		 * #3: Text & likes
+		 */
+		core.like_frames(std::vector<ImageId>{ 627 });
+		core.like_frames(std::vector<ImageId>{ 601 });
+		core.like_frames(std::vector<ImageId>{ 594 });
+		h = core.rescore("chicken").history;
+		auto state3{ core.ctx };
+		ASSERT(h->back() == core.ctx, "Inconsistent data.");
+		ASSERT(h->back().likes.size() == 0,
+		       "Likes should be reset with rescore.");
+
+#ifdef TESTING_ITEC_DATASET
+		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
+		ASSERT(disp[0]->frame_ID == 489,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[1]->frame_ID == 462,
+		       "Incorrect frame in the display.");
+
+		ASSERT(disp[7]->frame_ID == 221,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[8]->frame_ID == 224,
+		       "Incorrect frame in the display.");
+#else
+		warn("No test data for this dataset.");
+#endif
+
+		/*
+		 * #4: `conext_switch`
+		 */
+		core.context_switch(0);
+		ASSERT(state1 == core.ctx, "State SHOULD BE equal.");
+#ifdef TESTING_ITEC_DATASET
+		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
+		ASSERT(disp[0]->frame_ID == 80,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[1]->frame_ID == 130,
+		       "Incorrect frame in the display.");
+#else
+		warn("No test data for this dataset.");
+#endif
+
+		core.context_switch(1);
+		ASSERT(state2 == core.ctx, "State SHOULD BE equal.");
+#ifdef TESTING_ITEC_DATASET
+		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
+		ASSERT(disp[0]->frame_ID == 25,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[1]->frame_ID == 224,
+		       "Incorrect frame in the display.");
+
+		ASSERT(disp[7]->frame_ID == 588,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[8]->frame_ID == 331,
+		       "Incorrect frame in the display.");
+#else
+		warn("No test data for this dataset.");
+#endif
+
+		core.context_switch(2);
+		ASSERT(state3 == core.ctx, "State SHOULD BE equal.");
+#ifdef TESTING_ITEC_DATASET
+		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
+		ASSERT(disp[0]->frame_ID == 489,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[1]->frame_ID == 462,
+		       "Incorrect frame in the display.");
+
+		ASSERT(disp[7]->frame_ID == 221,
+		       "Incorrect frame in the display.");
+		ASSERT(disp[8]->frame_ID == 224,
+		       "Incorrect frame in the display.");
+#else
+		warn("No test data for this dataset.");
+#endif
+
+		print("\t Testing `SomHunter::TEST_rescore` finished.");
 	}
 };

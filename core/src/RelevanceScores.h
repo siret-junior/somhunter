@@ -39,6 +39,11 @@ public:
 	  : scores(p.size(), 1.0f)
 	{}
 
+	bool operator==(const ScoreModel &other) const
+	{
+		return (scores == other.scores);
+	}
+
 	void reset()
 	{
 		for (auto &i : scores)
