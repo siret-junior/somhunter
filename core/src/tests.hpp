@@ -72,24 +72,24 @@ private:
 		using vec = std::vector<ImageId>;
 
 		core.like_frames(vec{ ff->frame_ID });
-		ASSERT(likes->count(ff->frame_ID) == 1,
+		ASSERT(likes.count(ff->frame_ID) == 1,
 		       "Frame SHOULD be liked.");
 		core.like_frames(std::vector<ImageId>{ ff->frame_ID });
-		ASSERT(likes->count(ff->frame_ID) == 0,
+		ASSERT(likes.count(ff->frame_ID) == 0,
 		       "Frame SHOULD NOT be liked.");
 
 		core.like_frames(vec{ fm->frame_ID });
-		ASSERT(likes->count(fm->frame_ID) == 1,
+		ASSERT(likes.count(fm->frame_ID) == 1,
 		       "Frame SHOULD be liked.");
 		core.like_frames(std::vector<ImageId>{ fm->frame_ID });
-		ASSERT(likes->count(fm->frame_ID) == 0,
+		ASSERT(likes.count(fm->frame_ID) == 0,
 		       "Frame SHOULD NOT be liked.");
 
 		core.like_frames(vec{ fl->frame_ID });
-		ASSERT(likes->count(fl->frame_ID) == 1,
+		ASSERT(likes.count(fl->frame_ID) == 1,
 		       "Frame SHOULD be liked.");
 		core.like_frames(std::vector<ImageId>{ fl->frame_ID });
-		ASSERT(likes->count(fl->frame_ID) == 0,
+		ASSERT(likes.count(fl->frame_ID) == 0,
 		       "Frame SHOULD NOT be liked.");
 
 		vec all;
@@ -97,10 +97,10 @@ private:
 			all.emplace_back(f->frame_ID);
 		}
 		core.like_frames(all);
-		ASSERT(likes->size() == size, "All frames SHOULD be liked.");
+		ASSERT(likes.size() == size, "All frames SHOULD be liked.");
 
 		core.like_frames(all);
-		ASSERT(likes->size() == 0, "All frames SHOULD NOT be liked.");
+		ASSERT(likes.size() == 0, "All frames SHOULD NOT be liked.");
 
 		print("\t Testing `SomHunter::like_frames` finished.");
 	}
@@ -160,8 +160,8 @@ private:
 		 * #1 Text
 		 */
 		auto h{ core.rescore("cat").history };
-		auto state1{ core.ctx };
-		ASSERT(h->back() == core.ctx, "Inconsistent data.");
+		auto state1{ core.user.ctx };
+		ASSERT(h.back() == core.user.ctx, "Inconsistent data.");
 
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
@@ -178,8 +178,8 @@ private:
 		 */
 		core.like_frames(std::vector<ImageId>{ 0 });
 		h = core.rescore("dog catalog >> habitat ").history;
-		auto state2{ core.ctx };
-		ASSERT(h->back() == core.ctx, "Inconsistent data.");
+		auto state2{ core.user.ctx };
+		ASSERT(h.back() == core.user.ctx, "Inconsistent data.");
 
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
@@ -203,9 +203,9 @@ private:
 		core.like_frames(std::vector<ImageId>{ 601 });
 		core.like_frames(std::vector<ImageId>{ 594 });
 		h = core.rescore("chicken").history;
-		auto state3{ core.ctx };
-		ASSERT(h->back() == core.ctx, "Inconsistent data.");
-		ASSERT(h->back().likes.size() == 0,
+		auto state3{ core.user.ctx };
+		ASSERT(h.back() == core.user.ctx, "Inconsistent data.");
+		ASSERT(h.back().likes.size() == 0,
 		       "Likes should be reset with rescore.");
 
 #ifdef TESTING_ITEC_DATASET
@@ -226,8 +226,8 @@ private:
 		/*
 		 * #4: `conext_switch`
 		 */
-		core.context_switch(0);
-		ASSERT(state1 == core.ctx, "State SHOULD BE equal.");
+		core.switch_search_context(0);
+		ASSERT(state1 == core.user.ctx, "State SHOULD BE equal.");
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
 		ASSERT(disp[0]->frame_ID == 80,
@@ -238,8 +238,8 @@ private:
 		warn("No test data for this dataset.");
 #endif
 
-		core.context_switch(1);
-		ASSERT(state2 == core.ctx, "State SHOULD BE equal.");
+		core.switch_search_context(1);
+		ASSERT(state2 == core.user.ctx, "State SHOULD BE equal.");
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
 		ASSERT(disp[0]->frame_ID == 25,
@@ -255,8 +255,8 @@ private:
 		warn("No test data for this dataset.");
 #endif
 
-		core.context_switch(2);
-		ASSERT(state3 == core.ctx, "State SHOULD BE equal.");
+		core.switch_search_context(2);
+		ASSERT(state3 == core.user.ctx, "State SHOULD BE equal.");
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
 		ASSERT(disp[0]->frame_ID == 489,

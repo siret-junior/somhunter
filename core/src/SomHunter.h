@@ -38,40 +38,22 @@ class TESTER_SomHunter;
 using LikesCont = std::set<ImageId>;
 using ShownFramesCont = std::set<ImageId>;
 
-struct GetDisplayResult
-{
-	FramePointerRange frames;
-	const LikesCont *p_likes;
-};
-
 /** Represents exactly one momentary state of a search session.
  *
- * It can be DIFFERENT USERS or some point in HISTORY.
+ * It can be ome point in HISTORY.
  */
 class SearchContext
 {
 public:
+	SearchContext() = delete;
 	SearchContext(const Config &cfg,
 	              const DatasetFrames &frames,
-	              const DatasetFeatures &features)
-	  : scores(frames)
-	{}
+	              const DatasetFeatures &features);
 
-	bool operator==(const SearchContext &other) const
-	{
-		return (used_tools == other.used_tools &&
-		        current_display == other.current_display &&
-		        curr_disp_type == other.curr_disp_type &&
-		        scores == other.scores &&
-		        last_text_query == other.last_text_query &&
-		        likes == other.likes &&
-		        shown_images == other.shown_images &&
-		        screenshot_fpth == other.screenshot_fpth);
-	}
+	bool operator==(const SearchContext &other) const;
 
 public:
 	// VBS logging
-
 	UsedTools used_tools;
 
 	// Current display context
@@ -88,12 +70,42 @@ public:
 	LikesCont likes;
 	ShownFramesCont shown_images;
 
+	// Filepath to screenshot repesenting this screen
 	std::string screenshot_fpth{};
 };
 
+/** Represents exactly one state of ONE user that uses this core. */
+class UserContext
+{
+public:
+	UserContext() = delete;
+	UserContext(const Config &cfg,
+	            const DatasetFrames &frames,
+	            const DatasetFeatures features);
+
+	bool operator==(const UserContext &other) const;
+
+public:
+	// *** SEARCH CONTEXT ***
+	SearchContext ctx;
+
+	// *** USER SPECIFIC ***
+	std::vector<SearchContext> history;
+	Submitter submitter;
+	AsyncSom async_SOM;
+};
+
+/** Result type `get_display` returns */
+struct GetDisplayResult
+{
+	FramePointerRange frames;
+	const LikesCont &likes;
+};
+
+/** Result type `rescore` returns */
 struct RescoreResult
 {
-	const std::vector<SearchContext> *history;
+	const std::vector<SearchContext> &history;
 };
 
 /* This is the main backend class. */
@@ -105,28 +117,22 @@ class SomHunter
 	const KeywordRanker keywords;
 	const Config config;
 
-	// *** SEARCH CONTEXT ***
-	SearchContext ctx;
-	std::vector<SearchContext> history;
-	Submitter submitter;
-	AsyncSom asyncSom;
+	// *** USER CONTEXT ***
+	UserContext user; // This will become std::vector<UserContext>
 
 public:
 	SomHunter() = delete;
-	/** The main ctor with the filepath to the JSON config file */
+	/** The main ctor with the config from the JSON config file. */
 	inline SomHunter(const Config &cfg)
 	  : config(cfg)
 	  , frames(cfg)
 	  , features(frames, cfg)
 	  , keywords(cfg, frames)
-	  , ctx(cfg, frames, features)
-	  , submitter(cfg.submitter_config)
-	  , asyncSom(cfg)
-	{
-		asyncSom.start_work(features, ctx.scores);
-	}
+	  , user(cfg, frames, features)
+	{}
 
-	/** Returns display of desired type
+	/**
+	 * Returns display of desired type
 	 *
 	 *	Some diplays may even support paging (e.g. top_n) or
 	 * selection of one frame (e.g. top_knn)
@@ -140,6 +146,8 @@ public:
 	 * states. */
 	std::vector<bool> like_frames(const std::vector<ImageId> &likes);
 
+	/** Returns the nearest supported keyword matches to the provided
+	 * prefix. */
 	std::vector<const Keyword *> autocomplete_keywords(
 	  const std::string &prefix,
 	  size_t count) const;
@@ -153,8 +161,37 @@ public:
 	RescoreResult rescore(const std::string &text_query,
 	                      const std::string &screenshot_fpth = ""s);
 
+	/** Switches the search context for the user to the provided index in
+	 *  the history and returns reference to it.
+	 *
+	 * To be extended with the `user_token` argument with multiple users
+	 * support.
+	 */
+	const SearchContext &switch_search_context(size_t index);
+
+	/**
+	 * Returns a reference to the current user's search context.
+	 *
+	 * To be extended with the `user_token` argument with multiple users
+	 * support.
+	 */
+	const SearchContext &get_search_context() const;
+
+	/**
+	 * Returns a reference to the current user's context.
+	 *
+	 * To be extended with the `user_token` argument with multiple users
+	 * support.
+	 */
+	const UserContext &get_user_context() const;
+
+	/** Returns true if the user's SOM is ready */
 	bool som_ready() const;
 
+	/**
+	 * Tries to login into the DRES evaluation server
+	 *		https://github.com/lucaro/DRES
+	 */
 	bool login_to_dres() const;
 
 	/** Sumbits frame with given id to VBS server */
@@ -163,10 +200,11 @@ public:
 	/** Resets current search context and starts new search */
 	void reset_search_session();
 
+	/*
+	 * Log events that need to be triggered from the outside (e.g. the UI).
+	 */
 	void log_video_replay(ImageId frame_ID, float delta_X);
-
 	void log_scroll(DisplayType t, float delta_Y);
-
 	void log_text_query_change(const std::string &text_query);
 
 private:
@@ -204,8 +242,6 @@ private:
 	FramePointerRange get_page_from_last(PageId page);
 
 	void reset_scores();
-
-	const SearchContext *context_switch(size_t index);
 
 	/** The tester class */
 	friend TESTER_SomHunter;
