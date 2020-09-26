@@ -1,24 +1,12 @@
 import React from "react";
 
-import {
-  Action,
-  SetCoreSettingsAction,
-  ScrollReplayAction,
-  HideReplayAction,
-} from "./index";
+import { Action } from "./index";
 
-import {
-  FrameRef,
-  Vec2,
-  CoreApiSettings,
-  CoreSearchState,
-} from "../../types/coreApi";
+import { CoreApiSettings } from "../../types/coreApi";
 
 import * as CS from "../constants";
 
 export type SettingsState = {
-  textQueryRefs: React.Ref<HTMLInputElement>[];
-
   /* Static settings from the core
    * undefined => fetching
    * null => fetch failed
@@ -27,21 +15,12 @@ export type SettingsState = {
 };
 
 const defaultState: SettingsState = {
-  textQueryRefs: [],
   coreSettings: undefined,
 };
 
 function settingsReducer(state = defaultState, action: Action): SettingsState {
   switch (action.type) {
-    case CS.SETTINGS_ADD_QUERY_REF:
-      console.debug("=> (REDUCER) settingsReducer:", action);
-      return {
-        ...state,
-        textQueryRefs: [...state.textQueryRefs, action.payload],
-      };
-
     case CS.SETTINGS_SET_CORE:
-      console.debug("=> (REDUCER) settingsReducer:", action);
       return {
         ...state,
         coreSettings: action.payload,

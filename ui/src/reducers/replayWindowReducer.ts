@@ -34,8 +34,6 @@ function replayWindowReducer(
 
   switch (action.type) {
     case CS.SHOW_REPLAY_WINDOW:
-      console.debug("=> (REDUCER) replayWindowReducer:", action);
-
       // Assert type
       pl = (action as ShowReplayAction).payload;
 
@@ -48,8 +46,6 @@ function replayWindowReducer(
       };
 
     case CS.SCROLL_REPLAY_WINDOW:
-      console.debug("=> (REDUCER) replayWindowReducer:", action);
-
       if (state === null) break;
 
       // Assert type
@@ -58,8 +54,6 @@ function replayWindowReducer(
       return { ...state, deltaX: state.deltaX! + pl.deltaX };
 
     case CS.HIDE_REPLAY_WINDOW:
-      console.debug("=> (REDUCER) replayWindowReducer:", action);
-
       // Assert type
       pl = (<HideReplayAction>action).payload;
 

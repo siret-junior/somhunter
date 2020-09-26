@@ -6,6 +6,20 @@
         "topknn": "topknn_display",
         "detail": "video_detail",
         "replay": "video_replay"
-    }
+    },
+    "ui": {
+        "UNABLE_TO_FETCH_CORE_SETTINGS_HEADING": "Unable to fetch core settings!",
+        "UNABLE_TO_FETCH_CORE_SETTINGS_DESC": "Check if the SOMHunter Core API server is running at ",
+        "UNABLE_TO_FETCH_CORE_SETTINGS_ACTION": "Reload",
 
+        "LOADING_CORE_SETTINGS_HEADING":  "Loading Core API settings.",
+        "LOADING_CORE_SETTINGS_DESC":  "This may take a while.",
+
+        "UNABLE_TO_FETCH_SEARCH_STATE_HEADING": "Unable to fetch search state!",
+        "UNABLE_TO_FETCH_SEARCH_STATE_DESC": "Check if the SOMHunter Core API server is resonding at ",
+        "UNABLE_TO_FETCH_SEARCH_STATE_ACTION": "Reload",
+
+        "LOADING_SEARCH_STATE_HEADING":  "Loading the current search session state.",
+        "LOADING_SEARCH_STATE_DESC":  "This may take a while."
+    }
 }

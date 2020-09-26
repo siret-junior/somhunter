@@ -15,16 +15,16 @@ export type FrameRef = {
 export type Vec2 = { x: number; y: number };
 
 export type CoreSearchState = any;
+export type CoreApiSettings = any;
 
 export type CoreApiEndpoint = {
   get?: { url: string };
   post?: { url: string };
 };
 
-/** Type returned by the Core API `/search/info` endpoint. */
-
 /** Type returned by the Core API `/settings/info` endpoint. */
-export type CoreApiSettings = {
+export type CoreApiConfig = {
+  generated: string;
   api: {
     endpoints: {
       config: CoreApiEndpoint;
@@ -103,16 +103,25 @@ export type CoreApiSettings = {
     appSubname: string;
     authName: string;
     authPassword: string;
-    autocompleteExampleFramesCount: number;
-    autocompleteResCount: number;
-    dataConfigFilepath: string;
-    framesPathPrefix: string;
-    jsonIndentation: number;
+    coreConfigFilepath: string;
     logsDir: string;
     port: number;
   };
   strings: any;
   ui: {
+    media: {
+      framesPathPrefix: string;
+    };
+    autocomplete: {
+      numExampleFrames: number;
+      numSuggestions: number;
+    };
+    frameGrid: {
+      infiniteScrollThreshold: number;
+      infiniteScrollTimeout: number;
+      defaultRescoreDisplay: string;
+      defaultSecondaryRescoreDisplay: string;
+    };
     textSearch: {
       autocompleteDelay: number;
     };

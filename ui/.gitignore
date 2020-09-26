@@ -24,3 +24,5 @@ yarn-error.log*
 
 /public/thumbs
 /public/_thumbs
+
+src/__*

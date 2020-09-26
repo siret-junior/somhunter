@@ -34,8 +34,6 @@ type State = {
 };
 
 function addQueryHandler(s: SettingsState, props: Props, state: State, e: any) {
-  console.info(`Adding query...`);
-
   const tarEl = e.currentTarget;
 
   const parRect = tarEl.getBoundingClientRect();
@@ -52,11 +50,6 @@ function addQueryHandler(s: SettingsState, props: Props, state: State, e: any) {
   };
   const newQs = [...state.queries, q];
   state.setQueries(newQs);
-}
-
-function eventLogger(e: MouseEvent, data: Object) {
-  console.log("Event: ", e);
-  console.log("Data: ", data);
 }
 
 function toggleAoe(tarEl: any) {
@@ -82,14 +75,11 @@ function getQueriesJsx(
   const parX = props.subInputsRef.current.clientWidth;
   const parY = props.subInputsRef.current.clientHeight;
 
-  console.info(props.subInputsRef.current);
-
   return qs.map((q, i) => {
     const posAbs = {
       x: q.pos.x * parX,
       y: q.pos.y * parY,
     };
-    console.info(posAbs);
     return (
       <Draggable>
         <li
@@ -127,7 +117,7 @@ function SubFrameCanvas(props: Props) {
     setQueries,
   };
 
-  console.info("<SubFrameCanvas>: Rendering...", props);
+  console.debug("<SubFrameCanvas>: Rendering...", props);
   return (
     <div className="sub-frame-text-query-cont">
       <img className="canvas-bg" src="/assets/img/frame_grid.svg" alt="bg" />

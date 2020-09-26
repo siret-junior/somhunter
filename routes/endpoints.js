@@ -39,7 +39,7 @@ exports.getSomScreen = function (req, res) {
 
   // -------------------------------
   // Call the core
-  const frameData = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.som);
+  const frameData = global.core.getDisplay(global.uiCfg.media.framesPathPrefix, global.strs.displayTypes.som);
   // -------------------------------
 
   SessionState.switchScreenTo(sess.state, global.strs.displayTypes.som, frameData.frames, 0);
@@ -70,7 +70,7 @@ exports.getTopScreen = function (req, res) {
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, type, pageId, frameId);
+  const displayFrames = global.core.getDisplay(global.uiCfg.media.framesPathPrefix, type, pageId, frameId);
   frames = displayFrames.frames;
   // -------------------------------
 
@@ -139,10 +139,10 @@ exports.getAutocompleteResults = function (req, res) {
   // -------------------------------
   // Call the core
   const acKeywords = global.core.autocompleteKeywords(
-    global.cfg.framesPathPrefix,
+    global.uiCfg.media.framesPathPrefix,
     prefix,
-    global.cfg.autocompleteResCount,
-    global.cfg.autocompleteExampleFramesCount
+    global.uiCfg.autocomplete.numSuggestions,
+    global.uiCfg.autocomplete.numExampleFrames
   );
 
   // Send response
@@ -261,16 +261,9 @@ exports.logTextQueryChange = function (req, res) {
 exports.settingsGet = function (req, res) {
   const sess = req.session;
 
-  // \todo Do we need to send all that?
-  const cfgData = {
-    strings: global.strs,
-    core: global.coreCfg,
-    server: global.cfg,
-    ui: global.uiCfg,
-    api: global.apiCfg,
-  };
+  const data = {};
 
-  res.status(200).jsonp(cfgData);
+  res.status(200).jsonp(data);
 };
 
 /**
@@ -287,8 +280,8 @@ exports.searchContextGet = function (req, res) {
   // << Core NAPI >>
 
   // If core does not specify, use UI config
-  if (searchContext.displayType == ""){
-    searchContext.displayType = global.uiCfg.defaultMainDisplay;
+  if (searchContext.displayType == "") {
+    searchContext.displayType = global.uiCfg.frameGrid.defaultRescoreDisplay;
   }
 
   res.status(200).jsonp(searchContext);
@@ -313,7 +306,7 @@ exports.searchContextPost = function (req, res) {
   }
 
   // << Core NAPI >>
-  const searchContext = global.core.switchSearchContext(global.cfg.user_token, ctx_ID);
+  const searchContext = global.core.switchSearchContext(global.serverCfg.user_token, ctx_ID);
   // << Core NAPI >>
 
   res.status(200).jsonp(searchContext);
@@ -341,7 +334,7 @@ exports.getFrameDetailData = function (req, res) {
   // -------------------------------
   // Call the core
   const frameData = global.core.getDisplay(
-    global.cfg.framesPathPrefix,
+    global.uiCfg.media.framesPathPrefix,
     global.strs.displayTypes.detail,
     null,
     frameId,

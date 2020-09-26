@@ -27,8 +27,6 @@ function mainWindowReducer(
     case CS.SHOW_DISPLAY_TOP_N:
     case CS.SHOW_DISPLAY_TOP_N_CONTEXT:
     case CS.SHOW_DISPLAY_TOP_KNN:
-      console.debug("=> (REDUCER) mainWindowReducer:", action);
-
       // Assert type
       pl = (<ShowTopNDisplay>action).payload;
 
@@ -60,8 +58,6 @@ function mainWindowReducer(
       break;
 
     case CS.SHOW_DISPLAY_SOM:
-      console.debug("=> (REDUCER) mainWindowReducer:", action);
-
       // Assert type
       pl = (<ShowSomDisplay>action).payload;
 

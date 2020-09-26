@@ -1,6 +1,18 @@
 {
     "development": {
-        "defaultMainDisplay": "topn_display",
+        "media": {
+            "framesPathPrefix": "/thumbs/"
+        },
+        "autocomplete": {
+            "numSuggestions": 10,
+            "numExampleFrames": 5
+        },
+        "frameGrid": {
+            "infiniteScrollThreshold": 1000,
+            "infiniteScrollTimeout": 1000,
+            "defaultRescoreDisplay": "topn_display",
+            "defaultSecondaryRescoreDisplay": "SOM_display"
+        },
         "textSearch": {
             "autocompleteDelay": 200
         }

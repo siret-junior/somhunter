@@ -10,7 +10,12 @@ export function isErrDef(e) {
 }
 
 export function resetMainGridScroll() {
-  document.getElementById("mainGrid").scrollTop = 0;
+  const el = document.getElementById("mainGrid");
+  if (el) el.scrollTop = 0;
+}
+
+export function getTextQueryInput(idx) {
+  return document.getElementById(`textQuery${idx}`).childNodes[0];
 }
 
 export function hideAllSubQueries() {

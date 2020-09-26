@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -44,7 +43,7 @@ exports.switchScreenTo = function (state, screen, frames, targetFrame) {
     type: screen,
     frames: frames,
   };
-  
+
   state.frameContext.frameId = targetFrame;
 };
 
@@ -53,7 +52,7 @@ exports.resetSearchSession = function (state) {
     q0: { value: "" },
     q1: { value: "" },
   };
-  
+
   state.frameContext = {
     frameId: null,
     frames: [],
@@ -66,4 +65,3 @@ exports.getSomhunterUiState = function (state) {
   // For now it's just the whole state
   return state;
 };
-

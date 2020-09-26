@@ -196,7 +196,7 @@ $theme-colors: (
 
 .overlay {
   position: absolute;
-  z-index: 100;
+  z-index: 1011;
 }
 
 .global-notification-overlay {
@@ -211,7 +211,8 @@ $theme-colors: (
 
 .frame-grid {
   height: 100vh;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   align-items: flex-start;
   align-content: flex-start;
 
@@ -378,6 +379,13 @@ $theme-colors: (
 }
 
 .modal-dialog {
+  .close {
+    top: 0;
+    right: 0;
+    position: absolute;
+    margin: 0;
+    padding: 1rem 1rem;
+  }
   .modal-header {
     border-color: theme-color-level($color-name: "primary", $level: 0);
   }
@@ -547,9 +555,9 @@ $theme-colors: (
       width: auto;
       width: max-content;
       > .col-2 {
-        flex: 0 0 100px;
-        max-width: 100px;
-        min-width: 100px;
+        flex: 0 0 320px;
+        max-width: 320px;
+        min-width: 320px;
         align-self: stretch;
       }
     }

@@ -18,8 +18,9 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Require Lodash module
-const moduleLodaSh = require("lodash");
+const _ = require("lodash");
+const fs = require("fs");
+const path = require("path");
 
 // Get serverConfig file
 const serverConfig = require("./serverConfig.json");
@@ -30,8 +31,7 @@ const apiConfig = require("./apiConfig.json");
 const strings = require("./strings.json");
 
 exports.initConfig = function () {
-  // Get current env setup
-  const environment = process.env.NODE_ENV || "development";
+  const env = process.env.NODE_ENV || "development";
 
   /*
    * Server config
@@ -40,36 +40,58 @@ exports.initConfig = function () {
   const defaultConfig = serverConfig.development;
 
   // Create enviroment serverConfig
-  const environmentConfig = serverConfig[environment];
+  const envConfig = serverConfig[env];
 
   // Merge to the final serverConfig
-  const finalConfig = moduleLodaSh.merge(defaultConfig, environmentConfig);
-  const cred = require("./user.json");
+  const finalServerConfig = _.merge(defaultConfig, envConfig);
+  const cred = require("./apiUserConfig.json");
 
   // Login & auth credentials
-  finalConfig.authPassword = cred.authPassword;
-  finalConfig.authName = cred.authName;
+  finalServerConfig.apiPassword = cred.apiUsername;
+  finalServerConfig.apiUsername = cred.apiPassword;
 
   /*
    * UI config
    */
   const defaultUiConfig = uiConfig.development;
-  const environmentUiConfig = uiConfig[environment];
-  const finalUiConfig = moduleLodaSh.merge(defaultUiConfig, environmentUiConfig);
+  const envUiConfig = uiConfig[env];
+  const finalUiConfig = _.merge(defaultUiConfig, envUiConfig);
 
   /*
    * API config
    */
   const defaultApiConfig = apiConfig.development;
-  const environmentApiConfig = apiConfig[environment];
-  const finalApiConfig = moduleLodaSh.merge(defaultApiConfig, environmentApiConfig);
+  const envApiConfig = apiConfig[env];
+  const finalApiConfig = _.merge(defaultApiConfig, envApiConfig);
+  finalApiConfig.url = `http://localhost:${finalServerConfig.port}`;
 
   /*
-   * Global store
+   * Core config
    */
+  const finalCoreConfig = require(path.join(global.rootDir, finalServerConfig.coreConfigFilepath));
+
+  /* ****************************************
+   * Global store
+   * **************************************** */
   // Store final serverConfig in globals
-  global.cfg = finalConfig;
-  global.strs = strings;
   global.uiCfg = finalUiConfig;
   global.apiCfg = finalApiConfig;
+  global.serverCfg = finalServerConfig;
+  global.coreCfg = finalCoreConfig;
+  global.strs = strings;
+
+  /* ****************************************
+   * Generate the config JSON for the UI
+   * **************************************** */
+  const uiConfigGenerated = {
+    generated: new Date().toString(),
+    strings: global.strs,
+    core: global.coreCfg,
+    server: global.serverCfg,
+    ui: global.uiCfg,
+    api: global.apiCfg,
+  };
+  fs.writeFile(global.serverCfg.uiConfigFilepath, JSON.stringify(uiConfigGenerated, null, 4), (e) => {
+    console.error(e);
+  });
 };

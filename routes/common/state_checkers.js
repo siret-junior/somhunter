@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -46,7 +45,6 @@ exports.checkGlobalSessionState = function (req, viewData) {
   const sess = req.session;
 
   if (typeof sess.state === "undefined" || sess.state == null) {
-    
     // Construct the session state here
     sess.state = sessState.Construct();
   }

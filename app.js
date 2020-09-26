@@ -38,10 +38,9 @@ const { combine, timestamp, printf } = format;
 // Set root project directory
 global.rootDir = __dirname;
 
-// Load config into the `global.cfg` variable
-const config = require("./config/config");
+// Load config into the `global.serverCfg` variable
+const config = require("./config/");
 config.initConfig();
-global.coreCfg = require("./config");
 
 /*
  * Request routing
@@ -76,7 +75,7 @@ const myFormat = printf(({ level, message, timestamp }) => {
 });
 
 // Make sure that this dir exists
-fs.mkdir(global.cfg.logsDir, { recursive: true }, (err) => {
+fs.mkdir(global.serverCfg.logsDir, { recursive: true }, (err) => {
   if (err) throw err;
 });
 
@@ -89,10 +88,10 @@ global.logger = createLogger({
     // Write all logs with level `error` and below to `error.log`
     // Write all logs with level `info` and below to `combined.log`
     new transports.Stream({
-      stream: fs.createWriteStream(global.cfg.logsDir + "error.log", { flags: "a+" }),
+      stream: fs.createWriteStream(global.serverCfg.logsDir + "error.log", { flags: "a+" }),
       level: "error",
     }),
-    new transports.Stream({ stream: fs.createWriteStream(global.cfg.logsDir + "combined.log", { flags: "a+" }) }),
+    new transports.Stream({ stream: fs.createWriteStream(global.serverCfg.logsDir + "combined.log", { flags: "a+" }) }),
   ],
 });
 
@@ -124,7 +123,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Use Morgan for request logging
 app.use(
   morgan("common", {
-    stream: fs.createWriteStream(__dirname + "/" + global.cfg.logsDir + "/requests.log", { flags: "a+" }),
+    stream: fs.createWriteStream(__dirname + "/" + global.serverCfg.logsDir + "/requests.log", { flags: "a+" }),
   })
 );
 app.use(morgan("dev"));
@@ -135,8 +134,8 @@ app.use(morgan("dev"));
 // app.use((req, res, next) => {
 //   // Get auth credentials
 //   const auth = {
-//     login: global.cfg.authName,
-//     password: global.cfg.authPassword,
+//     login: global.serverCfg.authName,
+//     password: global.serverCfg.authPassword,
 //   };
 
 //   // Parse login and password from headers
@@ -180,16 +179,16 @@ if (process.env["NODE_ENV"] === "development") {
 }
 
 /*
- * Load native evaluation library (ImageRanker)
+ * Load native evaluation library
  */
-const dataConfigFilepath = path.join(global.rootDir, global.cfg.dataConfigFilepath);
+const coreConfigFilepath = path.join(global.rootDir, global.serverCfg.coreConfigFilepath);
 
 global.logger.log("info", "Initializing SOMHunter core...");
-global.logger.log("debug", "dataConfigFilepath = " + dataConfigFilepath);
+global.logger.log("debug", "coreConfigFilepath = " + coreConfigFilepath);
 
-// Create global instance of the ImageRanker
+// Create global instance of the Core
 const core = require(path.join(__dirname, "build/Release/somhunter_core.node"));
-global.core = new core.SomHunterNapi(dataConfigFilepath);
+global.core = new core.SomHunterNapi(coreConfigFilepath);
 if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.submitter_config.submit_to_VBS) {
   const logRes = global.core.loginToDres();
   if (logRes) {
@@ -223,13 +222,12 @@ addPost(app, eps.screenSom, endpoints.getSomScreen);
 addGet(app, eps.logBrowsingScroll, endpoints.logScroll);
 addGet(app, eps.logTextChange, endpoints.logTextQueryChange);
 
-addGet(app, eps.serverSubmitFrame, endpoints.submitFrame);
+addPost(app, eps.serverSubmitFrame, endpoints.submitFrame);
 addPost(app, eps.searchReset, endpoints.resetSearchSession);
 
 addPost(app, eps.searchRescore, endpoints.rescore);
 addPost(app, eps.searchLike, endpoints.likeFrame);
 addPost(app, eps.serverLogin, endpoints.loginToDres);
-
 
 // Gets the current program settings
 addGet(app, eps.settings, endpoints.settingsGet);
@@ -239,7 +237,6 @@ addGet(app, eps.searchContext, endpoints.searchContextGet);
 
 // Switches the current search context
 addPost(app, eps.searchContext, endpoints.searchContextPost);
-
 
 app.use("/", somhunterRouter);
 app.use("/404", routerNotFound);

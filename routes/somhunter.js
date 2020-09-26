@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -61,7 +60,11 @@ router.get("/", function (req, res, next) {
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(global.cfg.framesPathPrefix, global.strs.displayTypes.topn, 0);
+  const displayFrames = global.core.getDisplay(
+    global.serverCfg.media.framesPathPrefix,
+    global.strs.displayTypes.topn,
+    0
+  );
   frames = displayFrames.frames;
   // -------------------------------
 

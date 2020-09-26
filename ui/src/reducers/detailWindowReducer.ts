@@ -23,10 +23,7 @@ function detailWindowReducer(state = defaultState, action: Action) {
 
   switch (action.type) {
     case CS.SHOW_DETAIL_WINDOW:
-      console.debug("=> (REDUCER) detailWindowReducer:", action);
-
       pl = (<ShowDetailAction>action).payload;
-
       return {
         show: true,
         pivotFrameId: pl.pivotFrameId,
@@ -35,7 +32,6 @@ function detailWindowReducer(state = defaultState, action: Action) {
       };
 
     case CS.HIDE_DETAIL_WINDOW:
-      console.debug("=> (REDUCER) detailWindowReducer:", action);
       return { ...state, show: false };
 
     default:

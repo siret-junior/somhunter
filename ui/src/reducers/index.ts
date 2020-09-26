@@ -109,9 +109,14 @@ export type SetCoreSettingsAction = {
   payload: React.Ref<any>;
 };
 
-export type AddQueryRefAction = {
+export type SetSearchStateAction = {
   type: string;
-  payload: any;
+  payload: {
+    ID: number;
+    displayType: string;
+    screenshotFilepath: string;
+    textQueries: string[];
+  };
 };
 
 export type Action =
@@ -125,7 +130,7 @@ export type Action =
   | ScrollReplayAction
   | HideReplayAction
   | SetCoreSettingsAction
-  | AddQueryRefAction;
+  | SetSearchStateAction;
 
 // Combine all the reducers
 export default combineReducers({

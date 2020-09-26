@@ -19,7 +19,6 @@ function indicatorReducer(
 ) {
   switch (action.type) {
     case CS.SHOW_LOGIN_WARNING:
-      console.debug("=> (REDUCER) indicatorReducer:", action);
       return { ...state, loginWarning: action.payload };
 
     case CS.SHOW_NOT_SENDING_WARNING:

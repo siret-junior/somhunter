@@ -20,8 +20,6 @@ function notificationReducer(
 
   switch (action.type) {
     case CS.SHOW_GLOBAL_NOTIFICATION:
-      console.debug("=> (REDUCER) notificationReducer:", action);
-
       pl = (<ShowGlobNotAction>action).payload;
       return {
         type: pl.type,
@@ -31,7 +29,6 @@ function notificationReducer(
       };
 
     case CS.HIDE_GLOBAL_NOTIFICATION:
-      console.debug("=> (REDUCER) notificationReducer:", action);
       pl = (<HideGlobNotAction>action).payload;
       return defState;
 

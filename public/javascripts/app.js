@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -19,7 +18,6 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 $(document).foundation();
-
 
 let globMsgTimeoutHandle = null;
 function showGlobalMessage(messagePrimary, messageSecondary, time, type = "i") {

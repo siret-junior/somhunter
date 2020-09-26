@@ -1,16 +1,25 @@
-import { Action } from "./index";
+import { Action, SetSearchStateAction } from "./index";
 
 import * as CS from "../constants";
 
-export type SearchState = {} | undefined | null;
+export type SearchState =
+  | {
+      reset: boolean;
+      ID: number;
+      displayType: string;
+      screenshotFilepath: string;
+      textQueries: string[];
+    }
+  | {}
+  | null;
 
 const defaultState: SearchState = {};
 
 function searchReducer(state = defaultState, action: Action): SearchState {
   switch (action.type) {
     case CS.SET_SEARCH_STATE:
-      console.debug("=> (REDUCER) searchReducer:", action);
-      return action.payload;
+      const a = action as SetSearchStateAction;
+      return { ...action.payload};
 
     default:
       return state;

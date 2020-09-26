@@ -1,4 +1,3 @@
-
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -319,62 +318,62 @@ exports.generateImageRankerConstructorArgs = function (inputImageSetIds, inputKe
     const paramsC = [];
 
     // Path to images
-    params.push(path.join(global.rootDir, global.cfg.imageSets[isId].imagesDir));
+    params.push(path.join(global.rootDir, global.serverCfg.imageSets[isId].imagesDir));
 
     // Get data dir path
-    const isDir = path.join(global.rootDir, global.cfg.imageSets[isId].dataDir);
+    const isDir = path.join(global.rootDir, global.serverCfg.imageSets[isId].dataDir);
 
     for (let kwId = 0; kwId < inputKeywordDataIds.length; ++kwId) {
-      const kwDir = path.join(isDir, global.cfg.imageSets[isId].keywordDataTypes[kwId].dataDir);
+      const kwDir = path.join(isDir, global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataDir);
 
       paramsAA.push({
-        keywordsDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
-        filepath: path.join(kwDir, global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordDataFilename),
+        keywordsDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
+        filepath: path.join(kwDir, global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordDataFilename),
       });
 
-      if (global.cfg.imageSets[isId].keywordDataTypes[kwId].wordToVecFilename != "") {
+      if (global.serverCfg.imageSets[isId].keywordDataTypes[kwId].wordToVecFilename != "") {
         paramsAAw2v.push({
-          keywordsDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
-          filepath: path.join(kwDir, global.cfg.imageSets[isId].keywordDataTypes[kwId].wordToVecFilename),
+          keywordsDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
+          filepath: path.join(kwDir, global.serverCfg.imageSets[isId].keywordDataTypes[kwId].wordToVecFilename),
         });
       } else {
         paramsAAw2v.push({
-          keywordsDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
+          keywordsDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
           filepath: "",
         });
       }
 
       for (let scId = 0; scId < inputScoringDataIds.length; ++scId) {
-        const scDir = path.join(kwDir, global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].dataDir);
+        const scDir = path.join(kwDir, global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].dataDir);
 
         paramsA.push({
-          keywordsDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
-          scoringDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataType,
+          keywordsDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
+          scoringDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataType,
           filepath: path.join(
             scDir,
-            global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataFilename
+            global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataFilename
           ),
         });
 
-        const b = global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].softmaxScoringDataFilename;
+        const b = global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].softmaxScoringDataFilename;
         if (b != "") {
           paramsB.push({
-            keywordsDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
-            scoringDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataType,
+            keywordsDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
+            scoringDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataType,
             filepath: path.join(
               scDir,
-              global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].softmaxScoringDataFilename
+              global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].softmaxScoringDataFilename
             ),
           });
         }
-        const c = global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].deepFeaturesFilename;
+        const c = global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].deepFeaturesFilename;
         if (c != "") {
           paramsC.push({
-            keywordsDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
-            scoringDataType: global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataType,
+            keywordsDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].keywordType,
+            scoringDataType: global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].scoringDataType,
             filepath: path.join(
               scDir,
-              global.cfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].deepFeaturesFilename
+              global.serverCfg.imageSets[isId].keywordDataTypes[kwId].dataSets[scId].deepFeaturesFilename
             ),
           });
         }
@@ -385,9 +384,9 @@ exports.generateImageRankerConstructorArgs = function (inputImageSetIds, inputKe
 
     const aaa = path.join(
       global.rootDir,
-      global.cfg.imageSets[isId].dataDir,
-      global.cfg.imageSets[isId].keywordDataTypes[0].dataDir,
-      global.cfg.imageSets[isId].keywordDataTypes[inputKeywordDataIds[0]].dataSets[inputKeywordDataIds[0]].dataDir
+      global.serverCfg.imageSets[isId].dataDir,
+      global.serverCfg.imageSets[isId].keywordDataTypes[0].dataDir,
+      global.serverCfg.imageSets[isId].keywordDataTypes[inputKeywordDataIds[0]].dataSets[inputKeywordDataIds[0]].dataDir
     );
 
     params.push(paramsAA);
@@ -397,16 +396,17 @@ exports.generateImageRankerConstructorArgs = function (inputImageSetIds, inputKe
     params.push(
       path.join(
         aaa,
-        global.cfg.imageSets[isId].keywordDataTypes[inputKeywordDataIds[0]].dataSets[inputKeywordDataIds[0]]
+        global.serverCfg.imageSets[isId].keywordDataTypes[inputKeywordDataIds[0]].dataSets[inputKeywordDataIds[0]]
           .imageIdToFilename
       )
     );
     params.push(
       Number(
-        global.cfg.imageSets[isId].keywordDataTypes[inputKeywordDataIds[0]].dataSets[inputKeywordDataIds[0]].idOffset
+        global.serverCfg.imageSets[isId].keywordDataTypes[inputKeywordDataIds[0]].dataSets[inputKeywordDataIds[0]]
+          .idOffset
       )
     );
-    params.push(Number(global.cfg.appMode));
+    params.push(Number(global.serverCfg.appMode));
     params.push(paramsAAw2v);
 
     // TODO

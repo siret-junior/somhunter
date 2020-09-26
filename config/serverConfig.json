@@ -3,16 +3,10 @@
         "appName": "SOMHunter",
         "appSubname": "The interactive search tool.",
         "port": 8888,
-
+        "coreConfigFilepath": "config.json",
         "logsDir": "logs/",
-
-        "framesPathPrefix": "/thumbs/",
-
-        "autocompleteResCount": 10,
-        "autocompleteExampleFramesCount": 5,
-
-        "dataConfigFilepath": "config.json",
-        "jsonIndentation": 4
+        "uiRoot": "ui/",
+        "uiConfigFilepath": "ui/src/__config_generated__.json"
     },
     "staging": {
     },

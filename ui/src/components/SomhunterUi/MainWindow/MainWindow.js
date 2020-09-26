@@ -16,10 +16,6 @@ import DetailWindow from "./DetailWindow";
 import ReplayWindow from "./ReplayWindow";
 
 function scrollToPivot(gridElRef, pivotFrameId) {
-  console.debug(
-    `=> scrollToPivot: Scrolling to the pivot frame ID '${pivotFrameId}'...`
-  );
-
   const gridEl = gridElRef.current;
 
   // Find children elements by data value

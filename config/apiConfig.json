@@ -37,7 +37,7 @@
                 }
             },
             "serverSubmitFrame": {
-                "get": {
+                "post": {
                     "url": "/submit_frame"
                 }
             },

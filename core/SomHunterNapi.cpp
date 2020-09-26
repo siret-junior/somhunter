@@ -425,7 +425,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 
 	// Process arguments
 	int length = info.Length();
-	if (length != 1) {
+	if (length != 2) {
 		Napi::TypeError::New(env, "Wrong number of arguments!")
 		  .ThrowAsJavaScriptException();
 	}
