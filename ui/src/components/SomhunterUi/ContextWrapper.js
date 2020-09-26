@@ -19,7 +19,7 @@ function getErrorWindowJsx() {
   return (
     <CriticalErrorWindow
       title={STRS.UNABLE_TO_FETCH_CORE_SETTINGS_HEADING}
-      body={`${STRS.UNABLE_TO_FETCH_CORE_SETTINGS_DESC} '${config.coreSettingsUrl}'`}
+      body={`${STRS.UNABLE_TO_FETCH_CORE_SETTINGS_DESC} '${config.backendUrl}${config.coreSettingsUrl}'`}
       action={STRS.UNABLE_TO_FETCH_CORE_SETTINGS_ACTION}
       actionHandler={() => window.location.reload()}
     />

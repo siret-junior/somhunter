@@ -25,6 +25,8 @@ const moduleLodaSh = require("lodash");
 const serverConfig = require("./serverConfig.json");
 const uiConfig = require("./uiConfig.json");
 const apiConfig = require("./apiConfig.json");
+
+/* !!! THIS MUST MATCH WITH `core/src/common.h` FILE !!! */
 const strings = require("./strings.json");
 
 exports.initConfig = function () {

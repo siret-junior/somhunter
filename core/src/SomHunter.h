@@ -46,13 +46,18 @@ class SearchContext
 {
 public:
 	SearchContext() = delete;
-	SearchContext(const Config &cfg,
+	SearchContext(size_t ID,
+	              const Config &cfg,
 	              const DatasetFrames &frames,
 	              const DatasetFeatures &features);
 
 	bool operator==(const SearchContext &other) const;
 
+	void inc_ID() { ID = next_ID++; };
+
 public:
+	inline static size_t next_ID{ 0 };
+
 	// VBS logging
 	UsedTools used_tools;
 
@@ -72,6 +77,8 @@ public:
 
 	// Filepath to screenshot repesenting this screen
 	std::string screenshot_fpth{};
+
+	size_t ID;
 };
 
 /** Represents exactly one state of ONE user that uses this core. */
@@ -79,7 +86,8 @@ class UserContext
 {
 public:
 	UserContext() = delete;
-	UserContext(const Config &cfg,
+	UserContext(const std::string &user_token,
+	            const Config &cfg,
 	            const DatasetFrames &frames,
 	            const DatasetFeatures features);
 
@@ -90,6 +98,7 @@ public:
 	SearchContext ctx;
 
 	// *** USER SPECIFIC ***
+	std::string user_token;
 	std::vector<SearchContext> history;
 	Submitter submitter;
 	AsyncSom async_SOM;
@@ -128,7 +137,7 @@ public:
 	  , frames(cfg)
 	  , features(frames, cfg)
 	  , keywords(cfg, frames)
-	  , user(cfg, frames, features)
+	  , user(cfg.user_token, cfg, frames, features)
 	{}
 
 	/**

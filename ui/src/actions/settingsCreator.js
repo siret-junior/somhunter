@@ -24,10 +24,3 @@ export function createSetCoreSettings(coreSettings) {
     payload: coreSettings,
   };
 }
-
-export function createSetSearchState(data) {
-  return {
-    type: CS.SET_SEARCH_STATE,
-    payload: data,
-  };
-}

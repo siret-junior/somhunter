@@ -1,7 +1,7 @@
 {
   "backendUrl": "http://localhost:8888",
   "coreSettingsUrl": "/settings",
-  "coreSearchStateUrl": "/search",
+  "coreSearchUrl": "/search/context",
   "coreUsername": "som",
   "corePassword": "hunter",
   "frameGrid": {

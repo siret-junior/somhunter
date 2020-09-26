@@ -69,6 +69,7 @@ enum class DisplayType
 inline DisplayType
 str_to_disp_type(const std::string &type_str)
 {
+	/* !!! THIS MUST MATCH WITH `config/strings.json` FILE !!! */
 	if (type_str == "topn_display")
 		return DisplayType::DTopN;
 	if (type_str == "topn_context_display")

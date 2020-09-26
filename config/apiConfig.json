@@ -1,7 +1,7 @@
 {
     "development": {
         "endpoints": {
-            "config": {
+            "settings": {
                 "get": {
                     "url": "/settings"
                 }
@@ -61,9 +61,12 @@
                     "url": "/like_frame"
                 }
             },
-            "search": {
+            "searchContext": {
                 "get": {
-                    "url": "/search"
+                    "url": "/search/context"
+                },
+                "post": {
+                    "url": "/search/context"
                 }
             }
         }

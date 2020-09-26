@@ -17,8 +17,8 @@ import { createRescore } from "../../actions/rescoreCreator";
 import {
   createFocusTextQuery,
   createSetCoreSettings,
-  createSetSearchState,
 } from "../../actions/settingsCreator";
+import { createSetSearchState } from "../../actions/searchCreator";
 
 import CriticalErrorWindow from "./CriticalErrorWindow";
 import LoadingWindow from "./LoadingWindow";
@@ -31,7 +31,7 @@ function getErrorWindowJsx() {
   return (
     <CriticalErrorWindow
       title={STRS.UNABLE_TO_FETCH_SEARCH_STATE_HEADING}
-      body={`${STRS.UNABLE_TO_FETCH_SEARCH_STATE_DESC} '${config.coreSearchStateUrl}'`}
+      body={`${STRS.UNABLE_TO_FETCH_SEARCH_STATE_DESC} '${config.backendUrl}${config.coreSearchUrl}'`}
       action={STRS.UNABLE_TO_FETCH_SEARCH_STATE_ACTION}
       actionHandler={() => window.location.reload()}
     />
@@ -116,7 +116,7 @@ async function fetchSearchState(
   succ = (_) => null,
   fail = () => null
 ) {
-  const url = config.coreSettingsUrl;
+  const url = config.coreSearchUrl;
   let response = null;
 
   try {
@@ -167,7 +167,7 @@ function initializeUi(s, props) {
 
 function SomhunterUi(props) {
   const settings = useSettings();
-  const searchState = props.searchState;
+  const searchState = props.search;
 
   // Initial setup
   useEffect(() => initializeUi(settings, props), []);
@@ -178,7 +178,7 @@ function SomhunterUi(props) {
     return getErrorWindowJsx();
   }
   // If still LOADING
-  else if (typeof searchState === "undefined") {
+  else if (_.isEmpty(searchState)) {
     console.info("<SomhunterUi>: Rendering... (LOADING)");
     return getLoadingJsx();
   }
@@ -204,8 +204,8 @@ function SomhunterUi(props) {
   }
 }
 
-const stateToProps = ({ settings }) => {
-  return { searchState: settings.searchState };
+const stateToProps = ({ search }) => {
+  return { search };
 };
 
 const actionCreators = {

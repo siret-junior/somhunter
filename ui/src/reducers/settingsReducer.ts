@@ -24,15 +24,11 @@ export type SettingsState = {
    * null => fetch failed
    */
   coreSettings: CoreApiSettings | undefined | null;
-
-  // If state of the current search session has been fetched
-  searchState: CoreSearchState | undefined | null;
 };
 
 const defaultState: SettingsState = {
   textQueryRefs: [],
   coreSettings: undefined,
-  searchState: undefined,
 };
 
 function settingsReducer(state = defaultState, action: Action): SettingsState {
@@ -49,13 +45,6 @@ function settingsReducer(state = defaultState, action: Action): SettingsState {
       return {
         ...state,
         coreSettings: action.payload,
-      };
-
-    case CS.SET_SEARCH_STATE:
-      console.debug("=> (REDUCER) settingsReducer:", action);
-      return {
-        ...state,
-        searchState: action.payload,
       };
 
     default:

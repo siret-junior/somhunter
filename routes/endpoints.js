@@ -25,56 +25,6 @@ const path = require("path");
 const SessionState = require("./common/SessionState");
 const stateCheck = require("./common/state_checkers");
 
-exports.getProgramSettings = function (req, res) {
-  const sess = req.session;
-
-  // \todo What do we need?
-
-  // \temp
-  const cfgData = {
-    strings: global.strs,
-    core: global.coreCfg,
-    server: global.cfg,
-    ui: global.uiCfg,
-    api: global.apiCfg,
-  };
-
-  res.status(200).jsonp(cfgData);
-};
-
-exports.searchGet = function (req, res) {
-  const sess = req.session;
-
-  const data = { ok: true };
-
-  res.status(200).jsonp(data);
-};
-
-exports.getFrameDetailData = function (req, res) {
-  const sess = req.session;
-
-  const frameId = Number(req.query.frameId);
-  const logIt = req.query.logIt === "true" ? true : false;
-
-  if (!frameId) {
-    res.status(400).jsonp({ error: { message: "Invalid `frameId` argument." } });
-    return;
-  }
-
-  // -------------------------------
-  // Call the core
-  const frameData = global.core.getDisplay(
-    global.cfg.framesPathPrefix,
-    global.strs.displayTypes.detail,
-    null,
-    frameId,
-    logIt
-  );
-  // -------------------------------
-
-  res.status(200).jsonp(frameData);
-};
-
 exports.getSomScreen = function (req, res) {
   const sess = req.session;
 
@@ -153,12 +103,14 @@ exports.rescore = function (req, res) {
 
   SessionState.setTextQueries(sess.state, q0, q1);
 
-  // -------------------------------
-  // Call the core
-  global.core.rescore(textQuery);
-  // -------------------------------
+  // \todo Temporal...
+  const user_token = global.coreCfg.user_token;
 
-  res.status(200).jsonp({});
+  // << Core NAPI >>
+  const history = global.core.rescore(user_token, textQuery);
+  // << Core NAPI >>
+
+  res.status(200).jsonp({ history });
 };
 
 exports.submitFrame = function (req, res) {
@@ -298,4 +250,104 @@ exports.logTextQueryChange = function (req, res) {
   // -------------------------------
 
   res.status(200).jsonp({});
+};
+
+/**
+ * Returns the current general program settings.
+ *
+ * RESPONSES:
+ *    200 - OK
+ */
+exports.settingsGet = function (req, res) {
+  const sess = req.session;
+
+  // \todo Do we need to send all that?
+  const cfgData = {
+    strings: global.strs,
+    core: global.coreCfg,
+    server: global.cfg,
+    ui: global.uiCfg,
+    api: global.apiCfg,
+  };
+
+  res.status(200).jsonp(cfgData);
+};
+
+/**
+ * Returns the current search context of the given user.
+ *
+ * RESPONSES:
+ *    200 - OK
+ */
+exports.searchContextGet = function (req, res) {
+  const sess = req.session;
+
+  // << Core NAPI >>
+  const searchContext = global.core.getSearchContext(global.coreCfg.user_token);
+  // << Core NAPI >>
+
+  // If core does not specify, use UI config
+  if (searchContext.displayType == ""){
+    searchContext.displayType = global.uiCfg.defaultMainDisplay;
+  }
+
+  res.status(200).jsonp(searchContext);
+};
+
+/**
+ * Switches the search context to the provided ID for the given user.
+ *
+ * RESPONSES:
+ *    200 - OK
+ *    400 - Ivalid parameters.
+ */
+exports.searchContextPost = function (req, res) {
+  const sess = req.session;
+
+  const ctx_ID = req.body.ID;
+
+  // Check argument validity
+  if (typeof ctx_ID === "udnefined" || !ctx_ID) {
+    res.status(400).jsonp({ error: { message: "Invalid `ID` parameter." } });
+    return;
+  }
+
+  // << Core NAPI >>
+  const searchContext = global.core.switchSearchContext(global.cfg.user_token, ctx_ID);
+  // << Core NAPI >>
+
+  res.status(200).jsonp(searchContext);
+};
+
+/**
+ * Returns data about the specified frame.
+ *
+ * RESPONSES:
+ *    200 - OK
+ *    400 - Ivalid parameters.
+ */
+exports.getFrameDetailData = function (req, res) {
+  const sess = req.session;
+
+  const frameId = Number(req.query.frameId);
+  const logIt = req.query.logIt === "true" ? true : false;
+
+  // Check arguments
+  if (!frameId) {
+    res.status(400).jsonp({ error: { message: "Invalid `frameId` parameter." } });
+    return;
+  }
+
+  // -------------------------------
+  // Call the core
+  const frameData = global.core.getDisplay(
+    global.cfg.framesPathPrefix,
+    global.strs.displayTypes.detail,
+    null,
+    frameId,
+    logIt
+  );
+  // -------------------------------
+
+  res.status(200).jsonp(frameData);
 };

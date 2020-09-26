@@ -55,4 +55,10 @@ private:
 	Napi::Value login_to_dres(const Napi::CallbackInfo &info);
 
 	Napi::Value submit_to_server(const Napi::CallbackInfo &info);
+
+	Napi::Value get_search_context(const Napi::CallbackInfo& info);
+
+	Napi::Value get_user_context(const Napi::CallbackInfo& info);
+
+	Napi::Value switch_search_context(const Napi::CallbackInfo& info);
 };

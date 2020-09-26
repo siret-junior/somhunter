@@ -1,5 +1,6 @@
 {
     "development": {
+        "defaultMainDisplay": "topn_display",
         "textSearch": {
             "autocompleteDelay": 200
         }

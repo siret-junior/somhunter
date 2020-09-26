@@ -20,6 +20,9 @@ import replayWindowReducer, { ReplayWindowState } from "./replayWindowReducer";
 // Indicators (not logged in, not sending, etc)
 import indicatorReducer, { IndicatorState } from "./indicatorReducer";
 
+// Search state (e.g. queries' values, liked frames, ...)
+import searchReducer, { SearchState } from "./searchReducer";
+
 /** State type */
 export type StoreState = {
   mainWindow: MainWindowState;
@@ -28,6 +31,7 @@ export type StoreState = {
   replayWindow: ReplayWindowState;
   settings: SettingsState;
   indicators: IndicatorState;
+  search: SearchState;
 };
 
 /*
@@ -131,4 +135,5 @@ export default combineReducers({
   replayWindow: replayWindowReducer,
   settings: settingsReducer,
   indicators: indicatorReducer,
+  search: searchReducer,
 });

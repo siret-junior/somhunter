@@ -215,7 +215,6 @@ app.use(cors(corsOptions));
 const eps = global.apiCfg.endpoints;
 
 // SOMHunter endpoints
-addGet(app, eps.config, endpoints.getProgramSettings);
 addGet(app, eps.frameDetail, endpoints.getFrameDetailData);
 addGet(app, eps.textSearchSuggestions, endpoints.getAutocompleteResults);
 addPost(app, eps.screenTop, endpoints.getTopScreen);
@@ -226,11 +225,21 @@ addGet(app, eps.logTextChange, endpoints.logTextQueryChange);
 
 addGet(app, eps.serverSubmitFrame, endpoints.submitFrame);
 addPost(app, eps.searchReset, endpoints.resetSearchSession);
-addGet(app, eps.search, endpoints.searchGet);
 
 addPost(app, eps.searchRescore, endpoints.rescore);
 addPost(app, eps.searchLike, endpoints.likeFrame);
 addPost(app, eps.serverLogin, endpoints.loginToDres);
+
+
+// Gets the current program settings
+addGet(app, eps.settings, endpoints.settingsGet);
+
+// Gets the current search context
+addGet(app, eps.searchContext, endpoints.searchContextGet);
+
+// Switches the current search context
+addPost(app, eps.searchContext, endpoints.searchContextPost);
+
 
 app.use("/", somhunterRouter);
 app.use("/404", routerNotFound);

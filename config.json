@@ -1,5 +1,6 @@
 {
-    "submitter_config":{
+  "user_token": "admin",
+  "submitter_config":{
 		"submit_to_VBS": true,
 
 		"submit_server": "dres",

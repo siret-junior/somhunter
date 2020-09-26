@@ -102,6 +102,7 @@ struct SubmitterConfig
  */
 struct Config
 {
+	std::string user_token;
 	SubmitterConfig submitter_config;
 
 	size_t max_frame_filename_len;
@@ -169,6 +170,7 @@ Config::parse_json_config(const std::string &filepath)
 	}
 
 	auto cfg = Config{
+		json["user_token"].string_value(),
 		parse_submitter_config(json["submitter_config"]),
 
 		size_t(json["max_frame_filename_len"].int_value()),

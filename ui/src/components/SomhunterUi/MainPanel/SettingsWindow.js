@@ -7,6 +7,12 @@ import { useSettings } from "../../../hooks/useSettings";
 import coreApi from "../../../apis/coreApi";
 
 import {
+  crSuccNotif,
+  crWarnNotif,
+  crErrNotif,
+} from "../../../actions/notificationCreator";
+
+import {
   createShowLoginWarning,
   createShowNotSendingWarning,
 } from "../../../actions/indicatorCreator";
@@ -26,23 +32,30 @@ async function loginToDres(settings, onSucc = () => null, onFail = () => null) {
     return;
   }
 
-  let response = null;
+  dispatch(crWarnNotif(settings, "Waiting for the DRES server login..."));
 
   try {
     // << Core API >>
-    response = await coreApi.post(url);
+    const response = await coreApi.post(url);
     // << Core API >>
 
+    // Check if login was successfull
     if (!response.data.result) {
       throw Error("Unable to login");
     }
   } catch (e) {
     onFail();
+    dispatch(
+      crErrNotif(settings, "Login to the DRES server failed.", "", 5000)
+    );
     dispatch(createShowLoginWarning(settings, true));
     return;
   }
 
   onSucc();
+  dispatch(
+    crSuccNotif(settings, "Login to the DRES server successfull.", "", 5000)
+  );
   dispatch(createShowLoginWarning(settings, false));
 }
 

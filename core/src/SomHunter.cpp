@@ -27,16 +27,18 @@
 #include "log.h"
 #include "utils.h"
 
-SearchContext::SearchContext(const Config &cfg,
+SearchContext::SearchContext(size_t ID,
+                             const Config &cfg,
                              const DatasetFrames &frames,
                              const DatasetFeatures &features)
-  : scores(frames)
+  : ID(ID)
+  , scores(frames)
 {}
 
 bool
 SearchContext::operator==(const SearchContext &other) const
 {
-	return (used_tools == other.used_tools &&
+	return (ID == other.ID && used_tools == other.used_tools &&
 	        current_display == other.current_display &&
 	        curr_disp_type == other.curr_disp_type &&
 	        scores == other.scores &&
@@ -45,10 +47,12 @@ SearchContext::operator==(const SearchContext &other) const
 	        screenshot_fpth == other.screenshot_fpth);
 }
 
-UserContext::UserContext(const Config &cfg,
+UserContext::UserContext(const std::string &user_token,
+                         const Config &cfg,
                          const DatasetFrames &frames,
                          const DatasetFeatures features)
-  : ctx(cfg, frames, features)
+  : ctx(0, cfg, frames, features)
+  , user_token(user_token)
   , submitter(cfg.submitter_config)
   , async_SOM(cfg)
 {
@@ -58,7 +62,8 @@ UserContext::UserContext(const Config &cfg,
 bool
 UserContext::operator==(const UserContext &other) const
 {
-	return (ctx == other.ctx && history == other.history);
+	return (ctx == other.ctx && user_token == other.user_token &&
+	        history == other.history);
 }
 
 GetDisplayResult
@@ -215,6 +220,10 @@ SomHunter::rescore(const std::string &text_query,
 
 	// Add this state to the history timeline
 	user.ctx.screenshot_fpth = screenshot_fpth;
+
+	// Increment context ID
+	user.ctx.inc_ID();
+
 	user.history.emplace_back(user.ctx);
 
 	return RescoreResult{ user.history };
