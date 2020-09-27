@@ -19,26 +19,24 @@
  * SOMHunter. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// clang-format off
+
 #include <stack>
 #include <string>
 
 #include "SomHunter.h"
+#include "config_json.h"
 #include "log.h"
 #include "utils.h"
-
-// What dataset
-#define TESTING_ITEC_DATASET // Filters v3s1
-
-// What keywords
-#define TESTING_BOW_W2VV
 
 class TESTER_SomHunter
 {
 public:
 	static void run_all_tests(const std::string &cfg_fpth)
 	{
-
-		print("Initializing the SomHunter class tests...");
+		print("====================================================");
+		print("\tInitializing the `SomHunter` class tests...");
+		print("====================================================");
 
 		// Parse config file
 		auto config = Config::parse_json_config(cfg_fpth);
@@ -52,7 +50,9 @@ public:
 		TEST_autocomplete_keywords(core);
 		TEST_rescore(core);
 
-		print("If you got here, all tests were OK...");
+		print("====================================================");
+		print("\tIf you got here, all `SomHunter` tests were OK...");
+		print("====================================================");
 	}
 
 private:
@@ -169,8 +169,6 @@ private:
 		       "Incorrect frame in the display.");
 		ASSERT(disp[1]->frame_ID == 130,
 		       "Incorrect frame in the display.");
-#else
-		warn("No test data for this dataset.");
 #endif
 
 		/*
@@ -192,8 +190,6 @@ private:
 		       "Incorrect frame in the display.");
 		ASSERT(disp[8]->frame_ID == 331,
 		       "Incorrect frame in the display.");
-#else
-		warn("No test data for this dataset.");
 #endif
 
 		/*
@@ -219,14 +215,12 @@ private:
 		       "Incorrect frame in the display.");
 		ASSERT(disp[8]->frame_ID == 224,
 		       "Incorrect frame in the display.");
-#else
-		warn("No test data for this dataset.");
 #endif
 
 		/*
 		 * #4: `conext_switch`
 		 */
-		core.switch_search_context(0);
+		core.switch_search_context(1);
 		ASSERT(state1 == core.user.ctx, "State SHOULD BE equal.");
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
@@ -234,11 +228,9 @@ private:
 		       "Incorrect frame in the display.");
 		ASSERT(disp[1]->frame_ID == 130,
 		       "Incorrect frame in the display.");
-#else
-		warn("No test data for this dataset.");
 #endif
 
-		core.switch_search_context(1);
+		core.switch_search_context(2);
 		ASSERT(state2 == core.user.ctx, "State SHOULD BE equal.");
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
@@ -251,11 +243,9 @@ private:
 		       "Incorrect frame in the display.");
 		ASSERT(disp[8]->frame_ID == 331,
 		       "Incorrect frame in the display.");
-#else
-		warn("No test data for this dataset.");
 #endif
 
-		core.switch_search_context(2);
+		core.switch_search_context(3);
 		ASSERT(state3 == core.user.ctx, "State SHOULD BE equal.");
 #ifdef TESTING_ITEC_DATASET
 		disp = core.get_display(DisplayType::DTopN, 0, 0).frames;
@@ -268,10 +258,170 @@ private:
 		       "Incorrect frame in the display.");
 		ASSERT(disp[8]->frame_ID == 224,
 		       "Incorrect frame in the display.");
-#else
-		warn("No test data for this dataset.");
 #endif
 
 		print("\t Testing `SomHunter::TEST_rescore` finished.");
+	}
+};
+
+const char *json_contents = R"(
+{
+  "user_token": "admin",
+  "submitter_config":{
+		"submit_to_VBS": true,
+
+		"submit_server": "dres",
+		"server_config": {
+		  "vbs": {
+			"submit_interaction_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/query",
+			"submit_rerank_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/result",
+			"submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
+		  },
+		  "dres": {
+			"submit_interaction_URL": "http://localhost:8080/log/query",
+			"submit_rerank_URL": "http://localhost:8080/log/result",
+			"submit_URL": "http://localhost:8080/submit",
+			"cookie_file": "cookie.txt",
+			"login_URL": "http://localhost:8080/api/login",
+			"username": "admin",
+			"password": "adminadmin"
+			}
+		},
+	
+		"team_ID": 4,
+		"member_ID": 1,
+	  
+		"VBS_submit_archive_dir": "logs/submitted_logs/",
+		"VBS_submit_archive_log_suffix": ".json",
+		"extra_verbose_log": false,
+	  
+		"send_logs_to_server_period": 10000,
+		"apply_log_action_timeout_in_core": false,
+		"log_action_timeout": 500
+	},
+
+	"max_frame_filename_len": 64,
+	"display_page_size": 128,
+	"topn_frames_per_video": 3,
+	"topn_frames_per_shot": 1,
+	
+	"filename_offsets": {
+		"fr_filename_off": 6,
+		"fr_filename_vid_ID_off": 7,
+		"fr_filename_vid_ID_len": 5,
+		"fr_filename_shot_ID_off": 14,
+		"fr_filename_shot_ID_len": 5,
+		"fr_filename_frame_num_off": 42,
+		"fr_filename_frame_num_len": 8
+	},
+
+	"kws_file": "data/LSC2020_5days/word2idx.txt",
+	"frames_path_prefix": "/images/LSC2020_5days/thumbs/",
+	"frames_list_file": "data/LSC2020_5days/LSC-5days.keyframes.dataset",
+
+	"features_file_data_off": 0,
+	"features_dim": 128,
+	"features_file": "data/LSC2020_5days/LSC-5days.w2vv.bin",
+	
+	"kw_bias_vec_file": "data/LSC2020_5days/txt_bias-2048floats.bin",
+	"kw_scores_mat_file": "data/LSC2020_5days/txt_weight-11147x2048floats.bin",
+
+	"kw_PCA_mat_dim": 128,
+	"pre_PCA_features_dim": 2048,
+	"kw_PCA_mean_vec_file": "data/LSC2020_5days/LSC-5days.w2vv.pca.mean.bin",
+	"kw_PCA_mat_file": "data/LSC2020_5days/LSC-5days.w2vv.pca.matrix.bin",
+	
+    "LSC_metadata_file": "data/LSC2020_5days/lsc2020-metadata.csv"
+  
+}
+)";
+
+class TESTER_Config
+{
+public:
+	static void run_all_tests(const std::string &cfg_fpth)
+	{
+		print("====================================================");
+		print("\tInitializing the `Config` struct tests...");
+		print("====================================================");
+
+		// Parse config file
+		Config config = Config::parse_json_config_string(json_contents);
+
+		TEST_parse_json_config(config);
+		TEST_LSC_addition(config);
+
+		print("====================================================");
+		print("\tIf you got here, all `Config` tests were OK...");
+		print("====================================================");
+	}
+
+private:
+	static void TEST_parse_json_config(const Config &c)
+	{
+		print("\t Testing `Config::parse_json_config`...");
+
+		ASSERT(c.user_token == "admin", "Incorrect parse.");
+
+		const auto &sbc{ c.submitter_config };
+		ASSERT(sbc.submit_to_VBS == true, "Incorrect parse.");
+		ASSERT(sbc.team_ID == 4_z, "Incorrect parse.");
+		ASSERT(sbc.member_ID == 1_z, "Incorrect parse.");
+		ASSERT(sbc.VBS_submit_archive_dir == "logs/submitted_logs/", "Incorrect parse.");
+		ASSERT(sbc.VBS_submit_archive_log_suffix == ".json", "Incorrect parse.");
+		ASSERT(sbc.extra_verbose_log == false, "Incorrect parse.");
+		ASSERT(sbc.send_logs_to_server_period == 10000_z, "Incorrect parse.");
+		ASSERT(sbc.apply_log_action_timeout == false, "Incorrect parse.");
+		ASSERT(sbc.log_action_timeout == 500_z, "Incorrect parse.");
+		ASSERT(sbc.server_type == "dres", "Incorrect parse.");
+
+		const auto &sc{ std::get<ServerConfigDres>(c.submitter_config.server_cfg) };
+		ASSERT(sc.submit_URL == "http://localhost:8080/submit", "Incorrect parse.");
+		ASSERT(sc.submit_rerank_URL == "http://localhost:8080/log/result", "Incorrect parse.");
+		ASSERT(sc.submit_interaction_URL == "http://localhost:8080/log/query", "Incorrect parse.");
+		ASSERT(sc.cookie_file == "cookie.txt", "Incorrect parse.");
+		ASSERT(sc.login_URL == "http://localhost:8080/api/login", "Incorrect parse.");
+		ASSERT(sc.username == "admin", "Incorrect parse.");
+		ASSERT(sc.password == "adminadmin", "Incorrect parse.");
+
+		ASSERT(c.max_frame_filename_len == 64_z, "Incorrect parse.");
+
+		ASSERT(c.filename_offsets.filename_off == 6_z, "Incorrect parse.");
+		ASSERT(c.filename_offsets.vid_ID_off == 7_z,"Incorrect parse.");
+		ASSERT(c.filename_offsets.vid_ID_len == 5_z, "Incorrect parse.");
+		ASSERT(c.filename_offsets.shot_ID_off == 14_z, "Incorrect parse.");
+		ASSERT(c.filename_offsets.shot_ID_len == 5_z, "Incorrect parse.");
+		ASSERT(c.filename_offsets.frame_num_off == 42_z, "Incorrect parse.");
+		ASSERT(c.filename_offsets.frame_num_len == 8_z, "Incorrect parse.");
+
+		ASSERT(c.frames_list_file == "data/LSC2020_5days/LSC-5days.keyframes.dataset", "Incorrect parse.");
+		ASSERT(c.frames_path_prefix == "/images/LSC2020_5days/thumbs/", "Incorrect parse.");
+		ASSERT(c.features_file_data_off == 0_z, "Incorrect parse.");
+		ASSERT(c.features_file == "data/LSC2020_5days/LSC-5days.w2vv.bin", "Incorrect parse.");
+		ASSERT(c.features_dim == 128, "Incorrect parse.");
+
+		ASSERT(c.pre_PCA_features_dim == 2048, "Incorrect parse.");
+		ASSERT(c.kw_bias_vec_file == "data/LSC2020_5days/txt_bias-2048floats.bin", "Incorrect parse.");
+		ASSERT(c.kw_scores_mat_file == "data/LSC2020_5days/txt_weight-11147x2048floats.bin", "Incorrect parse.");
+		ASSERT(c.kw_PCA_mean_vec_file == "data/LSC2020_5days/LSC-5days.w2vv.pca.mean.bin", "Incorrect parse.");
+		ASSERT(c.kw_PCA_mat_file == "data/LSC2020_5days/LSC-5days.w2vv.pca.matrix.bin", "Incorrect parse.");
+		ASSERT(c.kw_PCA_mat_dim == 128, "Incorrect parse.");
+
+		ASSERT(c.kws_file == "data/LSC2020_5days/word2idx.txt", "Incorrect parse.");
+
+		ASSERT(c.display_page_size == 128_z, "Incorrect parse.");
+		ASSERT(c.topn_frames_per_video == 3, "Incorrect parse.");
+		ASSERT(c.topn_frames_per_shot == 1, "Incorrect parse.");
+
+		print("\t Finishing `Config::parse_json_config`...");
+	}
+
+	static void TEST_LSC_addition(const Config &config)
+	{
+		print("\t Testing `Config::parse_json_config` for LSC changes...");
+
+		ASSERT(config.LSC_metadata_file == "data/LSC2020_5days/lsc2020-metadata.csv", "Incorrect parse.");
+
+		print("\t Finishing `Config::parse_json_config` for LSC changes...");
 	}
 };

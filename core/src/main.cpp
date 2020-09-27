@@ -24,10 +24,43 @@
 #include <thread>
 
 #include "SomHunter.h"
-#include "tests.hpp"
 
 // If the `TESTER_SomHunter` should do its job.
 #define RUN_TESTER
+
+#ifdef RUN_TESTER
+
+/*
+ * What dataset are we testing?
+ *
+ * *** TESTING_ITEC_DATASET ***:
+ *	config.json:
+ *		...
+ *		"topn_frames_per_video": 3,
+ *		"topn_frames_per_shot": 1,
+ * 		...
+ *
+ * *** TESTING_LSC5DAYS_DATASET ***:
+ *	config.json:
+ *		...
+ *		"topn_frames_per_video": 3,
+ *		"topn_frames_per_shot": 1,
+ * 		...
+ *
+ */
+//#define TESTING_ITEC_DATASET
+#define TESTING_LSC5DAYS_DATASET
+
+/*
+ * What keywords are we testing?
+ *
+ * *** TESTING_BOW_W2VV ***:
+ */
+#define TESTING_BOW_W2VV
+
+#include "tests.hpp"
+
+#endif
 
 void
 print_display(const FramePointerRange &d)
@@ -47,6 +80,7 @@ main()
 
 #ifdef RUN_TESTER
 	TESTER_SomHunter::run_all_tests(cfg_fpth);
+	TESTER_Config::run_all_tests(cfg_fpth);
 #endif
 
 #if 1

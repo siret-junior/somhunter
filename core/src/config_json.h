@@ -95,6 +95,7 @@ struct SubmitterConfig
 	size_t send_logs_to_server_period;
 	bool apply_log_action_timeout;
 	size_t log_action_timeout;
+	std::string server_type;
 };
 
 /** Parsed current config of the core.
@@ -128,7 +129,11 @@ struct Config
 	size_t topn_frames_per_video;
 	size_t topn_frames_per_shot;
 
+	std::string LSC_metadata_file;
+
 	static Config parse_json_config(const std::string &filepath);
+	static Config parse_json_config_string(
+	  const std::string &cfg_file_contents);
 
 private:
 	static SubmitterConfig parse_submitter_config(const json11::Json &json);
@@ -159,59 +164,65 @@ Config::parse_json_config(const std::string &filepath)
 	ifs.seekg(0);
 	ifs.read(&cfg_file_contents[0], size);
 
+	return parse_json_config_string(cfg_file_contents);
+}
+
+inline Config
+Config::parse_json_config_string(const std::string &cfg_file_contents)
+{
 	std::string err;
 	auto json{ json11::Json::parse(cfg_file_contents, err) };
 
 	if (!err.empty()) {
-		std::string msg{ "Error parsing JSON config file: " +
-			         filepath };
+		std::string msg{ "Error parsing JSON config string." };
 		warn(msg);
 		throw std::runtime_error(msg);
 	}
 
-	auto cfg = Config{
-		json["user_token"].string_value(),
-		parse_submitter_config(json["submitter_config"]),
+	auto cfg =
+	  Config{ json["user_token"].string_value(),
+		  parse_submitter_config(json["submitter_config"]),
 
-		size_t(json["max_frame_filename_len"].int_value()),
+		  size_t(json["max_frame_filename_len"].int_value()),
 
-		VideoFilenameOffsets{
-		  size_t(
-		    json["filename_offsets"]["fr_filename_off"].int_value()),
-		  size_t(json["filename_offsets"]["fr_filename_vid_ID_off"]
-		           .int_value()),
-		  size_t(json["filename_offsets"]["fr_filename_vid_ID_len"]
-		           .int_value()),
-		  size_t(json["filename_offsets"]["fr_filename_shot_ID_off"]
-		           .int_value()),
-		  size_t(json["filename_offsets"]["fr_filename_shot_ID_len"]
-		           .int_value()),
-		  size_t(json["filename_offsets"]["fr_filename_frame_num_off"]
-		           .int_value()),
-		  size_t(json["filename_offsets"]["fr_filename_frame_num_len"]
-		           .int_value()),
-		},
+		  VideoFilenameOffsets{
+		    size_t(
+		      json["filename_offsets"]["fr_filename_off"].int_value()),
+		    size_t(json["filename_offsets"]["fr_filename_vid_ID_off"]
+		             .int_value()),
+		    size_t(json["filename_offsets"]["fr_filename_vid_ID_len"]
+		             .int_value()),
+		    size_t(json["filename_offsets"]["fr_filename_shot_ID_off"]
+		             .int_value()),
+		    size_t(json["filename_offsets"]["fr_filename_shot_ID_len"]
+		             .int_value()),
+		    size_t(json["filename_offsets"]["fr_filename_frame_num_off"]
+		             .int_value()),
+		    size_t(json["filename_offsets"]["fr_filename_frame_num_len"]
+		             .int_value()),
+		  },
 
-		json["frames_list_file"].string_value(),
-		json["frames_path_prefix"].string_value(),
+		  json["frames_list_file"].string_value(),
+		  json["frames_path_prefix"].string_value(),
 
-		size_t(json["features_file_data_off"].int_value()),
-		json["features_file"].string_value(),
-		size_t(json["features_dim"].int_value()),
+		  size_t(json["features_file_data_off"].int_value()),
+		  json["features_file"].string_value(),
+		  size_t(json["features_dim"].int_value()),
 
-		size_t(json["pre_PCA_features_dim"].int_value()),
-		json["kw_bias_vec_file"].string_value(),
-		json["kw_scores_mat_file"].string_value(),
-		json["kw_PCA_mean_vec_file"].string_value(),
-		json["kw_PCA_mat_file"].string_value(),
-		size_t(json["kw_PCA_mat_dim"].int_value()),
+		  size_t(json["pre_PCA_features_dim"].int_value()),
+		  json["kw_bias_vec_file"].string_value(),
+		  json["kw_scores_mat_file"].string_value(),
+		  json["kw_PCA_mean_vec_file"].string_value(),
+		  json["kw_PCA_mat_file"].string_value(),
+		  size_t(json["kw_PCA_mat_dim"].int_value()),
 
-		json["kws_file"].string_value(),
+		  json["kws_file"].string_value(),
 
-		size_t(json["display_page_size"].int_value()),
-		size_t(json["topn_frames_per_video"].int_value()),
-		size_t(json["topn_frames_per_shot"].int_value()),
-	};
+		  size_t(json["display_page_size"].int_value()),
+		  size_t(json["topn_frames_per_video"].int_value()),
+		  size_t(json["topn_frames_per_shot"].int_value()),
+
+		  json["LSC_metadata_file"].string_value() };
 
 	return cfg;
 }
@@ -240,20 +251,21 @@ Config::parse_submitter_config(const json11::Json &json)
 	res.log_action_timeout = size_t(json["log_action_timeout"].int_value());
 
 	// Parse a type of the submit server
-	std::string server_type{ json["submit_server"].string_value() };
+	res.server_type = json["submit_server"].string_value();
 
 	// Parse the correct JSON format based on the server type
-	if (server_type == "vbs") {
+	if (res.server_type == "vbs") {
 		res.server_cfg =
-		  parse_vbs_config(json["server_config"][server_type]);
-	} else if (server_type == "dres") {
+		  parse_vbs_config(json["server_config"][res.server_type]);
+	} else if (res.server_type == "dres") {
 		res.server_cfg =
-		  parse_dres_config(json["server_config"][server_type]);
+		  parse_dres_config(json["server_config"][res.server_type]);
 	}
 	// If error value
 	else {
 #ifndef NDEBUG
-		std::string msg{ "Uknown submit server type: " + server_type };
+		std::string msg{ "Uknown submit server type: " +
+			         res.server_type };
 		warn(msg);
 		throw std::runtime_error(msg);
 #endif
