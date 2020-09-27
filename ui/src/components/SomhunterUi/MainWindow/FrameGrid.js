@@ -46,6 +46,7 @@ function getFrames(s, props, gridEl) {
       onLikeHandler={(frameId) => onLikeHandler(s, props, gridEl, frameId)}
       key={frame.id + i * Math.pow(2, 32)}
       frame={frame}
+      replayGridRef={props.replayGridRef}
     />
   ));
 }

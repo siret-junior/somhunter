@@ -66,24 +66,40 @@ const triggerLogs = (s, props, e, frameId, delta) => {
   // << Core API >>
 };
 
-function onWheellHandler(settings, props, e) {
-  e.stopPropagation();
+const triggerLogsThrottled = _.throttle(
+  triggerLogs,
+  config.core.submitter_config.log_action_timeout
+);
 
+function calcReplayLeftOffset(gridEl, pivotFrameId, deltaX = 0) {
+  if (typeof gridEl === "undefined") {
+    return 0;
+  }
+
+  const currOffset = parseInt(gridEl.style.left);
+  const unitWidth = 200;
+  const leftOffset = currOffset + deltaX * unitWidth;
+
+  return leftOffset;
+}
+
+function onWheellHandler(settings, props, e) {
   const frameId = props.frame.id;
 
   // If SHIFT key down
   if (e.shiftKey) {
     // If just a scroll
     if (props.replayWindow.pivotFrameId === frameId) {
-      const triggerLogsThrottled = _.throttle(
-        triggerLogs,
-        config.core.submitter_config.log_action_timeout
-      );
-
       const delta = e.deltaY > 0 ? -1 : 1;
 
       triggerLogsThrottled(settings, props, e, frameId, delta);
-      props.createScrollReplayWindow(settings, delta);
+
+      const gridEl = props.replayGridRef.current;
+      const left = calcReplayLeftOffset(gridEl, frameId, delta);
+      gridEl.style.left = `${left}px`;
+
+      // \todo This seems too slow
+      //props.createScrollReplayWindow(settings, delta);
     }
     // Else new frame ID
     else {
@@ -95,8 +111,6 @@ function onWheellHandler(settings, props, e) {
     }
   }
 }
-
-const onWheelHandlerThrottled = _.throttle(onWheellHandler, 100);
 
 function Frame(props) {
   const settings = useSettings();
@@ -118,7 +132,7 @@ function Frame(props) {
         onClick={(e) => onLikeHandler(settings, props, e, props.onLikeHandler)}
         onWheel={(e) => {
           e.persist();
-          onWheelHandlerThrottled(settings, props, e);
+          onWheellHandler(settings, props, e);
         }}
         data-frame-id={props.frame.id}
         xs={2}

@@ -58,6 +58,7 @@ function MainWindow(props) {
         gridRef={mainGridElRef}
         crShowDisplay={props.crShowDisplay}
         mainWindow={props.mainWindow}
+        replayGridRef={replayGridElRef}
       />
 
       <DetailWindow
@@ -71,6 +72,7 @@ function MainWindow(props) {
           id="detailGrid"
           gridRef={detailGridElRef}
           mainWindow={props.detailWindow}
+          replayGridRef={replayGridElRef}
         />
       </DetailWindow>
 
@@ -84,6 +86,7 @@ function MainWindow(props) {
           id="replayGrid"
           gridRef={replayGridElRef}
           mainWindow={props.replayWindow}
+          replayGridRef={replayGridElRef}
         />
       </ReplayWindow>
     </Container>

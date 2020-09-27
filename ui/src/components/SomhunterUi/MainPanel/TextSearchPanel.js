@@ -11,30 +11,29 @@ import { get, post } from "../../../apis/coreApi";
 import { useSettings } from "../../../hooks/useSettings";
 import TextSearchInput from "./TextSearchInput";
 
+/** Lets the Core know about text query change. */
+const triggerLogTextChange = (s, props) => {
+  const dispatch = s.dispatch;
+  const url = config.api.endpoints.logTextChange.get.url;
+
+  let query = `${props.refQuery0.current.value} >> ${props.refQuery1.current.value}`;
+
+  const params = {
+    query: query,
+  };
+
+  get(dispatch, url, { params });
+};
+
+const triggerLogTextChangeThrottled = _.throttle(
+  triggerLogTextChange,
+  config.core.submitter_config.log_action_timeout
+);
+
 function TextSearchPanel(props) {
   const s = useSettings();
 
   const subInputsRef = useRef();
-
-  /** Lets the Core know about text query change. */
-  const triggerLogTextChange = () => {
-    const dispatch = s.dispatch;
-    const url = config.api.endpoints.logTextChange.get.url;
-
-    let query = `${props.refQuery0.current.value} >> ${props.refQuery1.current.value}`;
-
-    const params = {
-      query: query,
-    };
-
-    get(dispatch, url, { params });
-  };
-
-  // Trigger logging mechanisms
-  const triggerLogTextChangeThrottled = _.throttle(
-    triggerLogTextChange,
-    config.core.submitter_config.log_action_timeout
-  );
 
   return (
     <Container fluid className="text-search panel">
@@ -46,7 +45,9 @@ function TextSearchPanel(props) {
               inputRef={props.refQuery0}
               subInputsRef={subInputsRef}
               setIsAcOpen={props.setIsAcOpen}
-              triggerLogTextChange={triggerLogTextChangeThrottled}
+              triggerLogTextChange={() =>
+                triggerLogTextChangeThrottled(s, props)
+              }
             />
           </Col>
           <Col xs={6} className="text-search-cont smaller pr-0">
@@ -56,7 +57,9 @@ function TextSearchPanel(props) {
               inputRef={props.refQuery1}
               subInputsRef={subInputsRef}
               setIsAcOpen={props.setIsAcOpen}
-              triggerLogTextChange={triggerLogTextChangeThrottled}
+              triggerLogTextChange={() =>
+                triggerLogTextChangeThrottled(s, props)
+              }
             />
           </Col>
         </Row>
