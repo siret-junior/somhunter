@@ -482,11 +482,6 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 	std::string screenshot{ info[3].As<Napi::String>().Utf8Value() };
 	std::string time_string{ info[4].As<Napi::String>().Utf8Value() };
 
-	std::cout << "SomHunter::rescore(): "
-	          << "src_search_ctx_ID=" << src_search_ctx_ID
-	          << "screenshot=" << screenshot
-	          << "time_string=" << time_string << std::endl;
-
 	try {
 		// << Core >>
 		auto rescore_res{ somhunter->rescore(
@@ -1027,7 +1022,7 @@ SomHunterNapi::switch_search_context(const Napi::CallbackInfo &info)
 
 	// Process arguments
 	int arg_count = info.Length();
-	if (arg_count != 1) {
+	if (arg_count != 5) {
 		Napi::TypeError::New(env, "Wrong number of arguments!")
 		  .ThrowAsJavaScriptException();
 	}
@@ -1035,12 +1030,18 @@ SomHunterNapi::switch_search_context(const Napi::CallbackInfo &info)
 	// Convert arguments
 	std::string user_token{ info[0].As<Napi::String>().Utf8Value() };
 	size_t search_ctx_ID{ info[1].As<Napi::Number>().Uint32Value() };
+	size_t src_search_ctx_ID{ info[2].As<Napi::Number>().Uint32Value() };
+	std::string screenshot_fpth{ info[3].As<Napi::String>().Utf8Value() };
+	std::string label{ info[4].As<Napi::String>().Utf8Value() };
 
 	try {
 		// << Core >>
 		const UserContext &user_context =
 		  somhunter->switch_search_context(
-		    /*user_token, */ search_ctx_ID);
+		    /*user_token, */ search_ctx_ID,
+		    src_search_ctx_ID,
+		    screenshot_fpth,
+		    label);
 		// << Core >>
 
 		// Return the processed result

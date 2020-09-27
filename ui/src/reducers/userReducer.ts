@@ -29,22 +29,11 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
   switch (action.type) {
     // SET_USER_HISTORY
     case CS.SET_USER_HISTORY:
-      const a0 = action as SetUserHistoryAction;
-      const s0 = state as UserState;
-
-      const histNew = a0.payload.history;
-      const currCtxId = a0.payload.currCtxId;
-
-      const newSc = { ...s0.search };
-      newSc.id = currCtxId;
-
-      console.info("SET_USER_HISTORY", a0);
-      return { history: histNew, search: newSc };
+      return action.payload;
 
     // SET_USER_STATE
     case CS.SET_USER_STATE:
       const a1 = action as SetUserStateAction;
-      console.info("SET_USER_STATE", a1);
 
       // If fetch failed
       if (a1.payload === null) {

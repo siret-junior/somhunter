@@ -38,6 +38,10 @@ const { combine, timestamp, printf } = format;
 // Set root project directory
 global.rootDir = __dirname;
 
+if (typeof process.env["NODE_ENV"] === "undefined") {
+  process.env["NODE_ENV"] = "production";
+}
+
 // Load config into the `global.serverCfg` variable
 const config = require("./config/");
 config.initConfig();
@@ -162,17 +166,19 @@ app.use(session({ secret: "matfyz", resave: false, saveUninitialized: true }));
  * Initial communication with the admin user
  */
 global.logger.log("debug", "process.env = '" + process.env["NODE_ENV"] + "'");
+
+// Developmend mode warning
 if (process.env["NODE_ENV"] === "development") {
   global.logger.log(
     "warn",
     `
   =======================================================================
-  App is running in 'development' environment!
+    App is running in a 'development' environment!
   
-  Debug info will be printed. 
-  This is not recommended while exposed to public users.
+    Debug info will be printed. 
+    This is not recommended while the program is exposed to public users.
   
-  To change it, you can set environment variable \`NODE_ENV\` to 'production.
+    To change it, you can set environment variable \`NODE_ENV\` to 'production'.
 
   =======================================================================`
   );

@@ -590,8 +590,23 @@ SomHunter::reset_scores()
 }
 
 const UserContext &
-SomHunter::switch_search_context(size_t index)
+SomHunter::switch_search_context(size_t index,
+                                 size_t src_search_ctx_ID,
+                                 const std::string &screenshot_fpth,
+                                 const std::string &label)
 {
+
+	/*
+	 * Save provided screenshot filepath if needed
+	 */
+	if (src_search_ctx_ID != SIZE_T_ERR_VAL &&
+	    user.history[src_search_ctx_ID].screenshot_fpth.empty()) {
+
+		user.history[src_search_ctx_ID].label = label;
+		user.history[src_search_ctx_ID].screenshot_fpth =
+		  screenshot_fpth;
+	}
+
 	// Range check
 	if (index >= user.history.size()) {
 		std::string msg{ "Index is out of bounds: " + index };

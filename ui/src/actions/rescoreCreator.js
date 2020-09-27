@@ -29,9 +29,13 @@ export function createRescore(s, destDisplay) {
     dispatch(crNotif(s, CS.GLOB_NOTIF_INFO, "Working..."));
 
     // Take a screenshot
-    const screenData = await takeScreenshotOfElem(
-      document.getElementById("mainGrid")
-    );
+    let screenData = "";
+    // Does this screen still lack the screenshot
+    if (state.user.search.screenshotFilepath === "") {
+      screenData = await takeScreenshotOfElem(
+        document.getElementById("mainGrid")
+      );
+    }
 
     // Current text queries
     // \todo Do it propperly!

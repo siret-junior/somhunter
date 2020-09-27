@@ -16,8 +16,8 @@ type Props = {
   h: number;
 
   index: number;
-  inputRef: React.Ref<HTMLInputElement>;
-  subInputsRef: React.Ref<HTMLUListElement>;
+  inputRef: React.RefObject<any>;
+  subInputsRef: React.RefObject<any>;
 
   setIsAcOpen: (val: boolean) => void;
   triggerLogTextChange: () => void;
@@ -70,10 +70,12 @@ function getQueriesJsx(
 ): ReactNode {
   const qs = state.queries;
 
-  if (typeof props.subInputsRef.current === "undefined") return null;
+  const subRefs = props.subInputsRef!;
 
-  const parX = props.subInputsRef.current.clientWidth;
-  const parY = props.subInputsRef.current.clientHeight;
+  if (typeof subRefs.current! === "undefined") return null;
+
+  const parX = subRefs.current.clientWidth;
+  const parY = subRefs.current.clientHeight;
 
   return qs.map((q, i) => {
     const posAbs = {

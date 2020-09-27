@@ -266,19 +266,58 @@ exports.searchContextGet = function (req, res) {
 exports.searchContextPost = function (req, res) {
   const sess = req.session;
 
-  const ctx_ID = req.body.ID;
+  const body = req.body;
+  const ctxID = body.id;
+  const srcSearchCtxId = body.srcSearchCtxId;
+  const screenshotData = body.screenshotData;
 
-  // Check argument validity
-  if (typeof ctx_ID === "udnefined" || !ctx_ID) {
-    res.status(400).jsonp({ error: { message: "Invalid `ID` parameter." } });
+  // Check arguments
+  if (typeof srcSearchCtxId === "undefined" || typeof screenshotData === "undefined") {
+    res.status(400).jsonp({ error: { message: "Invalid screenshot parameters." } });
     return;
   }
 
+  // Check argument validity
+  if (typeof ctxID === "udnefined" || ctxID === null) {
+    res.status(400).jsonp({ error: { message: "Invalid `id` parameter." } });
+    return;
+  }
+
+  // Write the screenshot file if provided
+  let screenshotFilename = "";
+  let timeStr = "";
+  if (screenshotData !== "") {
+    const ts = Date.now();
+
+    timeStr = new Date().toLocaleTimeString();
+    screenshotFilename = `screenshot_${ts}.jpg`;
+    const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
+
+    var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
+    console.log(screenshotFilepath);
+    fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
+      if (e) {
+        global.logger.log("error", "Writing screenshot failed!\n\n" + e.message);
+      }
+    });
+  }
+
   // << Core NAPI >>
-  const searchContext = global.core.switchSearchContext(global.serverCfg.user_token, ctx_ID);
+  const userContext = global.core.switchSearchContext(
+    global.coreCfg.user_token,
+    ctxID,
+    srcSearchCtxId,
+    screenshotFilename,
+    timeStr
+  );
   // << Core NAPI >>
 
-  res.status(200).jsonp(searchContext);
+  // If core does not specify, use UI config
+  if (userContext.search.displayType == "") {
+    userContext.search.displayType = global.uiCfg.frameGrid.defaultRescoreDisplay;
+  }
+
+  res.status(200).jsonp(userContext);
 };
 
 /**
@@ -331,20 +370,24 @@ exports.rescore = function (req, res) {
     return;
   }
 
-  // Write the screenshot file
-  const ts = Date.now();
+  // Write the screenshot file if provided
+  let screenshotFilename = "";
+  let timeStr = "";
+  if (screenshotData !== "") {
+    const ts = Date.now();
 
-  const timeStr = new Date().toLocaleTimeString();
-  const screenshotFilename = `screenshot_${ts}.jpg`;
-  const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
+    timeStr = new Date().toLocaleTimeString();
+    screenshotFilename = `screenshot_${ts}.jpg`;
+    const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
 
-  var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
+    var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
 
-  fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
-    if (e) {
-      global.logger.log("error", "Writing screenshot failed!\n\n" + e.message);
-    }
-  });
+    fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
+      if (e) {
+        global.logger.log("error", "Writing screenshot failed!\n\n" + e.message);
+      }
+    });
+  }
 
   const q0 = body.q0;
   const q1 = body.q1;

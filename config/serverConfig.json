@@ -17,5 +17,7 @@
     "staging": {
     },
     "production": {
+        "uiTempImgDir": "ui/build/assets/img/tmp",
+        "uiImgDir": "ui/build/assets/img/"
     }
 }

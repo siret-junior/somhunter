@@ -176,7 +176,11 @@ public:
 	 * To be extended with the `user_token` argument with multiple users
 	 * support.
 	 */
-	const UserContext &switch_search_context(size_t index);
+	const UserContext &switch_search_context(
+	  size_t index,
+	  size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
+	  const std::string &screenshot_fpth = "",
+	  const std::string &label = "");
 
 	/**
 	 * Returns a reference to the current user's search context.
@@ -256,6 +260,9 @@ private:
 	 * context (with next contiguous ID number) */
 	void push_search_ctx()
 	{
+		// Make sure we're not pushing in any old screenshot
+		user.ctx.screenshot_fpth = "";
+
 		// Increment context ID
 		user.ctx.ID = user.history.size();
 		user.history.emplace_back(user.ctx);
@@ -265,6 +272,9 @@ private:
 	 * (from ID 0) */
 	void reset_search_history()
 	{
+		// Make sure we're not pushing in any old screenshot
+		user.ctx.screenshot_fpth = "";
+
 		user.ctx.ID = 0;
 		user.history.clear();
 		user.history.emplace_back(user.ctx);
