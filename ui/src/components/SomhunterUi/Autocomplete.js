@@ -13,12 +13,14 @@ import coreApi from "../../apis/coreApi";
 import { get, post } from "../../apis/coreApi";
 import { crNotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
+import { crSetQueryChanged } from "../../actions/indicatorCreator";
 
 import SettingsContext from "../../contexts/settingsContext";
 
 class Autocomplete extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       activeSuggestion: 0,
       filteredSuggestions: [],
@@ -82,6 +84,9 @@ class Autocomplete extends Component {
       () => this.getAutocompleteSuggestions(this.context, currentWord),
       config.ui.textSearch.autocompleteDelay
     );
+
+    // Set query changed flag
+    settings.dispatch(crSetQueryChanged(settings, true));
 
     this.setState({
       activeSuggestion: 0,
@@ -187,9 +192,10 @@ class Autocomplete extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const prev = prevProps.search.textQueries[this.props.index];
-    const curr = this.props.search.textQueries[this.props.index];
-    if (prev !== curr) {
+    const prev = prevProps.search.textQueries[this.props.index].trim();
+    const curr = this.props.search.textQueries[this.props.index].trim();
+
+    if (prev !== curr && this.state.userInput != curr) {
       this.setState({ ...this.state, userInput: curr });
     }
   }
@@ -275,7 +281,7 @@ class Autocomplete extends Component {
 Autocomplete.contextType = SettingsContext;
 
 const stateToProps = (state) => {
-  return { search: state.search };
+  return { search: state.user.search };
 };
 
 const actionCreators = {

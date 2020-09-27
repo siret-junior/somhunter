@@ -20,8 +20,11 @@ import replayWindowReducer, { ReplayWindowState } from "./replayWindowReducer";
 // Indicators (not logged in, not sending, etc)
 import indicatorReducer, { IndicatorState } from "./indicatorReducer";
 
-// Search state (e.g. queries' values, liked frames, ...)
-import searchReducer, { SearchState } from "./searchReducer";
+import userReducer, {
+  UserState,
+  UserStateEx,
+  HistoryPoint,
+} from "./userReducer";
 
 /** State type */
 export type StoreState = {
@@ -31,7 +34,7 @@ export type StoreState = {
   replayWindow: ReplayWindowState;
   settings: SettingsState;
   indicators: IndicatorState;
-  search: SearchState;
+  user: UserState;
 };
 
 /*
@@ -109,14 +112,17 @@ export type SetCoreSettingsAction = {
   payload: React.Ref<any>;
 };
 
-export type SetSearchStateAction = {
+export type SetUserHistoryAction = {
   type: string;
   payload: {
-    ID: number;
-    displayType: string;
-    screenshotFilepath: string;
-    textQueries: string[];
+    history: HistoryPoint[];
+    currCtxId: number;
   };
+};
+
+export type SetUserStateAction = {
+  type: string;
+  payload: UserStateEx;
 };
 
 export type Action =
@@ -130,7 +136,8 @@ export type Action =
   | ScrollReplayAction
   | HideReplayAction
   | SetCoreSettingsAction
-  | SetSearchStateAction;
+  | SetUserHistoryAction
+  | SetUserStateAction;
 
 // Combine all the reducers
 export default combineReducers({
@@ -140,5 +147,5 @@ export default combineReducers({
   replayWindow: replayWindowReducer,
   settings: settingsReducer,
   indicators: indicatorReducer,
-  search: searchReducer,
+  user: userReducer,
 });

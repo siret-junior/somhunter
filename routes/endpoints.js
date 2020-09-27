@@ -82,37 +82,6 @@ exports.getTopScreen = function (req, res) {
   res.status(200).jsonp({ viewData: viewData });
 };
 
-exports.rescore = function (req, res) {
-  const sess = req.session;
-
-  // Make sure that this session is initialized
-  const viewDataOld = stateCheck.initRequest(req);
-  stateCheck.checkGlobalSessionState(req, viewDataOld);
-
-  const body = req.body;
-  const q0 = body.q0;
-  const q1 = body.q1;
-
-  let textQuery = q0;
-
-  // Append temporal query
-  if (q1 != "") {
-    textQuery += " >> ";
-    textQuery += q1;
-  }
-
-  SessionState.setTextQueries(sess.state, q0, q1);
-
-  // \todo Temporal...
-  const user_token = global.coreCfg.user_token;
-
-  // << Core NAPI >>
-  const history = global.core.rescore(user_token, textQuery);
-  // << Core NAPI >>
-
-  res.status(200).jsonp({ history });
-};
-
 exports.submitFrame = function (req, res) {
   const sess = req.session;
 
@@ -343,4 +312,80 @@ exports.getFrameDetailData = function (req, res) {
   // -------------------------------
 
   res.status(200).jsonp(frameData);
+};
+
+exports.rescore = function (req, res) {
+  const sess = req.session;
+
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
+
+  const body = req.body;
+  const srcSearchCtxId = body.srcSearchCtxId;
+  const screenshotData = body.screenshotData;
+
+  // Check arguments
+  if (typeof srcSearchCtxId === "undefined" || typeof screenshotData === "undefined") {
+    res.status(400).jsonp({ error: { message: "Invalid parameters." } });
+    return;
+  }
+
+  // Write the screenshot file
+  const ts = Date.now();
+
+  const timeStr = new Date().toLocaleTimeString();
+  const screenshotFilename = `screenshot_${ts}.jpg`;
+  const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
+
+  var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
+
+  fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
+    if (e) {
+      global.logger.log("error", "Writing screenshot failed!\n\n" + e.message);
+    }
+  });
+
+  const q0 = body.q0;
+  const q1 = body.q1;
+
+  let textQuery = q0;
+
+  // Append temporal query
+  if (q1 != "") {
+    textQuery += " >> ";
+    textQuery += q1;
+  }
+
+  SessionState.setTextQueries(sess.state, q0, q1);
+
+  // \todo Temporal...
+  const user_token = global.coreCfg.user_token;
+
+  // << Core NAPI >>
+  const history = global.core.rescore(user_token, textQuery, srcSearchCtxId, screenshotFilename, timeStr);
+  // << Core NAPI >>
+
+  res.status(200).jsonp(history);
+};
+
+/**
+ * Returns the current search context of the given user.
+ *
+ * RESPONSES:
+ *    200 - OK
+ */
+exports.userContextGet = function (req, res) {
+  const sess = req.session;
+
+  // << Core NAPI >>
+  const userContext = global.core.getUserContext(global.coreCfg.user_token);
+  // << Core NAPI >>
+
+  // If core does not specify, use UI config
+  if (userContext.search.displayType == "") {
+    userContext.search.displayType = global.uiCfg.frameGrid.defaultRescoreDisplay;
+  }
+
+  res.status(200).jsonp(userContext);
 };

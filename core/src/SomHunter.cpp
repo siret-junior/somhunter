@@ -57,6 +57,12 @@ UserContext::UserContext(const std::string &user_token,
   , async_SOM(cfg)
 {
 	async_SOM.start_work(features, ctx.scores);
+
+	/*
+	 * Store this initial state into the history
+	 */
+	ctx.screenshot_fpth = "";
+	history.emplace_back(ctx);
 }
 
 bool
@@ -178,9 +184,22 @@ SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
 
 RescoreResult
 SomHunter::rescore(const std::string &text_query,
-                   const std::string &screenshot_fpth)
+                   size_t src_search_ctx_ID,
+                   const std::string &screenshot_fpth,
+                   const std::string &label)
 {
 	user.submitter.poll();
+
+	/*
+	 * Save provided screenshot filepath if needed
+	 */
+	if (src_search_ctx_ID != SIZE_T_ERR_VAL &&
+	    user.history[src_search_ctx_ID].screenshot_fpth.empty()) {
+
+		user.history[src_search_ctx_ID].label = label;
+		user.history[src_search_ctx_ID].screenshot_fpth =
+		  screenshot_fpth;
+	}
 
 	// Store likes for the logging purposees
 	auto old_likes{ user.ctx.likes };
@@ -218,15 +237,9 @@ SomHunter::rescore(const std::string &text_query,
 	                                      config.topn_frames_per_video,
 	                                      config.topn_frames_per_shot);
 
-	// Add this state to the history timeline
-	user.ctx.screenshot_fpth = screenshot_fpth;
+	push_search_ctx();
 
-	// Increment context ID
-	user.ctx.inc_ID();
-
-	user.history.emplace_back(user.ctx);
-
-	return RescoreResult{ user.history };
+	return RescoreResult{ user.ctx.ID, user.history };
 }
 
 bool
@@ -258,7 +271,7 @@ SomHunter::reset_search_session()
 	som_start();
 
 	// Delete the history
-	user.history.clear();
+	reset_search_history();
 }
 
 void
@@ -576,7 +589,7 @@ SomHunter::reset_scores()
 	user.ctx.scores.reset();
 }
 
-const SearchContext &
+const UserContext &
 SomHunter::switch_search_context(size_t index)
 {
 	// Range check
@@ -605,7 +618,7 @@ SomHunter::switch_search_context(size_t index)
 	user.async_SOM.start_work(features, user.ctx.scores);
 
 	// Returnp ptr to it
-	return destContext;
+	return user;
 }
 
 const SearchContext &

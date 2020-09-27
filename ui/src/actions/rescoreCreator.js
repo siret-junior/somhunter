@@ -6,14 +6,32 @@ import * as CS from "../constants";
 import { post } from "../apis/coreApi";
 import { crNotif, crHideNotif } from "./notificationCreator";
 import { crShowDisplay } from "./mainWindowCreator";
-import { createSetSearchState } from "./searchCreator";
-import { getTextQueryInput } from "../utils/utils";
+import { crSetQueryChanged } from "./indicatorCreator";
+import {
+  createSetUserHistory,
+  createFetchAndSetUserState,
+} from "./userCreator";
+import { getTextQueryInput, takeScreenshotOfElem } from "../utils/utils";
 
-export function createRescore(settings, destDisplay) {
+export function createRescore(s, destDisplay) {
   return async (dispatch, getState) => {
     const state = getState();
 
-    dispatch(crNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
+    // If no need for the rescore
+    // \todo This state is reset on refresh! If need to handle this,
+    //      store this dirty flag in the core/local storage
+    if (!state.indicators.queryChanged) {
+      return;
+    }
+
+    const srcSearchCtxId = state.user.search.id;
+
+    dispatch(crNotif(s, CS.GLOB_NOTIF_INFO, "Working..."));
+
+    // Take a screenshot
+    const screenData = await takeScreenshotOfElem(
+      document.getElementById("mainGrid")
+    );
 
     // Current text queries
     // \todo Do it propperly!
@@ -22,25 +40,37 @@ export function createRescore(settings, destDisplay) {
 
     // POST data
     const reqData = {
+      srcSearchCtxId: srcSearchCtxId,
+      screenshotData: screenData,
       q0: query0,
       q1: query1,
     };
 
     const requestSettings = config.api.endpoints.searchRescore;
     // << Core API >>
-    await post(dispatch, requestSettings.post.url, reqData);
+    const res = await post(dispatch, requestSettings.post.url, reqData);
     // << Core API >>
 
+    // If failed
+    if (!res) return;
+
+    const currCtxId = res.data.currId;
+    dispatch(createSetUserHistory(s, res.data.history, currCtxId));
+
     // Load the reset state
-    //dispatch(createSetSearchState(settings));
-    dispatch(crHideNotif(settings));
-    dispatch(crShowDisplay(settings, destDisplay, 0, 0));
+    dispatch(crHideNotif(s));
+
+    // Reset query changed flag
+    dispatch(crSetQueryChanged(s, false));
+
+    // Jump to the display
+    dispatch(crShowDisplay(s, destDisplay, 0, 0));
   };
 }
 
-export function createResetSearch(settings, destDisplay) {
+export function createResetSearch(s, destDisplay) {
   return async (dispatch, _) => {
-    dispatch(crNotif(settings, CS.GLOB_NOTIF_INFO, "Working..."));
+    dispatch(crNotif(scrollBy, CS.GLOB_NOTIF_INFO, "Working..."));
 
     const requestSettings = config.api.endpoints.searchReset;
     // << Core API >>
@@ -48,8 +78,8 @@ export function createResetSearch(settings, destDisplay) {
     // << Core API >>
 
     // Load the reset state
-    dispatch(createSetSearchState(settings));
-    dispatch(crNotif(settings, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000));
-    dispatch(crShowDisplay(settings, destDisplay, 0, 0));
+    dispatch(createFetchAndSetUserState(s));
+    dispatch(crNotif(s, CS.GLOB_NOTIF_SUCC, "Search reset.", "", 2000));
+    dispatch(crShowDisplay(s, destDisplay, 0, 0));
   };
 }

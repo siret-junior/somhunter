@@ -238,6 +238,9 @@ addGet(app, eps.searchContext, endpoints.searchContextGet);
 // Switches the current search context
 addPost(app, eps.searchContext, endpoints.searchContextPost);
 
+// Gets the user context
+addGet(app, eps.userContext, endpoints.userContextGet);
+
 app.use("/", somhunterRouter);
 app.use("/404", routerNotFound);
 

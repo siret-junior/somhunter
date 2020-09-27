@@ -9,6 +9,7 @@ import config, { strings } from "../../../__config_generated__.json";
 import * as CS from "../../../constants";
 import { useSettings } from "../../../hooks/useSettings";
 import { get, post } from "../../../apis/coreApi";
+import { crSetQueryChanged } from "../../../actions/indicatorCreator";
 
 import Frame from "./Frame";
 
@@ -21,6 +22,9 @@ async function onLikeHandler(s, props, gridElRef, frameId) {
   };
 
   const response = await post(dispatch, url, reqData);
+
+  // Set query changed flag
+  dispatch(crSetQueryChanged(s, true));
 
   // Flag ALL the frames accrodingly
   const grid = gridElRef.current;

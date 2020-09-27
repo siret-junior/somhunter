@@ -409,12 +409,57 @@ construct_result_from_SearchHistory(Napi::Env &env,
 			napi_set_property(env, hist_point, key, value);
 		}
 
+		{ // *** time ***
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "time", NAPI_AUTO_LENGTH, &key);
+			napi_value value;
+			napi_create_string_utf8(
+			  env, ctx.label.c_str(), NAPI_AUTO_LENGTH, &value);
+
+			napi_set_property(env, hist_point, key, value);
+		}
+
 		napi_set_element(env, result_arr, i, hist_point);
 
 		++i;
 	}
 
 	return Napi::Object(env, result_arr);
+}
+
+Napi::Value
+construct_result_from_RescoreResult(Napi::Env &env,
+                                    const RescoreResult &rescore_res)
+{
+	size_t curr_ctx_ID{ rescore_res.curr_ctx_ID };
+	const auto &history{ rescore_res.history };
+
+	// Return structure
+
+	napi_value result_obj;
+	napi_create_object(env, &result_obj);
+
+	{ /* *** currId *** */
+		napi_value key;
+		napi_create_string_utf8(env, "currId", NAPI_AUTO_LENGTH, &key);
+
+		napi_value value;
+		napi_create_uint32(env, curr_ctx_ID, &value);
+
+		napi_set_property(env, result_obj, key, value);
+	}
+
+	{ /* *** history *** */
+		napi_value key;
+		napi_create_string_utf8(env, "history", NAPI_AUTO_LENGTH, &key);
+
+		auto result_arr{ construct_result_from_SearchHistory(env,
+			                                             history) };
+		napi_set_property(env, result_obj, key, result_arr);
+	}
+
+	return Napi::Object(env, result_obj);
 }
 
 Napi::Value
@@ -425,7 +470,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 
 	// Process arguments
 	int length = info.Length();
-	if (length != 2) {
+	if (length != 5) {
 		Napi::TypeError::New(env, "Wrong number of arguments!")
 		  .ThrowAsJavaScriptException();
 	}
@@ -433,13 +478,22 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 	// Convert arguments
 	std::string user_token{ info[0].As<Napi::String>().Utf8Value() };
 	std::string query{ info[1].As<Napi::String>().Utf8Value() };
+	size_t src_search_ctx_ID{ info[2].As<Napi::Number>().Uint32Value() };
+	std::string screenshot{ info[3].As<Napi::String>().Utf8Value() };
+	std::string time_string{ info[4].As<Napi::String>().Utf8Value() };
+
+	std::cout << "SomHunter::rescore(): "
+	          << "src_search_ctx_ID=" << src_search_ctx_ID
+	          << "screenshot=" << screenshot
+	          << "time_string=" << time_string << std::endl;
 
 	try {
 		// << Core >>
-		auto [history]{ somhunter->rescore(query) };
+		auto rescore_res{ somhunter->rescore(
+		  query, src_search_ctx_ID, screenshot, time_string) };
 		// << Core >>
 
-		return construct_result_from_SearchHistory(env, history);
+		return construct_result_from_RescoreResult(env, rescore_res);
 
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
@@ -857,9 +911,9 @@ construct_result_from_SearchContext(Napi::Env &env,
 	}
 
 	{ /* *** ID ***
-	    ID: number; */
+	    id: number; */
 		napi_value key;
-		napi_create_string_utf8(env, "ID", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "id", NAPI_AUTO_LENGTH, &key);
 
 		size_t ID{ search_ctx.ID };
 
@@ -904,103 +958,31 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-construct_result_from_UserContext(Napi::Env &env,
-                                  const SearchContext &search_ctx)
+construct_result_from_UserContext(Napi::Env &env, const UserContext &user_ctx)
 {
-
 	// Return structure
 	napi_value result_obj;
 	napi_create_object(env, &result_obj);
 
-	{ /* *** textQueries ***
-	  textQueries: {
-		main: string; // The mail query
-		sub: string[] // Sub-frame queries
-	  }[] */
+	{ /* *** search *** */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "textQueries", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "search", NAPI_AUTO_LENGTH, &key);
 
-		napi_value value_arr;
-		napi_create_array(env, &value_arr);
-		{
-			// \todo This should be generalized in the future
-
-			std::string q0{};
-			std::string q1{};
-
-			// Scan the query string
-			const auto &query{ search_ctx.last_text_query };
-			auto idx{ query.find(">>") };
-
-			// If temporal
-			if (idx != std::string::npos) {
-				q0 = query.substr(0, idx);
-				q1 = query.substr(idx + 2);
-			}
-			// Else simple
-			else {
-				q0 = query;
-			}
-
-			// Conert them to the JS types
-			napi_value q0_napi;
-			napi_value q1_napi;
-			napi_create_string_utf8(
-			  env, q0.c_str(), NAPI_AUTO_LENGTH, &q0_napi);
-			napi_create_string_utf8(
-			  env, q1.c_str(), NAPI_AUTO_LENGTH, &q1_napi);
-			napi_set_element(env, value_arr, 0, q0_napi);
-			napi_set_element(env, value_arr, 1, q1_napi);
-		}
-
-		napi_set_property(env, result_obj, key, value_arr);
+		// Parse the search context
+		auto val{ construct_result_from_SearchContext(env,
+			                                      user_ctx.ctx) };
+		napi_set_property(env, result_obj, key, val);
 	}
 
-	{ /* *** displayType ***
-	   displayType: string; */
+	{ /* *** history *** */
+
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "displayType", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "history", NAPI_AUTO_LENGTH, &key);
 
-		auto curr_disp_type{ search_ctx.curr_disp_type };
-		auto disp_string{ disp_type_to_str(curr_disp_type) };
-
-		napi_value disp_string_napi;
-		napi_create_string_utf8(env,
-		                        disp_string.c_str(),
-		                        NAPI_AUTO_LENGTH,
-		                        &disp_string_napi);
-
-		napi_set_property(env, result_obj, key, disp_string_napi);
-	}
-
-	{ /* *** screenshotFilepath ***
-	   screenshotFilepath: string; */
-		napi_value key;
-		napi_create_string_utf8(
-		  env, "screenshotFilepath", NAPI_AUTO_LENGTH, &key);
-
-		auto str{ search_ctx.screenshot_fpth };
-
-		napi_value str_napi;
-		napi_create_string_utf8(
-		  env, str.c_str(), NAPI_AUTO_LENGTH, &str_napi);
-
-		napi_set_property(env, result_obj, key, str_napi);
-	}
-
-	{ /* *** ID ***
-		ID: number; */
-		napi_value key;
-		napi_create_string_utf8(env, "ID", NAPI_AUTO_LENGTH, &key);
-
-		size_t ID{ search_ctx.ID };
-
-		napi_value ID_napi;
-		napi_create_uint32(env, ID, &ID_napi);
-
-		napi_set_property(env, result_obj, key, ID_napi);
+		// Parse the search context
+		auto val{ construct_result_from_SearchHistory(
+		  env, user_ctx.history) };
+		napi_set_property(env, result_obj, key, val);
 	}
 
 	return Napi::Object(env, result_obj);
@@ -1024,12 +1006,12 @@ SomHunterNapi::get_user_context(const Napi::CallbackInfo &info)
 
 	try {
 		// << Core >>
-		const SearchContext &search_context =
-		  somhunter->get_search_context(/*user_token*/);
+		const UserContext &user_context =
+		  somhunter->get_user_context(/*user_token*/);
 		// << Core >>
 
 		// Return the processed result
-		return construct_result_from_SearchContext(env, search_context);
+		return construct_result_from_UserContext(env, user_context);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -1056,13 +1038,13 @@ SomHunterNapi::switch_search_context(const Napi::CallbackInfo &info)
 
 	try {
 		// << Core >>
-		const SearchContext &search_context =
+		const UserContext &user_context =
 		  somhunter->switch_search_context(
 		    /*user_token, */ search_ctx_ID);
 		// << Core >>
 
 		// Return the processed result
-		return construct_result_from_SearchContext(env, search_context);
+		return construct_result_from_UserContext(env, user_context);
 	} catch (const std::exception &e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}

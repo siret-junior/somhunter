@@ -53,11 +53,7 @@ public:
 
 	bool operator==(const SearchContext &other) const;
 
-	void inc_ID() { ID = next_ID++; };
-
 public:
-	inline static size_t next_ID{ 0 };
-
 	// VBS logging
 	UsedTools used_tools;
 
@@ -79,6 +75,7 @@ public:
 	std::string screenshot_fpth{};
 
 	size_t ID;
+	std::string label{ "" };
 };
 
 /** Represents exactly one state of ONE user that uses this core. */
@@ -114,6 +111,7 @@ struct GetDisplayResult
 /** Result type `rescore` returns */
 struct RescoreResult
 {
+	size_t curr_ctx_ID;
 	const std::vector<SearchContext> &history;
 };
 
@@ -168,7 +166,9 @@ public:
 	 * (including the current one).
 	 */
 	RescoreResult rescore(const std::string &text_query,
-	                      const std::string &screenshot_fpth = ""s);
+	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
+	                      const std::string &screenshot_fpth = ""s,
+	                      const std::string &label = ""s);
 
 	/** Switches the search context for the user to the provided index in
 	 *  the history and returns reference to it.
@@ -176,7 +176,7 @@ public:
 	 * To be extended with the `user_token` argument with multiple users
 	 * support.
 	 */
-	const SearchContext &switch_search_context(size_t index);
+	const UserContext &switch_search_context(size_t index);
 
 	/**
 	 * Returns a reference to the current user's search context.
@@ -251,6 +251,24 @@ private:
 	FramePointerRange get_page_from_last(PageId page);
 
 	void reset_scores();
+
+	/** Adds currently active search context to the history and starts a new
+	 * context (with next contiguous ID number) */
+	void push_search_ctx()
+	{
+		// Increment context ID
+		user.ctx.ID = user.history.size();
+		user.history.emplace_back(user.ctx);
+	}
+
+	/** Resets the current history and search session and starts new history
+	 * (from ID 0) */
+	void reset_search_history()
+	{
+		user.ctx.ID = 0;
+		user.history.clear();
+		user.history.emplace_back(user.ctx);
+	}
 
 	/** The tester class */
 	friend TESTER_SomHunter;

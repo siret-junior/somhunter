@@ -6,11 +6,13 @@ import * as CS from "../constants";
 export type IndicatorState = {
   loginWarning: boolean;
   notSendingWarning: boolean;
+  queryChanged: boolean;
 };
 
 const defaultState: IndicatorState = {
   loginWarning: false,
   notSendingWarning: false,
+  queryChanged: false,
 };
 
 function indicatorReducer(
@@ -23,6 +25,9 @@ function indicatorReducer(
 
     case CS.SHOW_NOT_SENDING_WARNING:
       return { ...state, notSendingWarning: action.payload };
+
+    case CS.SET_QUERY_CHANGED:
+      return { ...state, queryChanged: action.payload };
 
     default:
       break;

@@ -68,6 +68,11 @@
                 "post": {
                     "url": "/search/context"
                 }
+            },
+            "userContext": {
+                "get": {
+                    "url": "/user/context"
+                }
             }
         }
     },

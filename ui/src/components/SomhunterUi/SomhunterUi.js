@@ -17,7 +17,7 @@ import { crShowDisplay } from "../../actions/mainWindowCreator";
 import { crNotif, crHideNotif } from "../../actions/notificationCreator";
 import { createRescore } from "../../actions/rescoreCreator";
 import { createSetCoreSettings } from "../../actions/settingsCreator";
-import { createSetSearchState } from "../../actions/searchCreator";
+import { createFetchAndSetUserState } from "../../actions/userCreator";
 
 import CriticalErrorWindow from "./CriticalErrorWindow";
 import LoadingWindow from "./LoadingWindow";
@@ -30,7 +30,7 @@ function getErrorWindowJsx() {
   return (
     <CriticalErrorWindow
       title={strings.ui.UNABLE_TO_FETCH_SEARCH_STATE_HEADING}
-      body={`${strings.ui.UNABLE_TO_FETCH_SEARCH_STATE_DESC} '${config.backendUrl}${config.coreSearchUrl}'`}
+      body={`${strings.ui.UNABLE_TO_FETCH_SEARCH_STATE_DESC} '${config.api.url}${config.api.endpoints.userContext.get.url}'`}
       action={strings.ui.UNABLE_TO_FETCH_SEARCH_STATE_ACTION}
       actionHandler={() => window.location.reload()}
     />
@@ -125,23 +125,23 @@ function initializeUi(s, props) {
   // Fail callback
   const fail = () => null;
 
-  s.dispatch(createSetSearchState(s, succ, fail));
+  s.dispatch(createFetchAndSetUserState(s, succ, fail));
 }
 
 function SomhunterUi(props) {
   const settings = useSettings();
-  const searchState = props.search;
+  const userState = props.user;
 
   // Initial setup
   useEffect(() => initializeUi(settings, props), []);
 
   // If initialize FAILED
-  if (searchState === null) {
+  if (userState === null) {
     console.debug("<SomhunterUi>: Rendering... (ERROR LOADING SEARCH STATE)");
     return getErrorWindowJsx();
   }
   // If still LOADING
-  else if (_.isEmpty(searchState)) {
+  else if (_.isEmpty(userState)) {
     console.debug("<SomhunterUi>: Rendering... (LOADING)");
     return getLoadingJsx();
   }
@@ -167,8 +167,8 @@ function SomhunterUi(props) {
   }
 }
 
-const stateToProps = ({ search }) => {
-  return { search };
+const stateToProps = ({ user }) => {
+  return { user };
 };
 
 const actionCreators = {

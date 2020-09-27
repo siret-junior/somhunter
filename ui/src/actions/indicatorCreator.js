@@ -13,3 +13,10 @@ export function createShowNotSendingWarning(settings, value) {
     payload: value,
   };
 }
+
+export function crSetQueryChanged(settings, value) {
+  return {
+    type: CS.SET_QUERY_CHANGED,
+    payload: value,
+  };
+}

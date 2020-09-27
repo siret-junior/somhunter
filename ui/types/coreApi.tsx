@@ -22,6 +22,10 @@ export type CoreApiEndpoint = {
   post?: { url: string };
 };
 
+export type CoreApiRescoreResponse = {
+  history: { id: number; screenshotFilepath: string }[];
+};
+
 /** Type returned by the Core API `/settings/info` endpoint. */
 export type CoreApiConfig = {
   generated: string;

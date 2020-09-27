@@ -6,6 +6,12 @@
         "coreConfigFilepath": "config.json",
         "logsDir": "logs/",
         "uiRoot": "ui/",
+        "uiImgDir": "ui/public/assets/img/",
+
+        "screenshotDefault": "/assets/img/history_screenshot.jpg",
+        "uiTempImgDirPub": "/assets/img/tmp",
+        "uiTempImgDir": "ui/public/assets/img/tmp",
+
         "uiConfigFilepath": "ui/src/__config_generated__.json"
     },
     "staging": {
