@@ -23,5 +23,7 @@
 	"kw_PCA_mat_dim": 128,
 	"pre_PCA_features_dim": 2048,
 	"kw_PCA_mean_vec_file": "data/v3c1_w2vv/V3C1_20191228.w2vv.pca.mean.bin",
-	"kw_PCA_mat_file": "data/v3c1_w2vv/V3C1_20191228.w2vv.pca.matrix.bin"
+	"kw_PCA_mat_file": "data/v3c1_w2vv/V3C1_20191228.w2vv.pca.matrix.bin",
+		
+  "LSC_metadata_file": ""
 }
