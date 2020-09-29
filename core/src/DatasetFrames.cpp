@@ -80,15 +80,37 @@ DatasetFrames::DatasetFrames(const Config &config)
 	frames_path_prefix = config.frames_path_prefix;
 	offs = config.filename_offsets;
 
-	info("Loading image paths");
+	info("Loading frames...");
 
+	// Open the "frames list" file
 	std::ifstream in(config.frames_list_file);
 	if (!in.good()) {
-		warn("Failed to open " << config.frames_list_file);
-		throw std::runtime_error("missing image list");
+		auto msg{ "Failed to open " + config.frames_list_file };
+		warn(msg);
+#ifndef NDEBUG
+		throw std::runtime_error(msg);
+#endif
 	}
 
-	{ // We can precompute this into binary file as well
+	bool parse_metadata{ false };
+	std::ifstream ifs_meta;
+
+	// If metadata file available
+	if (!config.LSC_metadata_file.empty()) {
+		parse_metadata = true;
+
+		ifs_meta.open(config.LSC_metadata_file);
+		if (!ifs_meta.good()) {
+			auto msg{ "Failed to open " +
+				  config.LSC_metadata_file };
+			warn(msg);
+#ifndef NDEBUG
+			throw std::runtime_error(msg);
+#endif
+		}
+	}
+
+	{
 
 		ImageId i = 0;
 		size_t prev_frame_vid_ID = SIZE_T_ERR_VAL;
@@ -96,12 +118,34 @@ DatasetFrames::DatasetFrames(const Config &config)
 		size_t beg_img_ID = SIZE_T_ERR_VAL;
 		std::vector<std::pair<size_t, size_t>> range_pairs;
 
+		std::string md_line;
 		for (std::string s; getline(in, s); ++i) {
 
 			std::string tmp;
 
 			auto vf =
 			  DatasetFrames::parse_video_filename(std::move(s));
+
+			if (parse_metadata) {
+
+				// Read one metadata line
+				if (!getline(ifs_meta, md_line)) {
+#ifndef NDEBUG
+					auto msg{ "Not enough lines in " +
+						  config.LSC_metadata_file };
+					warn(msg);
+					throw std::runtime_error(msg);
+#endif
+				}
+
+				// Parse this line
+				auto [weekday,
+				      hour]{ DatasetFrames::parse_metadata_line(
+				  md_line) };
+
+				vf.weekday = weekday;
+				vf.hour = hour;
+			}
 
 			vf.frame_ID = i;
 
@@ -139,10 +183,10 @@ DatasetFrames::DatasetFrames(const Config &config)
 		}
 	}
 
-	if (size() == 0u)
-		warn("No image paths loaded");
+	if (size() == 0_z)
+		warn("No frames loaded");
 	else
-		info("Loaded " << size() << " image paths");
+		info("Loaded " << size() << " frames.");
 }
 
 VideoFrame
@@ -165,6 +209,21 @@ DatasetFrames::parse_video_filename(std::string &&filename)
 	                  str_to_int(shotIdString),
 	                  str_to_int(frameNumberString),
 	                  0);
+}
+
+std::tuple<Weekday, Hour>
+DatasetFrames::parse_metadata_line(const std::string &line)
+{
+	// EXAMPLE `line`: 20160815,509,2016-08-15_06:09,53.3892,0,-6.15827,Home
+
+	auto tokens{ split(line, ',') };
+
+	auto datetime_str{ tokens[2].substr(11, 2) };
+	Hour h{ static_cast<Hour>(str2<size_t>(datetime_str)) };
+
+	Weekday wd{ static_cast<Weekday>(str2<size_t>(tokens[5])) };
+
+	return std::tuple{ wd, h };
 }
 
 std::vector<VideoFramePointer>

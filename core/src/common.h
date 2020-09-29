@@ -197,4 +197,7 @@ struct SubmitData
 
 using PageId = unsigned;
 
+using Weekday = uint8_t;
+using Hour = uint8_t;
+
 #endif // COMMON_H_

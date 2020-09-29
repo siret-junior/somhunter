@@ -344,4 +344,18 @@ frand(T from, T to)
 	return dist(gen);
 }
 
+inline std::vector<std::string>
+split(const std::string &str, char delim)
+{
+	std::vector<std::string> result;
+	std::stringstream ss(str);
+	std::string item;
+
+	while (getline(ss, item, delim)) {
+		result.emplace_back(item);
+	}
+
+	return result;
+}
+
 #endif // UTILS_H_

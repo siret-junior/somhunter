@@ -1,4 +1,5 @@
 
+
 /* This file is part of SOMHunter.
  *
  * Copyright (C) 2020 František Mejzlík <frankmejzlik@gmail.com>
@@ -62,10 +63,10 @@ struct VideoFrame
 	// *** LSC medadata ***
 
 	/** Day in a week (mon -> 0, ..., sun -> 7). */
-	uint8_t weekday;
+	Weekday weekday;
 
 	/** In interval [0, 23]. */
-	uint8_t hour;
+	Hour hour;
 };
 
 /**
@@ -274,6 +275,11 @@ private:
 	 * etc.
 	 */
 	VideoFrame parse_video_filename(std::string &&filename);
+
+	/**
+	 * Parses the desired metadata from the metadata line.
+	 */
+	std::tuple<Weekday, Hour> parse_metadata_line(const std::string &line);
 };
 
 #endif
