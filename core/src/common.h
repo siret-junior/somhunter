@@ -51,6 +51,14 @@ using FeatureVector = std::vector<float>;
 #define IMAGE_ID_ERR_VAL (std::numeric_limits<ImageId>::max)()
 #define VIDEO_ID_ERR_VAL (std::numeric_limits<VideoId>::max)()
 
+/** Value indicating error/invalid/"NULL" value for the given type. */
+template<typename T>
+constexpr T
+ERR_VAL()
+{
+	return std::numeric_limits<T>::max();
+}
+
 enum class DisplayType
 {
 	DNull,

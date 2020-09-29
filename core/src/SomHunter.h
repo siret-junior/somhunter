@@ -22,6 +22,7 @@
 #ifndef somhunter_h
 #define somhunter_h
 
+#include <array>
 #include <set>
 #include <string>
 #include <vector>
@@ -35,10 +36,60 @@
 
 class TESTER_SomHunter;
 
+class WeekDaysFilter
+{
+public:
+	/** Default state is all dayes */
+	WeekDaysFilter() { _days.fill(true); }
+
+	bool mon() const { return _days[0]; }
+	bool tue() const { return _days[1]; }
+	bool wed() const { return _days[2]; }
+	bool thr() const { return _days[3]; }
+	bool fri() const { return _days[4]; }
+	bool sat() const { return _days[5]; }
+	bool sun() const { return _days[6]; }
+
+	bool mon(bool val) { _days[0] = val; }
+	bool tue(bool val) { _days[1] = val; }
+	bool wed(bool val) { _days[2] = val; }
+	bool thr(bool val) { _days[3] = val; }
+	bool fri(bool val) { _days[4] = val; }
+	bool sat(bool val) { _days[5] = val; }
+	bool sun(bool val) { _days[6] = val; }
+
+private:
+	std::array<bool, 7> _days;
+};
+
+class TimeFilter
+{
+public:
+	/** Default state is the whole day */
+	TimeFilter()
+	  : _from(0)
+	  , _to(24){};
+	TimeFilter(size_t from, size_t to)
+	  : _from(from)
+	  , _to(to){};
+
+private:
+	size_t _from;
+	size_t _to;
+};
+
+/** Container for all the available filters for the rescore */
+struct Filters
+{
+	TimeFilter _time;
+	WeekDaysFilter _days;
+};
+
 using LikesCont = std::set<ImageId>;
 using ShownFramesCont = std::set<ImageId>;
 
-/** Represents exactly one momentary state of a search session.
+/**
+ * Represents exactly one momentary state of a search session.
  *
  * It can be ome point in HISTORY.
  */
@@ -166,6 +217,13 @@ public:
 	 * (including the current one).
 	 */
 	RescoreResult rescore(const std::string &text_query,
+	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
+	                      const std::string &screenshot_fpth = ""s,
+	                      const std::string &label = ""s);
+
+	/** Works as `rescore` but applies also the provided filters. */
+	RescoreResult rescore(const std::string &text_query,
+	                      const Filters &filters,
 	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
 	                      const std::string &screenshot_fpth = ""s,
 	                      const std::string &label = ""s);

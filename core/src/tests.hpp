@@ -45,10 +45,14 @@ public:
 		SomHunter core{ config };
 
 		print("Running all the SomHunter class tests...");
-
+#if 0
 		TEST_like_frames(core);
 		TEST_autocomplete_keywords(core);
 		TEST_rescore(core);
+#endif
+
+		TEST_rescore_time_filter(core);
+		TEST_rescore_day_filter(core);
 
 		print("====================================================");
 		print("\tIf you got here, all `SomHunter` tests were OK...");
@@ -261,6 +265,21 @@ private:
 #endif
 
 		print("\t Testing `SomHunter::TEST_rescore` finished.");
+	}
+
+
+	static void TEST_rescore_time_filter(SomHunter& core)
+	{
+		print("\t Testing `SomHunter::TEST_rescore` score filter...");
+
+		print("\t Testing `SomHunter::TEST_rescore` score filter finished...");
+	}
+
+	static void TEST_rescore_day_filter(SomHunter& core)
+	{
+		print("\t Testing `SomHunter::TEST_rescore` day filter...");
+
+		print("\t Testing `SomHunter::TEST_rescore` day filter finished...");
 	}
 };
 

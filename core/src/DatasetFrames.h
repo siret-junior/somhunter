@@ -37,16 +37,20 @@ using VideoFramePointer = const VideoFrame *;
 
 struct VideoFrame
 {
-	inline VideoFrame(std::string &&filename,
-	                  VideoId video_ID,
-	                  ShotId shot_ID,
-	                  ImageId frame_number,
-	                  ImageId image_ID)
-	  : filename(std::move(filename))
-	  , video_ID(video_ID)
-	  , shot_ID(shot_ID)
-	  , frame_number(frame_number)
-	  , frame_ID(image_ID)
+	VideoFrame(std::string &&filename,
+	           VideoId video_ID,
+	           ShotId shot_ID,
+	           ImageId frame_number,
+	           ImageId image_ID,
+	           uint8_t weekday = ERR_VAL<uint8_t>(),
+	           uint8_t hour = ERR_VAL<uint8_t>())
+	  : filename{ std::move(filename) }
+	  , video_ID{ video_ID }
+	  , shot_ID{ shot_ID }
+	  , frame_number{ frame_number }
+	  , frame_ID{ image_ID }
+	  , weekday{ weekday }
+	  , hour{ hour }
 	{}
 
 	std::string filename;
@@ -54,6 +58,14 @@ struct VideoFrame
 	ShotId shot_ID;
 	ImageId frame_number;
 	ImageId frame_ID;
+
+	// *** LSC medadata ***
+
+	/** Day in a week (mon -> 0, ..., sun -> 7). */
+	uint8_t weekday;
+
+	/** In interval [0, 23]. */
+	uint8_t hour;
 };
 
 /**

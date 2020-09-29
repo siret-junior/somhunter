@@ -242,6 +242,16 @@ SomHunter::rescore(const std::string &text_query,
 	return RescoreResult{ user.ctx.ID, user.history };
 }
 
+RescoreResult
+SomHunter::rescore(const std::string &text_query,
+                   const Filters &filters,
+                   size_t src_search_ctx_ID,
+                   const std::string &screenshot_fpth,
+                   const std::string &label)
+{
+	return RescoreResult{ 0, {} };
+}
+
 bool
 SomHunter::som_ready() const
 {
