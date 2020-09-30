@@ -55,6 +55,10 @@ $theme-colors: (
 //   "green": #00ff00,
 // );
 
+.main-window {
+  background: map-get($theme-colors, "primary");
+}
+
 .cont-btn {
   padding: 0.4rem 0.4rem 0 0;
 

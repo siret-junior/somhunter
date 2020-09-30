@@ -14,6 +14,9 @@
                 "src/KeywordRanker.cpp",
                 "src/RelevanceScores.cpp",
                 "src/Submitter.cpp",
+                "src/UserContext.cpp",
+                "src/SearchContext.cpp",
+                "src/Filters.cpp",
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")",
@@ -35,7 +38,7 @@
                     "AdditionalOptions": [
                         "-std:c++17"
                     ]
-                }
+                } 
             },
             "conditions": [
                 [

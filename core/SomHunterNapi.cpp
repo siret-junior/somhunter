@@ -23,6 +23,7 @@
 #include <stdexcept>
 
 #include "SomHunterNapi.h"
+
 #include "common.h"
 
 Napi::FunctionReference SomHunterNapi::constructor;
@@ -97,6 +98,9 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 	napi_value result;
 	napi_create_object(env, &result);
 
+	const auto &likes{ display_frames.likes };
+	const auto &bookmarks{ display_frames.bookmarks };
+
 	// Set "page"
 	{
 		napi_value key;
@@ -130,6 +134,7 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 					ImageId v_ID{ IMAGE_ID_ERR_VAL };
 					ImageId s_ID{ IMAGE_ID_ERR_VAL };
 					bool is_liked{ false };
+					bool is_bookmarked{ false };
 					std::string filename{};
 
 					if ((*it) != nullptr) {
@@ -137,12 +142,15 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 						v_ID = (*it)->video_ID;
 						s_ID = (*it)->shot_ID;
 						is_liked =
-						  (display_frames.likes.count(
-						     ID) > 0
-						     ? true
-						     : false);
+						  (likes.count(ID) > 0 ? true
+						                       : false);
 						filename =
 						  path_prefix + (*it)->filename;
+
+						is_bookmarked =
+						  (bookmarks.count(ID) > 0
+						     ? true
+						     : false);
 					}
 
 					{
@@ -225,6 +233,22 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 						napi_value value;
 						napi_get_boolean(
 						  env, is_liked, &value);
+
+						napi_set_property(
+						  env, obj, key, value);
+					}
+
+					{ // *** bookmarked ***
+						napi_value key;
+						napi_create_string_utf8(
+						  env,
+						  "bookmarked",
+						  NAPI_AUTO_LENGTH,
+						  &key);
+
+						napi_value value;
+						napi_get_boolean(
+						  env, is_bookmarked, &value);
 
 						napi_set_property(
 						  env, obj, key, value);
@@ -470,7 +494,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 
 	// Process arguments
 	int length = info.Length();
-	if (length != 5) {
+	if (length != 6) {
 		Napi::TypeError::New(env, "Wrong number of arguments!")
 		  .ThrowAsJavaScriptException();
 	}
@@ -478,14 +502,33 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 	// Convert arguments
 	std::string user_token{ info[0].As<Napi::String>().Utf8Value() };
 	std::string query{ info[1].As<Napi::String>().Utf8Value() };
-	size_t src_search_ctx_ID{ info[2].As<Napi::Number>().Uint32Value() };
-	std::string screenshot{ info[3].As<Napi::String>().Utf8Value() };
-	std::string time_string{ info[4].As<Napi::String>().Utf8Value() };
+
+	// Convert filters argument
+	Napi::Object o{ info[2].As<Napi::Object>() };
+	Hour from{ Hour(o.Get("hourFrom").As<Napi::Number>().Uint32Value()) };
+	Hour to{ Hour(o.Get("hourTo").As<Napi::Number>().Uint32Value()) };
+	uint8_t weekdays_mask{ uint8_t(
+	  o.Get("weekdaysMask").As<Napi::Number>().Uint32Value()) };
+
+	size_t src_search_ctx_ID{ info[3].As<Napi::Number>().Uint32Value() };
+	std::string screenshot{ info[4].As<Napi::String>().Utf8Value() };
+	std::string time_string{ info[5].As<Napi::String>().Utf8Value() };
+
+	Filters filters{ TimeFilter{ from, to },
+		         WeekDaysFilter{ weekdays_mask } };
+
+	std::cout << "Calling `rescore` with filters: "
+	          << "\n\t from=" << size_t(from) << "\n\t to=" << size_t(to)
+	          << "\n\t weekdays_mask=" << size_t(weekdays_mask)
+	          << std::endl;
 
 	try {
 		// << Core >>
-		auto rescore_res{ somhunter->rescore(
-		  query, src_search_ctx_ID, screenshot, time_string) };
+		auto rescore_res{ somhunter->rescore(query,
+			                             &filters,
+			                             src_search_ctx_ID,
+			                             screenshot,
+			                             time_string) };
 		// << Core >>
 
 		return construct_result_from_RescoreResult(env, rescore_res);

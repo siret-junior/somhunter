@@ -405,8 +405,16 @@ exports.rescore = function (req, res) {
   // \todo Temporal...
   const user_token = global.coreCfg.user_token;
 
+  // \todo Dummy data
+  const filters = {
+    hourFrom: 1,
+    hourTo: 24,
+    /* 0x3F: 0011 1111 */
+    weekdaysMask: 0x3f,
+  };
+
   // << Core NAPI >>
-  const history = global.core.rescore(user_token, textQuery, srcSearchCtxId, screenshotFilename, timeStr);
+  const history = global.core.rescore(user_token, textQuery, filters, srcSearchCtxId, screenshotFilename, timeStr);
   // << Core NAPI >>
 
   res.status(200).jsonp(history);

@@ -6,13 +6,13 @@
         "coreConfigFilepath": "config.json",
         "logsDir": "logs/",
         "uiRoot": "ui/",
-        "uiImgDir": "ui/public/assets/img/",
+        "uiImgDir": "c:/Users/frank/source/repos/LightSOMHunter/ui/public/assets/img/",
 
         "screenshotDefault": "/assets/img/history_screenshot.jpg",
         "uiTempImgDirPub": "/assets/img/tmp",
-        "uiTempImgDir": "ui/public/assets/img/tmp",
+        "uiTempImgDir": "c:/Users/frank/source/repos/LightSOMHunter/ui/public/assets/img/tmp",
 
-        "uiConfigFilepath": "ui/src/__config_generated__.json"
+        "uiConfigFilepath": "c:/Users/frank/source/repos/LightSOMHunter/ui/src/__config_generated__.json"
     },
     "staging": {
     },

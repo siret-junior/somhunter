@@ -302,6 +302,8 @@ SomHunter::reset_search_session()
 
 	// Delete the history
 	reset_search_history();
+
+	user.ctx.reset_mask();
 }
 
 void
