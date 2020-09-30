@@ -82,7 +82,7 @@ public:
 		std::transform(_mask.begin(),
 		               _mask.end(),
 		               _mask.begin(),
-		               [](const bool &x) { return true; });
+		               [](const bool &) { return true; });
 	};
 
 	/** Returns the current value for the frame */

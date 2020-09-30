@@ -47,8 +47,7 @@ public:
 	SearchContext() = delete;
 	SearchContext(size_t ID,
 	              const Config &cfg,
-	              const DatasetFrames &frames,
-	              const DatasetFeatures &features);
+	              const DatasetFrames &frames);
 
 	bool operator==(const SearchContext &other) const;
 

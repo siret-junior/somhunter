@@ -318,12 +318,12 @@ private:
 		print("\t Testing `SomHunter::TEST_rescore` score filter...");
 
 		std::vector<std::tuple<std::string, Hour, Hour, uint8_t>> input{
-			{"", 0, 24, 0x0000}, // Empty result
-			{"cat", 0, 0, 0x03FF}, // Only 00:xx 
-			{"", 9, 17, 0x0001}, // 9-17h, mondays
-			{"", 17, 17, 0x0001}, // 9-17h, mondays
-			{"", 12, 12, 0x0003}, // 12h, mondays, wednesdays
-			{"", 0, 24, 0x0003}, // all hours, mondays, wednesdays, fridays
+			{ "", Hour(0), Hour(24), uint8_t(0x00) }, // Empty result
+			{ "cat", Hour(0), Hour(0), uint8_t(0x3F) }, // Only 00:xx 
+			{ "", Hour(9), Hour(17), uint8_t(0x01) }, // 9-17h, mondays
+			{ "", Hour(17), Hour(17), uint8_t(0x01) }, // 9-17h, mondays
+			{ "", Hour(12), Hour(12), uint8_t(0x03) }, // 12h, mondays, wednesdays
+			{ "", Hour(0), Hour(24), uint8_t(0x03) }, // all hours, mondays, wednesdays, fridays
 		};
 
 		std::vector<std::vector<ImageId>> spec_tests;
@@ -450,7 +450,7 @@ const char *json_contents = R"(
 class TESTER_Config
 {
 public:
-	static void run_all_tests(const std::string &cfg_fpth)
+	static void run_all_tests(const std::string &/*cfg_fpth*/)
 	{
 		print("====================================================");
 		print("\tInitializing the `Config` struct tests...");

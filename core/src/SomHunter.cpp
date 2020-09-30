@@ -35,32 +35,31 @@ SomHunter::get_display(DisplayType d_type,
 {
 	user.submitter.poll();
 
-	FramePointerRange frames{};
+	FramePointerRange frs{};
 
 	switch (d_type) {
 		case DisplayType::DRand:
-			frames = get_random_display();
+			frs = get_random_display();
 			break;
 
 		case DisplayType::DTopN:
-			frames = get_topn_display(page);
+			frs = get_topn_display(page);
 			break;
 
 		case DisplayType::DTopNContext:
-			frames = get_topn_context_display(page);
+			frs = get_topn_context_display(page);
 			break;
 
 		case DisplayType::DSom:
-			frames = get_som_display();
+			frs = get_som_display();
 			break;
 
 		case DisplayType::DVideoDetail:
-			frames =
-			  get_video_detail_display(selected_image, log_it);
+			frs = get_video_detail_display(selected_image, log_it);
 			break;
 
 		case DisplayType::DTopKNN:
-			frames = get_topKNN_display(selected_image, page);
+			frs = get_topKNN_display(selected_image, page);
 			break;
 
 		default:
@@ -73,7 +72,7 @@ SomHunter::get_display(DisplayType d_type,
 			break;
 	}
 
-	return GetDisplayResult{ frames, user.ctx.likes, user.ctx.bookmarks };
+	return GetDisplayResult{ frs, user.ctx.likes, user.ctx.bookmarks };
 }
 
 std::vector<bool>

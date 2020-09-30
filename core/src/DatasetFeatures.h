@@ -54,7 +54,7 @@ public:
 		return get_top_knn(
 		  frames,
 		  id,
-		  [](ImageId frame_ID) { return true; },
+		  [](ImageId /*frame_ID*/) { return true; },
 		  per_vid_limit,
 		  from_shot_limit);
 	}

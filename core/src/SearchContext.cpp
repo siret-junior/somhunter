@@ -25,9 +25,8 @@
 #include "DatasetFrames.h"
 
 SearchContext::SearchContext(size_t ID,
-                             const Config &cfg,
-                             const DatasetFrames &frames,
-                             const DatasetFeatures &features)
+                             const Config & /*cfg*/,
+                             const DatasetFrames &frames)
   : ID(ID)
   , scores(frames)
 {}

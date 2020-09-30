@@ -70,6 +70,7 @@ hswap(dist_id &a, dist_id &b)
 	b = c;
 }
 
+#if 0
 static void
 heap_down(dist_id *heap, size_t start, size_t lim)
 {
@@ -99,6 +100,7 @@ heap_down(dist_id *heap, size_t start, size_t lim)
 			break;
 	}
 }
+#endif
 
 void
 som(size_t /*n*/,
