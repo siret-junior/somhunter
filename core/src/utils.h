@@ -358,4 +358,11 @@ split(const std::string &str, char delim)
 	return result;
 }
 
+template<typename T>
+bool
+is_set(T mask, size_t i)
+{
+	return ((mask >> i) & 0x01) == 1;
+}
+
 #endif // UTILS_H_

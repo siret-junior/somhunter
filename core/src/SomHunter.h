@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 
+#include "utils.h"
+
 #include "AsyncSom.h"
 #include "DatasetFeatures.h"
 #include "DatasetFrames.h"
@@ -41,6 +43,15 @@ class WeekDaysFilter
 public:
 	/** Default state is all dayes */
 	WeekDaysFilter() { _days.fill(true); }
+
+	/** Construct from the bit mask */
+	WeekDaysFilter(uint8_t mask)
+	{
+		// Set the according days, ignore the last 2 bits
+		for (size_t i{ 0 }; i < 7; ++i) {
+			_days[i] = is_set(mask, i);
+		}
+	}
 
 	const bool &operator[](size_t i) const { return _days[i]; }
 
@@ -204,7 +215,7 @@ public:
 	 * (including the current one).
 	 */
 	RescoreResult rescore(const std::string &text_query,
-	                      Filters filters = Filters{},
+	                      const Filters *p_filters = nullptr,
 	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
 	                      const std::string &screenshot_fpth = ""s,
 	                      const std::string &label = ""s);
@@ -221,7 +232,7 @@ public:
 	  const std::string &screenshot_fpth = "",
 	  const std::string &label = "");
 
-	void apply_filters(const Filters &filters);
+	void apply_filters(const Filters *filters);
 
 	/**
 	 * Returns a reference to the current user's search context.

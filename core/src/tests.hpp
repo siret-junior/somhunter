@@ -272,25 +272,57 @@ private:
 	{
 		print("\t Testing `SomHunter::TEST_rescore` score filter...");
 
-		Filters fs{
-			TimeFilter{6,10},
-			WeekDaysFilter{}
+		std::vector<std::tuple<std::string, Hour, Hour, uint8_t>> input{
+			{"", 0, 24, 0x0000}, // Empty result
+			{"cat", 0, 0, 0x03FF}, // Only 00:xx 
+			{"", 9, 17, 0x0001}, // 9-17h, mondays
+			{"", 17, 17, 0x0001}, // 9-17h, mondays
+			{"", 12, 12, 0x0003}, // 12h, mondays, wednesdays
+			{"", 0, 24, 0x0003}, // all hours, mondays, wednesdays, fridays
 		};
 
-		fs.days[0] = true;
-		fs.days[1] = false;
-		fs.days[2] = false;
-		fs.days[3] = false;
-		fs.days[4] = false;
-		fs.days[5] = false;
-		fs.days[6] = false;
+		std::vector<std::vector<ImageId>> spec_tests;
+#ifdef TESTING_LSC5DAYS_DATASET
+		spec_tests.emplace_back(std::vector<ImageId>{});
+		spec_tests.emplace_back(std::vector<ImageId>{ 1769 });
+		spec_tests.emplace_back(std::vector<ImageId>{ 356 });
+		spec_tests.emplace_back(std::vector<ImageId>{ 356 });
+		spec_tests.emplace_back(std::vector<ImageId>{ 752, 193 });
+		spec_tests.emplace_back(std::vector<ImageId>{ 977,508 });
+#endif
 
+		size_t t_i{ 0 };
+		for (auto&& [tq, fr, to, days_mask] : input) {
 
-		core.rescore("", fs);
-		auto t{ core.get_topn_display(0) };
+			Filters fs{
+				TimeFilter{fr,to},
+				WeekDaysFilter{days_mask}
+			};
 
-		for (auto&& f : t) {
-			std::cout << "H: " << size_t(f->hour) << " WD: " << size_t(f->weekday) << std::endl;
+			core.rescore(tq, &fs);
+			auto disp{ core.get_topn_display(0) };
+
+			size_t i{ 0 };
+			for (auto&& f : disp) {
+				ASSERT(fr <= f->hour && f->hour <= to, "Should not be in the result.");
+				ASSERT(is_set(days_mask, f->weekday), "Should not be in the result.");
+
+				// Dataset specific tests
+				if (spec_tests[t_i].size() > i) {
+					ASSERT(spec_tests[t_i][i] == f->frame_ID, "Incorrect frame ID.");
+				}
+
+				//std::cout << "H: " << size_t(f->hour) << " WD: " << size_t(f->weekday) << ", ID: " << f->frame_ID << std::endl;
+				++i;
+			}
+			
+			// Empty case
+			if (spec_tests[t_i].empty()) {
+				ASSERT(disp.begin() == disp.end(), "Should be empty.");
+			}
+
+			//std::cout << "\n ================================== \n" << std::endl;
+			++t_i;
 		}
 
 		print("\t Testing `SomHunter::TEST_rescore` score filter finished...");

@@ -31,54 +31,102 @@
 
 class ScoreModel
 {
-	// assert: all scores are always > 0
-	std::vector<float> scores;
+	/** Current score distribution for the frames. */
+	std::vector<float> _scores;
+
+	/**
+	 * Frames mask telling what frames should not be place inside the
+	 * results.
+	 */
+	std::vector<bool> _mask;
+
+	// *** CACHING VARIABLES ***
+	mutable std::vector<ImageId> _topn_cache;
+	mutable bool _cache_dirty;
+	mutable std::vector<ImageId> _topn_ctx_cache;
+	mutable bool _cache_ctx_dirty;
 
 public:
 	ScoreModel(const DatasetFrames &p)
-	  : scores(p.size(), 1.0f)
+	  : _scores(p.size(), 1.0F)
+	  , _mask(p.size(), true)
+	  , _cache_dirty{ true }
+	  , _cache_ctx_dirty{ true }
 	{}
 
-	bool operator==(const ScoreModel &other) const
-	{
-		return (scores == other.scores);
-	}
+	bool operator==(const ScoreModel &other) const;
+	float operator[](ImageId i) const { return _scores[i]; }
 
-	void reset()
-	{
-		for (auto &i : scores)
-			i = 1.0f;
-	}
+	void reset();
 
-	// hard remove image
-	float adjust(ImageId i, float prob) { return scores[i] *= prob; }
-	float set(ImageId i, float prob) { return scores[i] = prob; }
-	float operator[](ImageId i) const { return scores[i]; }
-	const float *v() const { return scores.data(); }
-	size_t size() const { return scores.size(); }
+	/** Multiplies the relevance score with the provided value. */
+	float adjust(ImageId i, float prob);
+
+	/** Hard-sets the score with the provided value (normalization
+	 * required). */
+	float set(ImageId i, float prob);
+
+	/** Pointer to the begin of the data. */
+	const float *v() const { return _scores.data(); }
+
+	/** Returns number of scores stored. */
+	size_t size() const { return _scores.size(); }
+
+	/** Normalizes the score distribution. */
 	void normalize();
 
+	void reset_mask()
+	{
+		_cache_dirty = true;
+
+		std::transform(_mask.begin(),
+		               _mask.end(),
+		               _mask.begin(),
+		               [](const bool &x) { return true; });
+	};
+
+	/** Returns the current value for the frame */
+	bool is_masked(ImageId ID) const { return _mask[ID]; }
+
+	/** Sets the mask value for the frame. */
+	bool set_mask(ImageId ID, bool val)
+	{
+		_cache_dirty = true;
+		return _mask[ID] = val;
+	}
+
 	/**
-	 * Applies relevance feedback based on
-	 * bayesian update rule.
+	 * Applies relevance feedback rescore based on the Bayesian update rule.
 	 */
 	void apply_bayes(std::set<ImageId> likes,
 	                 const std::set<ImageId> &screen,
 	                 const DatasetFeatures &features);
 
-	// gets images with top scores and skips first offset
+	/**
+	 * Gets the images with the highest scores but respecting the provided
+	 * limits. */
 	std::vector<ImageId> top_n(const DatasetFrames &frames,
 	                           size_t n,
 	                           size_t from_vid_limit = 0,
 	                           size_t from_shot_limit = 0) const;
-	// gets images with top scores with temporal context
+
+	/**
+	 * Gets the images with the highest scores while respecting the
+	 * provided limits and each frame is wrapped by it's context based on
+	 * the number of frames per line. */
 	std::vector<ImageId> top_n_with_context(const DatasetFrames &frames,
 	                                        size_t n,
 	                                        size_t from_vid_limit,
 	                                        size_t from_shot_limit) const;
-	std::vector<ImageId> weighted_sample(size_t k, float pow = 1) const;
+
+	/** Samples `n` random frames from the current scores distribution. */
+	std::vector<ImageId> weighted_sample(size_t n, float pow = 1) const;
+
+	/** Samples a random frame from the current scores distribution. */
 	ImageId weighted_example(const std::vector<ImageId> &subset) const;
-	size_t rank_of_image(ImageId i) const;
+
+	/** Returns the current rank of the provided frame (starts from 0). */
+	size_t frame_rank(ImageId i) const;
 };
 
 #endif

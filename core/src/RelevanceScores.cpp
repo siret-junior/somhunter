@@ -95,34 +95,76 @@ heap_down(T *heap, size_t start, size_t lim, C less = std::less<T>())
 	}
 }
 
+bool
+ScoreModel::operator==(const ScoreModel &other) const
+{
+	return (_scores == other._scores);
+}
+
+void
+ScoreModel::reset()
+{
+	_cache_dirty = true;
+	_cache_ctx_dirty = true;
+
+	for (auto &i : _scores)
+		i = 1.0f;
+}
+
+float
+ScoreModel::adjust(ImageId i, float prob)
+{
+	_cache_dirty = true;
+	_cache_ctx_dirty = true;
+
+	return _scores[i] *= prob;
+}
+
+float
+ScoreModel::set(ImageId i, float prob)
+{
+	_cache_dirty = true;
+	_cache_ctx_dirty = true;
+
+	return _scores[i] = prob;
+}
+
 std::vector<ImageId>
 ScoreModel::top_n_with_context(const DatasetFrames &frames,
                                size_t n,
                                size_t from_vid_limit,
                                size_t from_shot_limit) const
 {
+	// Is this cached
+	// !! We assume that vid/shot limits do not change during the runtime.
+	if (!_cache_ctx_dirty) {
+		return _topn_ctx_cache;
+	}
+
 	/* This display needs to have `GUI_IMG_GRID_WIDTH`-times more images
 	if we want to keep reporting `n` unique results. */
 	n = n * DISPLAY_GRID_WIDTH;
 
 	auto to_show = top_n(
 	  frames, n / DISPLAY_GRID_WIDTH, from_vid_limit, from_shot_limit);
-	std::vector<ImageId> result;
-	result.reserve(n);
+
+	_topn_ctx_cache.clear();
+	_topn_ctx_cache.reserve(n);
 	for (auto &&selected : to_show) {
 		auto video_id = frames.get_video_id(selected);
 		for (int i = -TOP_N_SELECTED_FRAME_POSITION;
 		     i < DISPLAY_GRID_WIDTH - TOP_N_SELECTED_FRAME_POSITION;
 		     ++i) {
 			if (frames.get_video_id(selected + i) == video_id) {
-				result.push_back(selected + i);
+				_topn_ctx_cache.push_back(selected + i);
 			} else {
-				result.push_back(IMAGE_ID_ERR_VAL);
+				_topn_ctx_cache.push_back(IMAGE_ID_ERR_VAL);
 			}
 		}
 	}
 
-	return result;
+	_cache_ctx_dirty = false;
+	return _topn_ctx_cache;
 }
 
 std::vector<ImageId>
@@ -131,18 +173,30 @@ ScoreModel::top_n(const DatasetFrames &frames,
                   size_t from_vid_limit,
                   size_t from_shot_limit) const
 {
+	// Is this cached
+	// !! We assume that vid/shot limits do not change during the runtime.
+	if (!_cache_dirty) {
+		return _topn_cache;
+	}
+
 	if (from_vid_limit == 0)
-		from_vid_limit = scores.size();
+		from_vid_limit = _scores.size();
 
 	if (from_shot_limit == 0)
-		from_shot_limit = scores.size();
+		from_shot_limit = _scores.size();
 
-	if (n > scores.size())
-		n = scores.size();
+	if (n > _scores.size())
+		n = _scores.size();
 
-	std::vector<FrameScoreIdPair> score_ids(scores.size());
-	for (ImageId i = 0; i < scores.size(); ++i) {
-		score_ids[i] = FrameScoreIdPair{ scores[i], i };
+	std::vector<FrameScoreIdPair> score_ids;
+	for (ImageId i = 0; i < _scores.size(); ++i) {
+		auto mask{ _mask[i] };
+
+		// Filter out masked values
+		if (mask) {
+			score_ids.emplace_back(
+			  FrameScoreIdPair{ _scores[i], i });
+		}
 	}
 
 	std::sort(
@@ -150,10 +204,11 @@ ScoreModel::top_n(const DatasetFrames &frames,
 
 	std::map<VideoId, size_t> frames_per_vid;
 	std::map<VideoId, std::map<ShotId, size_t>> frames_per_shot;
-	std::vector<ImageId> result;
-	result.reserve(n);
+
+	_topn_cache.clear();
+	_topn_cache.reserve(n);
 	size_t t = 0;
-	for (ImageId i = 0; t < n && i < scores.size(); ++i) {
+	for (ImageId i = 0; t < n && i < score_ids.size(); ++i) {
 		ImageId frame = score_ids[i].id;
 		auto vf = frames.get_frame(frame);
 
@@ -166,16 +221,18 @@ ScoreModel::top_n(const DatasetFrames &frames,
 		    from_shot_limit)
 			continue;
 
-		result.push_back(frame);
+		_topn_cache.push_back(frame);
 		++t;
 	}
-	return result;
+
+	_cache_dirty = false;
+	return _topn_cache;
 }
 
 std::vector<ImageId>
 ScoreModel::weighted_sample(size_t k, float pow) const
 {
-	size_t n = scores.size();
+	size_t n = _scores.size();
 
 	assert(n >= 2);
 	assert(k < n);
@@ -188,7 +245,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 	std::vector<float> tree(branches + n, 0);
 	float sum = 0;
 	for (size_t i = 0; i < n; ++i)
-		sum += tree[branches + i] = powf(scores[i], pow);
+		sum += tree[branches + i] = powf(_scores[i], pow);
 
 	auto upd = [&tree, branches, n](size_t i) {
 		const size_t l = 2 * i + 1;
@@ -245,7 +302,7 @@ ScoreModel::weighted_example(const std::vector<ImageId> &subset) const
 {
 	std::vector<float> fs(subset.size());
 	for (size_t i = 0; i < subset.size(); ++i)
-		fs[i] = scores[subset[i]];
+		fs[i] = _scores[subset[i]];
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -260,6 +317,8 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 {
 	if (likes.empty())
 		return;
+
+	_cache_dirty = true;
 
 	constexpr float Sigma = .1f;
 	constexpr size_t max_others = 64;
@@ -292,9 +351,9 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 
 		auto worker = [&](size_t threadID) {
 			const ImageId first =
-			  ImageId(threadID * scores.size() / n_threads);
+			  ImageId(threadID * _scores.size() / n_threads);
 			const ImageId last =
-			  ImageId((threadID + 1) * scores.size() / n_threads);
+			  ImageId((threadID + 1) * _scores.size() / n_threads);
 
 			for (ImageId ii = first; ii < last; ++ii) {
 				float divSum = 0;
@@ -306,7 +365,7 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 				for (auto &&like : likes) {
 					const float likeValTmp = expf(
 					  -features.d_dot(ii, like) / Sigma);
-					scores[ii] *=
+					_scores[ii] *=
 					  likeValTmp / (likeValTmp + divSum);
 				}
 			}
@@ -329,7 +388,7 @@ ScoreModel::normalize()
 {
 	float smax = 0;
 
-	for (float s : scores)
+	for (float s : _scores)
 		if (s > smax)
 			smax = s;
 
@@ -339,7 +398,7 @@ ScoreModel::normalize()
 	}
 
 	size_t n = 0;
-	for (float &s : scores) {
+	for (float &s : _scores) {
 		s /= smax;
 		if (s < MINIMAL_SCORE)
 			++n, s = MINIMAL_SCORE;
@@ -347,13 +406,13 @@ ScoreModel::normalize()
 }
 
 size_t
-ScoreModel::rank_of_image(ImageId i) const
+ScoreModel::frame_rank(ImageId i) const
 {
-	size_t rank = 0;
-	float tScore = scores[i];
-	for (float s : scores) {
-		if (s > tScore)
-			rank++;
+	size_t rank{ 0 };
+	float tar_score = _scores[i];
+	for (float s : _scores) {
+		if (s > tar_score)
+			++rank;
 	}
 	return rank;
 }

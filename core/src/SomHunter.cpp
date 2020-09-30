@@ -183,14 +183,22 @@ SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
 }
 
 void
-SomHunter::apply_filters(const Filters &filters)
+SomHunter::apply_filters(const Filters *p_filters)
 {
+	// Filters must be always reset
+	user.ctx.scores.reset_mask();
 
-	const auto &days{ filters.days };
-	Hour t_from{ filters.time.from };
-	Hour t_to{ filters.time.to };
+	// If no filters whatsoever
+	if (p_filters == nullptr) {
+		return;
+	}
 
-	auto isOut{ [&days, t_from, t_to](const VideoFrame &f) {
+	const auto &days{ p_filters->days };
+	Hour t_from{ p_filters->time.from };
+	Hour t_to{ p_filters->time.to };
+
+	// A closure that determines if the frame should be filtered out
+	auto is_out{ [&days, t_from, t_to](const VideoFrame &f) {
 		// If NOT within the selected days
 		if (!days[f.weekday])
 			return true;
@@ -202,19 +210,21 @@ SomHunter::apply_filters(const Filters &filters)
 		return false;
 	} };
 
-	size_t i{ 0 };
+	ImageId frame_ID{ 0 };
 	for (auto &&f : frames) {
 
 		// If should be filtered out
-		if (isOut(f))
-			user.ctx.scores.set(i, 0.0F);
-		++i;
+		if (is_out(f)) {
+			user.ctx.scores.set_mask(frame_ID, false);
+		}
+
+		++frame_ID;
 	}
 }
 
 RescoreResult
 SomHunter::rescore(const std::string &text_query,
-                   Filters filters,
+                   const Filters *p_filters,
                    size_t src_search_ctx_ID,
                    const std::string &screenshot_fpth,
                    const std::string &label)
@@ -238,8 +248,7 @@ SomHunter::rescore(const std::string &text_query,
 	// Rescore text query
 	rescore_keywords(text_query);
 
-	// Apply filters
-	apply_filters(filters);
+	apply_filters(p_filters);
 
 	// Rescore relevance feedback
 	rescore_feedback();
