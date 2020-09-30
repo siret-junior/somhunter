@@ -22,7 +22,9 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
+#include <cstdint>
 #include <limits>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -46,6 +48,9 @@ using ImageId = unsigned long;
 using ScreenImgsCont = std::vector<ImageId>;
 using FeatureMatrix = std::vector<std::vector<float>>;
 using FeatureVector = std::vector<float>;
+
+using LikesCont = std::set<ImageId>;
+using ShownFramesCont = std::set<ImageId>;
 
 #define SIZE_T_ERR_VAL (std::numeric_limits<size_t>::max)()
 #define IMAGE_ID_ERR_VAL (std::numeric_limits<ImageId>::max)()

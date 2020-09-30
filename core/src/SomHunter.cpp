@@ -27,51 +27,6 @@
 #include "log.h"
 #include "utils.h"
 
-SearchContext::SearchContext(size_t ID,
-                             const Config &cfg,
-                             const DatasetFrames &frames,
-                             const DatasetFeatures &features)
-  : ID(ID)
-  , scores(frames)
-{}
-
-bool
-SearchContext::operator==(const SearchContext &other) const
-{
-	return (ID == other.ID && used_tools == other.used_tools &&
-	        current_display == other.current_display &&
-	        curr_disp_type == other.curr_disp_type &&
-	        scores == other.scores &&
-	        last_text_query == other.last_text_query &&
-	        likes == other.likes && shown_images == other.shown_images &&
-	        screenshot_fpth == other.screenshot_fpth);
-}
-
-UserContext::UserContext(const std::string &user_token,
-                         const Config &cfg,
-                         const DatasetFrames &frames,
-                         const DatasetFeatures features)
-  : ctx(0, cfg, frames, features)
-  , user_token(user_token)
-  , submitter(cfg.submitter_config)
-  , async_SOM(cfg)
-{
-	async_SOM.start_work(features, ctx.scores);
-
-	/*
-	 * Store this initial state into the history
-	 */
-	ctx.screenshot_fpth = "";
-	history.emplace_back(ctx);
-}
-
-bool
-UserContext::operator==(const UserContext &other) const
-{
-	return (ctx == other.ctx && user_token == other.user_token &&
-	        history == other.history);
-}
-
 GetDisplayResult
 SomHunter::get_display(DisplayType d_type,
                        ImageId selected_image,

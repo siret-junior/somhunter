@@ -481,7 +481,6 @@ KeywordRanker::get_sorted_frames(
 			dist_cache[0][img_ID] = dist;
 		} else {
 			std::cout << "cached" << std::endl;
-			;
 		}
 
 		// This will adjust `dist` based on temporal queries

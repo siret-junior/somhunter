@@ -8,38 +8,43 @@ find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIR})
 
 SET(HEADERS
-	AsyncSom.h
-  	common.h
-	config_json.h
+	json11.hpp
+  common.h
 	config.h
 	distfs.h
+	utils.h
+	log.h
+	config_json.h
+	tests.hpp
+	use_intrins.h
 	SOM.h
+	AsyncSom.h
 	DatasetFeatures.h
 	DatasetFrames.h
 	KeywordRanker.h
-  	log.h
 	RelevanceScores.h
-  	SomHunter.h
+  SomHunter.h
 	Submitter.h
-	use_intrins.h
-	utils.h
-	log.h
-	tests.hpp
-	json11.hpp
+	Filters.h
+	UserContext.h
+	SearchContext.h
 )
 
 SET(SOURCES
 	${HEADERS}
-	AsyncSom.cpp
+	json11.cpp
+	main.cpp
 	SOM.cpp
+	AsyncSom.cpp
 	DatasetFeatures.cpp
 	DatasetFrames.cpp
 	KeywordRanker.cpp
 	RelevanceScores.cpp
-  	SomHunter.cpp
+  SomHunter.cpp
 	Submitter.cpp
-	main.cpp
-	json11.cpp
+	Filters.cpp
+	UserContext.cpp
+	SearchContext.cpp
 )
 
 #create the program

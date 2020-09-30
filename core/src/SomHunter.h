@@ -29,140 +29,18 @@
 
 #include "utils.h"
 
-#include "AsyncSom.h"
 #include "DatasetFeatures.h"
 #include "DatasetFrames.h"
+#include "Filters.h"
 #include "KeywordRanker.h"
 #include "RelevanceScores.h"
+#include "UserContext.h"
+
+#include "AsyncSom.h"
+#include "SearchContext.h"
 #include "Submitter.h"
 
 class TESTER_SomHunter;
-
-class WeekDaysFilter
-{
-public:
-	/** Default state is all dayes */
-	WeekDaysFilter() { _days.fill(true); }
-
-	/** Construct from the bit mask */
-	WeekDaysFilter(uint8_t mask)
-	{
-		// Set the according days, ignore the last 2 bits
-		for (size_t i{ 0 }; i < 7; ++i) {
-			_days[i] = is_set(mask, i);
-		}
-	}
-
-	const bool &operator[](size_t i) const { return _days[i]; }
-
-	bool &operator[](size_t i) { return _days[i]; }
-
-private:
-	std::array<bool, 7> _days;
-};
-
-class TimeFilter
-{
-public:
-	/** Default state is the whole day */
-	TimeFilter()
-	  : from(0)
-	  , to(24){};
-	TimeFilter(Hour from, Hour to)
-	  : from(from)
-	  , to(to){};
-
-	Hour from;
-	Hour to;
-};
-
-/** Container for all the available filters for the rescore */
-struct Filters
-{
-	TimeFilter time;
-	WeekDaysFilter days;
-};
-
-using LikesCont = std::set<ImageId>;
-using ShownFramesCont = std::set<ImageId>;
-
-/**
- * Represents exactly one momentary state of a search session.
- *
- * It can be ome point in HISTORY.
- */
-class SearchContext
-{
-public:
-	SearchContext() = delete;
-	SearchContext(size_t ID,
-	              const Config &cfg,
-	              const DatasetFrames &frames,
-	              const DatasetFeatures &features);
-
-	bool operator==(const SearchContext &other) const;
-
-public:
-	// VBS logging
-	UsedTools used_tools;
-
-	// Current display context
-	std::vector<VideoFramePointer> current_display;
-	DisplayType curr_disp_type{ DisplayType::DNull };
-
-	// Relevance scores
-	ScoreModel scores;
-
-	// Used keyword query
-	std::string last_text_query;
-
-	// Relevance feedback context
-	LikesCont likes;
-	ShownFramesCont shown_images;
-
-	// Filepath to screenshot repesenting this screen
-	std::string screenshot_fpth{};
-
-	size_t ID;
-	std::string label{ "" };
-};
-
-/** Represents exactly one state of ONE user that uses this core. */
-class UserContext
-{
-public:
-	UserContext() = delete;
-	UserContext(const std::string &user_token,
-	            const Config &cfg,
-	            const DatasetFrames &frames,
-	            const DatasetFeatures features);
-
-	bool operator==(const UserContext &other) const;
-
-public:
-	// *** SEARCH CONTEXT ***
-	SearchContext ctx;
-
-	// *** USER SPECIFIC ***
-	std::string user_token;
-	std::vector<SearchContext> history;
-	Submitter submitter;
-	AsyncSom async_SOM;
-};
-
-/** Result type `get_display` returns */
-struct GetDisplayResult
-{
-	FramePointerRange frames;
-	const LikesCont &likes;
-};
-
-/** Result type `rescore` returns */
-struct RescoreResult
-{
-	size_t curr_ctx_ID;
-	const std::vector<SearchContext> &history;
-};
 
 /* This is the main backend class. */
 class SomHunter
