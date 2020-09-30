@@ -133,6 +133,10 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 					ImageId ID{ IMAGE_ID_ERR_VAL };
 					ImageId v_ID{ IMAGE_ID_ERR_VAL };
 					ImageId s_ID{ IMAGE_ID_ERR_VAL };
+
+					Hour hour{ ERR_VAL<Hour>() };
+					Weekday weekday{ ERR_VAL<Weekday>() };
+
 					bool is_liked{ false };
 					bool is_bookmarked{ false };
 					std::string filename{};
@@ -141,6 +145,10 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 						ID = (*it)->frame_ID;
 						v_ID = (*it)->video_ID;
 						s_ID = (*it)->shot_ID;
+
+						hour = (*it)->hour;
+						weekday = (*it)->weekday;
+
 						is_liked =
 						  (likes.count(ID) > 0 ? true
 						                       : false);
@@ -215,6 +223,53 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 							napi_create_uint32(
 							  env,
 							  uint32_t(s_ID),
+							  &value);
+						}
+
+						napi_set_property(
+						  env, obj, key, value);
+					}
+
+					{ // *** hour ***
+						napi_value key;
+						napi_create_string_utf8(
+						  env,
+						  "hour",
+						  NAPI_AUTO_LENGTH,
+						  &key);
+
+						napi_value value;
+						if (hour == ERR_VAL<Hour>()) {
+							napi_get_null(env,
+							              &value);
+						} else {
+							napi_create_uint32(
+							  env,
+							  uint32_t(hour),
+							  &value);
+						}
+
+						napi_set_property(
+						  env, obj, key, value);
+					}
+
+					{ // *** weekday ***
+						napi_value key;
+						napi_create_string_utf8(
+						  env,
+						  "weekday",
+						  NAPI_AUTO_LENGTH,
+						  &key);
+
+						napi_value value;
+						if (weekday ==
+						    ERR_VAL<Hour>()) {
+							napi_get_null(env,
+							              &value);
+						} else {
+							napi_create_uint32(
+							  env,
+							  uint32_t(weekday),
 							  &value);
 						}
 

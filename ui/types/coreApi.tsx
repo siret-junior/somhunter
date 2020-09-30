@@ -10,6 +10,8 @@ export type FrameRef = {
   liked: boolean;
   vId: number;
   sId: number;
+  hour: number;
+  weekday: number;
 };
 
 export type Vec2 = { x: number; y: number };

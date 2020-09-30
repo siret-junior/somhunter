@@ -138,7 +138,15 @@ function Frame(props) {
         xs={2}
         style={{ backgroundImage: `url("${props.frame.src}")` }}
       >
-        <span className="video-id-label top left">{props.frame.id}</span>
+        <div className="frame-debug-hover">
+          <p><span>ID:</span> {props.frame.id}</p>
+          <p><span>Video ID:</span> {props.frame.vId}</p>
+          <p><span>Shot ID</span>: {props.frame.sId}</p>
+          <p><span>Hour:</span> {props.frame.hour}</p>
+          <p><span>Weekday:</span> {props.frame.weekday}</p>
+        </div>
+
+        <span className="video-id-label top left">{props.frame.vId}</span>
         <Button
           onClick={(e) => {
             onSubmitHandler(settings, props);
