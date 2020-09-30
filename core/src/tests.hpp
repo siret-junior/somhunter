@@ -272,6 +272,27 @@ private:
 	{
 		print("\t Testing `SomHunter::TEST_rescore` score filter...");
 
+		Filters fs{
+			TimeFilter{6,10},
+			WeekDaysFilter{}
+		};
+
+		fs.days[0] = true;
+		fs.days[1] = false;
+		fs.days[2] = false;
+		fs.days[3] = false;
+		fs.days[4] = false;
+		fs.days[5] = false;
+		fs.days[6] = false;
+
+
+		core.rescore("", fs);
+		auto t{ core.get_topn_display(0) };
+
+		for (auto&& f : t) {
+			std::cout << "H: " << size_t(f->hour) << " WD: " << size_t(f->weekday) << std::endl;
+		}
+
 		print("\t Testing `SomHunter::TEST_rescore` score filter finished...");
 	}
 

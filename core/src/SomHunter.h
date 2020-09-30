@@ -42,21 +42,9 @@ public:
 	/** Default state is all dayes */
 	WeekDaysFilter() { _days.fill(true); }
 
-	bool mon() const { return _days[0]; }
-	bool tue() const { return _days[1]; }
-	bool wed() const { return _days[2]; }
-	bool thr() const { return _days[3]; }
-	bool fri() const { return _days[4]; }
-	bool sat() const { return _days[5]; }
-	bool sun() const { return _days[6]; }
+	const bool &operator[](size_t i) const { return _days[i]; }
 
-	bool mon(bool val) { _days[0] = val; }
-	bool tue(bool val) { _days[1] = val; }
-	bool wed(bool val) { _days[2] = val; }
-	bool thr(bool val) { _days[3] = val; }
-	bool fri(bool val) { _days[4] = val; }
-	bool sat(bool val) { _days[5] = val; }
-	bool sun(bool val) { _days[6] = val; }
+	bool &operator[](size_t i) { return _days[i]; }
 
 private:
 	std::array<bool, 7> _days;
@@ -67,22 +55,21 @@ class TimeFilter
 public:
 	/** Default state is the whole day */
 	TimeFilter()
-	  : _from(0)
-	  , _to(24){};
-	TimeFilter(size_t from, size_t to)
-	  : _from(from)
-	  , _to(to){};
+	  : from(0)
+	  , to(24){};
+	TimeFilter(Hour from, Hour to)
+	  : from(from)
+	  , to(to){};
 
-private:
-	size_t _from;
-	size_t _to;
+	Hour from;
+	Hour to;
 };
 
 /** Container for all the available filters for the rescore */
 struct Filters
 {
-	TimeFilter _time;
-	WeekDaysFilter _days;
+	TimeFilter time;
+	WeekDaysFilter days;
 };
 
 using LikesCont = std::set<ImageId>;
@@ -217,13 +204,7 @@ public:
 	 * (including the current one).
 	 */
 	RescoreResult rescore(const std::string &text_query,
-	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
-	                      const std::string &screenshot_fpth = ""s,
-	                      const std::string &label = ""s);
-
-	/** Works as `rescore` but applies also the provided filters. */
-	RescoreResult rescore(const std::string &text_query,
-	                      const Filters &filters,
+	                      Filters filters = Filters{},
 	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
 	                      const std::string &screenshot_fpth = ""s,
 	                      const std::string &label = ""s);
@@ -239,6 +220,8 @@ public:
 	  size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
 	  const std::string &screenshot_fpth = "",
 	  const std::string &label = "");
+
+	void apply_filters(const Filters &filters);
 
 	/**
 	 * Returns a reference to the current user's search context.

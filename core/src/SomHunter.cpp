@@ -182,8 +182,39 @@ SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
 	return res;
 }
 
+void
+SomHunter::apply_filters(const Filters &filters)
+{
+
+	const auto &days{ filters.days };
+	Hour t_from{ filters.time.from };
+	Hour t_to{ filters.time.to };
+
+	auto isOut{ [&days, t_from, t_to](const VideoFrame &f) {
+		// If NOT within the selected days
+		if (!days[f.weekday])
+			return true;
+
+		// If NOT within the hour range
+		if (t_from > f.hour || f.hour > t_to)
+			return true;
+
+		return false;
+	} };
+
+	size_t i{ 0 };
+	for (auto &&f : frames) {
+
+		// If should be filtered out
+		if (isOut(f))
+			user.ctx.scores.set(i, 0.0F);
+		++i;
+	}
+}
+
 RescoreResult
 SomHunter::rescore(const std::string &text_query,
+                   Filters filters,
                    size_t src_search_ctx_ID,
                    const std::string &screenshot_fpth,
                    const std::string &label)
@@ -206,6 +237,9 @@ SomHunter::rescore(const std::string &text_query,
 
 	// Rescore text query
 	rescore_keywords(text_query);
+
+	// Apply filters
+	apply_filters(filters);
 
 	// Rescore relevance feedback
 	rescore_feedback();
@@ -240,16 +274,6 @@ SomHunter::rescore(const std::string &text_query,
 	push_search_ctx();
 
 	return RescoreResult{ user.ctx.ID, user.history };
-}
-
-RescoreResult
-SomHunter::rescore(const std::string &text_query,
-                   const Filters &filters,
-                   size_t src_search_ctx_ID,
-                   const std::string &screenshot_fpth,
-                   const std::string &label)
-{
-	return RescoreResult{ 0, {} };
 }
 
 bool
