@@ -62,6 +62,7 @@ struct GetDisplayResult
 {
 	FramePointerRange frames;
 	const LikesCont &likes;
+	const LikesCont &bookmarks;
 };
 
 /** Result type `rescore` returns */

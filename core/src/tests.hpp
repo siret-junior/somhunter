@@ -45,14 +45,13 @@ public:
 		SomHunter core{ config };
 
 		print("Running all the SomHunter class tests...");
-#if 0
+
 		TEST_like_frames(core);
+		TEST_bookmark_frames(core);
 		TEST_autocomplete_keywords(core);
 		TEST_rescore(core);
-#endif
 
-		TEST_rescore_time_filter(core);
-		TEST_rescore_day_filter(core);
+		TEST_rescore_filters(core);
 
 		print("====================================================");
 		print("\tIf you got here, all `SomHunter` tests were OK...");
@@ -64,8 +63,7 @@ private:
 	{
 		print("\t Testing `SomHunter::like_frames` method...");
 
-		auto [disp,
-		      likes]{ core.get_display(DisplayType::DTopN, 0, 0) };
+		auto [disp, likes, bookmarks]{ core.get_display(DisplayType::DTopN, 0, 0) };
 		size_t size{ disp.size() };
 		ASSERT(size > 0, "Top N display is empty!");
 
@@ -107,6 +105,54 @@ private:
 		ASSERT(likes.size() == 0, "All frames SHOULD NOT be liked.");
 
 		print("\t Testing `SomHunter::like_frames` finished.");
+	}
+
+	static void TEST_bookmark_frames(SomHunter& core)
+	{
+		print("\t Testing `SomHunter::bookmark_frames` method...");
+
+		auto [disp, likes, bookmarks] { core.get_display(DisplayType::DTopN, 0, 0) };
+		size_t size{ disp.size() };
+		ASSERT(size > 0, "Top N display is empty!");
+
+		auto ff = *(disp.begin());
+		auto fm = *(disp.begin() + irand(1_z, size - 1));
+		auto fl = *(--(disp.end()));
+
+		using vec = std::vector<ImageId>;
+
+		core.bookmark_frames(vec{ ff->frame_ID });
+		ASSERT(bookmarks.count(ff->frame_ID) == 1,
+			"Frame SHOULD be bookmarked.");
+		core.bookmark_frames(std::vector<ImageId>{ ff->frame_ID });
+		ASSERT(bookmarks.count(ff->frame_ID) == 0,
+			"Frame SHOULD NOT be bookmarked.");
+
+		core.bookmark_frames(vec{ fm->frame_ID });
+		ASSERT(bookmarks.count(fm->frame_ID) == 1,
+			"Frame SHOULD be bookmarked.");
+		core.bookmark_frames(std::vector<ImageId>{ fm->frame_ID });
+		ASSERT(bookmarks.count(fm->frame_ID) == 0,
+			"Frame SHOULD NOT be bookmarked.");
+
+		core.bookmark_frames(vec{ fl->frame_ID });
+		ASSERT(bookmarks.count(fl->frame_ID) == 1,
+			"Frame SHOULD be bookmarked.");
+		core.bookmark_frames(std::vector<ImageId>{ fl->frame_ID });
+		ASSERT(bookmarks.count(fl->frame_ID) == 0,
+			"Frame SHOULD NOT be bookmarked.");
+
+		vec all;
+		for (auto&& f : disp) {
+			all.emplace_back(f->frame_ID);
+		}
+		core.bookmark_frames(all);
+		ASSERT(bookmarks.size() == size, "All frames SHOULD be bookmarked.");
+
+		core.bookmark_frames(all);
+		ASSERT(bookmarks.size() == 0, "All frames SHOULD NOT be bookmarked.");
+
+		print("\t Testing `SomHunter::bookmark_frames` finished.");
 	}
 
 	static void TEST_autocomplete_keywords(SomHunter &core)
@@ -267,8 +313,7 @@ private:
 		print("\t Testing `SomHunter::TEST_rescore` finished.");
 	}
 
-
-	static void TEST_rescore_time_filter(SomHunter& core)
+	static void TEST_rescore_filters(SomHunter& core)
 	{
 		print("\t Testing `SomHunter::TEST_rescore` score filter...");
 
@@ -328,12 +373,6 @@ private:
 		print("\t Testing `SomHunter::TEST_rescore` score filter finished...");
 	}
 
-	static void TEST_rescore_day_filter(SomHunter& core)
-	{
-		print("\t Testing `SomHunter::TEST_rescore` day filter...");
-
-		print("\t Testing `SomHunter::TEST_rescore` day filter finished...");
-	}
 };
 
 const char *json_contents = R"(

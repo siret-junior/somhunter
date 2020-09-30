@@ -108,16 +108,16 @@ main()
 	{
 		core.rescore("dog park");
 
-		auto [d_topn, l0] = core.get_display(DisplayType::DTopN, 0, 0);
+		auto d_topn = core.get_display(DisplayType::DTopN, 0, 0).frames;
 		std::cout << "TOP N\n";
 		print_display(d_topn);
 
-		auto [d_topknn, l1] =
-		  core.get_display(DisplayType::DTopKNN, 2, 0);
+		auto d_topknn =
+		  core.get_display(DisplayType::DTopKNN, 2, 0).frames;
 		std::cout << "TOP KNN\n";
 		print_display(d_topknn);
 
-		auto [d_rand, l2] = core.get_display(DisplayType::DRand);
+		auto d_rand = core.get_display(DisplayType::DRand).frames;
 		std::cout << "RANDOM\n";
 		print_display(d_rand);
 	}

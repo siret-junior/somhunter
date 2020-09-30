@@ -50,6 +50,7 @@ using FeatureMatrix = std::vector<std::vector<float>>;
 using FeatureVector = std::vector<float>;
 
 using LikesCont = std::set<ImageId>;
+using BookmarksCont = std::set<ImageId>;
 using ShownFramesCont = std::set<ImageId>;
 
 #define SIZE_T_ERR_VAL (std::numeric_limits<size_t>::max)()

@@ -78,7 +78,11 @@ public:
 
 	/** Inverts the like states of the provided frames and returns the new
 	 * states. */
-	std::vector<bool> like_frames(const std::vector<ImageId> &likes);
+	std::vector<bool> like_frames(const std::vector<ImageId> &new_likes);
+
+	/** (De)selects the provided frames from the bookmark list. */
+	std::vector<bool> bookmark_frames(
+	  const std::vector<ImageId> &new_bookmarks);
 
 	/** Returns the nearest supported keyword matches to the provided
 	 * prefix. */

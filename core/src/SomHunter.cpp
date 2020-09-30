@@ -73,7 +73,7 @@ SomHunter::get_display(DisplayType d_type,
 			break;
 	}
 
-	return GetDisplayResult{ frames, user.ctx.likes };
+	return GetDisplayResult{ frames, user.ctx.likes, user.ctx.bookmarks };
 }
 
 std::vector<bool>
@@ -111,6 +111,39 @@ SomHunter::like_frames(const std::vector<ImageId> &new_likes)
 			                          user.ctx.likes,
 			                          user.ctx.curr_disp_type,
 			                          fr_ID);
+		}
+	}
+
+	return res;
+}
+
+std::vector<bool>
+SomHunter::bookmark_frames(const std::vector<ImageId> &new_bookmarks)
+{
+	user.submitter.poll();
+
+	// Prepare the result flags vector
+	std::vector<bool> res;
+	res.reserve(new_bookmarks.size());
+
+	for (auto &&fr_ID : new_bookmarks) {
+
+		// Find the item in the set
+		size_t count{ user.ctx.bookmarks.count(fr_ID) };
+
+		// If item is not present (NOT LIKED) -> bookmark it
+		if (count == 0) {
+			user.ctx.bookmarks.insert(fr_ID);
+			res.emplace_back(true);
+
+			// \todo Log it?
+		}
+		// If the item is present (LIKED) -> unbookmark it
+		else {
+			user.ctx.bookmarks.erase(fr_ID);
+			res.emplace_back(false);
+
+			// \todo Log it?
 		}
 	}
 

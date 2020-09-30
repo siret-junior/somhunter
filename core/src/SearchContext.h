@@ -68,6 +68,11 @@ public:
 
 	// Relevance feedback context
 	LikesCont likes;
+
+	/** Frames selected as important. */
+	BookmarksCont bookmarks;
+
+	/** Frames that were seen since the last rescore. */
 	ShownFramesCont shown_images;
 
 	// Filepath to screenshot repesenting this screen
