@@ -132,6 +132,10 @@ public:
 	 */
 	const UserContext &get_user_context() const;
 
+	const VideoFrame &get_frame(ImageId ID) const {
+		return frames.get_frame(ID);
+	}
+
 	/** Returns true if the user's SOM is ready */
 	bool som_ready() const;
 

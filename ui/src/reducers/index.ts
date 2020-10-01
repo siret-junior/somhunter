@@ -125,6 +125,16 @@ export type SetUserStateAction = {
   payload: UserStateEx;
 };
 
+export type AddBookmarkedFrameAction = {
+  type: string;
+  payload: FrameRef;
+};
+
+export type AddLikedFrameAction = {
+  type: string;
+  payload: FrameRef;
+};
+
 export type Action =
   | ShowTopNDisplay
   | ShowSomDisplay

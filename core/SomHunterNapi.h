@@ -61,4 +61,14 @@ private:
 	Napi::Value get_user_context(const Napi::CallbackInfo &info);
 
 	Napi::Value switch_search_context(const Napi::CallbackInfo &info);
+
+	// *** HELPER FUNCTIONS ***
+private:
+	Napi::Value construct_result_from_SearchContext(
+	  Napi::Env &env,
+	  const SearchContext &search_ctx);
+	
+	Napi::Value construct_result_from_UserContext(
+	  Napi::Env &env,
+	  const UserContext &user_ctx);
 };

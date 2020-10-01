@@ -29,8 +29,36 @@ export function createSetUserHistory(
 
     dispatch({
       type: CS.SET_USER_HISTORY,
-      payload: { history, search },
+      payload: { ...state, history, search },
     });
+  };
+}
+
+export function createAddLiked(s, likedFrame) {
+  return {
+    type: CS.ADD_LIKED_FRAME,
+    payload: likedFrame,
+  };
+}
+
+export function createAddBookmarked(s, bookmarkedFrame) {
+  return {
+    type: CS.ADD_BOOKMARKED_FRAME,
+    payload: bookmarkedFrame,
+  };
+}
+
+export function createRemoveLiked(s, id) {
+  return {
+    type: CS.REMOVE_LIKED_FRAME,
+    payload: id,
+  };
+}
+
+export function createRemoveBookmarked(s, id) {
+  return {
+    type: CS.REMOVE_BOOKMARKED_FRAME,
+    payload: id,
   };
 }
 

@@ -364,6 +364,10 @@ $theme-colors: (
     text-align: center;
     padding: 0.4em 0.8em;
 
+    &.visible {
+      display: initial;
+    }
+
     &:before,
     &:after {
       border: 1px solid rgba(map-get($theme-colors, "white"), 0.7);

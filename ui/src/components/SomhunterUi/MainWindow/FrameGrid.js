@@ -9,6 +9,11 @@ import config, { strings } from "../../../__config_generated__.json";
 import * as CS from "../../../constants";
 import { useSettings } from "../../../hooks/useSettings";
 import { get, post } from "../../../apis/coreApi";
+import {
+  createAddLiked,
+  createAddBookmarked,
+  createRemoveLiked,
+} from "../../../actions/userCreator";
 import { crSetQueryChanged } from "../../../actions/indicatorCreator";
 
 import Frame from "./Frame";
@@ -26,16 +31,37 @@ async function onLikeHandler(s, props, gridElRef, frameId) {
   // Set query changed flag
   dispatch(crSetQueryChanged(s, true));
 
+  // {
+  //   id: number;
+  //   liked: bool;
+  //   sId: number;
+  //   vId: number;
+  //   src: string;
+
+  // }
+
   // Flag ALL the frames accrodingly
   const grid = gridElRef.current;
   if (response.data.isLiked) {
-    grid
-      .querySelectorAll(`[data-frame-id="${frameId}"]`)
-      .forEach((x) => x.classList.add("liked"));
+    const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
+
+    fs.forEach((x) => x.classList.add("liked"));
+
+    dispatch(
+      createAddLiked(s, {
+        id: frameId,
+        liked: true,
+        sId: null,
+        vId: null,
+        src: fs[0].src,
+      })
+    );
   } else {
-    grid
-      .querySelectorAll(`[data-frame-id="${frameId}"]`)
-      .forEach((x) => x.classList.remove("liked"));
+    const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
+
+    fs.forEach((x) => x.classList.remove("liked"));
+
+    dispatch(createRemoveLiked(s, frameId));
   }
 }
 

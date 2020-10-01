@@ -300,6 +300,9 @@ SomHunter::reset_search_session()
 	user.submitter.log_reset_search();
 	som_start();
 
+	// Reset bookmarks
+	user.ctx.bookmarks.clear();
+	
 	// Delete the history
 	reset_search_history();
 	user.ctx.scores.reset_mask();

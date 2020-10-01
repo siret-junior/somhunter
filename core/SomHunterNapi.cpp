@@ -90,19 +90,169 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
+VideoFrame_to_res(Napi::Env &env,
+                  const VideoFrame *p_frame,
+                  const LikesCont &likes,
+                  const BookmarksCont &bookmarks,
+                  const std::string &path_prefix)
+{
+	napi_value obj;
+	napi_create_object(env, &obj);
+	{
+		ImageId ID{ IMAGE_ID_ERR_VAL };
+		ImageId v_ID{ IMAGE_ID_ERR_VAL };
+		ImageId s_ID{ IMAGE_ID_ERR_VAL };
+
+		Hour hour{ ERR_VAL<Hour>() };
+		Weekday weekday{ ERR_VAL<Weekday>() };
+
+		bool is_liked{ false };
+		bool is_bookmarked{ false };
+		std::string filename{};
+
+		if (p_frame != nullptr) {
+			ID = p_frame->frame_ID;
+			v_ID = p_frame->video_ID;
+			s_ID = p_frame->shot_ID;
+
+			hour = p_frame->hour;
+			weekday = p_frame->weekday;
+
+			is_liked = (likes.count(ID) > 0 ? true : false);
+			filename = path_prefix + p_frame->filename;
+
+			is_bookmarked =
+			  (bookmarks.count(ID) > 0 ? true : false);
+		}
+
+		{
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "id", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			if (ID == IMAGE_ID_ERR_VAL) {
+				napi_get_null(env, &value);
+			} else {
+				napi_create_uint32(env, uint32_t(ID), &value);
+			}
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "vId", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			if (ID == IMAGE_ID_ERR_VAL) {
+				napi_get_null(env, &value);
+			} else {
+				napi_create_uint32(env, uint32_t(v_ID), &value);
+			}
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "sId", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			if (ID == IMAGE_ID_ERR_VAL) {
+				napi_get_null(env, &value);
+			} else {
+				napi_create_uint32(env, uint32_t(s_ID), &value);
+			}
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{ // *** hour ***
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "hour", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			if (hour == ERR_VAL<Hour>()) {
+				napi_get_null(env, &value);
+			} else {
+				napi_create_uint32(env, uint32_t(hour), &value);
+			}
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{ // *** weekday ***
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "weekday", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			if (weekday == ERR_VAL<Hour>()) {
+				napi_get_null(env, &value);
+			} else {
+				napi_create_uint32(
+				  env, uint32_t(weekday), &value);
+			}
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "liked", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			napi_get_boolean(env, is_liked, &value);
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{ // *** bookmarked ***
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "bookmarked", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			napi_get_boolean(env, is_bookmarked, &value);
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{
+			napi_value key;
+			napi_create_string_utf8(
+			  env, "src", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			napi_create_string_utf8(
+			  env, filename.c_str(), NAPI_AUTO_LENGTH, &value);
+
+			napi_set_property(env, obj, key, value);
+		}
+	}
+
+	return Napi::Object(env, obj);
+}
+
+Napi::Value
 construct_result_from_GetDisplayResult(Napi::Env &env,
-                                       const GetDisplayResult &display_frames,
+                                       const GetDisplayResult &res,
                                        size_t page_num,
                                        const std::string &path_prefix)
 {
+	const auto &frames{ res.frames };
+	const auto &likes{ res.likes };
+	const auto &bookmarks{ res.bookmarks };
+
 	napi_value result;
 	napi_create_object(env, &result);
 
-	const auto &likes{ display_frames.likes };
-	const auto &bookmarks{ display_frames.bookmarks };
-
-	// Set "page"
-	{
+	{ // *** page ***
 		napi_value key;
 		napi_create_string_utf8(env, "page", NAPI_AUTO_LENGTH, &key);
 
@@ -112,229 +262,25 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 		napi_set_property(env, result, key, value);
 	}
 
-	// Set "frames"
-	{
-		napi_value upperKey;
-		napi_create_string_utf8(
-		  env, "frames", NAPI_AUTO_LENGTH, &upperKey);
+	{ // *** frames ***
+		napi_value key;
+		napi_create_string_utf8(env, "frames", NAPI_AUTO_LENGTH, &key);
 
 		// Create array
 		napi_value arr;
 		napi_create_array(env, &arr);
-		{
-			size_t i{ 0_z };
-			for (auto it{ display_frames.frames.begin() };
-			     it != display_frames.frames.end();
-			     ++it) {
 
-				napi_value obj;
-				napi_create_object(env, &obj);
-				{
-					ImageId ID{ IMAGE_ID_ERR_VAL };
-					ImageId v_ID{ IMAGE_ID_ERR_VAL };
-					ImageId s_ID{ IMAGE_ID_ERR_VAL };
+		size_t i{ 0_z };
+		for (auto it{ frames.begin() }; it != frames.end(); ++it) {
 
-					Hour hour{ ERR_VAL<Hour>() };
-					Weekday weekday{ ERR_VAL<Weekday>() };
+			auto fr{ VideoFrame_to_res(
+			  env, *it, likes, bookmarks, path_prefix) };
+			napi_set_element(env, arr, i, fr);
 
-					bool is_liked{ false };
-					bool is_bookmarked{ false };
-					std::string filename{};
-
-					if ((*it) != nullptr) {
-						ID = (*it)->frame_ID;
-						v_ID = (*it)->video_ID;
-						s_ID = (*it)->shot_ID;
-
-						hour = (*it)->hour;
-						weekday = (*it)->weekday;
-
-						is_liked =
-						  (likes.count(ID) > 0 ? true
-						                       : false);
-						filename =
-						  path_prefix + (*it)->filename;
-
-						is_bookmarked =
-						  (bookmarks.count(ID) > 0
-						     ? true
-						     : false);
-					}
-
-					{
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "id",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						if (ID == IMAGE_ID_ERR_VAL) {
-							napi_get_null(env,
-							              &value);
-						} else {
-							napi_create_uint32(
-							  env,
-							  uint32_t(ID),
-							  &value);
-						}
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "vId",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						if (ID == IMAGE_ID_ERR_VAL) {
-							napi_get_null(env,
-							              &value);
-						} else {
-							napi_create_uint32(
-							  env,
-							  uint32_t(v_ID),
-							  &value);
-						}
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "sId",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						if (ID == IMAGE_ID_ERR_VAL) {
-							napi_get_null(env,
-							              &value);
-						} else {
-							napi_create_uint32(
-							  env,
-							  uint32_t(s_ID),
-							  &value);
-						}
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{ // *** hour ***
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "hour",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						if (hour == ERR_VAL<Hour>()) {
-							napi_get_null(env,
-							              &value);
-						} else {
-							napi_create_uint32(
-							  env,
-							  uint32_t(hour),
-							  &value);
-						}
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{ // *** weekday ***
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "weekday",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						if (weekday ==
-						    ERR_VAL<Hour>()) {
-							napi_get_null(env,
-							              &value);
-						} else {
-							napi_create_uint32(
-							  env,
-							  uint32_t(weekday),
-							  &value);
-						}
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "liked",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						napi_get_boolean(
-						  env, is_liked, &value);
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{ // *** bookmarked ***
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "bookmarked",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						napi_get_boolean(
-						  env, is_bookmarked, &value);
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-
-					{
-						napi_value key;
-						napi_create_string_utf8(
-						  env,
-						  "src",
-						  NAPI_AUTO_LENGTH,
-						  &key);
-
-						napi_value value;
-						napi_create_string_utf8(
-						  env,
-						  filename.c_str(),
-						  NAPI_AUTO_LENGTH,
-						  &value);
-
-						napi_set_property(
-						  env, obj, key, value);
-					}
-				}
-				napi_set_element(env, arr, i, obj);
-
-				++i;
-			}
+			++i;
 		}
 
-		napi_set_property(env, result, upperKey, arr);
+		napi_set_property(env, result, key, arr);
 	}
 
 	return Napi::Object(env, result);
@@ -917,8 +863,9 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-construct_result_from_SearchContext(Napi::Env &env,
-                                    const SearchContext &search_ctx)
+SomHunterNapi::construct_result_from_SearchContext(
+  Napi::Env &env,
+  const SearchContext &search_ctx)
 {
 
 	// Return structure
@@ -937,7 +884,8 @@ construct_result_from_SearchContext(Napi::Env &env,
 		napi_value value_arr;
 		napi_create_array(env, &value_arr);
 		{
-			// \todo This should be generalized in the future
+			// \todo This should be generalized in the
+			// future
 
 			std::string q0{};
 			std::string q1{};
@@ -1003,8 +951,7 @@ construct_result_from_SearchContext(Napi::Env &env,
 		napi_set_property(env, result_obj, key, str_napi);
 	}
 
-	{ /* *** ID ***
-	    id: number; */
+	{ /* *** ID *** */
 		napi_value key;
 		napi_create_string_utf8(env, "id", NAPI_AUTO_LENGTH, &key);
 
@@ -1014,6 +961,54 @@ construct_result_from_SearchContext(Napi::Env &env,
 		napi_create_uint32(env, ID, &ID_napi);
 
 		napi_set_property(env, result_obj, key, ID_napi);
+	}
+
+	{ /* *** likedFrames *** */
+		napi_value key;
+		napi_create_string_utf8(
+		  env, "likedFrames", NAPI_AUTO_LENGTH, &key);
+
+		napi_value likes_arr;
+		napi_create_array(env, &likes_arr);
+
+		size_t i{ 0 };
+		for (auto &&f_ID : search_ctx.likes) {
+
+			const VideoFrame &f{ somhunter->get_frame(f_ID) };
+			auto fr{ VideoFrame_to_res(env,
+				                   &f,
+				                   search_ctx.likes,
+				                   search_ctx.bookmarks,
+				                   "") };
+
+			napi_set_element(env, likes_arr, i, fr);
+			++i;
+		}
+		napi_set_property(env, result_obj, key, likes_arr);
+	}
+
+	{ /* *** bookmarkedFrames *** */
+		napi_value key;
+		napi_create_string_utf8(
+		  env, "bookmarkedFrames", NAPI_AUTO_LENGTH, &key);
+
+		napi_value likes_arr;
+		napi_create_array(env, &likes_arr);
+
+		size_t i{ 0 };
+		for (auto &&f_ID : search_ctx.bookmarks) {
+
+			const VideoFrame &f{ somhunter->get_frame(f_ID) };
+			auto fr{ VideoFrame_to_res(env,
+				                   &f,
+				                   search_ctx.likes,
+				                   search_ctx.bookmarks,
+				                   "") };
+
+			napi_set_element(env, likes_arr, i, fr);
+			++i;
+		}
+		napi_set_property(env, result_obj, key, likes_arr);
 	}
 
 	return Napi::Object(env, result_obj);
@@ -1051,7 +1046,8 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-construct_result_from_UserContext(Napi::Env &env, const UserContext &user_ctx)
+SomHunterNapi::construct_result_from_UserContext(Napi::Env &env,
+                                                 const UserContext &user_ctx)
 {
 	// Return structure
 	napi_value result_obj;
