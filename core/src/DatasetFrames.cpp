@@ -28,7 +28,7 @@
 #include <fstream>
 
 std::vector<std::vector<KeywordId>>
-DatasetFrames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
+DatasetFrames::parse_top_kws_for_imgs_text_file(const std::string& filepath)
 {
 	std::ifstream inFile(filepath.c_str(), std::ios::in);
 
@@ -42,15 +42,13 @@ DatasetFrames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
 
 	// read the input file by lines
 	size_t line_idx = 0;
-	for (std::string line_text_buffer;
-	     std::getline(inFile, line_text_buffer);) {
+	for (std::string line_text_buffer; std::getline(inFile, line_text_buffer);) {
 
 		std::stringstream line_buffer_ss(line_text_buffer);
 
 		std::vector<std::string> tokens;
 
-		for (std::string token;
-		     std::getline(line_buffer_ss, token, '~');)
+		for (std::string token; std::getline(line_buffer_ss, token, '~');)
 			tokens.push_back(token);
 
 		if (tokens.size() < 2)
@@ -60,8 +58,7 @@ DatasetFrames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
 
 		// Keywrod IDs
 		std::vector<KeywordId> kw_IDs;
-		for (std::stringstream kw_IDs_ss(tokens[1]);
-		     std::getline(kw_IDs_ss, token, '#');)
+		for (std::stringstream kw_IDs_ss(tokens[1]); std::getline(kw_IDs_ss, token, '#');)
 			kw_IDs.emplace_back(str2<KeywordId>(token));
 
 		// Insert this image's top keywords
@@ -74,7 +71,7 @@ DatasetFrames::parse_top_kws_for_imgs_text_file(const std::string &filepath)
 	return result_vec;
 }
 
-DatasetFrames::DatasetFrames(const Config &config)
+DatasetFrames::DatasetFrames(const Config& config)
 {
 	// Save the config values
 	frames_path_prefix = config.frames_path_prefix;
@@ -101,8 +98,7 @@ DatasetFrames::DatasetFrames(const Config &config)
 
 		ifs_meta.open(config.LSC_metadata_file);
 		if (!ifs_meta.good()) {
-			auto msg{ "Failed to open " +
-				  config.LSC_metadata_file };
+			auto msg{ "Failed to open " + config.LSC_metadata_file };
 			warn(msg);
 #ifndef NDEBUG
 			throw std::runtime_error(msg);
@@ -123,25 +119,21 @@ DatasetFrames::DatasetFrames(const Config &config)
 
 			std::string tmp;
 
-			auto vf =
-			  DatasetFrames::parse_video_filename(std::move(s));
+			auto vf = DatasetFrames::parse_video_filename(std::move(s));
 
 			if (parse_metadata) {
 
 				// Read one metadata line
 				if (!getline(ifs_meta, md_line)) {
 #ifndef NDEBUG
-					auto msg{ "Not enough lines in " +
-						  config.LSC_metadata_file };
+					auto msg{ "Not enough lines in " + config.LSC_metadata_file };
 					warn(msg);
 					throw std::runtime_error(msg);
 #endif
 				}
 
 				// Parse this line
-				auto [weekday,
-				      hour]{ DatasetFrames::parse_metadata_line(
-				  md_line) };
+				auto [weekday, hour]{ DatasetFrames::parse_metadata_line(md_line) };
 
 				vf.weekday = weekday;
 				vf.hour = hour;
@@ -160,8 +152,7 @@ DatasetFrames::DatasetFrames(const Config &config)
 
 				// End previous range
 				if (prev_frame_vid_ID != SIZE_T_ERR_VAL) {
-					range_pairs.emplace_back(beg_img_ID,
-					                         last_item_ID);
+					range_pairs.emplace_back(beg_img_ID, last_item_ID);
 				}
 				// Start the new one
 				beg_img_ID = last_item_ID;
@@ -177,9 +168,8 @@ DatasetFrames::DatasetFrames(const Config &config)
 		 * Transfer ID pairs into iterators...
 		 */
 		auto base_it = _frames.begin();
-		for (auto &&[from_ID, to_ID] : range_pairs) {
-			_video_ID_to_frame_range.emplace_back(base_it + from_ID,
-			                                      base_it + to_ID);
+		for (auto&& [from_ID, to_ID] : range_pairs) {
+			_video_ID_to_frame_range.emplace_back(base_it + from_ID, base_it + to_ID);
 		}
 	}
 
@@ -190,29 +180,23 @@ DatasetFrames::DatasetFrames(const Config &config)
 }
 
 VideoFrame
-DatasetFrames::parse_video_filename(std::string &&filename)
+DatasetFrames::parse_video_filename(std::string&& filename)
 {
 	// Extract string representing video ID
-	std::string_view videoIdString(filename.data() + offs.vid_ID_off,
-	                               offs.vid_ID_len);
+	std::string_view videoIdString(filename.data() + offs.vid_ID_off, offs.vid_ID_len);
 
 	// Extract string representing shot ID
-	std::string_view shotIdString(filename.data() + offs.shot_ID_off,
-	                              offs.shot_ID_len);
+	std::string_view shotIdString(filename.data() + offs.shot_ID_off, offs.shot_ID_len);
 
 	// Extract string representing frame number
-	std::string_view frameNumberString(filename.data() + offs.frame_num_off,
-	                                   offs.frame_num_len);
+	std::string_view frameNumberString(filename.data() + offs.frame_num_off, offs.frame_num_len);
 
-	return VideoFrame(std::move(filename),
-	                  str_to_int(videoIdString),
-	                  str_to_int(shotIdString),
-	                  str_to_int(frameNumberString),
-	                  0);
+	return VideoFrame(
+	  std::move(filename), str_to_int(videoIdString), str_to_int(shotIdString), str_to_int(frameNumberString), 0);
 }
 
 std::tuple<Weekday, Hour>
-DatasetFrames::parse_metadata_line(const std::string &line)
+DatasetFrames::parse_metadata_line(const std::string& line)
 {
 	// EXAMPLE `line`: 20160815,509,2016-08-15_06:09,53.3892,0,-6.15827,Home
 
@@ -227,7 +211,7 @@ DatasetFrames::parse_metadata_line(const std::string &line)
 }
 
 std::vector<VideoFramePointer>
-DatasetFrames::ids_to_video_frame(const std::vector<ImageId> &ids) const
+DatasetFrames::ids_to_video_frame(const std::vector<ImageId>& ids) const
 {
 	std::vector<VideoFramePointer> res;
 	res.reserve(ids.size());
@@ -244,7 +228,7 @@ DatasetFrames::ids_to_video_frame(const std::vector<ImageId> &ids) const
 }
 
 std::vector<VideoFramePointer>
-DatasetFrames::range_to_video_frame(const FrameRange &ids)
+DatasetFrames::range_to_video_frame(const FrameRange& ids)
 {
 	std::vector<VideoFramePointer> res;
 	res.reserve(ids.size());

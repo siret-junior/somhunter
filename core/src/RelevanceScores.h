@@ -47,14 +47,14 @@ class ScoreModel
 	mutable bool _cache_ctx_dirty;
 
 public:
-	ScoreModel(const DatasetFrames &p)
+	ScoreModel(const DatasetFrames& p)
 	  : _scores(p.size(), 1.0F)
 	  , _mask(p.size(), true)
 	  , _cache_dirty{ true }
 	  , _cache_ctx_dirty{ true }
 	{}
 
-	bool operator==(const ScoreModel &other) const;
+	bool operator==(const ScoreModel& other) const;
 	float operator[](ImageId i) const { return _scores[i]; }
 
 	void reset();
@@ -67,7 +67,7 @@ public:
 	float set(ImageId i, float prob);
 
 	/** Pointer to the begin of the data. */
-	const float *v() const { return _scores.data(); }
+	const float* v() const { return _scores.data(); }
 
 	/** Returns number of scores stored. */
 	size_t size() const { return _scores.size(); }
@@ -79,10 +79,7 @@ public:
 	{
 		_cache_dirty = true;
 
-		std::transform(_mask.begin(),
-		               _mask.end(),
-		               _mask.begin(),
-		               [](const bool &) { return true; });
+		std::transform(_mask.begin(), _mask.end(), _mask.begin(), [](const bool&) { return true; });
 	};
 
 	/** Returns the current value for the frame */
@@ -98,14 +95,12 @@ public:
 	/**
 	 * Applies relevance feedback rescore based on the Bayesian update rule.
 	 */
-	void apply_bayes(std::set<ImageId> likes,
-	                 const std::set<ImageId> &screen,
-	                 const DatasetFeatures &features);
+	void apply_bayes(std::set<ImageId> likes, const std::set<ImageId>& screen, const DatasetFeatures& features);
 
 	/**
 	 * Gets the images with the highest scores but respecting the provided
 	 * limits. */
-	std::vector<ImageId> top_n(const DatasetFrames &frames,
+	std::vector<ImageId> top_n(const DatasetFrames& frames,
 	                           size_t n,
 	                           size_t from_vid_limit = 0,
 	                           size_t from_shot_limit = 0) const;
@@ -114,7 +109,7 @@ public:
 	 * Gets the images with the highest scores while respecting the
 	 * provided limits and each frame is wrapped by it's context based on
 	 * the number of frames per line. */
-	std::vector<ImageId> top_n_with_context(const DatasetFrames &frames,
+	std::vector<ImageId> top_n_with_context(const DatasetFrames& frames,
 	                                        size_t n,
 	                                        size_t from_vid_limit,
 	                                        size_t from_shot_limit) const;
@@ -123,7 +118,7 @@ public:
 	std::vector<ImageId> weighted_sample(size_t n, float pow = 1) const;
 
 	/** Samples a random frame from the current scores distribution. */
-	ImageId weighted_example(const std::vector<ImageId> &subset) const;
+	ImageId weighted_example(const std::vector<ImageId>& subset) const;
 
 	/** Returns the current rank of the provided frame (starts from 0). */
 	size_t frame_rank(ImageId i) const;

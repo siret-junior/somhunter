@@ -32,7 +32,7 @@
 #include "log.h"
 
 void
-AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
+AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 {
 	std::random_device rd;
 	std::mt19937 rng(rd());
@@ -69,48 +69,29 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 
 		// at this point: restart is off, input is ready.
 
-		std::vector<float> nhbrdist(
-		  SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_WIDTH *
-		  SOM_DISPLAY_GRID_HEIGHT * SOM_DISPLAY_GRID_HEIGHT);
+		std::vector<float> nhbrdist(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT *
+		                            SOM_DISPLAY_GRID_HEIGHT);
 		for (size_t x1 = 0; x1 < SOM_DISPLAY_GRID_WIDTH; ++x1)
 			for (size_t y1 = 0; y1 < SOM_DISPLAY_GRID_HEIGHT; ++y1)
-				for (size_t x2 = 0; x2 < SOM_DISPLAY_GRID_WIDTH;
-				     ++x2)
-					for (size_t y2 = 0;
-					     y2 < SOM_DISPLAY_GRID_HEIGHT;
-					     ++y2)
-						nhbrdist
-						  [x1 +
-						   SOM_DISPLAY_GRID_WIDTH *
-						     (y1 +
-						      SOM_DISPLAY_GRID_HEIGHT *
-						        (x2 +
-						         SOM_DISPLAY_GRID_WIDTH *
-						           y2))] =
-						    abs(float(x1) - float(x2)) +
-						    abs(float(y1) - float(y2));
+				for (size_t x2 = 0; x2 < SOM_DISPLAY_GRID_WIDTH; ++x2)
+					for (size_t y2 = 0; y2 < SOM_DISPLAY_GRID_HEIGHT; ++y2)
+						nhbrdist[x1 + SOM_DISPLAY_GRID_WIDTH *
+						                (y1 + SOM_DISPLAY_GRID_HEIGHT *
+						                        (x2 + SOM_DISPLAY_GRID_WIDTH * y2))] =
+						  abs(float(x1) - float(x2)) + abs(float(y1) - float(y2));
 
 		if (parent->new_data || parent->terminate)
 			continue;
 
-		std::vector<float> koho(SOM_DISPLAY_GRID_WIDTH *
-		                          SOM_DISPLAY_GRID_HEIGHT *
-		                          cfg.features_dim,
-		                        0);
+		std::vector<float> koho(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT * cfg.features_dim, 0);
 		float negAlpha = -0.01f;
 		float negRadius = 1.1f;
 		float alphasA[2] = { 0.3f, 0.1f };
-		float alphasB[2] = { negAlpha * alphasA[0],
-			             negAlpha * alphasA[1] };
-		float radiiA[2] = { float(SOM_DISPLAY_GRID_WIDTH +
-			                  SOM_DISPLAY_GRID_HEIGHT) /
-			              3,
-			            0.1f };
-		float radiiB[2] = { negRadius * radiiA[0],
-			            negRadius * radiiA[1] };
+		float alphasB[2] = { negAlpha * alphasA[0], negAlpha * alphasA[1] };
+		float radiiA[2] = { float(SOM_DISPLAY_GRID_WIDTH + SOM_DISPLAY_GRID_HEIGHT) / 3, 0.1f };
+		float radiiB[2] = { negRadius * radiiA[0], negRadius * radiiA[1] };
 
-		std::chrono::high_resolution_clock::time_point begin =
-		  std::chrono::high_resolution_clock::now();
+		std::chrono::high_resolution_clock::time_point begin = std::chrono::high_resolution_clock::now();
 		som(n,
 		    SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT,
 		    cfg.features_dim,
@@ -124,13 +105,9 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 		    radiiB,
 		    scores,
 		    rng);
-		std::chrono::high_resolution_clock::time_point end =
-		  std::chrono::high_resolution_clock::now();
-		debug("SOM took "
-		      << std::chrono::duration_cast<std::chrono::milliseconds>(
-		           end - begin)
-		           .count()
-		      << " [ms]");
+		std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+		debug("SOM took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+		                  << " [ms]");
 
 		if (parent->new_data || parent->terminate)
 			continue;
@@ -146,8 +123,7 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 				size_t end = (id + 1) * n / n_threads;
 				mapPointsToKohos(start,
 				                 end,
-				                 SOM_DISPLAY_GRID_WIDTH *
-				                   SOM_DISPLAY_GRID_HEIGHT,
+				                 SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT,
 				                 cfg.features_dim,
 				                 points,
 				                 koho,
@@ -161,18 +137,14 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 				threads[i].join();
 		}
 		end = std::chrono::high_resolution_clock::now();
-		debug("Mapping took "
-		      << std::chrono::duration_cast<std::chrono::milliseconds>(
-		           end - begin)
-		           .count()
-		      << " [ms]");
+		debug("Mapping took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+		                      << " [ms]");
 
 		if (parent->new_data || parent->terminate)
 			continue;
 
 		parent->mapping.clear();
-		parent->mapping.resize(SOM_DISPLAY_GRID_WIDTH *
-		                       SOM_DISPLAY_GRID_HEIGHT);
+		parent->mapping.resize(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT);
 		for (ImageId im = 0; im < mapping.size(); ++im)
 			parent->mapping[mapping[im]].push_back(im);
 
@@ -189,7 +161,7 @@ AsyncSom::async_som_worker(AsyncSom *parent, const Config &cfg)
 	info("SOM worker terminating");
 }
 
-AsyncSom::AsyncSom(const Config &cfg)
+AsyncSom::AsyncSom(const Config& cfg)
 {
 	new_data = m_ready = terminate = false;
 	worker = std::thread(async_som_worker, this, cfg);
@@ -205,7 +177,7 @@ AsyncSom::~AsyncSom()
 }
 
 void
-AsyncSom::start_work(const DatasetFeatures &fs, const ScoreModel &sc)
+AsyncSom::start_work(const DatasetFeatures& fs, const ScoreModel& sc)
 {
 	std::unique_lock lck(worker_lock);
 	points = std::vector<float>(fs.fv(0), fs.fv(0) + fs.dim() * sc.size());

@@ -25,12 +25,12 @@
 //#define DEBUG_CURL_REQUESTS
 #define LOG_LOGS
 #ifdef LOG_LOGS
-#define LOG_LOGS_DIR "logs/actions/"s
+#	define LOG_LOGS_DIR "logs/actions/"s
 #endif // LOG_LOGS
 
 #define LOG_CURL_REQUESTS
 #ifdef LOG_CURL_REQUESTS
-#define LOG_CURL_REQUESTS_DIR "logs/requests/"s
+#	define LOG_CURL_REQUESTS_DIR "logs/requests/"s
 #endif // LOG_CURL_REQUESTS
 
 #include <memory>
@@ -69,11 +69,7 @@ class Submitter
 
 	std::ofstream act_log;
 	/** Just a shortcut so we have the unified log prefix. */
-	auto &alog()
-	{
-		return act_log << get_formated_timestamp("%H:%M:%S") << "\t"
-		               << timestamp() << "\t";
-	}
+	auto& alog() { return act_log << get_formated_timestamp("%H:%M:%S") << "\t" << timestamp() << "\t"; }
 
 #endif // LOG_LOGS
 
@@ -81,16 +77,12 @@ class Submitter
 
 	std::ofstream req_log;
 	/** Just a shortcut so we have the unified log prefix. */
-	auto &rlog()
-	{
-		return req_log << get_formated_timestamp("%H:%M:%S") << "\t"
-		               << timestamp() << "\t";
-	}
+	auto& rlog() { return req_log << get_formated_timestamp("%H:%M:%S") << "\t" << timestamp() << "\t"; }
 
 #endif // LOG_CURL_REQUESTS
 
 public:
-	Submitter(const SubmitterConfig &config);
+	Submitter(const SubmitterConfig& config);
 
 	// waits until the last thread submits
 	~Submitter() noexcept;
@@ -104,95 +96,73 @@ public:
 	size_t n_submitters() { return submit_threads.size(); }
 
 	/** Called whenever we want to submit frame/shot into the server */
-	void submit_and_log_submit(const DatasetFrames &frames,
-	                           DisplayType disp_type,
-	                           ImageId frame_ID);
+	void submit_and_log_submit(const DatasetFrames& frames, DisplayType disp_type, ImageId frame_ID);
 
 	/** Called whenever we rescore (Bayes/LD) */
-	void submit_and_log_rescore(const DatasetFrames &frames,
-	                            const ScoreModel &scores,
-	                            const std::set<ImageId> &likes,
-	                            const UsedTools &used_tools,
+	void submit_and_log_rescore(const DatasetFrames& frames,
+	                            const ScoreModel& scores,
+	                            const std::set<ImageId>& likes,
+	                            const UsedTools& used_tools,
 	                            DisplayType disp_type,
-	                            const std::vector<ImageId> &topn_imgs,
-	                            const std::string &sentence_query,
+	                            const std::vector<ImageId>& topn_imgs,
+	                            const std::string& sentence_query,
 	                            const size_t topn_frames_per_video,
 	                            const size_t topn_frames_per_shot);
 
-	void log_text_query_change(const std::string &query_sentence);
+	void log_text_query_change(const std::string& query_sentence);
 
-	void log_like(const DatasetFrames &frames,
-	              const std::set<ImageId> &likes,
+	void log_like(const DatasetFrames& frames,
+	              const std::set<ImageId>& likes,
 	              DisplayType disp_type,
 	              ImageId frame_ID);
 
-	void log_unlike(const DatasetFrames &frames,
-	                const std::set<ImageId> &likes,
+	void log_unlike(const DatasetFrames& frames,
+	                const std::set<ImageId>& likes,
 	                DisplayType disp_type,
 	                ImageId frame_ID);
 
-	void log_show_som_display(const DatasetFrames &frames,
-	                          const std::vector<ImageId> &imgs);
+	void log_show_som_display(const DatasetFrames& frames, const std::vector<ImageId>& imgs);
 
-	void log_show_random_display(const DatasetFrames &frames,
-	                             const std::vector<ImageId> &imgs);
+	void log_show_random_display(const DatasetFrames& frames, const std::vector<ImageId>& imgs);
 
-	void log_show_topn_display(const DatasetFrames &frames,
-	                           const std::vector<ImageId> &imgs);
+	void log_show_topn_display(const DatasetFrames& frames, const std::vector<ImageId>& imgs);
 
-	void log_show_topn_context_display(const DatasetFrames &frames,
-	                                   const std::vector<ImageId> &imgs);
+	void log_show_topn_context_display(const DatasetFrames& frames, const std::vector<ImageId>& imgs);
 
-	void log_show_topknn_display(const DatasetFrames &frames,
-	                             ImageId frame_ID,
-	                             const std::vector<ImageId> &imgs);
+	void log_show_topknn_display(const DatasetFrames& frames, ImageId frame_ID, const std::vector<ImageId>& imgs);
 
-	void log_show_detail_display(const DatasetFrames &frames,
-	                             ImageId frame_ID);
+	void log_show_detail_display(const DatasetFrames& frames, ImageId frame_ID);
 
-	void log_show_video_replay(const DatasetFrames &frames,
-	                           ImageId frame_ID,
-	                           float delta);
+	void log_show_video_replay(const DatasetFrames& frames, ImageId frame_ID, float delta);
 
-	void log_scroll(const DatasetFrames &frames,
-	                DisplayType from_disp_type,
-	                float dirY);
+	void log_scroll(const DatasetFrames& frames, DisplayType from_disp_type, float dirY);
 
 	void log_reset_search();
 
 private:
-	void start_poster(const std::string &submit_url,
-	                  const std::string &query_string,
-	                  const std::string &post_data);
+	void start_poster(const std::string& submit_url, const std::string& query_string, const std::string& post_data);
 
-	void start_getter(const std::string &submit_url,
-	                  const std::string &query_string);
+	void start_getter(const std::string& submit_url, const std::string& query_string);
 
-	void send_query_with_backlog(const std::string &query_string);
+	void send_query_with_backlog(const std::string& query_string);
 
 	/** @mk We won't be callling this explicitly from the outside, will we?
 	 */
 	void send_backlog_only();
 
 	/** Called by @ref submit_and_log_submit */
-	void log_submit(const DatasetFrames &frames,
-	                DisplayType disp_type,
-	                ImageId frame_ID);
+	void log_submit(const DatasetFrames& frames, DisplayType disp_type, ImageId frame_ID);
 
 	/** Called by @ref submit_and_log_rescore */
-	void log_rerank(const DatasetFrames &frames,
-	                DisplayType from_disp_type,
-	                const std::vector<ImageId> &topn_imgs);
+	void log_rerank(const DatasetFrames& frames, DisplayType from_disp_type, const std::vector<ImageId>& topn_imgs);
 
-	void push_event(const std::string &cat,
-	                const std::string &type,
-	                const std::string &value);
+	void push_event(const std::string& cat, const std::string& type, const std::string& value);
 
 	bool is_DRES_server() const;
 
-	const std::string &get_submit_URL() const;
-	const std::string &get_rerank_URL() const;
-	const std::string &get_interaction_URL() const;
+	const std::string& get_submit_URL() const;
+	const std::string& get_rerank_URL() const;
+	const std::string& get_interaction_URL() const;
 };
 
 #endif

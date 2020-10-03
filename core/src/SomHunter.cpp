@@ -28,10 +28,7 @@
 #include "utils.h"
 
 GetDisplayResult
-SomHunter::get_display(DisplayType d_type,
-                       ImageId selected_image,
-                       PageId page,
-                       bool log_it)
+SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page, bool log_it)
 {
 	user.submitter.poll();
 
@@ -65,8 +62,7 @@ SomHunter::get_display(DisplayType d_type,
 		default:
 			warn("Unsupported display requested.");
 #ifndef NDEBUG
-			throw std::runtime_error(
-			  "Unsupported display requested.");
+			throw std::runtime_error("Unsupported display requested.");
 #endif // !NDEBUG
 
 			break;
@@ -76,7 +72,7 @@ SomHunter::get_display(DisplayType d_type,
 }
 
 std::vector<bool>
-SomHunter::like_frames(const std::vector<ImageId> &new_likes)
+SomHunter::like_frames(const std::vector<ImageId>& new_likes)
 {
 	user.submitter.poll();
 
@@ -84,7 +80,7 @@ SomHunter::like_frames(const std::vector<ImageId> &new_likes)
 	std::vector<bool> res;
 	res.reserve(new_likes.size());
 
-	for (auto &&fr_ID : new_likes) {
+	for (auto&& fr_ID : new_likes) {
 
 		// Find the item in the set
 		size_t count{ user.ctx.likes.count(fr_ID) };
@@ -95,10 +91,7 @@ SomHunter::like_frames(const std::vector<ImageId> &new_likes)
 			user.ctx.likes.insert(fr_ID);
 			res.emplace_back(true);
 
-			user.submitter.log_like(frames,
-			                        user.ctx.likes,
-			                        user.ctx.curr_disp_type,
-			                        fr_ID);
+			user.submitter.log_like(frames, user.ctx.likes, user.ctx.curr_disp_type, fr_ID);
 		}
 		// If the item is present (LIKED)
 		else {
@@ -106,10 +99,7 @@ SomHunter::like_frames(const std::vector<ImageId> &new_likes)
 			user.ctx.likes.erase(fr_ID);
 			res.emplace_back(false);
 
-			user.submitter.log_unlike(frames,
-			                          user.ctx.likes,
-			                          user.ctx.curr_disp_type,
-			                          fr_ID);
+			user.submitter.log_unlike(frames, user.ctx.likes, user.ctx.curr_disp_type, fr_ID);
 		}
 	}
 
@@ -117,7 +107,7 @@ SomHunter::like_frames(const std::vector<ImageId> &new_likes)
 }
 
 std::vector<bool>
-SomHunter::bookmark_frames(const std::vector<ImageId> &new_bookmarks)
+SomHunter::bookmark_frames(const std::vector<ImageId>& new_bookmarks)
 {
 	user.submitter.poll();
 
@@ -125,7 +115,7 @@ SomHunter::bookmark_frames(const std::vector<ImageId> &new_bookmarks)
 	std::vector<bool> res;
 	res.reserve(new_bookmarks.size());
 
-	for (auto &&fr_ID : new_bookmarks) {
+	for (auto&& fr_ID : new_bookmarks) {
 
 		// Find the item in the set
 		size_t count{ user.ctx.bookmarks.count(fr_ID) };
@@ -149,20 +139,20 @@ SomHunter::bookmark_frames(const std::vector<ImageId> &new_bookmarks)
 	return res;
 }
 
-std::vector<const Keyword *>
-SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
+std::vector<const Keyword*>
+SomHunter::autocomplete_keywords(const std::string& prefix, size_t count) const
 {
 	// Trivial case
 	if (prefix.empty())
-		return std::vector<const Keyword *>{};
+		return std::vector<const Keyword*>{};
 
 	// Get the keywrods IDs
 	auto kw_IDs{ keywords.find(prefix, count) };
 
 	// Create vector of ptrs to corresponding keyword instances
-	std::vector<const Keyword *> res;
+	std::vector<const Keyword*> res;
 	res.reserve(kw_IDs.size());
-	for (auto &&kw_ID : kw_IDs) {
+	for (auto&& kw_ID : kw_IDs) {
 		res.emplace_back(&keywords[kw_ID.first]);
 	}
 
@@ -182,19 +172,18 @@ SomHunter::apply_filters()
 	if (!has_metadata()) {
 		return;
 	}
-	
 
 	// Make sure to reset the previous mask on the scores
 	user.ctx.scores.reset_mask();
 
-	const Filters &filters{ user.ctx.filters };
+	const Filters& filters{ user.ctx.filters };
 
-	const auto &days{ filters.days };
+	const auto& days{ filters.days };
 	Hour t_from{ filters.time.from };
 	Hour t_to{ filters.time.to };
-	
+
 	// A closure that determines if the frame should be filtered out
-	auto is_out{ [&days, t_from, t_to](const VideoFrame &f) {
+	auto is_out{ [&days, t_from, t_to](const VideoFrame& f) {
 		// If NOT within the selected days
 		if (!days[f.weekday])
 			return true;
@@ -207,7 +196,7 @@ SomHunter::apply_filters()
 	} };
 
 	ImageId frame_ID{ 0 };
-	for (auto &&f : frames) {
+	for (auto&& f : frames) {
 
 		// If should be filtered out
 		if (is_out(f)) {
@@ -219,11 +208,11 @@ SomHunter::apply_filters()
 }
 
 RescoreResult
-SomHunter::rescore(const std::string &text_query,
-                   const Filters *p_filters,
+SomHunter::rescore(const std::string& text_query,
+                   const Filters* p_filters,
                    size_t src_search_ctx_ID,
-                   const std::string &screenshot_fpth,
-                   const std::string &label)
+                   const std::string& screenshot_fpth,
+                   const std::string& label)
 {
 	/* ***
 	 * Set the filters to the context
@@ -231,17 +220,14 @@ SomHunter::rescore(const std::string &text_query,
 	if (p_filters != nullptr && has_metadata()) {
 		user.ctx.filters = *p_filters;
 	}
-	
 
 	/* ***
 	 * Save provided screenshot filepath if needed
 	 */
-	if (src_search_ctx_ID != SIZE_T_ERR_VAL &&
-	    user.history[src_search_ctx_ID].screenshot_fpth.empty()) {
+	if (src_search_ctx_ID != SIZE_T_ERR_VAL && user.history[src_search_ctx_ID].screenshot_fpth.empty()) {
 
 		user.history[src_search_ctx_ID].label = label;
-		user.history[src_search_ctx_ID].screenshot_fpth =
-		  screenshot_fpth;
+		user.history[src_search_ctx_ID].screenshot_fpth = screenshot_fpth;
 	}
 
 	/* ***
@@ -271,10 +257,8 @@ SomHunter::rescore(const std::string &text_query,
 	 */
 	// Flush the backlog
 	user.submitter.poll();
-	auto top_n = user.ctx.scores.top_n(frames,
-	                                   TOPN_LIMIT,
-	                                   config.topn_frames_per_video,
-	                                   config.topn_frames_per_shot);
+	auto top_n =
+	  user.ctx.scores.top_n(frames, TOPN_LIMIT, config.topn_frames_per_video, config.topn_frames_per_shot);
 
 	// Log this rescore result
 	user.submitter.submit_and_log_rescore(frames,
@@ -305,8 +289,7 @@ SomHunter::login_to_dres() const
 void
 SomHunter::submit_to_server(ImageId frame_id)
 {
-	user.submitter.submit_and_log_submit(
-	  frames, user.ctx.curr_disp_type, frame_id);
+	user.submitter.submit_and_log_submit(frames, user.ctx.curr_disp_type, frame_id);
 }
 
 void
@@ -335,13 +318,13 @@ SomHunter::log_scroll(DisplayType t, float dir_Y)
 }
 
 void
-SomHunter::log_text_query_change(const std::string &text_query)
+SomHunter::log_text_query_change(const std::string& text_query)
 {
 	user.submitter.log_text_query_change(text_query);
 }
 
 void
-SomHunter::rescore_keywords(const std::string &query)
+SomHunter::rescore_keywords(const std::string& query)
 {
 	// Do not rescore if query did not change
 	if (user.ctx.last_text_query == query) {
@@ -350,8 +333,7 @@ SomHunter::rescore_keywords(const std::string &query)
 
 	reset_scores();
 
-	keywords.rank_sentence_query(
-	  query, user.ctx.scores, features, frames, config);
+	keywords.rank_sentence_query(query, user.ctx.scores, features, frames, config);
 
 	user.ctx.last_text_query = query;
 	user.ctx.used_tools.KWs_used = true;
@@ -363,8 +345,7 @@ SomHunter::rescore_feedback()
 	if (user.ctx.likes.empty())
 		return;
 
-	user.ctx.scores.apply_bayes(
-	  user.ctx.likes, user.ctx.shown_images, features);
+	user.ctx.scores.apply_bayes(user.ctx.likes, user.ctx.shown_images, features);
 	user.ctx.used_tools.bayes_used = true;
 }
 
@@ -378,8 +359,7 @@ FramePointerRange
 SomHunter::get_random_display()
 {
 	// Get ids
-	auto ids = user.ctx.scores.weighted_sample(
-	  DISPLAY_GRID_WIDTH * DISPLAY_GRID_HEIGHT, RANDOM_DISPLAY_WEIGHT);
+	auto ids = user.ctx.scores.weighted_sample(DISPLAY_GRID_WIDTH * DISPLAY_GRID_HEIGHT, RANDOM_DISPLAY_WEIGHT);
 
 	// Log
 	user.submitter.log_show_random_display(frames, ids);
@@ -399,10 +379,8 @@ SomHunter::get_topn_display(PageId page)
 	if (user.ctx.curr_disp_type != DisplayType::DTopN || page == 0) {
 		debug("Loading top n display first page");
 		// Get ids
-		auto ids = user.ctx.scores.top_n(frames,
-		                                 TOPN_LIMIT,
-		                                 config.topn_frames_per_video,
-		                                 config.topn_frames_per_shot);
+		auto ids =
+		  user.ctx.scores.top_n(frames, TOPN_LIMIT, config.topn_frames_per_video, config.topn_frames_per_shot);
 
 		// Log only if page 0
 		if (page == 0)
@@ -424,15 +402,11 @@ SomHunter::get_topn_context_display(PageId page)
 		debug("Loading top n context display first page");
 		// Get ids
 		auto ids = user.ctx.scores.top_n_with_context(
-		  frames,
-		  TOPN_LIMIT,
-		  config.topn_frames_per_video,
-		  config.topn_frames_per_shot);
+		  frames, TOPN_LIMIT, config.topn_frames_per_video, config.topn_frames_per_shot);
 
 		// Log
 		if (page == 0)
-			user.submitter.log_show_topn_context_display(frames,
-			                                             ids);
+			user.submitter.log_show_topn_context_display(frames, ids);
 
 		// Update context
 		user.ctx.current_display = frames.ids_to_video_frame(ids);
@@ -455,11 +429,9 @@ SomHunter::get_som_display()
 	// Select weighted example from cluster
 	for (size_t i = 0; i < SOM_DISPLAY_GRID_WIDTH; ++i) {
 		for (size_t j = 0; j < SOM_DISPLAY_GRID_HEIGHT; ++j) {
-			if (!user.async_SOM.map(i + SOM_DISPLAY_GRID_WIDTH * j)
-			       .empty()) {
-				ImageId id = user.ctx.scores.weighted_example(
-				  user.async_SOM.map(
-				    i + SOM_DISPLAY_GRID_WIDTH * j));
+			if (!user.async_SOM.map(i + SOM_DISPLAY_GRID_WIDTH * j).empty()) {
+				ImageId id =
+				  user.ctx.scores.weighted_example(user.async_SOM.map(i + SOM_DISPLAY_GRID_WIDTH * j));
 				ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
 			}
 		}
@@ -467,49 +439,37 @@ SomHunter::get_som_display()
 
 	auto begin = std::chrono::steady_clock::now();
 	// Fix empty cluster
-	std::vector<size_t> stolen_count(
-	  SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT, 1);
+	std::vector<size_t> stolen_count(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT, 1);
 	for (size_t i = 0; i < SOM_DISPLAY_GRID_WIDTH; ++i) {
 		for (size_t j = 0; j < SOM_DISPLAY_GRID_HEIGHT; ++j) {
-			if (user.async_SOM.map(i + SOM_DISPLAY_GRID_WIDTH * j)
-			      .empty()) {
-				debug("Fixing cluster "
-				      << i + SOM_DISPLAY_GRID_WIDTH * j);
+			if (user.async_SOM.map(i + SOM_DISPLAY_GRID_WIDTH * j).empty()) {
+				debug("Fixing cluster " << i + SOM_DISPLAY_GRID_WIDTH * j);
 
 				// Get SOM node of empty cluster
-				auto k = user.async_SOM.get_koho(
-				  i + SOM_DISPLAY_GRID_WIDTH * j);
+				auto k = user.async_SOM.get_koho(i + SOM_DISPLAY_GRID_WIDTH * j);
 
 				// Get nearest cluster with enough elements
-				size_t clust =
-				  user.async_SOM.nearest_cluster_with_atleast(
-				    k, stolen_count);
+				size_t clust = user.async_SOM.nearest_cluster_with_atleast(k, stolen_count);
 
 				stolen_count[clust]++;
-				std::vector<ImageId> ci =
-				  user.async_SOM.map(clust);
+				std::vector<ImageId> ci = user.async_SOM.map(clust);
 
 				for (ImageId ii : ids) {
-					auto fi =
-					  std::find(ci.begin(), ci.end(), ii);
+					auto fi = std::find(ci.begin(), ci.end(), ii);
 					if (fi != ci.end())
 						ci.erase(fi);
 				}
 
 				assert(!ci.empty());
 
-				ImageId id =
-				  user.ctx.scores.weighted_example(ci);
+				ImageId id = user.ctx.scores.weighted_example(ci);
 				ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
 			}
 		}
 	}
 	auto end = std::chrono::steady_clock::now();
-	debug(
-	  "Fixing clusters took "
-	  << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin)
-	       .count()
-	  << " [ms]");
+	debug("Fixing clusters took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+	                              << " [ms]");
 
 	// Log
 	user.submitter.log_show_som_display(frames, ids);
@@ -545,8 +505,7 @@ SomHunter::get_video_detail_display(ImageId selected_image, bool log_it)
 		user.submitter.log_show_detail_display(frames, selected_image);
 
 	// Update context
-	for (auto iter = video_frames.begin(); iter != video_frames.end();
-	     ++iter) {
+	for (auto iter = video_frames.begin(); iter != video_frames.end(); ++iter) {
 		user.ctx.shown_images.insert(iter->frame_ID);
 	}
 
@@ -563,15 +522,12 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 	if (user.ctx.curr_disp_type != DisplayType::DTopKNN || page == 0) {
 
 		// Get ids
-		auto ids = features.get_top_knn(frames,
-		                                selected_image,
-		                                config.topn_frames_per_video,
-		                                config.topn_frames_per_shot);
+		auto ids = features.get_top_knn(
+		  frames, selected_image, config.topn_frames_per_video, config.topn_frames_per_shot);
 
 		// Log only if the first page
 		if (page == 0) {
-			user.submitter.log_show_topknn_display(
-			  frames, selected_image, ids);
+			user.submitter.log_show_topknn_display(frames, selected_image, ids);
 		}
 
 		// Update context
@@ -582,16 +538,15 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 		UsedTools ut;
 		ut.topknn_used = true;
 
-		user.submitter.submit_and_log_rescore(
-		  frames,
-		  user.ctx.scores,
-		  user.ctx.likes,
-		  ut,
-		  user.ctx.curr_disp_type,
-		  ids,
-		  user.ctx.last_text_query,
-		  config.topn_frames_per_video,
-		  config.topn_frames_per_shot);
+		user.submitter.submit_and_log_rescore(frames,
+		                                      user.ctx.scores,
+		                                      user.ctx.likes,
+		                                      ut,
+		                                      user.ctx.curr_disp_type,
+		                                      ids,
+		                                      user.ctx.last_text_query,
+		                                      config.topn_frames_per_video,
+		                                      config.topn_frames_per_shot);
 	}
 
 	return get_page_from_last(page);
@@ -600,15 +555,12 @@ SomHunter::get_topKNN_display(ImageId selected_image, PageId page)
 FramePointerRange
 SomHunter::get_page_from_last(PageId page)
 {
-	debug("Getting page "
-	      << page << ", page size " << config.display_page_size
-	      << ", current display size " << current_display.size());
+	debug("Getting page " << page << ", page size " << config.display_page_size << ", current display size "
+	                      << current_display.size());
 
-	size_t begin_off{ std::min(user.ctx.current_display.size(),
-		                   page * config.display_page_size) };
+	size_t begin_off{ std::min(user.ctx.current_display.size(), page * config.display_page_size) };
 	size_t end_off{ std::min(user.ctx.current_display.size(),
-		                 page * config.display_page_size +
-		                   config.display_page_size) };
+		                 page * config.display_page_size + config.display_page_size) };
 
 	FramePointerRange res(user.ctx.current_display.cbegin() + begin_off,
 	                      user.ctx.current_display.cbegin() + end_off);
@@ -637,22 +589,20 @@ SomHunter::reset_scores()
 	user.ctx.scores.reset();
 }
 
-const UserContext &
+const UserContext&
 SomHunter::switch_search_context(size_t index,
                                  size_t src_search_ctx_ID,
-                                 const std::string &screenshot_fpth,
-                                 const std::string &label)
+                                 const std::string& screenshot_fpth,
+                                 const std::string& label)
 {
 
 	/*
 	 * Save provided screenshot filepath if needed
 	 */
-	if (src_search_ctx_ID != SIZE_T_ERR_VAL &&
-	    user.history[src_search_ctx_ID].screenshot_fpth.empty()) {
+	if (src_search_ctx_ID != SIZE_T_ERR_VAL && user.history[src_search_ctx_ID].screenshot_fpth.empty()) {
 
 		user.history[src_search_ctx_ID].label = label;
-		user.history[src_search_ctx_ID].screenshot_fpth =
-		  screenshot_fpth;
+		user.history[src_search_ctx_ID].screenshot_fpth = screenshot_fpth;
 	}
 
 	// Range check
@@ -672,7 +622,7 @@ SomHunter::switch_search_context(size_t index,
 	}
 
 	// Get the desired state
-	const auto &destContext{ user.history[index] };
+	const auto& destContext{ user.history[index] };
 
 	// Copy the history state into the current one
 	user.ctx = SearchContext{ destContext };
@@ -684,13 +634,13 @@ SomHunter::switch_search_context(size_t index,
 	return user;
 }
 
-const SearchContext &
+const SearchContext&
 SomHunter::get_search_context() const
 {
 	return user.ctx;
 }
 
-const UserContext &
+const UserContext&
 SomHunter::get_user_context() const
 {
 	return user;

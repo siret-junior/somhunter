@@ -63,15 +63,15 @@ class AsyncSom
 	std::vector<std::vector<ImageId>> mapping;
 	std::vector<float> koho;
 
-	static void async_som_worker(AsyncSom *parent, const Config &cfg);
+	static void async_som_worker(AsyncSom* parent, const Config& cfg);
 
 public:
 	AsyncSom() = delete;
 	~AsyncSom() noexcept;
 
-	AsyncSom(const Config &cfg);
+	AsyncSom(const Config& cfg);
 
-	void start_work(const DatasetFeatures &fs, const ScoreModel &sc);
+	void start_work(const DatasetFeatures& fs, const ScoreModel& sc);
 
 	bool map_ready() const
 	{
@@ -79,28 +79,17 @@ public:
 		std::atomic_thread_fence(std::memory_order_acquire);
 		return t;
 	}
-	const std::vector<ImageId> &map(size_t i) const
-	{
-		return mapping.at(i);
-	}
+	const std::vector<ImageId>& map(size_t i) const { return mapping.at(i); }
 
-	const float *get_koho(size_t i) const
-	{
-		return koho.data() + i * features_dim;
-	}
+	const float* get_koho(size_t i) const { return koho.data() + i * features_dim; }
 
-	size_t nearest_cluster_with_atleast(
-	  const float *vec,
-	  const std::vector<size_t> &stolen_count) const
+	size_t nearest_cluster_with_atleast(const float* vec, const std::vector<size_t>& stolen_count) const
 	{
 		float min = std::numeric_limits<float>::max();
 		size_t res = 0;
 		for (size_t i = 0; i < mapping.size(); ++i) {
 			if (mapping[i].size() > stolen_count[i]) {
-				float tmp =
-				  d_sqeucl(koho.data() + features_dim * i,
-				           vec,
-				           features_dim);
+				float tmp = d_sqeucl(koho.data() + features_dim * i, vec, features_dim);
 				if (min > tmp) {
 					min = tmp;
 					res = i;

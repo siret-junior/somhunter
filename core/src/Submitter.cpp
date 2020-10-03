@@ -30,11 +30,7 @@
 #ifdef DEBUG_CURL_REQUESTS
 
 static void
-curl_dump(const char *text,
-          FILE *stream,
-          unsigned char *ptr,
-          size_t size,
-          char nohex)
+curl_dump(const char* text, FILE* stream, unsigned char* ptr, size_t size, char nohex)
 {
 	size_t i;
 	size_t c;
@@ -45,11 +41,7 @@ curl_dump(const char *text,
 		/* without the hex output, we can fit more on screen */
 		width = 0x40;
 
-	fprintf(stream,
-	        "%s, %10.10lu bytes (0x%8.8lx)\n",
-	        text,
-	        (unsigned long)size,
-	        (unsigned long)size);
+	fprintf(stream, "%s, %10.10lu bytes (0x%8.8lx)\n", text, (unsigned long)size, (unsigned long)size);
 
 	for (i = 0; i < size; i += width) {
 
@@ -67,20 +59,14 @@ curl_dump(const char *text,
 		for (c = 0; (c < width) && (i + c < size); c++) {
 			/* check for 0D0A; if found, skip past and start a new
 			 * line of output */
-			if (nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D &&
-			    ptr[i + c + 1] == 0x0A) {
+			if (nohex && (i + c + 1 < size) && ptr[i + c] == 0x0D && ptr[i + c + 1] == 0x0A) {
 				i += (c + 2 - width);
 				break;
 			}
-			fprintf(stream,
-			        "%c",
-			        (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80)
-			          ? ptr[i + c]
-			          : '.');
+			fprintf(stream, "%c", (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80) ? ptr[i + c] : '.');
 			/* check again for 0D0A, to avoid an extra \n if it's at
 			 * width */
-			if (nohex && (i + c + 2 < size) &&
-			    ptr[i + c + 1] == 0x0D && ptr[i + c + 2] == 0x0A) {
+			if (nohex && (i + c + 2 < size) && ptr[i + c + 1] == 0x0D && ptr[i + c + 2] == 0x0A) {
 				i += (c + 3 - width);
 				break;
 			}
@@ -91,10 +77,10 @@ curl_dump(const char *text,
 }
 
 static int
-trace_fn(CURL *handle, curl_infotype type, char *dt, size_t size, void *userp)
+trace_fn(CURL* handle, curl_infotype type, char* dt, size_t size, void* userp)
 {
-	struct data *config = (struct data *)userp;
-	const char *text;
+	struct data* config = (struct data*)userp;
+	const char* text;
 
 	switch (type) {
 		case CURLINFO_TEXT:
@@ -121,25 +107,25 @@ trace_fn(CURL *handle, curl_infotype type, char *dt, size_t size, void *userp)
 			break;
 	}
 
-	curl_dump(text, stderr, (unsigned char *)dt, size, 0);
+	curl_dump(text, stderr, (unsigned char*)dt, size, 0);
 	return 0;
 }
 
 #endif // DEBUG_CURL_REQUESTS
 
 static size_t
-res_cb(char *contents, size_t size, size_t nmemb, void *userp)
+res_cb(char* contents, size_t size, size_t nmemb, void* userp)
 {
-	static_cast<std::string *>(userp)->append(contents, size * nmemb);
+	static_cast<std::string*>(userp)->append(contents, size * nmemb);
 	return size * nmemb;
 }
 
 static void
-poster_thread(const std::string &submit_url,
-              const std::string &query,
-              const std::string &data,
-              bool &finished,
-              const SubmitterConfig &cfg)
+poster_thread(const std::string& submit_url,
+              const std::string& query,
+              const std::string& data,
+              bool& finished,
+              const SubmitterConfig& cfg)
 {
 	/*
 	 * write the stuff into a file just to be sure and have it nicely
@@ -153,9 +139,7 @@ poster_thread(const std::string &submit_url,
 		warn("wtf, directory was not created");
 
 	{
-		std::string path = cfg.VBS_submit_archive_dir +
-		                   std::string("/") +
-		                   std::to_string(timestamp()) +
+		std::string path = cfg.VBS_submit_archive_dir + std::string("/") + std::to_string(timestamp()) +
 		                   cfg.VBS_submit_archive_log_suffix;
 		std::ofstream o(path.c_str(), std::ios::app);
 		if (!o) {
@@ -171,14 +155,8 @@ poster_thread(const std::string &submit_url,
 
 		// Subtract ',' to '\n'
 		std::string data_not_so_pretty_fmtd(data);
-		std::replace(data_not_so_pretty_fmtd.begin(),
-		             data_not_so_pretty_fmtd.end(),
-		             ',',
-		             '\n');
-		std::replace(data_not_so_pretty_fmtd.begin(),
-		             data_not_so_pretty_fmtd.end(),
-		             '{',
-		             '\n');
+		std::replace(data_not_so_pretty_fmtd.begin(), data_not_so_pretty_fmtd.end(), ',', '\n');
+		std::replace(data_not_so_pretty_fmtd.begin(), data_not_so_pretty_fmtd.end(), '{', '\n');
 
 		if (data_not_so_pretty_fmtd.length() > 200) {
 			data_not_so_pretty_fmtd[200] = '\0';
@@ -186,16 +164,14 @@ poster_thread(const std::string &submit_url,
 
 		if (cfg.extra_verbose_log) {
 			std::cout << "**********************" << std::endl
-			          << "POST '" << submit_url
-			          << "' request: " << query << std::endl
-			          << "body: " << data_not_so_pretty_fmtd
-			          << std::endl
+			          << "POST '" << submit_url << "' request: " << query << std::endl
+			          << "body: " << data_not_so_pretty_fmtd << std::endl
 			          << "**********************" << std::endl;
 		}
 	}
 
 	if (cfg.submit_to_VBS) {
-		CURL *curl = curl_easy_init();
+		CURL* curl = curl_easy_init();
 		std::string res_buffer;
 
 #ifdef DEBUG_CURL_REQUESTS
@@ -226,13 +202,10 @@ poster_thread(const std::string &submit_url,
 
 		// If DRES server
 		if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
-			auto s_cfg{ std::get<ServerConfigDres>(
-			  cfg.server_cfg) };
+			auto s_cfg{ std::get<ServerConfigDres>(cfg.server_cfg) };
 
-			curl_easy_setopt(
-			  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
-			curl_easy_setopt(
-			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
 		}
 
 		auto res = curl_easy_perform(curl);
@@ -240,8 +213,7 @@ poster_thread(const std::string &submit_url,
 		if (res == CURLE_OK) {
 			info("GET request OK: " << url);
 		} else {
-			warn("GET request failed with cURL error: "
-			     << curl_easy_strerror(res));
+			warn("GET request failed with cURL error: " << curl_easy_strerror(res));
 		}
 
 		if (cfg.extra_verbose_log) {
@@ -258,10 +230,7 @@ poster_thread(const std::string &submit_url,
 }
 
 static void
-getter_thread(const std::string &submit_url,
-              const std::string &query,
-              bool &finished,
-              const SubmitterConfig &cfg)
+getter_thread(const std::string& submit_url, const std::string& query, bool& finished, const SubmitterConfig& cfg)
 {
 
 	if (!std::filesystem::is_directory(cfg.VBS_submit_archive_dir))
@@ -271,9 +240,7 @@ getter_thread(const std::string &submit_url,
 		warn("wtf, directory was not created");
 
 	{
-		std::string path = cfg.VBS_submit_archive_dir +
-		                   std::string("/") +
-		                   std::to_string(timestamp()) +
+		std::string path = cfg.VBS_submit_archive_dir + std::string("/") + std::to_string(timestamp()) +
 		                   cfg.VBS_submit_archive_log_suffix;
 		std::ofstream o(path.c_str(), std::ios::app);
 		if (!o) {
@@ -283,12 +250,11 @@ getter_thread(const std::string &submit_url,
 
 	if (cfg.extra_verbose_log) {
 		std::cout << "**********************" << std::endl
-		          << "GET '" << submit_url << "' request: " << query
-		          << std::endl;
+		          << "GET '" << submit_url << "' request: " << query << std::endl;
 	}
 
 	if (cfg.submit_to_VBS) {
-		CURL *curl = curl_easy_init();
+		CURL* curl = curl_easy_init();
 		std::string res_buffer;
 
 #ifdef DEBUG_CURL_REQUESTS
@@ -317,13 +283,10 @@ getter_thread(const std::string &submit_url,
 
 		// If DRES server
 		if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
-			auto s_cfg{ std::get<ServerConfigDres>(
-			  cfg.server_cfg) };
+			auto s_cfg{ std::get<ServerConfigDres>(cfg.server_cfg) };
 
-			curl_easy_setopt(
-			  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
-			curl_easy_setopt(
-			  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+			curl_easy_setopt(curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
 		}
 
 		auto res = curl_easy_perform(curl);
@@ -331,8 +294,7 @@ getter_thread(const std::string &submit_url,
 		if (res == CURLE_OK) {
 			info("GET request OK: " << url);
 		} else {
-			warn("GET request failed with cURL error: "
-			     << curl_easy_strerror(res));
+			warn("GET request failed with cURL error: " << curl_easy_strerror(res));
 		}
 
 		if (cfg.extra_verbose_log) {
@@ -353,7 +315,7 @@ Submitter::login_to_DRES() const
 {
 	auto s_cfg{ std::get<ServerConfigDres>(cfg.server_cfg) };
 
-	CURL *curl;
+	CURL* curl;
 	CURLcode res;
 	curl = curl_easy_init();
 	std::string res_buffer;
@@ -371,26 +333,21 @@ Submitter::login_to_DRES() const
 		curl_easy_setopt(curl, CURLOPT_URL, s_cfg.login_URL.c_str());
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-		struct curl_slist *headers = NULL;
-		headers =
-		  curl_slist_append(headers, "Content-Type: application/json");
+		struct curl_slist* headers = NULL;
+		headers = curl_slist_append(headers, "Content-Type: application/json");
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-		const std::string data_str{ "{ \"username\": \""s +
-			                    s_cfg.username +
-			                    "\" ,\"password\": \""s +
+		const std::string data_str{ "{ \"username\": \""s + s_cfg.username + "\" ,\"password\": \""s +
 			                    s_cfg.password + "\" }" };
 
-		const char *data = data_str.c_str();
+		const char* data = data_str.c_str();
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res_buffer);
 
-		curl_easy_setopt(
-		  curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
-		curl_easy_setopt(
-		  curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, s_cfg.cookie_file.c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, s_cfg.cookie_file.c_str());
 
 		res = curl_easy_perform(curl);
 
@@ -407,33 +364,27 @@ Submitter::login_to_DRES() const
 		curl_easy_cleanup(curl);
 
 		if (res != CURLE_OK) {
-			warn("DRES server login request returned cURL error: "
-			     << curl_easy_strerror(res));
+			warn("DRES server login request returned cURL error: " << curl_easy_strerror(res));
 			return false;
 		} else {
-			info(
-			  "DRES server login request returned: " << http_code);
+			info("DRES server login request returned: " << http_code);
 		}
 
 		// Parse the response
 		std::string err;
 		auto res_json{ json11::Json::parse(res_buffer, err) };
 		if (!err.empty()) {
-			std::string msg{ "Error parsing JSON response: " +
-				         res_buffer };
+			std::string msg{ "Error parsing JSON response: " + res_buffer };
 			warn(msg);
 			throw std::runtime_error(msg);
 		}
 
 		bool login_status{ res_json["status"].bool_value() };
-		std::string login_status_desc{
-			res_json["description"].string_value()
-		};
+		std::string login_status_desc{ res_json["description"].string_value() };
 
 		// If login failed
 		if (!login_status) {
-			warn("DRES server login failed! Message: "
-			     << login_status_desc);
+			warn("DRES server login failed! Message: " << login_status_desc);
 			return false;
 		}
 		info("DRES server login OK... Message: " << login_status_desc);
@@ -442,27 +393,25 @@ Submitter::login_to_DRES() const
 	return false;
 }
 
-Submitter::Submitter(const SubmitterConfig &config)
+Submitter::Submitter(const SubmitterConfig& config)
   : last_submit_timestamp(timestamp())
   , cfg(config){
 
 #ifdef LOG_LOGS
 	  { // Make sure the directory exists
-	    if (!(std::filesystem::exists(LOG_LOGS_DIR))){
-	      std::filesystem::create_directories(LOG_LOGS_DIR);
+	    if (!(std::filesystem::exists(LOG_LOGS_DIR))){ std::filesystem::create_directories(LOG_LOGS_DIR);
 }
 
-std::string filepath{ LOG_LOGS_DIR + "actions_" +
-	              get_formated_timestamp("%d-%m-%Y_%H-%M-%S") + ".log" };
+std::string filepath{ LOG_LOGS_DIR + "actions_" + get_formated_timestamp("%d-%m-%Y_%H-%M-%S") + ".log" };
 
 act_log.open(filepath, std::ios::out);
 if (!act_log.is_open()) {
 	std::string msg{ "Error openning file: " + filepath };
 	warn(msg);
 
-#ifndef NDEBUG
+#	ifndef NDEBUG
 	throw std::runtime_error(msg);
-#endif // NDEBUG
+#	endif // NDEBUG
 }
 
 // Enable automatic flushing
@@ -478,8 +427,7 @@ act_log << std::unitbuf;
 		std::filesystem::create_directories(LOG_CURL_REQUESTS_DIR);
 	}
 
-	std::string filepath{ LOG_CURL_REQUESTS_DIR + "requests_" +
-		              get_formated_timestamp("%d-%m-%Y_%H-%M-%S") +
+	std::string filepath{ LOG_CURL_REQUESTS_DIR + "requests_" + get_formated_timestamp("%d-%m-%Y_%H-%M-%S") +
 		              ".log" };
 
 	req_log.open(filepath, std::ios::out);
@@ -487,9 +435,9 @@ act_log << std::unitbuf;
 		std::string msg{ "Error openning file: " + filepath };
 		warn(msg);
 
-#ifndef NDEBUG
+#	ifndef NDEBUG
 		throw std::runtime_error(msg);
-#endif // NDEBUG
+#	endif // NDEBUG
 	}
 
 	// Enable automatic flushing
@@ -503,14 +451,12 @@ Submitter::~Submitter()
 {
 	send_backlog_only();
 
-	for (auto &t : submit_threads)
+	for (auto& t : submit_threads)
 		t.join();
 }
 
 void
-Submitter::submit_and_log_submit(const DatasetFrames &frames,
-                                 DisplayType disp_type,
-                                 ImageId frame_ID)
+Submitter::submit_and_log_submit(const DatasetFrames& frames, DisplayType disp_type, ImageId frame_ID)
 {
 	log_submit(frames, disp_type, frame_ID);
 
@@ -520,24 +466,19 @@ Submitter::submit_and_log_submit(const DatasetFrames &frames,
 
 	if (is_DRES_server()) {
 		query_ss << "item=" << std::setfill('0') << std::setw(5)
-		         << (vf.video_ID + 1) //< !! VBS videos start from 1
-		         << "&frame="
-		         << vf.frame_number; //< !! VBS frame numbers start at 0
+		         << (vf.video_ID + 1)             //< !! VBS videos start from 1
+		         << "&frame=" << vf.frame_number; //< !! VBS frame numbers start at 0
 	} else {
-		query_ss << "team=" << cfg.team_ID
-		         << "&member=" << cfg.member_ID << "&video="
-		         << (vf.video_ID + 1) //< !! VBS videos start from 1
-		         << "&frame="
-		         << vf.frame_number; //< !! VBS frame numbers start at 0
+		query_ss << "team=" << cfg.team_ID << "&member=" << cfg.member_ID
+		         << "&video=" << (vf.video_ID + 1) //< !! VBS videos start from 1
+		         << "&frame=" << vf.frame_number;  //< !! VBS frame numbers start at 0
 	}
 
 	send_query_with_backlog(query_ss.str());
 }
 
 void
-Submitter::log_submit(const DatasetFrames & /*frames*/,
-                      DisplayType disp_type,
-                      ImageId frame_ID)
+Submitter::log_submit(const DatasetFrames& /*frames*/, DisplayType disp_type, ImageId frame_ID)
 {
 #ifdef LOG_LOGS
 
@@ -550,9 +491,9 @@ Submitter::log_submit(const DatasetFrames & /*frames*/,
 }
 
 void
-Submitter::log_rerank(const DatasetFrames & /*frames*/,
+Submitter::log_rerank(const DatasetFrames& /*frames*/,
                       DisplayType /*from_disp_type*/,
-                      const std::vector<ImageId> & /*topn_imgs*/)
+                      const std::vector<ImageId>& /*topn_imgs*/)
 {
 	// @todo we can log them for our purporses
 }
@@ -576,13 +517,13 @@ Submitter::send_backlog_only()
 }
 
 void
-Submitter::submit_and_log_rescore(const DatasetFrames &frames,
-                                  const ScoreModel &scores,
-                                  const std::set<ImageId> &likes,
-                                  const UsedTools &used_tools,
+Submitter::submit_and_log_rescore(const DatasetFrames& frames,
+                                  const ScoreModel& scores,
+                                  const std::set<ImageId>& likes,
+                                  const UsedTools& used_tools,
                                   DisplayType /*disp_type*/,
-                                  const std::vector<ImageId> &topn_imgs,
-                                  const std::string &sentence_query,
+                                  const std::vector<ImageId>& topn_imgs,
+                                  const std::string& sentence_query,
                                   const size_t topn_frames_per_video,
                                   const size_t topn_frames_per_shot)
 {
@@ -592,13 +533,12 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 
 	{
 		size_t i{ 0 };
-		for (auto &&img_ID : topn_imgs) {
+		for (auto&& img_ID : topn_imgs) {
 			auto vf = frames.get_frame(img_ID);
-			results.push_back(Json::object{
-			  { "video", std::to_string(vf.video_ID + 1) },
-			  { "frame", int(vf.frame_number) },
-			  { "score", double(scores[img_ID]) },
-			  { "rank", int(i) } });
+			results.push_back(Json::object{ { "video", std::to_string(vf.video_ID + 1) },
+			                                { "frame", int(vf.frame_number) },
+			                                { "score", double(scores[img_ID]) },
+			                                { "rank", int(i) } });
 			++i;
 		}
 	}
@@ -666,7 +606,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 	// KNN is not rescore, so we ignore it
 	if (!used_tools.topknn_used) {
 
-		auto &ss{ alog() };
+		auto& ss{ alog() };
 
 		ss << "rescore\t"
 		   << "text_query=\"" << sentence_query << "\"\t"
@@ -674,7 +614,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 
 		{
 			size_t ii{ 0 };
-			for (auto &&l : likes) {
+			for (auto&& l : likes) {
 				if (ii > 0)
 					ss << ",";
 
@@ -690,7 +630,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames &frames,
 }
 
 void
-Submitter::log_text_query_change(const std::string &text_query)
+Submitter::log_text_query_change(const std::string& text_query)
 {
 	static int64_t last_logged{ 0 };
 
@@ -711,8 +651,8 @@ Submitter::log_text_query_change(const std::string &text_query)
 	push_event("text", "jointEmbedding", text_query);
 }
 void
-Submitter::log_like(const DatasetFrames &frames,
-                    const std::set<ImageId> &likes,
+Submitter::log_like(const DatasetFrames& frames,
+                    const std::set<ImageId>& likes,
                     DisplayType /*disp_type*/,
                     ImageId frame_ID)
 {
@@ -722,21 +662,19 @@ Submitter::log_like(const DatasetFrames &frames,
 
 	alog() << "like\t"
 	       << "frame_ID=" << frame_ID << "\t"
-	       << "liked=" << (likes.count(frame_ID) == 1 ? "true" : "false")
-	       << "\t" << std::endl;
+	       << "liked=" << (likes.count(frame_ID) == 1 ? "true" : "false") << "\t" << std::endl;
 
 #endif // LOG_LOGS
 
 	std::stringstream data_ss;
-	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
-	        << ";FId" << frame_ID << ";like;";
+	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number << ";FId" << frame_ID << ";like;";
 
 	push_event("image", "feedbackModel", data_ss.str());
 }
 
 void
-Submitter::log_unlike(const DatasetFrames &frames,
-                      const std::set<ImageId> &likes,
+Submitter::log_unlike(const DatasetFrames& frames,
+                      const std::set<ImageId>& likes,
                       DisplayType /*disp_type*/,
                       ImageId frame_ID)
 {
@@ -746,21 +684,18 @@ Submitter::log_unlike(const DatasetFrames &frames,
 
 	alog() << "unlike\t"
 	       << "frame_ID=" << frame_ID << "\t"
-	       << "liked=" << (likes.count(frame_ID) == 1 ? "true" : "false")
-	       << "\t" << std::endl;
+	       << "liked=" << (likes.count(frame_ID) == 1 ? "true" : "false") << "\t" << std::endl;
 
 #endif // LOG_LOGS
 
 	std::stringstream data_ss;
-	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
-	        << ";FId" << frame_ID << ";unlike;";
+	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number << ";FId" << frame_ID << ";unlike;";
 
 	push_event("image", "feedbackModel", data_ss.str());
 }
 
 void
-Submitter::log_show_random_display(const DatasetFrames & /*frames*/,
-                                   const std::vector<ImageId> & /*imgs*/)
+Submitter::log_show_random_display(const DatasetFrames& /*frames*/, const std::vector<ImageId>& /*imgs*/)
 {
 	push_event("browsing", "randomSelection", "random_display;");
 
@@ -772,8 +707,7 @@ Submitter::log_show_random_display(const DatasetFrames & /*frames*/,
 }
 
 void
-Submitter::log_show_som_display(const DatasetFrames & /*frames*/,
-                                const std::vector<ImageId> & /*imgs*/)
+Submitter::log_show_som_display(const DatasetFrames& /*frames*/, const std::vector<ImageId>& /*imgs*/)
 {
 	push_event("browsing", "exploration", "som_display");
 
@@ -785,8 +719,7 @@ Submitter::log_show_som_display(const DatasetFrames & /*frames*/,
 }
 
 void
-Submitter::log_show_topn_display(const DatasetFrames & /*frames*/,
-                                 const std::vector<ImageId> & /*imgs*/)
+Submitter::log_show_topn_display(const DatasetFrames& /*frames*/, const std::vector<ImageId>& /*imgs*/)
 {
 	push_event("browsing", "rankedList", "topn_display");
 
@@ -798,8 +731,7 @@ Submitter::log_show_topn_display(const DatasetFrames & /*frames*/,
 }
 
 void
-Submitter::log_show_topn_context_display(const DatasetFrames & /*frames*/,
-                                         const std::vector<ImageId> & /*imgs*/)
+Submitter::log_show_topn_context_display(const DatasetFrames& /*frames*/, const std::vector<ImageId>& /*imgs*/)
 {
 	push_event("browsing", "rankedList", "topn_context_display;");
 
@@ -811,15 +743,12 @@ Submitter::log_show_topn_context_display(const DatasetFrames & /*frames*/,
 }
 
 void
-Submitter::log_show_topknn_display(const DatasetFrames &frames,
-                                   ImageId frame_ID,
-                                   const std::vector<ImageId> & /*imgs*/)
+Submitter::log_show_topknn_display(const DatasetFrames& frames, ImageId frame_ID, const std::vector<ImageId>& /*imgs*/)
 {
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
-	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
-	        << ";FId" << frame_ID << ";topknn_display;";
+	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number << ";FId" << frame_ID << ";topknn_display;";
 
 	push_event("image", "globalFeatures", data_ss.str());
 
@@ -832,14 +761,12 @@ Submitter::log_show_topknn_display(const DatasetFrames &frames,
 }
 
 void
-Submitter::log_show_detail_display(const DatasetFrames &frames,
-                                   ImageId frame_ID)
+Submitter::log_show_detail_display(const DatasetFrames& frames, ImageId frame_ID)
 {
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
-	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
-	        << ";FId" << frame_ID << ";video_detail;";
+	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number << ";FId" << frame_ID << ";video_detail;";
 
 	push_event("browsing", "videoSummary", data_ss.str());
 
@@ -852,9 +779,7 @@ Submitter::log_show_detail_display(const DatasetFrames &frames,
 }
 
 void
-Submitter::log_show_video_replay(const DatasetFrames &frames,
-                                 ImageId frame_ID,
-                                 float delta)
+Submitter::log_show_video_replay(const DatasetFrames& frames, ImageId frame_ID, float delta)
 {
 	static int64_t last_replay_submit = 0;
 	static ImageId last_frame_ID = IMAGE_ID_ERR_VAL;
@@ -862,9 +787,7 @@ Submitter::log_show_video_replay(const DatasetFrames &frames,
 	// If timeout should be handled here
 	if (cfg.apply_log_action_timeout) {
 		// If no need to log now
-		if (last_replay_submit + cfg.log_action_timeout >
-		      size_t(timestamp()) &&
-		    frame_ID == last_frame_ID)
+		if (last_replay_submit + cfg.log_action_timeout > size_t(timestamp()) && frame_ID == last_frame_ID)
 			return;
 	}
 
@@ -874,8 +797,7 @@ Submitter::log_show_video_replay(const DatasetFrames &frames,
 	auto vf = frames.get_frame(frame_ID);
 
 	std::stringstream data_ss;
-	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number
-	        << ";FId" << frame_ID << ";replay;";
+	data_ss << "VId" << (vf.video_ID + 1) << ",FN" << vf.frame_number << ";FId" << frame_ID << ";replay;";
 
 	push_event("browsing", "temporalContext", data_ss.str());
 
@@ -884,16 +806,13 @@ Submitter::log_show_video_replay(const DatasetFrames &frames,
 	alog() << "replay_video\t"
 	       << "frame_ID=" << frame_ID << "\t"
 	       << "video_ID=" << vf.video_ID << "\t"
-	       << "dir=" << (delta > 0.0F ? "forward" : "backwards")
-	       << std::endl;
+	       << "dir=" << (delta > 0.0F ? "forward" : "backwards") << std::endl;
 
 #endif // LOG_LOGS
 }
 
 void
-Submitter::log_scroll(const DatasetFrames & /*frames*/,
-                      DisplayType from_disp_type,
-                      float dirY)
+Submitter::log_scroll(const DatasetFrames& /*frames*/, DisplayType from_disp_type, float dirY)
 {
 	std::string ev_type("rankedList");
 	std::string disp_type;
@@ -930,9 +849,7 @@ Submitter::log_scroll(const DatasetFrames & /*frames*/,
 	// If timeout should be handled here
 	if (cfg.apply_log_action_timeout) {
 		// If no need to log now
-		if (last_logged + cfg.log_action_timeout >
-		      size_t(timestamp()) &&
-		    from_disp_type == last_disp_type)
+		if (last_logged + cfg.log_action_timeout > size_t(timestamp()) && from_disp_type == last_disp_type)
 			return;
 	}
 
@@ -940,8 +857,7 @@ Submitter::log_scroll(const DatasetFrames & /*frames*/,
 	last_disp_type = from_disp_type;
 
 	std::stringstream data_ss;
-	data_ss << "scroll" << (dirY > 0 ? "Up" : "Down") << ";" << dirY << ";"
-	        << disp_type << ";";
+	data_ss << "scroll" << (dirY > 0 ? "Up" : "Down") << ";" << dirY << ";" << disp_type << ";";
 
 	push_event("browsing", ev_type, data_ss.str());
 
@@ -967,36 +883,24 @@ Submitter::log_reset_search()
 }
 
 void
-Submitter::start_poster(const std::string &submit_url,
-                        const std::string &query_string,
-                        const std::string &post_data)
+Submitter::start_poster(const std::string& submit_url, const std::string& query_string, const std::string& post_data)
 {
 	finish_flags.emplace_back(std::make_unique<bool>(false));
-	submit_threads.emplace_back(poster_thread,
-	                            submit_url,
-	                            query_string,
-	                            post_data,
-	                            std::ref(*(finish_flags.back())),
-	                            cfg);
+	submit_threads.emplace_back(
+	  poster_thread, submit_url, query_string, post_data, std::ref(*(finish_flags.back())), cfg);
 }
 
 void
-Submitter::start_getter(const std::string &submit_url,
-                        const std::string &query_string)
+Submitter::start_getter(const std::string& submit_url, const std::string& query_string)
 {
 	finish_flags.emplace_back(std::make_unique<bool>(false));
-	submit_threads.emplace_back(getter_thread,
-	                            submit_url,
-	                            query_string,
-	                            std::ref(*(finish_flags.back())),
-	                            cfg);
+	submit_threads.emplace_back(getter_thread, submit_url, query_string, std::ref(*(finish_flags.back())), cfg);
 }
 
 void
 Submitter::poll()
 {
-	if (last_submit_timestamp + cfg.send_logs_to_server_period <
-	    size_t(timestamp()))
+	if (last_submit_timestamp + cfg.send_logs_to_server_period < size_t(timestamp()))
 		send_backlog_only();
 
 	for (size_t i = 0; i < submit_threads.size();)
@@ -1009,7 +913,7 @@ Submitter::poll()
 }
 
 void
-Submitter::send_query_with_backlog(const std::string &query_string)
+Submitter::send_query_with_backlog(const std::string& query_string)
 {
 	// Send the submit
 	start_getter(get_submit_URL(), query_string);
@@ -1019,18 +923,15 @@ Submitter::send_query_with_backlog(const std::string &query_string)
 }
 
 void
-Submitter::push_event(const std::string &cat,
-                      const std::string &type,
-                      const std::string &value)
+Submitter::push_event(const std::string& cat, const std::string& type, const std::string& value)
 {
 
 	std::vector<Json> types{ type };
 	Json types_arr = Json::array(types);
 
-	Json a = Json::object{ { "timestamp", double(timestamp()) },
-		               { "category", cat },
-		               { "type", types_arr },
-		               { "value", value } };
+	Json a = Json::object{
+		{ "timestamp", double(timestamp()) }, { "category", cat }, { "type", types_arr }, { "value", value }
+	};
 
 	backlog.emplace_back(std::move(a));
 }
@@ -1041,7 +942,7 @@ Submitter::is_DRES_server() const
 	return std::holds_alternative<ServerConfigDres>(cfg.server_cfg);
 }
 
-const std::string &
+const std::string&
 Submitter::get_submit_URL() const
 {
 	if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
@@ -1051,23 +952,21 @@ Submitter::get_submit_URL() const
 	return std::get<ServerConfigVbs>(cfg.server_cfg).submit_URL;
 }
 
-const std::string &
+const std::string&
 Submitter::get_rerank_URL() const
 {
 	if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
-		return std::get<ServerConfigDres>(cfg.server_cfg)
-		  .submit_rerank_URL;
+		return std::get<ServerConfigDres>(cfg.server_cfg).submit_rerank_URL;
 	}
 
 	return std::get<ServerConfigVbs>(cfg.server_cfg).submit_rerank_URL;
 }
 
-const std::string &
+const std::string&
 Submitter::get_interaction_URL() const
 {
 	if (std::holds_alternative<ServerConfigDres>(cfg.server_cfg)) {
-		return std::get<ServerConfigDres>(cfg.server_cfg)
-		  .submit_interaction_URL;
+		return std::get<ServerConfigDres>(cfg.server_cfg).submit_interaction_URL;
 	}
 
 	return std::get<ServerConfigVbs>(cfg.server_cfg).submit_interaction_URL;

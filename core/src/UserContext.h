@@ -23,8 +23,8 @@
 #ifndef USER_CONTEXT_H_
 #define USER_CONTEXT_H_
 
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "common.h"
 
@@ -40,31 +40,32 @@ class UserContext
 {
 public:
 	UserContext() = delete;
-	UserContext(const std::string &user_token,
-	            const Config &cfg,
-	            const DatasetFrames &frames,
+	UserContext(const std::string& user_token,
+	            const Config& cfg,
+	            const DatasetFrames& frames,
 	            const DatasetFeatures features);
 
-	bool operator==(const UserContext &other) const;
-	void reset() {
+	bool operator==(const UserContext& other) const;
+	void reset()
+	{
 		// Reset SearchContext
 		ctx.reset();
 		// Make sure we're not pushing in any old screenshot
 		ctx.screenshot_fpth = "";
 		ctx.ID = 0;
 
-
 		history.clear();
 		history.emplace_back(ctx);
 	}
-	public:
+
+public:
 	// *** SEARCH CONTEXT ***
 	SearchContext ctx;
 
 	// *** USER SPECIFIC ***
 	std::string user_token;
 	std::vector<SearchContext> history;
-	
+
 	Submitter submitter;
 	AsyncSom async_SOM;
 };
@@ -73,15 +74,15 @@ public:
 struct GetDisplayResult
 {
 	FramePointerRange frames;
-	const LikesCont &likes;
-	const LikesCont &bookmarks;
+	const LikesCont& likes;
+	const LikesCont& bookmarks;
 };
 
 /** Result type `rescore` returns */
 struct RescoreResult
 {
 	size_t curr_ctx_ID;
-	const std::vector<SearchContext> &history;
+	const std::vector<SearchContext>& history;
 };
 
 #endif // USER_CONTEXT_H_

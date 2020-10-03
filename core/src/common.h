@@ -81,7 +81,7 @@ enum class DisplayType
 };
 
 inline DisplayType
-str_to_disp_type(const std::string &type_str)
+str_to_disp_type(const std::string& type_str)
 {
 	/* !!! THIS MUST MATCH WITH `config/strings.json` FILE !!! */
 	if (type_str == "topn_display")
@@ -146,10 +146,9 @@ constexpr size_t operator""_z(unsigned long long int x)
  */
 struct UsedTools
 {
-	bool operator==(const UsedTools &other) const
+	bool operator==(const UsedTools& other) const
 	{
-		return (KWs_used == other.KWs_used &&
-		        bayes_used == other.bayes_used &&
+		return (KWs_used == other.KWs_used && bayes_used == other.bayes_used &&
 		        topknn_used == other.topknn_used);
 	}
 	UsedTools()

@@ -51,12 +51,12 @@ public:
 
 	bool operator==(const SearchContext& other) const;
 
-	void reset() { 
+	void reset()
+	{
 		// Reset bookmarks
 		bookmarks.clear();
 		scores.reset_mask();
 		reset_filters();
-
 	}
 	void reset_filters() { filters = Filters{}; }
 

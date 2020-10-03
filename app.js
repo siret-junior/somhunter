@@ -37,7 +37,7 @@ const { combine, timestamp, printf } = format;
 
 // Set root project directory
 global.rootDir = __dirname;
-console.log(process.env["NODE_ENV"])
+console.log(process.env["NODE_ENV"]);
 if (typeof process.env["NODE_ENV"] === "undefined") {
   process.env["NODE_ENV"] = "production";
 }

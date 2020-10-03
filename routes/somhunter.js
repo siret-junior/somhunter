@@ -60,11 +60,7 @@ router.get("/", function (req, res, next) {
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(
-    "",
-    global.strs.displayTypes.topn,
-    0
-  );
+  const displayFrames = global.core.getDisplay("", global.strs.displayTypes.topn, 0);
   frames = displayFrames.frames;
   // -------------------------------
 

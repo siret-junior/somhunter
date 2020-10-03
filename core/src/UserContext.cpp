@@ -24,9 +24,9 @@
 #include "DatasetFeatures.h"
 #include "DatasetFrames.h"
 
-UserContext::UserContext(const std::string &user_token,
-                         const Config &cfg,
-                         const DatasetFrames &frames,
+UserContext::UserContext(const std::string& user_token,
+                         const Config& cfg,
+                         const DatasetFrames& frames,
                          const DatasetFeatures features)
   : ctx(0, cfg, frames)
   , user_token(user_token)
@@ -43,8 +43,7 @@ UserContext::UserContext(const std::string &user_token,
 }
 
 bool
-UserContext::operator==(const UserContext &other) const
+UserContext::operator==(const UserContext& other) const
 {
-	return (ctx == other.ctx && user_token == other.user_token &&
-	        history == other.history);
+	return (ctx == other.ctx && user_token == other.user_token && history == other.history);
 }

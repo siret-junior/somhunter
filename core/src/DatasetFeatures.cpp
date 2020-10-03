@@ -27,7 +27,7 @@
 #include "config_json.h"
 #include "log.h"
 
-DatasetFeatures::DatasetFeatures(const DatasetFrames &p, const Config &config)
+DatasetFeatures::DatasetFeatures(const DatasetFrames& p, const Config& config)
   : n(p.size())
   , features_dim(config.features_dim)
 {
@@ -41,8 +41,7 @@ DatasetFeatures::DatasetFeatures(const DatasetFrames &p, const Config &config)
 	// Skip the header
 	in.ignore(config.features_file_data_off);
 
-	if (!in.read(reinterpret_cast<char *>(data.data()),
-	             sizeof(float) * data.size()))
+	if (!in.read(reinterpret_cast<char*>(data.data()), sizeof(float) * data.size()))
 		warn("Feature matrix reading problems");
 	else
 		info("Feature matrix loaded OK");

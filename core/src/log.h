@@ -31,46 +31,45 @@
 
 #if LOGLEVEL > 0
 
-#define _dont_write_log                                                        \
-	do {                                                                   \
-	} while (0)
-#define _write_log(level, x)                                                   \
-	do {                                                                   \
-		std::cerr << level << x << "\n\t(" << __func__                 \
-		          << " in " __FILE__ " :" << __LINE__ << ")"           \
-		          << std::endl;                                        \
-	} while (0)
+#	define _dont_write_log                                                                                        \
+		do {                                                                                                   \
+		} while (0)
+#	define _write_log(level, x)                                                                                   \
+		do {                                                                                                   \
+			std::cerr << level << x << "\n\t(" << __func__ << " in " __FILE__ " :" << __LINE__ << ")"      \
+			          << std::endl;                                                                        \
+		} while (0)
 
-#define warn(x) _write_log("* ", x)
+#	define warn(x) _write_log("* ", x)
 #else
-#define warn(x)
-#define _write_log(level, x)
+#	define warn(x)
+#	define _write_log(level, x)
 #endif
 
 #if LOGLEVEL > 1
-#define info(x) _write_log("- ", x)
+#	define info(x) _write_log("- ", x)
 #else
-#define info(x) _dont_write_log
+#	define info(x) _dont_write_log
 #endif
 
 #if LOGLEVEL > 2
-#define debug(x) _write_log(". ", x)
+#	define debug(x) _write_log(". ", x)
 #else
-#define debug(x) _dont_write_log
+#	define debug(x) _dont_write_log
 #endif
 
 #define print(x) std::cout << x << std::endl;
 
 #if NDEBUG
-#define ASSERT(cond, msg)
+#	define ASSERT(cond, msg)
 #else
-#define ASSERT(cond, msg)                                                      \
-	do {                                                                   \
-		if (!(cond)) {                                                 \
-			std::cerr << msg << std::endl;                         \
-			throw std::logic_error(msg);                           \
-		}                                                              \
-	} while (false);
+#	define ASSERT(cond, msg)                                                                                      \
+		do {                                                                                                   \
+			if (!(cond)) {                                                                                 \
+				std::cerr << msg << std::endl;                                                         \
+				throw std::logic_error(msg);                                                           \
+			}                                                                                              \
+		} while (false);
 #endif // NDEBUG
 
 #endif // log_h

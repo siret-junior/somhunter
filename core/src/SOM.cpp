@@ -30,11 +30,11 @@
 #define EUCL
 
 #ifdef EUCL
-#define DIST_FUNC d_sqeucl
-#define UNDIST_FUNC sqrtf
+#	define DIST_FUNC d_sqeucl
+#	define UNDIST_FUNC sqrtf
 #else
-#define DIST_FUNC d_manhattan
-#define UNDIST_FUNC
+#	define DIST_FUNC d_manhattan
+#	define UNDIST_FUNC
 #endif
 
 // this helps with debugging floating-point overflows and similar nastiness,
@@ -42,7 +42,7 @@
 //#define DEBUG_CRASH_ON_FPE
 
 #ifdef DEBUG_CRASH_ON_FPE
-#include <fenv.h>
+#	include <fenv.h>
 #endif
 
 using namespace std;
@@ -63,7 +63,7 @@ struct dist_id
 };
 
 static inline void
-hswap(dist_id &a, dist_id &b)
+hswap(dist_id& a, dist_id& b)
 {
 	dist_id c = a;
 	a = b;
@@ -107,15 +107,15 @@ som(size_t /*n*/,
     size_t k,
     size_t dim,
     size_t niter,
-    const std::vector<float> &points,
-    std::vector<float> &koho,
-    const std::vector<float> &nhbrdist,
+    const std::vector<float>& points,
+    std::vector<float>& koho,
+    const std::vector<float>& nhbrdist,
     const float alphasA[2],
     const float radiiA[2],
     const float alphasB[2],
     const float radiiB[2],
-    const std::vector<float> &scores,
-    std::mt19937 &rng)
+    const std::vector<float>& scores,
+    std::mt19937& rng)
 {
 	info("build begin");
 	std::discrete_distribution<size_t> random(scores.begin(), scores.end());
@@ -136,13 +136,9 @@ som(size_t /*n*/,
 
 		size_t nearest = 0;
 		{
-			float nearestd = DIST_FUNC(
-			  points.data() + dim * point, koho.data(), dim);
+			float nearestd = DIST_FUNC(points.data() + dim * point, koho.data(), dim);
 			for (size_t i = 1; i < k; ++i) {
-				float tmp =
-				  DIST_FUNC(points.data() + dim * point,
-				            koho.data() + dim * i,
-				            dim);
+				float tmp = DIST_FUNC(points.data() + dim * point, koho.data() + dim * i, dim);
 				if (tmp < nearestd) {
 					nearest = i;
 					nearestd = tmp;
@@ -168,9 +164,7 @@ som(size_t /*n*/,
 				alpha = alphaA;
 
 			for (size_t j = 0; j < dim; ++j)
-				koho[j + i * dim] +=
-				  alpha *
-				  (points[j + point * dim] - koho[j + i * dim]);
+				koho[j + i * dim] += alpha * (points[j + point * dim] - koho[j + i * dim]);
 		}
 	}
 }
@@ -181,18 +175,15 @@ mapPointsToKohos(size_t start,
                  size_t end,
                  size_t k,
                  size_t dim,
-                 const std::vector<float> &points,
-                 const std::vector<float> &koho,
-                 std::vector<size_t> &mapping)
+                 const std::vector<float>& points,
+                 const std::vector<float>& koho,
+                 std::vector<size_t>& mapping)
 {
 	for (size_t point = start; point < end; ++point) {
 		size_t nearest = 0;
-		float nearestd =
-		  DIST_FUNC(points.data() + dim * point, koho.data(), dim);
+		float nearestd = DIST_FUNC(points.data() + dim * point, koho.data(), dim);
 		for (size_t i = 1; i < k; ++i) {
-			float tmp = DIST_FUNC(points.data() + dim * point,
-			                      koho.data() + dim * i,
-			                      dim);
+			float tmp = DIST_FUNC(points.data() + dim * point, koho.data() + dim * i, dim);
 			if (tmp < nearestd) {
 				nearest = i;
 				nearestd = tmp;

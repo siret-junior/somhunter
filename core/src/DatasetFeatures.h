@@ -36,35 +36,27 @@ class DatasetFeatures
 	std::vector<float> data;
 
 public:
-	DatasetFeatures(const DatasetFrames &, const Config &config);
+	DatasetFeatures(const DatasetFrames&, const Config& config);
 
 	size_t size() const { return n; }
 	size_t dim() const { return features_dim; }
 
-	inline const float *fv(size_t i) const
-	{
-		return data.data() + features_dim * i;
-	}
+	inline const float* fv(size_t i) const { return data.data() + features_dim * i; }
 
-	std::vector<ImageId> get_top_knn(const DatasetFrames &frames,
+	std::vector<ImageId> get_top_knn(const DatasetFrames& frames,
 	                                 ImageId id,
 	                                 size_t per_vid_limit = 0,
 	                                 size_t from_shot_limit = 0) const
 	{
 		return get_top_knn(
-		  frames,
-		  id,
-		  [](ImageId /*frame_ID*/) { return true; },
-		  per_vid_limit,
-		  from_shot_limit);
+		  frames, id, [](ImageId /*frame_ID*/) { return true; }, per_vid_limit, from_shot_limit);
 	}
 
-	inline std::vector<ImageId> get_top_knn(
-	  const DatasetFrames &frames,
-	  ImageId id,
-	  std::function<bool(ImageId ID)> pred,
-	  size_t per_vid_limit = 0,
-	  size_t from_shot_limit = 0) const
+	inline std::vector<ImageId> get_top_knn(const DatasetFrames& frames,
+	                                        ImageId id,
+	                                        std::function<bool(ImageId ID)> pred,
+	                                        size_t per_vid_limit = 0,
+	                                        size_t from_shot_limit = 0) const
 	{
 		if (per_vid_limit == 0)
 			per_vid_limit = frames.size();
@@ -72,14 +64,11 @@ public:
 		if (from_shot_limit == 0)
 			from_shot_limit = frames.size();
 
-		auto cmp = [](const std::pair<ImageId, float> &left,
-		              const std::pair<ImageId, float> &right) {
+		auto cmp = [](const std::pair<ImageId, float>& left, const std::pair<ImageId, float>& right) {
 			return left.second > right.second;
 		};
 
-		std::priority_queue<std::pair<ImageId, float>,
-		                    std::vector<std::pair<ImageId, float>>,
-		                    decltype(cmp)>
+		std::priority_queue<std::pair<ImageId, float>, std::vector<std::pair<ImageId, float>>, decltype(cmp)>
 		  q3(cmp);
 
 		for (ImageId i{ 0 }; i < n; ++i) {
@@ -109,8 +98,7 @@ public:
 				continue;
 
 			// If we have already enough from this shot
-			if (frames_per_shot[vf.video_ID][vf.shot_ID] >=
-			    from_shot_limit)
+			if (frames_per_shot[vf.video_ID][vf.shot_ID] >= from_shot_limit)
 				continue;
 
 			// Only if predicate is true
@@ -124,25 +112,13 @@ public:
 		return res;
 	}
 
-	inline float d_manhattan(size_t i, size_t j) const
-	{
-		return ::d_manhattan(fv(i), fv(j), features_dim);
-	}
+	inline float d_manhattan(size_t i, size_t j) const { return ::d_manhattan(fv(i), fv(j), features_dim); }
 
-	inline float d_sqeucl(size_t i, size_t j) const
-	{
-		return ::d_sqeucl(fv(i), fv(j), features_dim);
-	}
+	inline float d_sqeucl(size_t i, size_t j) const { return ::d_sqeucl(fv(i), fv(j), features_dim); }
 
-	inline float d_eucl(size_t i, size_t j) const
-	{
-		return sqrtf(d_sqeucl(i, j));
-	}
+	inline float d_eucl(size_t i, size_t j) const { return sqrtf(d_sqeucl(i, j)); }
 
-	inline float d_dot(size_t i, size_t j) const
-	{
-		return 1 - ::d_dot(fv(i), fv(j), features_dim);
-	}
+	inline float d_dot(size_t i, size_t j) const { return 1 - ::d_dot(fv(i), fv(j), features_dim); }
 
 	inline float d_cos(size_t i, size_t j) const
 	{

@@ -57,7 +57,7 @@ class SomHunter
 public:
 	SomHunter() = delete;
 	/** The main ctor with the config from the JSON config file. */
-	inline SomHunter(const Config &cfg)
+	inline SomHunter(const Config& cfg)
 	  : config(cfg)
 	  , frames(cfg)
 	  , features(frames, cfg)
@@ -78,17 +78,14 @@ public:
 
 	/** Inverts the like states of the provided frames and returns the new
 	 * states. */
-	std::vector<bool> like_frames(const std::vector<ImageId> &new_likes);
+	std::vector<bool> like_frames(const std::vector<ImageId>& new_likes);
 
 	/** (De)selects the provided frames from the bookmark list. */
-	std::vector<bool> bookmark_frames(
-	  const std::vector<ImageId> &new_bookmarks);
+	std::vector<bool> bookmark_frames(const std::vector<ImageId>& new_bookmarks);
 
 	/** Returns the nearest supported keyword matches to the provided
 	 * prefix. */
-	std::vector<const Keyword *> autocomplete_keywords(
-	  const std::string &prefix,
-	  size_t count) const;
+	std::vector<const Keyword*> autocomplete_keywords(const std::string& prefix, size_t count) const;
 
 	/**
 	 * Applies all algorithms for score computation and updates context.
@@ -96,11 +93,11 @@ public:
 	 * Returns references to existing history states that we can go back to
 	 * (including the current one).
 	 */
-	RescoreResult rescore(const std::string &text_query,
-	                      const Filters *p_filters = nullptr,
+	RescoreResult rescore(const std::string& text_query,
+	                      const Filters* p_filters = nullptr,
 	                      size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
-	                      const std::string &screenshot_fpth = ""s,
-	                      const std::string &label = ""s);
+	                      const std::string& screenshot_fpth = ""s,
+	                      const std::string& label = ""s);
 
 	/** Switches the search context for the user to the provided index in
 	 *  the history and returns reference to it.
@@ -108,11 +105,10 @@ public:
 	 * To be extended with the `user_token` argument with multiple users
 	 * support.
 	 */
-	const UserContext &switch_search_context(
-	  size_t index,
-	  size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
-	  const std::string &screenshot_fpth = "",
-	  const std::string &label = "");
+	const UserContext& switch_search_context(size_t index,
+	                                         size_t src_search_ctx_ID = SIZE_T_ERR_VAL,
+	                                         const std::string& screenshot_fpth = "",
+	                                         const std::string& label = "");
 
 	void apply_filters();
 
@@ -122,7 +118,7 @@ public:
 	 * To be extended with the `user_token` argument with multiple users
 	 * support.
 	 */
-	const SearchContext &get_search_context() const;
+	const SearchContext& get_search_context() const;
 
 	/**
 	 * Returns a reference to the current user's context.
@@ -130,11 +126,9 @@ public:
 	 * To be extended with the `user_token` argument with multiple users
 	 * support.
 	 */
-	const UserContext &get_user_context() const;
+	const UserContext& get_user_context() const;
 
-	const VideoFrame &get_frame(ImageId ID) const {
-		return frames.get_frame(ID);
-	}
+	const VideoFrame& get_frame(ImageId ID) const { return frames.get_frame(ID); }
 
 	/** Returns true if the user's SOM is ready */
 	bool som_ready() const;
@@ -156,13 +150,13 @@ public:
 	 */
 	void log_video_replay(ImageId frame_ID, float delta_X);
 	void log_scroll(DisplayType t, float delta_Y);
-	void log_text_query_change(const std::string &text_query);
+	void log_text_query_change(const std::string& text_query);
 
 private:
 	/**
 	 *	Applies text query from the user.
 	 */
-	void rescore_keywords(const std::string &query);
+	void rescore_keywords(const std::string& query);
 
 	/**
 	 *	Applies feedback from the user based
@@ -183,11 +177,9 @@ private:
 
 	FramePointerRange get_som_display();
 
-	FramePointerRange get_video_detail_display(ImageId selected_image,
-	                                           bool log_it = true);
+	FramePointerRange get_video_detail_display(ImageId selected_image, bool log_it = true);
 
-	FramePointerRange get_topKNN_display(ImageId selected_image,
-	                                     PageId page);
+	FramePointerRange get_topKNN_display(ImageId selected_image, PageId page);
 
 	// Gets only part of last display
 	FramePointerRange get_page_from_last(PageId page);

@@ -13,7 +13,7 @@ export type SearchFiltersState = {
   weekdays: boolean[];
   hourFrom: number;
   hourTo: number;
-}
+};
 
 export type SearchState = {
   textQueries: string[];

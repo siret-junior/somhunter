@@ -29,27 +29,28 @@ export function getTextQueryInput(idx) {
 export function getFiltersInput() {
   const filtersContEl = document.getElementById("queryFilters");
 
-  const weekdaysEl= document.getElementById("queryFiltersWeekdays");
+  const weekdaysEl = document.getElementById("queryFiltersWeekdays");
 
-  
   let weekdays = [];
-  weekdaysEl.childNodes.forEach((x) => { 
+  weekdaysEl.childNodes.forEach((x) => {
     const v = x.querySelector(".form-check-input");
-    
-    if (v)
-      weekdays.push(v.checked)
-  });
-  
 
-  const hoursFrom = Number(document.getElementById(config.ui.htmlElIds.queryFiltersHourFrom).value);
-  const hoursTo = Number(document.getElementById(config.ui.htmlElIds.queryFiltersHourTo).value);
+    if (v) weekdays.push(v.checked);
+  });
+
+  const hoursFrom = Number(
+    document.getElementById(config.ui.htmlElIds.queryFiltersHourFrom).value
+  );
+  const hoursTo = Number(
+    document.getElementById(config.ui.htmlElIds.queryFiltersHourTo).value
+  );
 
   return {
-    weekdays, hoursFrom, hoursTo
+    weekdays,
+    hoursFrom,
+    hoursTo,
   };
 }
-
-
 
 export function hideAllSubQueries() {
   document

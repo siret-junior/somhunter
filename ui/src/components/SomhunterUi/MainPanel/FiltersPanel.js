@@ -50,7 +50,9 @@ function FiltersPanel(props) {
                 value="0"
                 id={`inline-checkbox-${i}`}
                 defaultChecked={x}
-                onChange={(e) => {onFilterChangeHandler(s, props)} }
+                onChange={(e) => {
+                  onFilterChangeHandler(s, props);
+                }}
               />
             );
           })}
@@ -80,7 +82,9 @@ function FiltersPanel(props) {
               min="0"
               max="24"
               defaultValue={0}
-              onChange={(e) => {onFilterChangeHandler(s, props)} }
+              onChange={(e) => {
+                onFilterChangeHandler(s, props);
+              }}
             />
           </div>
           <div className="col-6">
@@ -91,7 +95,9 @@ function FiltersPanel(props) {
               min="0"
               max={24}
               defaultValue={24}
-              onChange={(e) => {onFilterChangeHandler(s, props)} }
+              onChange={(e) => {
+                onFilterChangeHandler(s, props);
+              }}
             />
           </div>
         </Col>

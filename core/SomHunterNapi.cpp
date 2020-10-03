@@ -33,28 +33,24 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 {
 	Napi::HandleScope scope(env);
 
-	Napi::Function func = DefineClass(
-	  env,
-	  "SomHunterNapi",
-	  { InstanceMethod("getDisplay", &SomHunterNapi::get_display),
-	    InstanceMethod("likeFrames", &SomHunterNapi::like_frames),
-	    InstanceMethod("bookmarkFrames", &SomHunterNapi::bookmark_frames),
-	    InstanceMethod("rescore", &SomHunterNapi::rescore),
-	    InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
-	    InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
-	    InstanceMethod("logTextQueryChange",
-	                   &SomHunterNapi::log_text_query_change),
-	    InstanceMethod("resetAll", &SomHunterNapi::reset_all),
-	    InstanceMethod("autocompleteKeywords",
-	                   &SomHunterNapi::autocomplete_keywords),
-	    InstanceMethod("isSomReady", &SomHunterNapi::is_som_ready),
-	    InstanceMethod("loginToDres", &SomHunterNapi::login_to_dres),
-	    InstanceMethod("submitToServer", &SomHunterNapi::submit_to_server),
-	    InstanceMethod("getSearchContext",
-	                   &SomHunterNapi::get_search_context),
-	    InstanceMethod("getUserContext", &SomHunterNapi::get_user_context),
-	    InstanceMethod("switchSearchContext",
-	                   &SomHunterNapi::switch_search_context) });
+	Napi::Function func =
+	  DefineClass(env,
+	              "SomHunterNapi",
+	              { InstanceMethod("getDisplay", &SomHunterNapi::get_display),
+	                InstanceMethod("likeFrames", &SomHunterNapi::like_frames),
+	                InstanceMethod("bookmarkFrames", &SomHunterNapi::bookmark_frames),
+	                InstanceMethod("rescore", &SomHunterNapi::rescore),
+	                InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
+	                InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
+	                InstanceMethod("logTextQueryChange", &SomHunterNapi::log_text_query_change),
+	                InstanceMethod("resetAll", &SomHunterNapi::reset_all),
+	                InstanceMethod("autocompleteKeywords", &SomHunterNapi::autocomplete_keywords),
+	                InstanceMethod("isSomReady", &SomHunterNapi::is_som_ready),
+	                InstanceMethod("loginToDres", &SomHunterNapi::login_to_dres),
+	                InstanceMethod("submitToServer", &SomHunterNapi::submit_to_server),
+	                InstanceMethod("getSearchContext", &SomHunterNapi::get_search_context),
+	                InstanceMethod("getUserContext", &SomHunterNapi::get_user_context),
+	                InstanceMethod("switchSearchContext", &SomHunterNapi::switch_search_context) });
 	constructor = Napi::Persistent(func);
 	constructor.SuppressDestruct();
 
@@ -63,7 +59,7 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	return exports;
 }
 
-SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
+SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<SomHunterNapi>(info)
 {
 	debug("API: Instantiating SomHunter...");
@@ -74,8 +70,7 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
 	// Process arguments
 	int length = info.Length();
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	std::string config_fpth = info[0].As<Napi::String>().Utf8Value();
@@ -85,17 +80,17 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo &info)
 	try {
 		somhunter = new SomHunter(cfg);
 		debug("API: SomHunter initialized.");
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 }
 
 Napi::Value
-VideoFrame_to_res(Napi::Env &env,
-                  const VideoFrame *p_frame,
-                  const LikesCont &likes,
-                  const BookmarksCont &bookmarks,
-                  const std::string &path_prefix)
+VideoFrame_to_res(Napi::Env& env,
+                  const VideoFrame* p_frame,
+                  const LikesCont& likes,
+                  const BookmarksCont& bookmarks,
+                  const std::string& path_prefix)
 {
 	napi_value obj;
 	napi_create_object(env, &obj);
@@ -122,14 +117,12 @@ VideoFrame_to_res(Napi::Env &env,
 			is_liked = (likes.count(ID) > 0 ? true : false);
 			filename = path_prefix + p_frame->filename;
 
-			is_bookmarked =
-			  (bookmarks.count(ID) > 0 ? true : false);
+			is_bookmarked = (bookmarks.count(ID) > 0 ? true : false);
 		}
 
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "id", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "id", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			if (ID == IMAGE_ID_ERR_VAL) {
@@ -143,8 +136,7 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "vId", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "vId", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			if (ID == IMAGE_ID_ERR_VAL) {
@@ -158,8 +150,7 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "sId", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "sId", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			if (ID == IMAGE_ID_ERR_VAL) {
@@ -173,8 +164,7 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{ // *** hour ***
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "hour", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "hour", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			if (hour == ERR_VAL<Hour>()) {
@@ -188,15 +178,13 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{ // *** weekday ***
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "weekday", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "weekday", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			if (weekday == ERR_VAL<Hour>()) {
 				napi_get_null(env, &value);
 			} else {
-				napi_create_uint32(
-				  env, uint32_t(weekday), &value);
+				napi_create_uint32(env, uint32_t(weekday), &value);
 			}
 
 			napi_set_property(env, obj, key, value);
@@ -204,8 +192,7 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "liked", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "liked", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			napi_get_boolean(env, is_liked, &value);
@@ -215,8 +202,7 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{ // *** bookmarked ***
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "bookmarked", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "bookmarked", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
 			napi_get_boolean(env, is_bookmarked, &value);
@@ -226,12 +212,10 @@ VideoFrame_to_res(Napi::Env &env,
 
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "src", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "src", NAPI_AUTO_LENGTH, &key);
 
 			napi_value value;
-			napi_create_string_utf8(
-			  env, filename.c_str(), NAPI_AUTO_LENGTH, &value);
+			napi_create_string_utf8(env, filename.c_str(), NAPI_AUTO_LENGTH, &value);
 
 			napi_set_property(env, obj, key, value);
 		}
@@ -241,14 +225,14 @@ VideoFrame_to_res(Napi::Env &env,
 }
 
 Napi::Value
-construct_result_from_GetDisplayResult(Napi::Env &env,
-                                       const GetDisplayResult &res,
+construct_result_from_GetDisplayResult(Napi::Env& env,
+                                       const GetDisplayResult& res,
                                        size_t page_num,
-                                       const std::string &path_prefix)
+                                       const std::string& path_prefix)
 {
-	const auto &frames{ res.frames };
-	const auto &likes{ res.likes };
-	const auto &bookmarks{ res.bookmarks };
+	const auto& frames{ res.frames };
+	const auto& likes{ res.likes };
+	const auto& bookmarks{ res.bookmarks };
 
 	napi_value result;
 	napi_create_object(env, &result);
@@ -274,8 +258,7 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 		size_t i{ 0_z };
 		for (auto it{ frames.begin() }; it != frames.end(); ++it) {
 
-			auto fr{ VideoFrame_to_res(
-			  env, *it, likes, bookmarks, path_prefix) };
+			auto fr{ VideoFrame_to_res(env, *it, likes, bookmarks, path_prefix) };
 			napi_set_element(env, arr, i, fr);
 
 			++i;
@@ -288,7 +271,7 @@ construct_result_from_GetDisplayResult(Napi::Env &env,
 }
 
 Napi::Value
-SomHunterNapi::get_display(const Napi::CallbackInfo &info)
+SomHunterNapi::get_display(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -335,21 +318,19 @@ SomHunterNapi::get_display(const Napi::CallbackInfo &info)
 	try {
 
 		// << Core >>
-		auto display_frames = somhunter->get_display(
-		  disp_type, selected_image, page_num, log_it);
+		auto display_frames = somhunter->get_display(disp_type, selected_image, page_num, log_it);
 		// << Core >>
 
-		return construct_result_from_GetDisplayResult(
-		  env, display_frames, page_num, path_prefix);
+		return construct_result_from_GetDisplayResult(env, display_frames, page_num, path_prefix);
 
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 	return Napi::Object(env, {});
 }
 
 Napi::Value
-SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
+SomHunterNapi::like_frames(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -358,8 +339,7 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	std::vector<ImageId> fr_IDs;
@@ -374,11 +354,10 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
 
 	std::vector<bool> like_flags;
 	try {
-		debug("API: CALL \n\t like_frames\n\t\fr_IDs.size() = "
-		      << fr_IDs.size() << std::endl);
+		debug("API: CALL \n\t like_frames\n\t\fr_IDs.size() = " << fr_IDs.size() << std::endl);
 
 		like_flags = somhunter->like_frames(fr_IDs);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -387,7 +366,7 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
 	napi_create_array(env, &result_arr);
 
 	size_t i{ 0 };
-	for (auto &&flag : like_flags) {
+	for (auto&& flag : like_flags) {
 		napi_value res;
 		napi_get_boolean(env, flag, &res);
 
@@ -398,7 +377,7 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::bookmark_frames(const Napi::CallbackInfo &info)
+SomHunterNapi::bookmark_frames(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -407,8 +386,7 @@ SomHunterNapi::bookmark_frames(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	std::vector<ImageId> fr_IDs;
@@ -424,7 +402,7 @@ SomHunterNapi::bookmark_frames(const Napi::CallbackInfo &info)
 	std::vector<bool> like_flags;
 	try {
 		like_flags = somhunter->bookmark_frames(fr_IDs);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -433,7 +411,7 @@ SomHunterNapi::bookmark_frames(const Napi::CallbackInfo &info)
 	napi_create_array(env, &result_arr);
 
 	size_t i{ 0 };
-	for (auto &&flag : like_flags) {
+	for (auto&& flag : like_flags) {
 		napi_value res;
 		napi_get_boolean(env, flag, &res);
 
@@ -444,23 +422,21 @@ SomHunterNapi::bookmark_frames(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-construct_result_from_SearchHistory(Napi::Env &env,
-                                    const std::vector<SearchContext> &history)
+construct_result_from_SearchHistory(Napi::Env& env, const std::vector<SearchContext>& history)
 {
 	// Return structure
 	napi_value result_arr;
 	napi_create_array(env, &result_arr);
 
 	size_t i{ 0 };
-	for (auto &&ctx : history) {
+	for (auto&& ctx : history) {
 
 		napi_value hist_point;
 		napi_create_object(env, &hist_point);
 
 		{ // *** ID ***
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "id", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "id", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
 			napi_create_uint32(env, ctx.ID, &value);
 
@@ -469,24 +445,18 @@ construct_result_from_SearchHistory(Napi::Env &env,
 
 		{ // *** screenshotFilepath ***
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "screenshotFilepath", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "screenshotFilepath", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
-			napi_create_string_utf8(env,
-			                        ctx.screenshot_fpth.c_str(),
-			                        NAPI_AUTO_LENGTH,
-			                        &value);
+			napi_create_string_utf8(env, ctx.screenshot_fpth.c_str(), NAPI_AUTO_LENGTH, &value);
 
 			napi_set_property(env, hist_point, key, value);
 		}
 
 		{ // *** time ***
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "time", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "time", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
-			napi_create_string_utf8(
-			  env, ctx.label.c_str(), NAPI_AUTO_LENGTH, &value);
+			napi_create_string_utf8(env, ctx.label.c_str(), NAPI_AUTO_LENGTH, &value);
 
 			napi_set_property(env, hist_point, key, value);
 		}
@@ -500,11 +470,10 @@ construct_result_from_SearchHistory(Napi::Env &env,
 }
 
 Napi::Value
-construct_result_from_RescoreResult(Napi::Env &env,
-                                    const RescoreResult &rescore_res)
+construct_result_from_RescoreResult(Napi::Env& env, const RescoreResult& rescore_res)
 {
 	size_t curr_ctx_ID{ rescore_res.curr_ctx_ID };
-	const auto &history{ rescore_res.history };
+	const auto& history{ rescore_res.history };
 
 	// Return structure
 
@@ -525,8 +494,7 @@ construct_result_from_RescoreResult(Napi::Env &env,
 		napi_value key;
 		napi_create_string_utf8(env, "history", NAPI_AUTO_LENGTH, &key);
 
-		auto result_arr{ construct_result_from_SearchHistory(env,
-			                                             history) };
+		auto result_arr{ construct_result_from_SearchHistory(env, history) };
 		napi_set_property(env, result_obj, key, result_arr);
 	}
 
@@ -534,7 +502,7 @@ construct_result_from_RescoreResult(Napi::Env &env,
 }
 
 Napi::Value
-SomHunterNapi::rescore(const Napi::CallbackInfo &info)
+SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -542,8 +510,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 	// Process arguments
 	int length = info.Length();
 	if (length != 6) {
-		Napi::TypeError::New(env, "Wrong number of arguments!")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of arguments!").ThrowAsJavaScriptException();
 	}
 
 	// Convert arguments
@@ -554,33 +521,26 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 	Napi::Object o{ info[2].As<Napi::Object>() };
 	Hour from{ Hour(o.Get("hourFrom").As<Napi::Number>().Uint32Value()) };
 	Hour to{ Hour(o.Get("hourTo").As<Napi::Number>().Uint32Value()) };
-	uint8_t weekdays_mask{ uint8_t(
-	  o.Get("weekdaysMask").As<Napi::Number>().Uint32Value()) };
+	uint8_t weekdays_mask{ uint8_t(o.Get("weekdaysMask").As<Napi::Number>().Uint32Value()) };
 
 	size_t src_search_ctx_ID{ info[3].As<Napi::Number>().Uint32Value() };
 	std::string screenshot{ info[4].As<Napi::String>().Utf8Value() };
 	std::string time_string{ info[5].As<Napi::String>().Utf8Value() };
 
-	Filters filters{ TimeFilter{ from, to },
-		         WeekDaysFilter{ weekdays_mask } };
+	Filters filters{ TimeFilter{ from, to }, WeekDaysFilter{ weekdays_mask } };
 
 	std::cout << "Calling `rescore` with filters: "
 	          << "\n\t from=" << size_t(from) << "\n\t to=" << size_t(to)
-	          << "\n\t weekdays_mask=" << size_t(weekdays_mask)
-	          << std::endl;
+	          << "\n\t weekdays_mask=" << size_t(weekdays_mask) << std::endl;
 
 	try {
 		// << Core >>
-		auto rescore_res{ somhunter->rescore(query,
-			                             &filters,
-			                             src_search_ctx_ID,
-			                             screenshot,
-			                             time_string) };
+		auto rescore_res{ somhunter->rescore(query, &filters, src_search_ctx_ID, screenshot, time_string) };
 		// << Core >>
 
 		return construct_result_from_RescoreResult(env, rescore_res);
 
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -588,7 +548,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::reset_all(const Napi::CallbackInfo &info)
+SomHunterNapi::reset_all(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -606,7 +566,7 @@ SomHunterNapi::reset_all(const Napi::CallbackInfo &info)
 
 		somhunter->reset_search_session();
 
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -614,7 +574,7 @@ SomHunterNapi::reset_all(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::log_video_replay(const Napi::CallbackInfo &info)
+SomHunterNapi::log_video_replay(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -623,19 +583,17 @@ SomHunterNapi::log_video_replay(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 2) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	ImageId fr_ID{ info[0].As<Napi::Number>().Uint32Value() };
 	float delta{ float(info[1].As<Napi::Number>().DoubleValue()) };
 
 	try {
-		debug("API: CALL \n\t log_video_replay\n\t frame_ID = "
-		      << fr_ID << std::endl);
+		debug("API: CALL \n\t log_video_replay\n\t frame_ID = " << fr_ID << std::endl);
 
 		somhunter->log_video_replay(fr_ID, delta);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -643,7 +601,7 @@ SomHunterNapi::log_video_replay(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::log_scroll(const Napi::CallbackInfo &info)
+SomHunterNapi::log_scroll(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -652,8 +610,7 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 2) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	std::string disp_type{ info[0].As<Napi::String>().Utf8Value() };
@@ -662,11 +619,10 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo &info)
 	DisplayType dt{ str_to_disp_type(disp_type) };
 
 	try {
-		debug("API: CALL \n\t log_scroll\n\t disp_type="
-		      << disp_type << "\n\tdeltaY=" << delta_Y << std::endl);
+		debug("API: CALL \n\t log_scroll\n\t disp_type=" << disp_type << "\n\tdeltaY=" << delta_Y << std::endl);
 
 		somhunter->log_scroll(dt, delta_Y);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -674,7 +630,7 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::log_text_query_change(const Napi::CallbackInfo &info)
+SomHunterNapi::log_text_query_change(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -683,18 +639,16 @@ SomHunterNapi::log_text_query_change(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	std::string query{ info[0].As<Napi::String>().Utf8Value() };
 
 	try {
-		debug("API: CALL \n\t log_text_query_change\n\t query="
-		      << query << std::endl);
+		debug("API: CALL \n\t log_text_query_change\n\t query=" << query << std::endl);
 
 		somhunter->log_text_query_change(query);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -702,7 +656,7 @@ SomHunterNapi::log_text_query_change(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
+SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -711,8 +665,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 4) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	std::string path_prefix{ info[0].As<Napi::String>().Utf8Value() };
@@ -721,10 +674,10 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 	size_t example_count{ info[3].As<Napi::Number>().Uint32Value() };
 
 	// Get suggested keywords
-	std::vector<const Keyword *> kws;
+	std::vector<const Keyword*> kws;
 	try {
 		kws = somhunter->autocomplete_keywords(prefix, count);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -734,7 +687,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 
 	size_t i = 0ULL;
 	// Iterate through all results
-	for (auto &&p_kw : kws) {
+	for (auto&& p_kw : kws) {
 
 		napi_value single_result_dict;
 		napi_create_object(env, &single_result_dict);
@@ -742,8 +695,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 		// ID
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "id", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "id", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
 			napi_create_uint32(env, p_kw->kw_ID, &value);
 
@@ -753,14 +705,9 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 		// wordString
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "wordString", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "wordString", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
-			napi_create_string_utf8(
-			  env,
-			  p_kw->synset_strs.front().c_str(),
-			  NAPI_AUTO_LENGTH,
-			  &value);
+			napi_create_string_utf8(env, p_kw->synset_strs.front().c_str(), NAPI_AUTO_LENGTH, &value);
 
 			napi_set_property(env, single_result_dict, key, value);
 		}
@@ -768,11 +715,9 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 		// description
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "description", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "description", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
-			napi_create_string_utf8(
-			  env, p_kw->desc.c_str(), NAPI_AUTO_LENGTH, &value);
+			napi_create_string_utf8(env, p_kw->desc.c_str(), NAPI_AUTO_LENGTH, &value);
 
 			napi_set_property(env, single_result_dict, key, value);
 		}
@@ -780,23 +725,19 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 		// exampleFrames
 		{
 			napi_value key;
-			napi_create_string_utf8(
-			  env, "exampleFrames", NAPI_AUTO_LENGTH, &key);
+			napi_create_string_utf8(env, "exampleFrames", NAPI_AUTO_LENGTH, &key);
 			napi_value value;
 			napi_create_array(env, &value);
 
 			size_t ii{ 0 };
-			for (auto &&p_frame : p_kw->top_ex_imgs) {
+			for (auto&& p_frame : p_kw->top_ex_imgs) {
 				if (ii >= example_count) {
 					break;
 				}
 
 				napi_value v;
 				napi_create_string_utf8(
-				  env,
-				  (path_prefix + p_frame->filename).c_str(),
-				  NAPI_AUTO_LENGTH,
-				  &v);
+				  env, (path_prefix + p_frame->filename).c_str(), NAPI_AUTO_LENGTH, &v);
 				napi_set_element(env, value, ii, v);
 				++ii;
 			}
@@ -813,7 +754,7 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::login_to_dres(const Napi::CallbackInfo &info)
+SomHunterNapi::login_to_dres(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -833,10 +774,9 @@ SomHunterNapi::login_to_dres(const Napi::CallbackInfo &info)
 
 		result = somhunter->login_to_dres();
 
-		debug(
-		  "API: RETURN \n\t login_to_dres()\n\t\result = " << result);
+		debug("API: RETURN \n\t login_to_dres()\n\t\result = " << result);
 
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -847,7 +787,7 @@ SomHunterNapi::login_to_dres(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::is_som_ready(const Napi::CallbackInfo &info)
+SomHunterNapi::is_som_ready(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -867,10 +807,9 @@ SomHunterNapi::is_som_ready(const Napi::CallbackInfo &info)
 
 		is_ready = somhunter->som_ready();
 
-		debug(
-		  "API: RETURN \n\t som_ready()\n\t\tis_ready = " << is_ready);
+		debug("API: RETURN \n\t som_ready()\n\t\tis_ready = " << is_ready);
 
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -881,7 +820,7 @@ SomHunterNapi::is_som_ready(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
+SomHunterNapi::submit_to_server(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -890,18 +829,16 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
 	int length = info.Length();
 
 	if (length != 1) {
-		Napi::TypeError::New(env, "Wrong number of parameters")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of parameters").ThrowAsJavaScriptException();
 	}
 
 	ImageId frame_ID{ info[0].As<Napi::Number>().Uint32Value() };
 
 	try {
-		debug("API: CALL \n\t submit_to_server\n\t\frame_ID = "
-		      << frame_ID);
+		debug("API: CALL \n\t submit_to_server\n\t\frame_ID = " << frame_ID);
 
 		somhunter->submit_to_server(frame_ID);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -909,8 +846,7 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env &env,
-                                             const SearchContext &search_ctx)
+SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env& env, const SearchContext& search_ctx)
 {
 	// Return structure
 	napi_value result_obj;
@@ -918,8 +854,7 @@ SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env &env,
 
 	{ /* *** weekdays *** */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "weekdays", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "weekdays", NAPI_AUTO_LENGTH, &key);
 
 		napi_value weekdaysArr;
 		napi_create_array(env, &weekdaysArr);
@@ -934,12 +869,10 @@ SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env &env,
 
 	{ /* *** hourFrom *** */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "hourFrom", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "hourFrom", NAPI_AUTO_LENGTH, &key);
 
 		napi_value hourFrom;
-		napi_create_uint32(
-		  env, search_ctx.filters.time.from, &hourFrom);
+		napi_create_uint32(env, search_ctx.filters.time.from, &hourFrom);
 
 		napi_set_property(env, result_obj, key, hourFrom);
 	}
@@ -958,9 +891,7 @@ SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env &env,
 }
 
 Napi::Value
-SomHunterNapi::construct_result_from_SearchContext(
-  Napi::Env &env,
-  const SearchContext &search_ctx)
+SomHunterNapi::construct_result_from_SearchContext(Napi::Env& env, const SearchContext& search_ctx)
 {
 
 	// Return structure
@@ -973,8 +904,7 @@ SomHunterNapi::construct_result_from_SearchContext(
 		sub: string[] // Sub-frame queries
 	  }[] */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "textQueries", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "textQueries", NAPI_AUTO_LENGTH, &key);
 
 		napi_value value_arr;
 		napi_create_array(env, &value_arr);
@@ -986,7 +916,7 @@ SomHunterNapi::construct_result_from_SearchContext(
 			std::string q1{};
 
 			// Scan the query string
-			const auto &query{ search_ctx.last_text_query };
+			const auto& query{ search_ctx.last_text_query };
 			auto idx{ query.find(">>") };
 
 			// If temporal
@@ -1002,10 +932,8 @@ SomHunterNapi::construct_result_from_SearchContext(
 			// Conert them to the JS types
 			napi_value q0_napi;
 			napi_value q1_napi;
-			napi_create_string_utf8(
-			  env, q0.c_str(), NAPI_AUTO_LENGTH, &q0_napi);
-			napi_create_string_utf8(
-			  env, q1.c_str(), NAPI_AUTO_LENGTH, &q1_napi);
+			napi_create_string_utf8(env, q0.c_str(), NAPI_AUTO_LENGTH, &q0_napi);
+			napi_create_string_utf8(env, q1.c_str(), NAPI_AUTO_LENGTH, &q1_napi);
 			napi_set_element(env, value_arr, 0, q0_napi);
 			napi_set_element(env, value_arr, 1, q1_napi);
 		}
@@ -1016,17 +944,13 @@ SomHunterNapi::construct_result_from_SearchContext(
 	{ /* *** displayType ***
 	   displayType: string; */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "displayType", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "displayType", NAPI_AUTO_LENGTH, &key);
 
 		auto curr_disp_type{ search_ctx.curr_disp_type };
 		auto disp_string{ disp_type_to_str(curr_disp_type) };
 
 		napi_value disp_string_napi;
-		napi_create_string_utf8(env,
-		                        disp_string.c_str(),
-		                        NAPI_AUTO_LENGTH,
-		                        &disp_string_napi);
+		napi_create_string_utf8(env, disp_string.c_str(), NAPI_AUTO_LENGTH, &disp_string_napi);
 
 		napi_set_property(env, result_obj, key, disp_string_napi);
 	}
@@ -1034,14 +958,12 @@ SomHunterNapi::construct_result_from_SearchContext(
 	{ /* *** screenshotFilepath ***
 	   screenshotFilepath: string; */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "screenshotFilepath", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "screenshotFilepath", NAPI_AUTO_LENGTH, &key);
 
 		auto str{ search_ctx.screenshot_fpth };
 
 		napi_value str_napi;
-		napi_create_string_utf8(
-		  env, str.c_str(), NAPI_AUTO_LENGTH, &str_napi);
+		napi_create_string_utf8(env, str.c_str(), NAPI_AUTO_LENGTH, &str_napi);
 
 		napi_set_property(env, result_obj, key, str_napi);
 	}
@@ -1060,21 +982,16 @@ SomHunterNapi::construct_result_from_SearchContext(
 
 	{ /* *** likedFrames *** */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "likedFrames", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "likedFrames", NAPI_AUTO_LENGTH, &key);
 
 		napi_value likes_arr;
 		napi_create_array(env, &likes_arr);
 
 		size_t i{ 0 };
-		for (auto &&f_ID : search_ctx.likes) {
+		for (auto&& f_ID : search_ctx.likes) {
 
-			const VideoFrame &f{ somhunter->get_frame(f_ID) };
-			auto fr{ VideoFrame_to_res(env,
-				                   &f,
-				                   search_ctx.likes,
-				                   search_ctx.bookmarks,
-				                   "") };
+			const VideoFrame& f{ somhunter->get_frame(f_ID) };
+			auto fr{ VideoFrame_to_res(env, &f, search_ctx.likes, search_ctx.bookmarks, "") };
 
 			napi_set_element(env, likes_arr, i, fr);
 			++i;
@@ -1084,21 +1001,16 @@ SomHunterNapi::construct_result_from_SearchContext(
 
 	{ /* *** bookmarkedFrames *** */
 		napi_value key;
-		napi_create_string_utf8(
-		  env, "bookmarkedFrames", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "bookmarkedFrames", NAPI_AUTO_LENGTH, &key);
 
 		napi_value likes_arr;
 		napi_create_array(env, &likes_arr);
 
 		size_t i{ 0 };
-		for (auto &&f_ID : search_ctx.bookmarks) {
+		for (auto&& f_ID : search_ctx.bookmarks) {
 
-			const VideoFrame &f{ somhunter->get_frame(f_ID) };
-			auto fr{ VideoFrame_to_res(env,
-				                   &f,
-				                   search_ctx.likes,
-				                   search_ctx.bookmarks,
-				                   "") };
+			const VideoFrame& f{ somhunter->get_frame(f_ID) };
+			auto fr{ VideoFrame_to_res(env, &f, search_ctx.likes, search_ctx.bookmarks, "") };
 
 			napi_set_element(env, likes_arr, i, fr);
 			++i;
@@ -1108,9 +1020,9 @@ SomHunterNapi::construct_result_from_SearchContext(
 
 	{ /* *** filters *** */
 		napi_value key;
-		napi_create_string_utf8( env, "filters", NAPI_AUTO_LENGTH, &key);
+		napi_create_string_utf8(env, "filters", NAPI_AUTO_LENGTH, &key);
 
-		auto fiters{filters_to_SearchFiltersState(env, search_ctx)};
+		auto fiters{ filters_to_SearchFiltersState(env, search_ctx) };
 		napi_set_property(env, result_obj, key, fiters);
 	}
 
@@ -1118,7 +1030,7 @@ SomHunterNapi::construct_result_from_SearchContext(
 }
 
 Napi::Value
-SomHunterNapi::get_search_context(const Napi::CallbackInfo &info)
+SomHunterNapi::get_search_context(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -1126,8 +1038,7 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo &info)
 	// Process arguments
 	int arg_count = info.Length();
 	if (arg_count != 1) {
-		Napi::TypeError::New(env, "Wrong number of arguments!")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of arguments!").ThrowAsJavaScriptException();
 	}
 
 	// Convert arguments
@@ -1135,13 +1046,12 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo &info)
 
 	try {
 		// << Core >>
-		const SearchContext &search_context =
-		  somhunter->get_search_context(/*user_token*/);
+		const SearchContext& search_context = somhunter->get_search_context(/*user_token*/);
 		// << Core >>
 
 		// Return the processed result
 		return construct_result_from_SearchContext(env, search_context);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -1149,8 +1059,7 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::construct_result_from_UserContext(Napi::Env &env,
-                                                 const UserContext &user_ctx)
+SomHunterNapi::construct_result_from_UserContext(Napi::Env& env, const UserContext& user_ctx)
 {
 	// Return structure
 	napi_value result_obj;
@@ -1161,8 +1070,7 @@ SomHunterNapi::construct_result_from_UserContext(Napi::Env &env,
 		napi_create_string_utf8(env, "search", NAPI_AUTO_LENGTH, &key);
 
 		// Parse the search context
-		auto val{ construct_result_from_SearchContext(env,
-			                                      user_ctx.ctx) };
+		auto val{ construct_result_from_SearchContext(env, user_ctx.ctx) };
 		napi_set_property(env, result_obj, key, val);
 	}
 
@@ -1172,8 +1080,7 @@ SomHunterNapi::construct_result_from_UserContext(Napi::Env &env,
 		napi_create_string_utf8(env, "history", NAPI_AUTO_LENGTH, &key);
 
 		// Parse the search context
-		auto val{ construct_result_from_SearchHistory(
-		  env, user_ctx.history) };
+		auto val{ construct_result_from_SearchHistory(env, user_ctx.history) };
 		napi_set_property(env, result_obj, key, val);
 	}
 
@@ -1181,7 +1088,7 @@ SomHunterNapi::construct_result_from_UserContext(Napi::Env &env,
 }
 
 Napi::Value
-SomHunterNapi::get_user_context(const Napi::CallbackInfo &info)
+SomHunterNapi::get_user_context(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -1189,8 +1096,7 @@ SomHunterNapi::get_user_context(const Napi::CallbackInfo &info)
 	// Process arguments
 	int arg_count = info.Length();
 	if (arg_count != 1) {
-		Napi::TypeError::New(env, "Wrong number of arguments!")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of arguments!").ThrowAsJavaScriptException();
 	}
 
 	// Convert arguments
@@ -1198,13 +1104,12 @@ SomHunterNapi::get_user_context(const Napi::CallbackInfo &info)
 
 	try {
 		// << Core >>
-		const UserContext &user_context =
-		  somhunter->get_user_context(/*user_token*/);
+		const UserContext& user_context = somhunter->get_user_context(/*user_token*/);
 		// << Core >>
 
 		// Return the processed result
 		return construct_result_from_UserContext(env, user_context);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
@@ -1212,7 +1117,7 @@ SomHunterNapi::get_user_context(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
-SomHunterNapi::switch_search_context(const Napi::CallbackInfo &info)
+SomHunterNapi::switch_search_context(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -1220,8 +1125,7 @@ SomHunterNapi::switch_search_context(const Napi::CallbackInfo &info)
 	// Process arguments
 	int arg_count = info.Length();
 	if (arg_count != 5) {
-		Napi::TypeError::New(env, "Wrong number of arguments!")
-		  .ThrowAsJavaScriptException();
+		Napi::TypeError::New(env, "Wrong number of arguments!").ThrowAsJavaScriptException();
 	}
 
 	// Convert arguments
@@ -1233,17 +1137,13 @@ SomHunterNapi::switch_search_context(const Napi::CallbackInfo &info)
 
 	try {
 		// << Core >>
-		const UserContext &user_context =
-		  somhunter->switch_search_context(
-		    /*user_token, */ search_ctx_ID,
-		    src_search_ctx_ID,
-		    screenshot_fpth,
-		    label);
+		const UserContext& user_context = somhunter->switch_search_context(
+		  /*user_token, */ search_ctx_ID, src_search_ctx_ID, screenshot_fpth, label);
 		// << Core >>
 
 		// Return the processed result
 		return construct_result_from_UserContext(env, user_context);
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 

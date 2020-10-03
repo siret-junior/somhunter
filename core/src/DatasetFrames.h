@@ -34,11 +34,11 @@
 
 struct VideoFrame;
 
-using VideoFramePointer = const VideoFrame *;
+using VideoFramePointer = const VideoFrame*;
 
 struct VideoFrame
 {
-	VideoFrame(std::string &&filename,
+	VideoFrame(std::string&& filename,
 	           VideoId video_ID,
 	           ShotId shot_ID,
 	           ImageId frame_number,
@@ -78,8 +78,7 @@ struct FrameRange
 	std::vector<VideoFrame>::iterator _end;
 
 	FrameRange() = default;
-	FrameRange(std::vector<VideoFrame>::iterator b,
-	           std::vector<VideoFrame>::iterator e)
+	FrameRange(std::vector<VideoFrame>::iterator b, std::vector<VideoFrame>::iterator e)
 	  : _begin(b)
 	  , _end(e)
 	{}
@@ -89,12 +88,12 @@ struct FrameRange
 	 * Returns VideoFrame reference to the frame with given index
 	 * in this frame range.
 	 */
-	const VideoFrame &operator[](size_t idx) const
+	const VideoFrame& operator[](size_t idx) const
 	{
 		// Iterator is random access so this is fine
 		return *(_begin + idx);
 	}
-	VideoFrame &operator[](size_t idx)
+	VideoFrame& operator[](size_t idx)
 	{
 		// Iterator is random access so this is fine
 		return *(_begin + idx);
@@ -124,7 +123,7 @@ public:
 	  , _end(e)
 	  , _valid(true)
 	{}
-	FramePointerRange(const std::vector<VideoFramePointer> &v)
+	FramePointerRange(const std::vector<VideoFramePointer>& v)
 	  : _begin(v.cbegin())
 	  , _end(v.cend())
 	  , _valid(true)
@@ -141,26 +140,20 @@ public:
 	 * Returns VideoFramePointer reference to the frame with given index
 	 * in this frame range.
 	 */
-	const VideoFramePointer &operator[](size_t idx) const
+	const VideoFramePointer& operator[](size_t idx) const
 	{
 		// Iterator is random access so this is fine
 		return *(_begin + idx);
 	}
-	const VideoFramePointer &operator[](size_t idx)
+	const VideoFramePointer& operator[](size_t idx)
 	{
 		// Iterator is random access so this is fine
 		return *(_begin + idx);
 	}
 
-	std::vector<VideoFramePointer>::const_iterator begin() const
-	{
-		return _begin;
-	}
+	std::vector<VideoFramePointer>::const_iterator begin() const { return _begin; }
 
-	std::vector<VideoFramePointer>::const_iterator end() const
-	{
-		return _end;
-	}
+	std::vector<VideoFramePointer>::const_iterator end() const { return _end; }
 };
 
 class DatasetFrames
@@ -173,36 +166,23 @@ class DatasetFrames
 	VideoFilenameOffsets offs{};
 
 public:
-	DatasetFrames(const Config &config);
+	DatasetFrames(const Config& config);
 
-	std::string operator[](ImageId i) const
-	{
-		return frames_path_prefix +
-		       std::string{ _frames.at(i).filename };
-	}
+	std::string operator[](ImageId i) const { return frames_path_prefix + std::string{ _frames.at(i).filename }; }
 
 	std::vector<VideoFrame>::iterator end() { return _frames.end(); };
 	std::vector<VideoFrame>::iterator begin() { return _frames.begin(); };
 
-	std::vector<VideoFrame>::const_iterator end() const
-	{
-		return _frames.end();
-	};
-	std::vector<VideoFrame>::const_iterator begin() const
-	{
-		return _frames.begin();
-	};
+	std::vector<VideoFrame>::const_iterator end() const { return _frames.end(); };
+	std::vector<VideoFrame>::const_iterator begin() const { return _frames.begin(); };
 
 	size_t get_num_videos() const { return _frames.back().video_ID + 1; }
 
-	VideoFrame &get_frame(ImageId i) { return _frames[i]; }
+	VideoFrame& get_frame(ImageId i) { return _frames[i]; }
 
-	const VideoFrame &get_frame(ImageId i) const { return _frames[i]; }
+	const VideoFrame& get_frame(ImageId i) const { return _frames[i]; }
 
-	std::vector<VideoFrame>::const_iterator get_frame_it(ImageId i) const
-	{
-		return _frames.begin() + i;
-	}
+	std::vector<VideoFrame>::const_iterator get_frame_it(ImageId i) const { return _frames.begin() + i; }
 
 	size_t size() const { return _frames.size(); }
 
@@ -219,18 +199,13 @@ public:
 	 * Return copy of FrameRange representing all selected frames from
 	 * the given video.
 	 */
-	FrameRange get_all_video_frames(VideoId video_ID) const
-	{
-		return _video_ID_to_frame_range[video_ID];
-	}
+	FrameRange get_all_video_frames(VideoId video_ID) const { return _video_ID_to_frame_range[video_ID]; }
 
 	/**
 	 * Returns new instance of FrameRange representing all frames from
 	 * prvided video ID in interval [frame_num_from, frame_num_to]
 	 */
-	FrameRange get_shot_frames(VideoId video_ID,
-	                           size_t frame_num_from,
-	                           size_t frame_num_to) const
+	FrameRange get_shot_frames(VideoId video_ID, size_t frame_num_from, size_t frame_num_to) const
 	{
 		// Get video range
 		auto video_range = _video_ID_to_frame_range[video_ID];
@@ -255,10 +230,8 @@ public:
 	}
 
 	/** Translation to VideoFrameRefs from vector ids or FrameRange */
-	std::vector<VideoFramePointer> ids_to_video_frame(
-	  const std::vector<ImageId> &ids) const;
-	static std::vector<VideoFramePointer> range_to_video_frame(
-	  const FrameRange &ids);
+	std::vector<VideoFramePointer> ids_to_video_frame(const std::vector<ImageId>& ids) const;
+	static std::vector<VideoFramePointer> range_to_video_frame(const FrameRange& ids);
 
 private:
 	/**
@@ -267,19 +240,18 @@ private:
 	 *
 	 * Line determines image ID therefore input file must have them sorted.
 	 */
-	static std::vector<std::vector<KeywordId>>
-	parse_top_kws_for_imgs_text_file(const std::string &filepath);
+	static std::vector<std::vector<KeywordId>> parse_top_kws_for_imgs_text_file(const std::string& filepath);
 
 	/**
 	 * From filename string it parses useful info as video/shot/frame ID
 	 * etc.
 	 */
-	VideoFrame parse_video_filename(std::string &&filename);
+	VideoFrame parse_video_filename(std::string&& filename);
 
 	/**
 	 * Parses the desired metadata from the metadata line.
 	 */
-	std::tuple<Weekday, Hour> parse_metadata_line(const std::string &line);
+	std::tuple<Weekday, Hour> parse_metadata_line(const std::string& line);
 };
 
 #endif

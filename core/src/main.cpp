@@ -49,21 +49,21 @@
  *
  */
 //#define TESTING_ITEC_DATASET
-#define TESTING_LSC5DAYS_DATASET
+#	define TESTING_LSC5DAYS_DATASET
 
 /*
  * What keywords are we testing?
  *
  * *** TESTING_BOW_W2VV ***:
  */
-#define TESTING_BOW_W2VV
+#	define TESTING_BOW_W2VV
 
-#include "tests.hpp"
+#	include "tests.hpp"
 
 #endif
 
 void
-print_display(const FramePointerRange &d)
+print_display(const FramePointerRange& d)
 {
 	for (auto iter = d.begin(); iter != d.end(); iter++)
 		std::cout << (*iter)->frame_ID << std::endl;
@@ -100,7 +100,7 @@ main()
 
 	// Try autocomplete
 	auto ac_res{ core.autocomplete_keywords("cat", 30) };
-	for (auto &&p_kw : ac_res) {
+	for (auto&& p_kw : ac_res) {
 		std::cout << p_kw->synset_strs.front() << std::endl;
 	}
 
@@ -112,8 +112,7 @@ main()
 		std::cout << "TOP N\n";
 		print_display(d_topn);
 
-		auto d_topknn =
-		  core.get_display(DisplayType::DTopKNN, 2, 0).frames;
+		auto d_topknn = core.get_display(DisplayType::DTopKNN, 2, 0).frames;
 		std::cout << "TOP KNN\n";
 		print_display(d_topknn);
 
@@ -125,8 +124,7 @@ main()
 	// Try keyword rescore
 	{
 		core.rescore("dog park");
-		auto d_topn1 =
-		  core.get_display(DisplayType::DTopN, 0, 0).frames;
+		auto d_topn1 = core.get_display(DisplayType::DTopN, 0, 0).frames;
 		std::cout << "TOP N\n";
 		print_display(d_topn1);
 	}
@@ -152,30 +150,23 @@ main()
 	}
 
 	{
-		auto d_topn2 =
-		  core.get_display(DisplayType::DTopN, 0, 0).frames;
+		auto d_topn2 = core.get_display(DisplayType::DTopN, 0, 0).frames;
 		print_display(d_topn2);
-		std::cout << "Len of top n page 0 " << d_topn2.size()
-		          << std::endl;
+		std::cout << "Len of top n page 0 " << d_topn2.size() << std::endl;
 	}
 	{
-		auto d_topn2 =
-		  core.get_display(DisplayType::DTopN, 0, 1).frames;
-		std::cout << "Len of top n page 1 " << d_topn2.size()
-		          << std::endl;
+		auto d_topn2 = core.get_display(DisplayType::DTopN, 0, 1).frames;
+		std::cout << "Len of top n page 1 " << d_topn2.size() << std::endl;
 	}
 	{
-		auto d_topn2 =
-		  core.get_display(DisplayType::DTopN, 0, 2).frames;
-		std::cout << "Len of top n page 2 " << d_topn2.size()
-		          << std::endl;
+		auto d_topn2 = core.get_display(DisplayType::DTopN, 0, 2).frames;
+		std::cout << "Len of top n page 2 " << d_topn2.size() << std::endl;
 	}
 
 	// Try SOM
 	{
 		while (!core.som_ready()) {
-			std::this_thread::sleep_for(
-			  std::chrono::milliseconds(1000));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 		std::cout << "SOM is ready now!" << std::endl;
 

@@ -5,5 +5,10 @@ UseTab: ForIndentation
 IndentWidth: 8
 TabWidth: 8
 AccessModifierOffset: -8
-PointerAlignment: Right
+PointerAlignment: Left
+ColumnLimit: 120
+IndentPPDirectives: AfterHash
+IncludeBlocks: Preserve
+Cpp11BracedListStyle: false
+AlwaysBreakAfterDefinitionReturnType: None
 ...

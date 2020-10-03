@@ -27,7 +27,7 @@
 
 #ifdef USE_INTRINS
 
-#ifdef _MSC_VER
+#	ifdef _MSC_VER
 template<unsigned i>
 constexpr inline float
 get(__m128 V)
@@ -40,14 +40,14 @@ get(__m128 V)
 	converter.v = V;
 	return converter.a[i];
 }
-#else
+#	else
 template<unsigned i>
 constexpr inline float
 get(__m128 V)
 {
 	return V[i];
 }
-#endif
+#	endif
 #endif
 
 static inline float
@@ -57,7 +57,7 @@ sqrf(float n)
 }
 
 inline static float
-d_sqeucl(const float *p1, const float *p2, const size_t dim)
+d_sqeucl(const float* p1, const float* p2, const size_t dim)
 {
 #ifndef USE_INTRINS
 	float sqdist = 0;
@@ -98,7 +98,7 @@ vec_abs(__m128 v)
 #endif
 
 inline static float
-d_manhattan(const float *p1, const float *p2, const size_t dim)
+d_manhattan(const float* p1, const float* p2, const size_t dim)
 {
 #ifndef USE_INTRINS
 	float mdist = 0;
@@ -111,8 +111,7 @@ d_manhattan(const float *p1, const float *p2, const size_t dim)
 
 	__m128 s = _mm_setzero_ps();
 	for (; p1 < p1ie; p1 += 4, p2 += 4) {
-		s = _mm_add_ps(
-		  s, vec_abs(_mm_sub_ps(_mm_loadu_ps(p1), _mm_loadu_ps(p2))));
+		s = _mm_add_ps(s, vec_abs(_mm_sub_ps(_mm_loadu_ps(p1), _mm_loadu_ps(p2))));
 	}
 	float mdist = get<0>(s) + get<1>(s) + get<2>(s) + get<3>(s);
 	for (; p1 < p1e; ++p1, ++p2) {
@@ -123,7 +122,7 @@ d_manhattan(const float *p1, const float *p2, const size_t dim)
 }
 
 inline static float
-d_dot(const float *p1, const float *p2, const size_t dim)
+d_dot(const float* p1, const float* p2, const size_t dim)
 {
 #ifndef USE_INTRINS
 	float mdist = 0;
@@ -136,8 +135,7 @@ d_dot(const float *p1, const float *p2, const size_t dim)
 
 	__m128 s = _mm_setzero_ps();
 	for (; p1 < p1ie; p1 += 4, p2 += 4) {
-		s =
-		  _mm_add_ps(s, _mm_mul_ps(_mm_loadu_ps(p1), _mm_loadu_ps(p2)));
+		s = _mm_add_ps(s, _mm_mul_ps(_mm_loadu_ps(p1), _mm_loadu_ps(p2)));
 	}
 	float mdist = get<0>(s) + get<1>(s) + get<2>(s) + get<3>(s);
 	for (; p1 < p1e; ++p1, ++p2) {

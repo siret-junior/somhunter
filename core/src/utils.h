@@ -51,7 +51,7 @@
  *  @return   String representing current date and time in desired format.
  */
 inline std::string
-get_formated_timestamp(const std::string &fmt)
+get_formated_timestamp(const std::string& fmt)
 {
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);
@@ -62,13 +62,12 @@ get_formated_timestamp(const std::string &fmt)
 }
 
 inline int
-str_to_int(const std::string_view &str)
+str_to_int(const std::string_view& str)
 {
 	int result = 0;
 
 	// Convert and check if successful
-	auto conv_res =
-	  std::from_chars(str.data(), str.data() + str.size(), result);
+	auto conv_res = std::from_chars(str.data(), str.data() + str.size(), result);
 
 	if (conv_res.ptr != (str.data() + str.size())) {
 		warn("Incorrect string in str_to_int");
@@ -82,7 +81,7 @@ str_to_int(const std::string_view &str)
 
 template<typename T, typename S>
 static inline T
-str2(const S &s)
+str2(const S& s)
 {
 	std::stringstream ss(s);
 	T r;
@@ -92,7 +91,7 @@ str2(const S &s)
 
 template<typename T>
 inline float
-d_manhattan(const std::vector<T> &left, const std::vector<T> &right)
+d_manhattan(const std::vector<T>& left, const std::vector<T>& right)
 {
 	if (left.size() != right.size()) {
 		throw std::runtime_error("Vectors have different sizes.");
@@ -108,7 +107,7 @@ d_manhattan(const std::vector<T> &left, const std::vector<T> &right)
 
 template<typename T>
 inline float
-d_sqeucl(const std::vector<T> &left, const std::vector<T> &right)
+d_sqeucl(const std::vector<T>& left, const std::vector<T>& right)
 {
 	if (left.size() != right.size()) {
 		throw std::runtime_error("Vectors have different sizes.");
@@ -123,7 +122,7 @@ d_sqeucl(const std::vector<T> &left, const std::vector<T> &right)
 
 template<typename T>
 inline float
-d_eucl(const std::vector<T> &left, const std::vector<T> &right)
+d_eucl(const std::vector<T>& left, const std::vector<T>& right)
 {
 	return sqrtf(d_sqeucl(left, right));
 }
@@ -135,7 +134,7 @@ squaref(float a)
 }
 
 inline float
-d_cos(const std::vector<float> &left, const std::vector<float> &right)
+d_cos(const std::vector<float>& left, const std::vector<float>& right)
 {
 	float s = 0.0f;
 	float w1 = 0.0f;
@@ -154,7 +153,7 @@ d_cos(const std::vector<float> &left, const std::vector<float> &right)
 
 template<typename T>
 inline std::vector<T>
-VecSub(const std::vector<T> &left, const std::vector<T> &right)
+VecSub(const std::vector<T>& left, const std::vector<T>& right)
 {
 	if (left.size() != right.size()) {
 		throw std::runtime_error("Vectors have different sizes.");
@@ -164,7 +163,7 @@ VecSub(const std::vector<T> &left, const std::vector<T> &right)
 	result.resize(left.size());
 
 	size_t i = 0;
-	for (auto &v : result) {
+	for (auto& v : result) {
 		v = left[i] - right[i];
 		++i;
 	}
@@ -174,7 +173,7 @@ VecSub(const std::vector<T> &left, const std::vector<T> &right)
 
 template<typename T>
 inline std::vector<T>
-VecAdd(const std::vector<T> &left, const std::vector<T> &right)
+VecAdd(const std::vector<T>& left, const std::vector<T>& right)
 {
 	if (left.size() != right.size()) {
 		throw std::runtime_error("Vectors have different sizes.");
@@ -184,7 +183,7 @@ VecAdd(const std::vector<T> &left, const std::vector<T> &right)
 	result.resize(left.size());
 
 	size_t i = 0;
-	for (auto &v : result) {
+	for (auto& v : result) {
 		v = left[i] + right[i];
 		++i;
 	}
@@ -194,21 +193,18 @@ VecAdd(const std::vector<T> &left, const std::vector<T> &right)
 
 template<typename T, typename S>
 inline std::vector<T>
-VecMult(const std::vector<T> &left, S right)
+VecMult(const std::vector<T>& left, S right)
 {
 	std::vector<T> result(left.size());
 
-	std::transform(left.begin(),
-	               left.end(),
-	               result.begin(),
-	               [right](const T &l) { return l * right; });
+	std::transform(left.begin(), left.end(), result.begin(), [right](const T& l) { return l * right; });
 
 	return result;
 }
 
 template<typename T>
 inline std::vector<T>
-VecMult(const std::vector<T> &left, const std::vector<T> &right)
+VecMult(const std::vector<T>& left, const std::vector<T>& right)
 {
 	if (left.size() != right.size()) {
 		throw std::runtime_error("Vectors have different sizes.");
@@ -216,18 +212,16 @@ VecMult(const std::vector<T> &left, const std::vector<T> &right)
 
 	std::vector<T> result;
 
-	std::transform(left.begin(),
-	               left.end(),
-	               right.begin(),
-	               std::back_inserter(result),
-	               [](const T &l, const T &r) { return l * r; });
+	std::transform(left.begin(), left.end(), right.begin(), std::back_inserter(result), [](const T& l, const T& r) {
+		return l * r;
+	});
 
 	return result;
 }
 
 template<typename T>
 inline T
-VecDot(const std::vector<T> &left, const std::vector<T> &right)
+VecDot(const std::vector<T>& left, const std::vector<T>& right)
 {
 	if (left.size() != right.size()) {
 		throw std::runtime_error("Vectors have different sizes.");
@@ -240,18 +234,17 @@ VecDot(const std::vector<T> &left, const std::vector<T> &right)
 
 template<typename T>
 inline std::vector<T>
-MatVecProd(const std::vector<std::vector<T>> &mat, const std::vector<T> &vec)
+MatVecProd(const std::vector<std::vector<T>>& mat, const std::vector<T>& vec)
 {
 	if (mat.empty() || mat[0].size() != vec.size()) {
-		throw std::runtime_error(
-		  "Vectors have different sizes or is mat empty.");
+		throw std::runtime_error("Vectors have different sizes or is mat empty.");
 	}
 
 	std::vector<T> result;
 	result.resize(mat.size());
 
 	size_t i = 0;
-	for (auto &&mat_row_vec : mat)
+	for (auto&& mat_row_vec : mat)
 		result[i++] = VecDot(mat_row_vec, vec);
 
 	return result;
@@ -259,14 +252,14 @@ MatVecProd(const std::vector<std::vector<T>> &mat, const std::vector<T> &vec)
 
 template<typename T>
 inline float
-VecLen(const std::vector<T> &left)
+VecLen(const std::vector<T>& left)
 {
 	return sqrtf(VecDot(left, left));
 }
 
 template<typename T>
 inline std::vector<T>
-VecNorm(const std::vector<T> &left)
+VecNorm(const std::vector<T>& left)
 {
 	float vec_size = VecLen(left);
 
@@ -280,8 +273,7 @@ VecNorm(const std::vector<T> &left)
  * Vectors must have unit size!
  */
 inline float
-d_cos_normalized(const std::vector<float> &left,
-                 const std::vector<float> &right)
+d_cos_normalized(const std::vector<float>& left, const std::vector<float>& right)
 {
 	return 1.0f - VecDot(left, right);
 }
@@ -290,11 +282,11 @@ d_cos_normalized(const std::vector<float> &left,
  * Vectors must have unit size!
  */
 inline float
-d_cos_normalized(const std::vector<float> &left, const float *right, size_t dim)
+d_cos_normalized(const std::vector<float>& left, const float* right, size_t dim)
 {
 	float s = 0.0f;
-	const float *iv = left.data();
-	const float *jv = right;
+	const float* iv = left.data();
+	const float* jv = right;
 
 	for (size_t d = 0; d < dim; ++d) {
 		s += iv[d] * jv[d];
@@ -313,9 +305,7 @@ inline int64_t
 timestamp()
 {
 	using namespace std::chrono;
-	return duration_cast<milliseconds>(
-	         system_clock::now().time_since_epoch())
-	  .count();
+	return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
 /** Returns pseudorandom integral number sampled from
@@ -345,7 +335,7 @@ frand(T from, T to)
 }
 
 inline std::vector<std::string>
-split(const std::string &str, char delim)
+split(const std::string& str, char delim)
 {
 	std::vector<std::string> result;
 	std::stringstream ss(str);

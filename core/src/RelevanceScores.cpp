@@ -39,12 +39,9 @@ struct FrameScoreIdPair
 	float score;
 	ImageId id;
 
-	inline bool operator==(const FrameScoreIdPair &a) const
-	{
-		return score == a.score && id == a.id;
-	}
+	inline bool operator==(const FrameScoreIdPair& a) const { return score == a.score && id == a.id; }
 
-	inline bool operator<(const FrameScoreIdPair &a) const
+	inline bool operator<(const FrameScoreIdPair& a) const
 	{
 		if (score < a.score)
 			return true;
@@ -53,7 +50,7 @@ struct FrameScoreIdPair
 		return id < a.id;
 	}
 
-	inline bool operator>(const FrameScoreIdPair &a) const
+	inline bool operator>(const FrameScoreIdPair& a) const
 	{
 		if (score > a.score)
 			return true;
@@ -67,7 +64,7 @@ struct FrameScoreIdPair
 // (this is maximum heap w.r.t. the supplied `less`)
 template<typename T, typename C>
 static void
-heap_down(T *heap, size_t start, size_t lim, C less = std::less<T>())
+heap_down(T* heap, size_t start, size_t lim, C less = std::less<T>())
 {
 	for (;;) {
 		size_t L = 2 * start + 1;
@@ -96,7 +93,7 @@ heap_down(T *heap, size_t start, size_t lim, C less = std::less<T>())
 }
 
 bool
-ScoreModel::operator==(const ScoreModel &other) const
+ScoreModel::operator==(const ScoreModel& other) const
 {
 	return (_scores == other._scores);
 }
@@ -107,7 +104,7 @@ ScoreModel::reset()
 	_cache_dirty = true;
 	_cache_ctx_dirty = true;
 
-	for (auto &i : _scores)
+	for (auto& i : _scores)
 		i = 1.0f;
 }
 
@@ -130,7 +127,7 @@ ScoreModel::set(ImageId i, float prob)
 }
 
 std::vector<ImageId>
-ScoreModel::top_n_with_context(const DatasetFrames &frames,
+ScoreModel::top_n_with_context(const DatasetFrames& frames,
                                size_t n,
                                size_t from_vid_limit,
                                size_t from_shot_limit) const
@@ -145,15 +142,13 @@ ScoreModel::top_n_with_context(const DatasetFrames &frames,
 	if we want to keep reporting `n` unique results. */
 	n = n * DISPLAY_GRID_WIDTH;
 
-	auto to_show = top_n(
-	  frames, n / DISPLAY_GRID_WIDTH, from_vid_limit, from_shot_limit);
+	auto to_show = top_n(frames, n / DISPLAY_GRID_WIDTH, from_vid_limit, from_shot_limit);
 
 	_topn_ctx_cache.clear();
 	_topn_ctx_cache.reserve(n);
-	for (auto &&selected : to_show) {
+	for (auto&& selected : to_show) {
 		auto video_id = frames.get_video_id(selected);
-		for (int i = -TOP_N_SELECTED_FRAME_POSITION;
-		     i < DISPLAY_GRID_WIDTH - TOP_N_SELECTED_FRAME_POSITION;
+		for (int i = -TOP_N_SELECTED_FRAME_POSITION; i < DISPLAY_GRID_WIDTH - TOP_N_SELECTED_FRAME_POSITION;
 		     ++i) {
 			if (frames.get_video_id(selected + i) == video_id) {
 				_topn_ctx_cache.push_back(selected + i);
@@ -168,10 +163,7 @@ ScoreModel::top_n_with_context(const DatasetFrames &frames,
 }
 
 std::vector<ImageId>
-ScoreModel::top_n(const DatasetFrames &frames,
-                  size_t n,
-                  size_t from_vid_limit,
-                  size_t from_shot_limit) const
+ScoreModel::top_n(const DatasetFrames& frames, size_t n, size_t from_vid_limit, size_t from_shot_limit) const
 {
 	// Is this cached
 	// !! We assume that vid/shot limits do not change during the runtime.
@@ -194,13 +186,11 @@ ScoreModel::top_n(const DatasetFrames &frames,
 
 		// Filter out masked values
 		if (mask) {
-			score_ids.emplace_back(
-			  FrameScoreIdPair{ _scores[i], i });
+			score_ids.emplace_back(FrameScoreIdPair{ _scores[i], i });
 		}
 	}
 
-	std::sort(
-	  score_ids.begin(), score_ids.end(), std::greater<FrameScoreIdPair>());
+	std::sort(score_ids.begin(), score_ids.end(), std::greater<FrameScoreIdPair>());
 
 	std::map<VideoId, size_t> frames_per_vid;
 	std::map<VideoId, std::map<ShotId, size_t>> frames_per_shot;
@@ -217,8 +207,7 @@ ScoreModel::top_n(const DatasetFrames &frames,
 			continue;
 
 		// If we have already enough from this shot
-		if (frames_per_shot[vf.video_ID][vf.shot_ID]++ >=
-		    from_shot_limit)
+		if (frames_per_shot[vf.video_ID][vf.shot_ID]++ >= from_shot_limit)
 			continue;
 
 		_topn_cache.push_back(frame);
@@ -251,8 +240,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 		const size_t l = 2 * i + 1;
 		const size_t r = 2 * i + 2;
 		if (i < branches + n)
-			tree[i] = ((l < branches + n) ? tree[l] : 0) +
-			          ((r < branches + n) ? tree[r] : 0);
+			tree[i] = ((l < branches + n) ? tree[l] : 0) + ((r < branches + n) ? tree[r] : 0);
 	};
 
 	auto updb = [&tree, branches, n, upd](size_t i) {
@@ -270,7 +258,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 
 	std::vector<ImageId> res(k, 0);
 
-	for (ImageId &rei : res) {
+	for (ImageId& rei : res) {
 		float x = real_dist(gen) * tree[0];
 		size_t i = 0;
 		for (;;) {
@@ -298,7 +286,7 @@ ScoreModel::weighted_sample(size_t k, float pow) const
 }
 
 ImageId
-ScoreModel::weighted_example(const std::vector<ImageId> &subset) const
+ScoreModel::weighted_example(const std::vector<ImageId>& subset) const
 {
 	std::vector<float> fs(subset.size());
 	for (size_t i = 0; i < subset.size(); ++i)
@@ -311,9 +299,7 @@ ScoreModel::weighted_example(const std::vector<ImageId> &subset) const
 }
 
 void
-ScoreModel::apply_bayes(std::set<ImageId> likes,
-                        const std::set<ImageId> &screen,
-                        const DatasetFeatures &features)
+ScoreModel::apply_bayes(std::set<ImageId> likes, const std::set<ImageId>& screen, const DatasetFeatures& features)
 {
 	if (likes.empty())
 		return;
@@ -336,9 +322,7 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 		std::uniform_int_distribution<size_t> rng;
 
 		for (size_t i = 0; (i + 1) < max_others; ++i)
-			std::swap(
-			  others[i],
-			  others[i + 1 + rng(gen) % (max_others - i - 1)]);
+			std::swap(others[i], others[i + 1 + rng(gen) % (max_others - i - 1)]);
 
 		others.resize(max_others);
 	}
@@ -350,29 +334,24 @@ ScoreModel::apply_bayes(std::set<ImageId> likes,
 		std::vector<std::thread> threads(n_threads);
 
 		auto worker = [&](size_t threadID) {
-			const ImageId first =
-			  ImageId(threadID * _scores.size() / n_threads);
-			const ImageId last =
-			  ImageId((threadID + 1) * _scores.size() / n_threads);
+			const ImageId first = ImageId(threadID * _scores.size() / n_threads);
+			const ImageId last = ImageId((threadID + 1) * _scores.size() / n_threads);
 
 			for (ImageId ii = first; ii < last; ++ii) {
 				float divSum = 0;
 
 				for (ImageId oi : others)
-					divSum +=
-					  expf(-features.d_dot(ii, oi) / Sigma);
+					divSum += expf(-features.d_dot(ii, oi) / Sigma);
 
-				for (auto &&like : likes) {
-					const float likeValTmp = expf(
-					  -features.d_dot(ii, like) / Sigma);
-					_scores[ii] *=
-					  likeValTmp / (likeValTmp + divSum);
+				for (auto&& like : likes) {
+					const float likeValTmp = expf(-features.d_dot(ii, like) / Sigma);
+					_scores[ii] *= likeValTmp / (likeValTmp + divSum);
 				}
 			}
 		};
 		for (size_t i = 0; i < threads.size(); ++i)
 			threads[i] = std::thread(worker, i);
-		for (auto &t : threads)
+		for (auto& t : threads)
 			t.join();
 	}
 
@@ -398,7 +377,7 @@ ScoreModel::normalize()
 	}
 
 	size_t n = 0;
-	for (float &s : _scores) {
+	for (float& s : _scores) {
 		s /= smax;
 		if (s < MINIMAL_SCORE)
 			++n, s = MINIMAL_SCORE;
