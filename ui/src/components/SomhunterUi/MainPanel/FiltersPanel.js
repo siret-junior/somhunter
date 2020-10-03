@@ -11,7 +11,8 @@ import config from "../../../__config_generated__.json";
 import { useSettings } from "../../../hooks/useSettings";
 import { crSetQueryChanged } from "../../../actions/indicatorCreator";
 
-function setAllWeekdays(parEl, val) {
+function setAllWeekdays(s, parEl, val) {
+  s.dispatch(crSetQueryChanged(s, true));
   parEl.childNodes.forEach((el) => {
     el.childNodes[0].checked = val;
   });
@@ -60,13 +61,13 @@ function FiltersPanel(props) {
           <div className="mini-btn-cont form-check-inline">
             <Button
               className="mini-btn"
-              onClick={(e) => setAllWeekdays(weekdayContRef.current, true)}
+              onClick={(e) => setAllWeekdays(s, weekdayContRef.current, true)}
             >
               All
             </Button>
             <Button
               className="mini-btn"
-              onClick={(e) => setAllWeekdays(weekdayContRef.current, false)}
+              onClick={(e) => setAllWeekdays(s, weekdayContRef.current, false)}
               variant="danger"
             >
               Clear
@@ -81,7 +82,7 @@ function FiltersPanel(props) {
               type="number"
               min="0"
               max="24"
-              defaultValue={0}
+              defaultValue={props.filters.hourFrom}
               onChange={(e) => {
                 onFilterChangeHandler(s, props);
               }}
@@ -94,7 +95,7 @@ function FiltersPanel(props) {
               type="number"
               min="0"
               max={24}
-              defaultValue={24}
+              defaultValue={props.filters.hourTo}
               onChange={(e) => {
                 onFilterChangeHandler(s, props);
               }}
