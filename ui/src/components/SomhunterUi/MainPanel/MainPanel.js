@@ -22,6 +22,9 @@ import {
 import HelpWindow from "./HelpWindow";
 import SettingsWindow from "./SettingsWindow";
 import { getTextQueryInput } from "../../../utils/utils";
+import BookmarksPanel from "./BookmarksPanel";
+import LikedPanel from "./LikedPanel";
+import FiltersPanel from "./FiltersPanel";
 
 function onTriggerRescoretHandler(settings, destDisplay, isAcOpen) {
   const dispatch = settings.dispatch;
@@ -81,6 +84,8 @@ function MainPanel(props) {
         </Col>
       </ControlsPanel>
 
+      <FiltersPanel />
+
       <TextSearchPanel
         setIsAcOpen={setIsAcOpen}
         isAcOpen={isAcOpen}
@@ -94,6 +99,8 @@ function MainPanel(props) {
           )
         }
       />
+
+      <LikedPanel />
 
       <ControlsPanel>
         <Col xs={6} className="cont-btn">
@@ -171,6 +178,8 @@ function MainPanel(props) {
       </ControlsPanel>
 
       <HistoryPanel />
+
+      <BookmarksPanel />
 
       <NotificationPanel />
 

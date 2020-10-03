@@ -61,7 +61,7 @@ router.get("/", function (req, res, next) {
   // -------------------------------
   // Call the core
   const displayFrames = global.core.getDisplay(
-    global.serverCfg.media.framesPathPrefix,
+    "",
     global.strs.displayTypes.topn,
     0
   );

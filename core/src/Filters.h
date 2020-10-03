@@ -47,6 +47,11 @@ public:
 
 	bool &operator[](size_t i) { return _days[i]; }
 
+	bool operator==(const WeekDaysFilter &other) const
+	{
+		return (_days == other._days);
+	}
+
 private:
 	std::array<bool, 7> _days;
 };
@@ -62,6 +67,11 @@ public:
 	  : from(from)
 	  , to(to){};
 
+	bool operator==(const TimeFilter &other) const
+	{
+		return (from == other.from && to == other.to);
+	}
+
 	Hour from;
 	Hour to;
 };
@@ -71,5 +81,10 @@ struct Filters
 {
 	TimeFilter time;
 	WeekDaysFilter days;
+
+	bool operator==(const Filters &other) const
+	{
+		return (time == other.time && days == other.days);
+	}
 };
 #endif // FILTERS_H_

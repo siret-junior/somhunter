@@ -1,7 +1,8 @@
 {
     "development": {
         "media": {
-            "framesPathPrefix": "/thumbs/"
+            "thumbsPathPrefix": "/thumbs/",
+            "framesPathPrefix": "/frames/"
         },
         "autocomplete": {
             "numSuggestions": 10,
@@ -14,7 +15,14 @@
             "defaultSecondaryRescoreDisplay": "SOM_display"
         },
         "textSearch": {
+            "showMetadataFilters": true,
             "autocompleteDelay": 200
+        },
+        "htmlElIds": {
+            "queryFilters": "queryFilters",
+            "queryFiltersWeekdays": "queryFiltersWeekdays",
+            "queryFiltersHourFrom": "queryFiltersHourFrom",
+            "queryFiltersHourTo": "queryFiltersHourTo"
         }
     },
     "staging": {},

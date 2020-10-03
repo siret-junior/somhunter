@@ -125,7 +125,7 @@ exports.getTopScreen = function (req, res) {
   let frames = [];
  
   const displayFrames =
-    global.core.getDisplay(global.serverCfg.media.framesPathPrefix, type, pageId, frameId);
+    global.core.getDisplay(global.serverCfg.media.thumbsPathPrefix, type, pageId, frameId);
 
   frames = displayFrames.frames;
 

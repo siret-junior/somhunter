@@ -114,7 +114,7 @@ public:
 	  const std::string &screenshot_fpth = "",
 	  const std::string &label = "");
 
-	void apply_filters(const Filters *filters);
+	void apply_filters();
 
 	/**
 	 * Returns a reference to the current user's search context.
@@ -206,17 +206,7 @@ private:
 		user.history.emplace_back(user.ctx);
 	}
 
-	/** Resets the current history and search session and starts new history
-	 * (from ID 0) */
-	void reset_search_history()
-	{
-		// Make sure we're not pushing in any old screenshot
-		user.ctx.screenshot_fpth = "";
-
-		user.ctx.ID = 0;
-		user.history.clear();
-		user.history.emplace_back(user.ctx);
-	}
+	bool has_metadata() const;
 
 	/** The tester class */
 	friend TESTER_SomHunter;

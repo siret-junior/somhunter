@@ -37,7 +37,7 @@ const { combine, timestamp, printf } = format;
 
 // Set root project directory
 global.rootDir = __dirname;
-
+console.log(process.env["NODE_ENV"])
 if (typeof process.env["NODE_ENV"] === "undefined") {
   process.env["NODE_ENV"] = "production";
 }
@@ -246,6 +246,8 @@ addPost(app, eps.searchContext, endpoints.searchContextPost);
 
 // Gets the user context
 addGet(app, eps.userContext, endpoints.userContextGet);
+
+addPost(app, eps.searchBookmark, endpoints.bookmarkFrame);
 
 app.use("/", somhunterRouter);
 app.use("/404", routerNotFound);

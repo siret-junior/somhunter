@@ -39,7 +39,7 @@ exports.getSomScreen = function (req, res) {
 
   // -------------------------------
   // Call the core
-  const frameData = global.core.getDisplay(global.uiCfg.media.framesPathPrefix, global.strs.displayTypes.som);
+  const frameData = global.core.getDisplay("", global.strs.displayTypes.som);
   // -------------------------------
 
   SessionState.switchScreenTo(sess.state, global.strs.displayTypes.som, frameData.frames, 0);
@@ -70,7 +70,7 @@ exports.getTopScreen = function (req, res) {
   let frames = [];
   // -------------------------------
   // Call the core
-  const displayFrames = global.core.getDisplay(global.uiCfg.media.framesPathPrefix, type, pageId, frameId);
+  const displayFrames = global.core.getDisplay("", type, pageId, frameId);
   frames = displayFrames.frames;
   // -------------------------------
 
@@ -108,7 +108,7 @@ exports.getAutocompleteResults = function (req, res) {
   // -------------------------------
   // Call the core
   const acKeywords = global.core.autocompleteKeywords(
-    global.uiCfg.media.framesPathPrefix,
+    "",
     prefix,
     global.uiCfg.autocomplete.numSuggestions,
     global.uiCfg.autocomplete.numExampleFrames
@@ -154,6 +154,24 @@ exports.likeFrame = function (req, res) {
   // -------------------------------
 
   res.status(200).jsonp({ frameId: frameId, isLiked: res_flags[0] });
+};
+
+exports.bookmarkFrame = function (req, res) {
+  const sess = req.session;
+
+  // Make sure that this session is initialized
+  const viewDataOld = stateCheck.initRequest(req);
+  stateCheck.checkGlobalSessionState(req, viewDataOld);
+
+  const frameId = req.body.frameId;
+  const bookmarks = [frameId];
+
+  // -------------------------------
+  // Call the core
+  const res_flags = global.core.bookmarkFrames(bookmarks);
+  // -------------------------------
+
+  res.status(200).jsonp({ frameId: frameId, isBookmarked: res_flags[0] });
 };
 
 exports.loginToDres = function (req, res) {
@@ -341,13 +359,7 @@ exports.getFrameDetailData = function (req, res) {
 
   // -------------------------------
   // Call the core
-  const frameData = global.core.getDisplay(
-    global.uiCfg.media.framesPathPrefix,
-    global.strs.displayTypes.detail,
-    null,
-    frameId,
-    logIt
-  );
+  const frameData = global.core.getDisplay("", global.strs.displayTypes.detail, null, frameId, logIt);
   // -------------------------------
 
   res.status(200).jsonp(frameData);
@@ -406,12 +418,28 @@ exports.rescore = function (req, res) {
   const user_token = global.coreCfg.user_token;
 
   // \todo Dummy data
-  const filters = {
-    hourFrom: 1,
-    hourTo: 24,
-    /* 0x3F: 0011 1111 */
-    weekdaysMask: 0x3f,
-  };
+  let filters = null;
+
+  if (global.uiCfg.textSearch.showMetadataFilters) {
+    // [true, false, false, true, true, true, true]
+    const weekdays = body.filters.weekdays;
+    let weekdaysMask = 0x0;
+    weekdays.map((isHigh, i) => {
+      if (isHigh) {
+        weekdaysMask |= 1 << i;
+      }
+    });
+
+    const hourFrom = body.filters.hoursFrom;
+    const hourTo = body.filters.hoursTo;
+
+    filters = {
+      hourFrom,
+      hourTo,
+      weekdaysMask,
+    };
+  }
+  console.warn("filters:", filters);
 
   // << Core NAPI >>
   const history = global.core.rescore(user_token, textQuery, filters, srcSearchCtxId, screenshotFilename, timeStr);

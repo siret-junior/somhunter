@@ -169,21 +169,30 @@ SomHunter::autocomplete_keywords(const std::string &prefix, size_t count) const
 	return res;
 }
 
-void
-SomHunter::apply_filters(const Filters *p_filters)
+bool
+SomHunter::has_metadata() const
 {
-	// Filters must be always reset
-	user.ctx.scores.reset_mask();
+	return !config.LSC_metadata_file.empty();
+}
 
-	// If no filters whatsoever
-	if (p_filters == nullptr) {
+void
+SomHunter::apply_filters()
+{
+	// If no filters set up
+	if (!has_metadata()) {
 		return;
 	}
+	
 
-	const auto &days{ p_filters->days };
-	Hour t_from{ p_filters->time.from };
-	Hour t_to{ p_filters->time.to };
+	// Make sure to reset the previous mask on the scores
+	user.ctx.scores.reset_mask();
 
+	const Filters &filters{ user.ctx.filters };
+
+	const auto &days{ filters.days };
+	Hour t_from{ filters.time.from };
+	Hour t_to{ filters.time.to };
+	
 	// A closure that determines if the frame should be filtered out
 	auto is_out{ [&days, t_from, t_to](const VideoFrame &f) {
 		// If NOT within the selected days
@@ -216,9 +225,15 @@ SomHunter::rescore(const std::string &text_query,
                    const std::string &screenshot_fpth,
                    const std::string &label)
 {
-	user.submitter.poll();
+	/* ***
+	 * Set the filters to the context
+	 */
+	if (p_filters != nullptr && has_metadata()) {
+		user.ctx.filters = *p_filters;
+	}
+	
 
-	/*
+	/* ***
 	 * Save provided screenshot filepath if needed
 	 */
 	if (src_search_ctx_ID != SIZE_T_ERR_VAL &&
@@ -229,34 +244,39 @@ SomHunter::rescore(const std::string &text_query,
 		  screenshot_fpth;
 	}
 
+	/* ***
+	 * Do all the needed rescore steps
+	 */
 	// Store likes for the logging purposees
 	auto old_likes{ user.ctx.likes };
 
-	// Rescore text query
 	rescore_keywords(text_query);
-
-	apply_filters(p_filters);
-
-	// Rescore relevance feedback
+	apply_filters();
 	rescore_feedback();
 
-	// Start SOM computation
+	// Notify the SOM worker thread
 	som_start();
 
-	// Update search context
+	// Reset the "seen frames" constext for the Bayes
 	user.ctx.shown_images.clear();
 
+	// Reset likes
+	user.ctx.likes.clear();
+
+	// Start the new search context
+	push_search_ctx();
+
+	/* ***
+	 * Logging
+	 */
+	// Flush the backlog
+	user.submitter.poll();
 	auto top_n = user.ctx.scores.top_n(frames,
 	                                   TOPN_LIMIT,
 	                                   config.topn_frames_per_video,
 	                                   config.topn_frames_per_shot);
 
-	// Reset likes
-	user.ctx.likes.clear();
-
-	debug("used_tools.topknn_used = " << used_tools.topknn_used);
-	debug("used_tools.KWs_used = " << used_tools.KWs_used);
-	debug("used_tools.bayes_used = " << used_tools.bayes_used);
+	// Log this rescore result
 	user.submitter.submit_and_log_rescore(frames,
 	                                      user.ctx.scores,
 	                                      old_likes,
@@ -266,8 +286,6 @@ SomHunter::rescore(const std::string &text_query,
 	                                      user.ctx.last_text_query,
 	                                      config.topn_frames_per_video,
 	                                      config.topn_frames_per_shot);
-
-	push_search_ctx();
 
 	return RescoreResult{ user.ctx.ID, user.history };
 }
@@ -300,12 +318,8 @@ SomHunter::reset_search_session()
 	user.submitter.log_reset_search();
 	som_start();
 
-	// Reset bookmarks
-	user.ctx.bookmarks.clear();
-	
-	// Delete the history
-	reset_search_history();
-	user.ctx.scores.reset_mask();
+	// Reset UserContext
+	user.reset();
 }
 
 void

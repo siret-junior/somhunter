@@ -9,6 +9,12 @@ import { FrameRef, Vec2 } from "../../types/coreApi";
 
 import * as CS from "../constants";
 
+export type SearchFiltersState = {
+  weekdays: boolean[];
+  hourFrom: number;
+  hourTo: number;
+}
+
 export type SearchState = {
   textQueries: string[];
   id: number;
@@ -16,6 +22,7 @@ export type SearchState = {
   screenshotFilepath: string;
   bookmarkedFrames: FrameRef[];
   likedFrames: FrameRef[];
+  filters: SearchFiltersState;
 };
 
 export type SearchStateEx = SearchState | {} | null;
@@ -60,7 +67,6 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
 
       let aaa = [];
       for (let i = 0; i < s00.likedFrames.length; ++i) {
-        
         if (s00.likedFrames[i].id !== action.payload) {
           aaa.push(s00.likedFrames[i]);
         }
@@ -73,6 +79,17 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
           likedFrames: aaa,
         },
       };
+
+    case CS.RESET_LIKED_FRAMES:
+      const s4 = (state as UserState).search as SearchState;
+      return {
+        ...state,
+        search: {
+          ...s4,
+          likedFrames: [],
+        },
+      };
+      break;
 
     case CS.ADD_BOOKMARKED_FRAME:
       console.warn("ADD_BOOKMARKED_FRAME", action);
@@ -107,6 +124,17 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
           bookmarkedFrames: aaa0,
         },
       };
+
+    case CS.RESET_BOOKMARKED_FRAMES:
+      const s3 = (state as UserState).search as SearchState;
+      return {
+        ...state,
+        search: {
+          ...s3,
+          bookmarkedFrames: [],
+        },
+      };
+      break;
 
     // SET_USER_STATE
     case CS.SET_USER_STATE:

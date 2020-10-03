@@ -38,6 +38,7 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	  "SomHunterNapi",
 	  { InstanceMethod("getDisplay", &SomHunterNapi::get_display),
 	    InstanceMethod("likeFrames", &SomHunterNapi::like_frames),
+	    InstanceMethod("bookmarkFrames", &SomHunterNapi::bookmark_frames),
 	    InstanceMethod("rescore", &SomHunterNapi::rescore),
 	    InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
 	    InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
@@ -394,7 +395,52 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo &info)
 	}
 
 	return Napi::Object(env, result_arr);
-	;
+}
+
+Napi::Value
+SomHunterNapi::bookmark_frames(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	Napi::HandleScope scope(env);
+
+	// Process arguments
+	int length = info.Length();
+
+	if (length != 1) {
+		Napi::TypeError::New(env, "Wrong number of parameters")
+		  .ThrowAsJavaScriptException();
+	}
+
+	std::vector<ImageId> fr_IDs;
+
+	Napi::Array arr = info[0].As<Napi::Array>();
+	for (size_t i{ 0 }; i < arr.Length(); ++i) {
+		Napi::Value val = arr[i];
+
+		size_t fr_ID{ val.As<Napi::Number>().Uint32Value() };
+		fr_IDs.emplace_back(fr_ID);
+	}
+
+	std::vector<bool> like_flags;
+	try {
+		like_flags = somhunter->bookmark_frames(fr_IDs);
+	} catch (const std::exception &e) {
+		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	}
+
+	// Return structure
+	napi_value result_arr;
+	napi_create_array(env, &result_arr);
+
+	size_t i{ 0 };
+	for (auto &&flag : like_flags) {
+		napi_value res;
+		napi_get_boolean(env, flag, &res);
+
+		napi_set_element(env, result_arr, i, res);
+	}
+
+	return Napi::Object(env, result_arr);
 }
 
 Napi::Value
@@ -863,6 +909,55 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo &info)
 }
 
 Napi::Value
+SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env &env,
+                                             const SearchContext &search_ctx)
+{
+	// Return structure
+	napi_value result_obj;
+	napi_create_object(env, &result_obj);
+
+	{ /* *** weekdays *** */
+		napi_value key;
+		napi_create_string_utf8(
+		  env, "weekdays", NAPI_AUTO_LENGTH, &key);
+
+		napi_value weekdaysArr;
+		napi_create_array(env, &weekdaysArr);
+
+		for (size_t i{ 0 }; i < 7; ++i) {
+			napi_value b;
+			napi_get_boolean(env, search_ctx.filters.days[i], &b);
+			napi_set_element(env, weekdaysArr, i, b);
+		}
+		napi_set_property(env, result_obj, key, weekdaysArr);
+	}
+
+	{ /* *** hourFrom *** */
+		napi_value key;
+		napi_create_string_utf8(
+		  env, "hourFrom", NAPI_AUTO_LENGTH, &key);
+
+		napi_value hourFrom;
+		napi_create_uint32(
+		  env, search_ctx.filters.time.from, &hourFrom);
+
+		napi_set_property(env, result_obj, key, hourFrom);
+	}
+
+	{ /* *** hourTo *** */
+		napi_value key;
+		napi_create_string_utf8(env, "hourTo", NAPI_AUTO_LENGTH, &key);
+
+		napi_value hourTo;
+		napi_create_uint32(env, search_ctx.filters.time.to, &hourTo);
+
+		napi_set_property(env, result_obj, key, hourTo);
+	}
+
+	return Napi::Object(env, result_obj);
+}
+
+Napi::Value
 SomHunterNapi::construct_result_from_SearchContext(
   Napi::Env &env,
   const SearchContext &search_ctx)
@@ -1009,6 +1104,14 @@ SomHunterNapi::construct_result_from_SearchContext(
 			++i;
 		}
 		napi_set_property(env, result_obj, key, likes_arr);
+	}
+
+	{ /* *** filters *** */
+		napi_value key;
+		napi_create_string_utf8( env, "filters", NAPI_AUTO_LENGTH, &key);
+
+		auto fiters{filters_to_SearchFiltersState(env, search_ctx)};
+		napi_set_property(env, result_obj, key, fiters);
 	}
 
 	return Napi::Object(env, result_obj);

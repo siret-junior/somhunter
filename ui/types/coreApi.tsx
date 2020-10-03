@@ -116,7 +116,7 @@ export type CoreApiConfig = {
   strings: any;
   ui: {
     media: {
-      framesPathPrefix: string;
+      thumbsPathPrefix: string;
     };
     autocomplete: {
       numExampleFrames: number;

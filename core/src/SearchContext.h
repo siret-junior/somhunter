@@ -23,6 +23,7 @@
 #ifndef SEARCH_CONTEXT_H_
 #define SEARCH_CONTEXT_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -31,6 +32,7 @@
 #include "utils.h"
 
 #include "DatasetFrames.h"
+#include "Filters.h"
 #include "RelevanceScores.h"
 
 class DatasetFrames;
@@ -45,11 +47,18 @@ class SearchContext
 {
 public:
 	SearchContext() = delete;
-	SearchContext(size_t ID,
-	              const Config &cfg,
-	              const DatasetFrames &frames);
+	SearchContext(size_t ID, const Config& cfg, const DatasetFrames& frames);
 
-	bool operator==(const SearchContext &other) const;
+	bool operator==(const SearchContext& other) const;
+
+	void reset() { 
+		// Reset bookmarks
+		bookmarks.clear();
+		scores.reset_mask();
+		reset_filters();
+
+	}
+	void reset_filters() { filters = Filters{}; }
 
 public:
 	// VBS logging
@@ -79,5 +88,8 @@ public:
 
 	size_t ID;
 	std::string label{ "" };
+
+	/** Filters based on metadata (hour, weekday). */
+	Filters filters;
 };
 #endif // SEARCH_CONTEXT_H_

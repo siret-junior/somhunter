@@ -61,6 +61,11 @@
                     "url": "/like_frame"
                 }
             },
+            "searchBookmark": {
+                "post": {
+                    "url": "/search/bookmark"
+                }
+            },
             "searchContext": {
                 "get": {
                     "url": "/search/context"

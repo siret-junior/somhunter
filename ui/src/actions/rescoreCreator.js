@@ -10,8 +10,13 @@ import { crSetQueryChanged } from "./indicatorCreator";
 import {
   createSetUserHistory,
   createFetchAndSetUserState,
+  createResetLiked,
 } from "./userCreator";
-import { getTextQueryInput, takeScreenshotOfElem } from "../utils/utils";
+import {
+  getTextQueryInput,
+  takeScreenshotOfElem,
+  getFiltersInput,
+} from "../utils/utils";
 
 export function createRescore(s, destDisplay) {
   return async (dispatch, getState) => {
@@ -42,12 +47,16 @@ export function createRescore(s, destDisplay) {
     const query0 = getTextQueryInput(0).value;
     const query1 = getTextQueryInput(1).value;
 
+    const filters = getFiltersInput();
+    console.info(filters);
+
     // POST data
     const reqData = {
       srcSearchCtxId: srcSearchCtxId,
       screenshotData: screenData,
       q0: query0,
       q1: query1,
+      filters,
     };
 
     const requestSettings = config.api.endpoints.searchRescore;
@@ -60,6 +69,7 @@ export function createRescore(s, destDisplay) {
 
     const currCtxId = res.data.currId;
     dispatch(createSetUserHistory(s, res.data.history, currCtxId));
+    dispatch(createResetLiked(s));
 
     // Load the reset state
     dispatch(crHideNotif(s));

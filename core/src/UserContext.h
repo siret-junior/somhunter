@@ -24,6 +24,7 @@
 #define USER_CONTEXT_H_
 
 #include <vector>
+#include <optional>
 
 #include "common.h"
 
@@ -45,14 +46,25 @@ public:
 	            const DatasetFeatures features);
 
 	bool operator==(const UserContext &other) const;
+	void reset() {
+		// Reset SearchContext
+		ctx.reset();
+		// Make sure we're not pushing in any old screenshot
+		ctx.screenshot_fpth = "";
+		ctx.ID = 0;
 
-public:
+
+		history.clear();
+		history.emplace_back(ctx);
+	}
+	public:
 	// *** SEARCH CONTEXT ***
 	SearchContext ctx;
 
 	// *** USER SPECIFIC ***
 	std::string user_token;
 	std::vector<SearchContext> history;
+	
 	Submitter submitter;
 	AsyncSom async_SOM;
 };

@@ -38,6 +38,8 @@ private:
 
 	Napi::Value like_frames(const Napi::CallbackInfo &info);
 
+	Napi::Value bookmark_frames(const Napi::CallbackInfo &info);
+
 	Napi::Value log_video_replay(const Napi::CallbackInfo &info);
 
 	Napi::Value log_scroll(const Napi::CallbackInfo &info);
@@ -67,8 +69,12 @@ private:
 	Napi::Value construct_result_from_SearchContext(
 	  Napi::Env &env,
 	  const SearchContext &search_ctx);
-	
+
 	Napi::Value construct_result_from_UserContext(
 	  Napi::Env &env,
 	  const UserContext &user_ctx);
+
+	Napi::Value filters_to_SearchFiltersState(
+	  const Napi::Env &env,
+	  const SearchContext &search_ctx);
 };

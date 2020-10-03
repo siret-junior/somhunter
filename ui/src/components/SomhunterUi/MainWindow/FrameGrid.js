@@ -46,14 +46,19 @@ async function onLikeHandler(s, props, gridElRef, frameId) {
     const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
 
     fs.forEach((x) => x.classList.add("liked"));
-
+    const urlSrc = fs[0].style.backgroundImage;
+    let s = urlSrc.substr(5, urlSrc.length - 7);
+    if (s.startsWith(config.ui.media.thumbsPathPrefix)) {
+      s = s.substr(config.ui.media.thumbsPathPrefix.length - 1);
+    }
     dispatch(
       createAddLiked(s, {
         id: frameId,
         liked: true,
         sId: null,
         vId: null,
-        src: fs[0].src,
+        // Trim the url( .... ) string
+        src: s,
       })
     );
   } else {

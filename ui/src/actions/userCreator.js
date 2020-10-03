@@ -41,6 +41,28 @@ export function createAddLiked(s, likedFrame) {
   };
 }
 
+export function createFetchAndAddBookmarked(s, frame) {
+  return async (dispatch, _) => {
+    const url = config.api.endpoints.searchBookmark.post.url;
+    console.info(frame);
+    const reqData = {
+      frameId: frame.id,
+    };
+
+    const res = await post(dispatch, url, reqData);
+    if (res === null) return;
+
+    if (res.data.isBookmarked) {
+      dispatch({
+        type: CS.ADD_BOOKMARKED_FRAME,
+        payload: frame,
+      });
+    } else {
+      dispatch(createRemoveBookmarked(s, frame.id));
+    }
+  };
+}
+
 export function createAddBookmarked(s, bookmarkedFrame) {
   return {
     type: CS.ADD_BOOKMARKED_FRAME,
@@ -55,10 +77,24 @@ export function createRemoveLiked(s, id) {
   };
 }
 
+export function createResetLiked(s) {
+  return {
+    type: CS.RESET_LIKED_FRAMES,
+    payload: null,
+  };
+}
+
 export function createRemoveBookmarked(s, id) {
   return {
     type: CS.REMOVE_BOOKMARKED_FRAME,
     payload: id,
+  };
+}
+
+export function createResetBookmarked(s) {
+  return {
+    type: CS.RESET_BOOKMARKED_FRAMES,
+    payload: null,
   };
 }
 

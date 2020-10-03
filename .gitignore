@@ -18,3 +18,4 @@ LOCAL_GIT_SETTINGS.md
 cookie.txt
 core/config.json
 ui/public/thumbs/
+ui/public/frames/
