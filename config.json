@@ -48,21 +48,21 @@
 		"fr_filename_frame_num_len": 8
 	},
 	
-	"kws_file": "data/LSC2020_5days/word2idx.txt",
-	"frames_path_prefix": "/images/LSC2020_5days/thumbs/",
-	"frames_list_file": "data/LSC2020_5days/LSC-5days.keyframes.dataset",
+	"kws_file": "data/LSC2020/word2idx.txt",
+	"frames_path_prefix": "/images/LSC2020/media/frames/",
+	"frames_list_file": "data/LSC2020/LSC-20201004.keyframes.dataset",
 
-	"features_file_data_off": 0,
+	"features_file_data_off": 12,
 	"features_dim": 128,
-	"features_file": "data/LSC2020_5days/LSC-5days.w2vv.bin",
+	"features_file": "data/LSC2020/LSC-20201004.w2vv",
 	
-	"kw_bias_vec_file": "data/LSC2020_5days/txt_bias-2048floats.bin",
-	"kw_scores_mat_file": "data/LSC2020_5days/txt_weight-11147x2048floats.bin",
+	"kw_bias_vec_file": "data/LSC2020/LSC-20201004.w2vv.pca.mean.bin",
+	"kw_scores_mat_file": "data/LSC2020/txt_weight-11147x2048floats.bin",
 
 	"kw_PCA_mat_dim": 128,
 	"pre_PCA_features_dim": 2048,
-	"kw_PCA_mean_vec_file": "data/LSC2020_5days/LSC-5days.w2vv.pca.mean.bin",
-	"kw_PCA_mat_file": "data/LSC2020_5days/LSC-5days.w2vv.pca.matrix.bin",
+	"kw_PCA_mean_vec_file": "data/LSC2020/LSC-20201004.w2vv.pca.mean.bin",
+	"kw_PCA_mat_file": "data/LSC2020/LSC-20201004.w2vv.pca.matrix.bin",
 	
-  "LSC_metadata_file": "data/LSC2020_5days/lsc2020-sel-frames-metadata.csv"
+  "LSC_metadata_file": "data/LSC2020/lsc2020-sel-frames-metadata.csv"
 }
