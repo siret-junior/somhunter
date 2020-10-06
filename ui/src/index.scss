@@ -936,3 +936,13 @@ $theme-colors: (
 .mini-btn-cont {
   width: 20% !important;
 }
+
+.top.y-n1 {
+  top: 2rem;
+}
+
+.zoom-window {
+  .modal-content {
+    width: auto;
+  }
+}

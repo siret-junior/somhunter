@@ -16,6 +16,7 @@ import detailWindowReducer, { DetailWindowState } from "./detailWindowReducer";
 
 // Replay window
 import replayWindowReducer, { ReplayWindowState } from "./replayWindowReducer";
+import zoomyWindowReducer, { ZoomWindowState } from "./zoomWindowReducer";
 
 // Indicators (not logged in, not sending, etc)
 import indicatorReducer, { IndicatorState } from "./indicatorReducer";
@@ -32,6 +33,7 @@ export type StoreState = {
   notifications: NotificationState;
   detailWindow: DetailWindowState;
   replayWindow: ReplayWindowState;
+  zoomWindow: ZoomWindowState;
   settings: SettingsState;
   indicators: IndicatorState;
   user: UserState;
@@ -135,6 +137,16 @@ export type AddLikedFrameAction = {
   payload: FrameRef;
 };
 
+export type ShowZoomAction = {
+  type: string;
+  payload: ZoomWindowState;
+};
+
+export type HideZoomAction = {
+  type: string;
+  payload: null;
+};
+
 export type Action =
   | ShowTopNDisplay
   | ShowSomDisplay
@@ -147,7 +159,9 @@ export type Action =
   | HideReplayAction
   | SetCoreSettingsAction
   | SetUserHistoryAction
-  | SetUserStateAction;
+  | SetUserStateAction
+  | ShowZoomAction
+  | HideZoomAction;
 
 // Combine all the reducers
 export default combineReducers({
@@ -155,6 +169,7 @@ export default combineReducers({
   notifications: notificationReducer,
   detailWindow: detailWindowReducer,
   replayWindow: replayWindowReducer,
+  zoomWindow: zoomyWindowReducer,
   settings: settingsReducer,
   indicators: indicatorReducer,
   user: userReducer,

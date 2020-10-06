@@ -9,11 +9,14 @@ import {
 } from "../../../actions/detailWindowCreator";
 import { crNotif } from "../../../actions/notificationCreator";
 import { createHideReplayWindow } from "../../../actions/replaylWindowCreator";
+import { createHideZoomWindow } from "../../../actions/zoomWindowCreator";
+
 import { crShowDisplay } from "../../../actions/mainWindowCreator";
 
 import FrameGrid from "./FrameGrid";
 import DetailWindow from "./DetailWindow";
 import ReplayWindow from "./ReplayWindow";
+import ZoomWindow from "./ZoomWindow";
 
 function scrollToPivot(gridElRef, pivotFrameId) {
   const gridEl = gridElRef.current;
@@ -89,6 +92,14 @@ function MainWindow(props) {
           replayGridRef={replayGridElRef}
         />
       </ReplayWindow>
+
+      <ZoomWindow
+        show={props.zoomWindow.show}
+        onShow={() => null}
+        onHide={() => props.createHideZoomWindow()}
+        src={props.zoomWindow.src}
+        id={props.zoomWindow.id}
+      />
     </Container>
   );
 }
@@ -98,6 +109,7 @@ const stateToProps = (state) => {
     detailWindow: state.detailWindow,
     replayWindow: state.replayWindow,
     mainWindow: state.mainWindow,
+    zoomWindow: state.zoomWindow,
   };
 };
 
@@ -107,6 +119,7 @@ const actionCreators = {
   crShowDisplay,
   crNotif,
   createHideReplayWindow,
+  createHideZoomWindow,
 };
 
 export default connect(stateToProps, actionCreators)(MainWindow);
