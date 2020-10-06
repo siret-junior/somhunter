@@ -58,20 +58,40 @@ export function hideAllSubQueries() {
     .forEach((x) => x.classList.remove("active"));
 }
 
-export async function takeScreenshotOfElem(elem) {
+export async function takeScreenshotOfElem(elem, frames) {
+  /* ***
+   * Get the helper values
+   */
+  const numX = config.ui.history.screenshotNumX;
+  const numY = config.ui.history.screenshotNumY;
+
   const w = 200;
   const h = w * 0.57;
 
-  // Render the contents inside the canvas
-  const canvas = await html2canvas(elem, {
-    logging: false,
-  });
+  const wi = w / numX;
+  const hi = h / numY;
 
+  /* ***
+   * Draw the frames into the canvas
+   */
   const resizedCanvas = document.createElement("canvas");
   const resizedContext = resizedCanvas.getContext("2d");
   resizedCanvas.width = w.toString();
   resizedCanvas.height = h.toString();
-  resizedContext.drawImage(canvas, 0, 0, w, h);
+
+  let frame_idx = 0;
+  for (let i = 0; i < numY; ++i) {
+    for (let j = 0; j < numX; ++j) {
+      const dx = wi * j;
+      const dy = hi * i;
+
+      const img = new Image(wi, hi);
+      img.src = config.ui.media.thumbsPathPrefix + frames[frame_idx].src;
+
+      resizedContext.drawImage(img, dx, dy, wi, hi);
+      ++frame_idx;
+    }
+  }
 
   const imgData = resizedCanvas.toDataURL("image/jpeg");
   return imgData;

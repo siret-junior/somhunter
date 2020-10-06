@@ -4,6 +4,10 @@
             "thumbsPathPrefix": "/thumbs/",
             "framesPathPrefix": "/frames/"
         },
+        "history": {
+            "screenshotNumX": 3,
+            "screenshotNumY": 3
+        },
         "autocomplete": {
             "numSuggestions": 10,
             "numExampleFrames": 5

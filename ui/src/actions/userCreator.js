@@ -146,8 +146,11 @@ export function createFetchAndSwitchSearchState(
     // Does this screen still lack the screenshot
 
     if (state.user.search.screenshotFilepath === "") {
+      const frs = state.mainWindow.frames;
+
       screenData = await takeScreenshotOfElem(
-        document.getElementById("mainGrid")
+        document.getElementById("mainGrid"),
+        frs
       );
     }
 
