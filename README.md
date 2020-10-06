@@ -40,6 +40,17 @@ After that, open your browser at http://localhost:8080, and use login `som` and 
 
 ![SOMHunter interface](media/screenshot.jpg)
 
+## Running the UI
+The UI is located inside the `ui` directory. After you launch the backend server, just cd to the `ui` directory and run `npm run build` to build the production static website. After that, just serve it with an arbitrary server (e.g. `serve -s build`).
+
+To run the development server, run `npm run start`.
+
+The UI needs the auto-generated config file `ui/src/__config_generated__.json` from the API server. The server generates this upon launching. Therefore, if you edit something in the API server that is related to the config file, you need to run it and then rebuild the UI production files (in order to correctly use the new config file).
+
+The UI expects directories `thumbs` and `frames` in the public root (relative either to the `build` or `public` directory). 
+
+Please be aware that if the symlink to `frames` and/or `thumbs` is present in the `public` directory when running `npm run build`, it will try to copy the contents to the `build` directory which takes a lot of time and is unnecessary. Just remove the symlink from the `public` directory before running the `npm run build`.
+
 ## Installation from source
 
 Prerequisites:
