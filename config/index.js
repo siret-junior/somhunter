@@ -63,7 +63,9 @@ exports.initConfig = function () {
   const defaultApiConfig = apiConfig.development;
   const envApiConfig = apiConfig[env];
   const finalApiConfig = _.merge(defaultApiConfig, envApiConfig);
-  finalApiConfig.url = `http://localhost:${finalServerConfig.port}`;
+
+  const base_URL = defaultConfig.useHttp2 ? "https://localhost:" : "http://localhost:";
+  finalApiConfig.url = `${base_URL}${finalServerConfig.port}`;
 
   /*
    * Core config

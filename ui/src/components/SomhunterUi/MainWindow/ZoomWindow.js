@@ -17,9 +17,7 @@ function ReplayWindow(props) {
       className="zoom-window off-canvas-window window"
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Zoom
-        </Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">Zoom</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <img src={props.frame.src} alt={props.frame.id} />

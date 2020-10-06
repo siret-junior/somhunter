@@ -21,29 +21,44 @@
  */
 
 /**
- * This is an entry point for this Node.js application. 
+ * This is an entry point for this Node.js application.
  * Main script `app.js` is launched.
  */
 
 /*
  * Module dependencies.
  */
-var app = require("../app");
-var http = require("http");
-var debug = require("debug")("somhunter:server");
+const app = require("../app");
+const http = require("http");
+const debug = require("debug")("somhunter:server");
+const spdy = require("spdy");
+const fs = require("fs");
+const path = require("path");
 
 /*
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || String(global.serverCfg.port));
+const port = normalizePort(process.env.PORT || String(global.serverCfg.port));
 app.set("port", port);
 
 /*
- * Create HTTP server.
+ * Create HTTP/2 server.
  */
 
-var server = http.createServer(app);
+const servCfg = global.serverCfg;
+let server = null;
+
+// If HTTP/2 protocol is desired
+if (servCfg.useHttp2) {
+  const options = {
+    key: fs.readFileSync(path.join(__dirname, "/../", servCfg.privKeyFilepath)),
+    cert: fs.readFileSync(path.join(__dirname, "/../", servCfg.certFilepath)),
+  };
+  server = spdy.createServer(options, app);
+} else {
+  server = http.createServer(app);
+}
 
 /*
  * Listen on provided port, on all network interfaces.

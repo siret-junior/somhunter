@@ -2,6 +2,9 @@
     "development": {
         "appName": "SOMHunter",
         "appSubname": "The interactive search tool.",
+        "useHttp2": true,
+        "certFilepath": "config/cert/server.pem",
+        "privKeyFilepath": "config/cert/server.key",
         "port": 8888,
         "coreConfigFilepath": "config.json",
         "logsDir": "logs/",
