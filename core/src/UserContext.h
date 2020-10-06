@@ -54,6 +54,9 @@ public:
 		ctx.screenshot_fpth = "";
 		ctx.ID = 0;
 
+				// Reset bookmarks
+		bookmarks.clear();
+
 		history.clear();
 		history.emplace_back(ctx);
 	}
@@ -68,6 +71,10 @@ public:
 
 	Submitter submitter;
 	AsyncSom async_SOM;
+
+	
+	/** Frames selected as important. */
+	BookmarksCont bookmarks;
 };
 
 /** Result type `get_display` returns */

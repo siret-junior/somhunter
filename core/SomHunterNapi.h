@@ -66,7 +66,9 @@ private:
 
 	// *** HELPER FUNCTIONS ***
 private:
-	Napi::Value construct_result_from_SearchContext(Napi::Env& env, const SearchContext& search_ctx);
+	Napi::Value construct_result_from_SearchContext(Napi::Env& env,
+	                                                const SearchContext& search_ctx,
+	                                                const BookmarksCont& bookmarks);
 
 	Napi::Value construct_result_from_UserContext(Napi::Env& env, const UserContext& user_ctx);
 

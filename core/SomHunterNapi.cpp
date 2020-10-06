@@ -891,7 +891,9 @@ SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env& env, const SearchC
 }
 
 Napi::Value
-SomHunterNapi::construct_result_from_SearchContext(Napi::Env& env, const SearchContext& search_ctx)
+SomHunterNapi::construct_result_from_SearchContext(Napi::Env& env, 
+	const SearchContext& search_ctx,
+                                                   const BookmarksCont& bookmarks)
 {
 
 	// Return structure
@@ -991,26 +993,7 @@ SomHunterNapi::construct_result_from_SearchContext(Napi::Env& env, const SearchC
 		for (auto&& f_ID : search_ctx.likes) {
 
 			const VideoFrame& f{ somhunter->get_frame(f_ID) };
-			auto fr{ VideoFrame_to_res(env, &f, search_ctx.likes, search_ctx.bookmarks, "") };
-
-			napi_set_element(env, likes_arr, i, fr);
-			++i;
-		}
-		napi_set_property(env, result_obj, key, likes_arr);
-	}
-
-	{ /* *** bookmarkedFrames *** */
-		napi_value key;
-		napi_create_string_utf8(env, "bookmarkedFrames", NAPI_AUTO_LENGTH, &key);
-
-		napi_value likes_arr;
-		napi_create_array(env, &likes_arr);
-
-		size_t i{ 0 };
-		for (auto&& f_ID : search_ctx.bookmarks) {
-
-			const VideoFrame& f{ somhunter->get_frame(f_ID) };
-			auto fr{ VideoFrame_to_res(env, &f, search_ctx.likes, search_ctx.bookmarks, "") };
+			auto fr{ VideoFrame_to_res(env, &f, search_ctx.likes, bookmarks, "") };
 
 			napi_set_element(env, likes_arr, i, fr);
 			++i;
@@ -1046,11 +1029,11 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo& info)
 
 	try {
 		// << Core >>
-		const SearchContext& search_context = somhunter->get_search_context(/*user_token*/);
+		const UserContext& user_context = somhunter->get_user_context(/*user_token*/);
 		// << Core >>
 
 		// Return the processed result
-		return construct_result_from_SearchContext(env, search_context);
+		return construct_result_from_SearchContext(env, user_context.ctx, user_context.bookmarks);
 	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -1070,7 +1053,7 @@ SomHunterNapi::construct_result_from_UserContext(Napi::Env& env, const UserConte
 		napi_create_string_utf8(env, "search", NAPI_AUTO_LENGTH, &key);
 
 		// Parse the search context
-		auto val{ construct_result_from_SearchContext(env, user_ctx.ctx) };
+		auto val{ construct_result_from_SearchContext(env, user_ctx.ctx, user_ctx.bookmarks) };
 		napi_set_property(env, result_obj, key, val);
 	}
 
@@ -1082,6 +1065,25 @@ SomHunterNapi::construct_result_from_UserContext(Napi::Env& env, const UserConte
 		// Parse the search context
 		auto val{ construct_result_from_SearchHistory(env, user_ctx.history) };
 		napi_set_property(env, result_obj, key, val);
+	}
+
+	{ /* *** bookmarkedFrames *** */
+		napi_value key;
+		napi_create_string_utf8(env, "bookmarkedFrames", NAPI_AUTO_LENGTH, &key);
+
+		napi_value likes_arr;
+		napi_create_array(env, &likes_arr);
+
+		size_t i{ 0 };
+		for (auto&& f_ID : user_ctx.bookmarks) {
+
+			const VideoFrame& f{ somhunter->get_frame(f_ID) };
+			auto fr{ VideoFrame_to_res(env, &f, user_ctx.ctx.likes, user_ctx.bookmarks, "") };
+
+			napi_set_element(env, likes_arr, i, fr);
+			++i;
+		}
+		napi_set_property(env, result_obj, key, likes_arr);
 	}
 
 	return Napi::Object(env, result_obj);

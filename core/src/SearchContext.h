@@ -53,8 +53,6 @@ public:
 
 	void reset()
 	{
-		// Reset bookmarks
-		bookmarks.clear();
 		scores.reset_mask();
 		reset_filters();
 	}
@@ -76,9 +74,6 @@ public:
 
 	// Relevance feedback context
 	LikesCont likes;
-
-	/** Frames selected as important. */
-	BookmarksCont bookmarks;
 
 	/** Frames that were seen since the last rescore. */
 	ShownFramesCont shown_images;

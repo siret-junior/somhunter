@@ -29,7 +29,7 @@ export function createSetUserHistory(
 
     dispatch({
       type: CS.SET_USER_HISTORY,
-      payload: { ...state, history, search },
+      payload: { ...state.user, history, search },
     });
   };
 }

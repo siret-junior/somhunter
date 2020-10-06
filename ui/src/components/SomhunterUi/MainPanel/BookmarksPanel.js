@@ -16,7 +16,7 @@ function frameCloseBtnClickHandler(s, props, frame) {
 }
 
 function getBookmarkedFrames(s, props) {
-  const data = props.search.bookmarkedFrames;
+  const data = props.user.bookmarkedFrames;
 
   const jsx = data.map((x, i) => {
     const scrFilepath = x.src;
@@ -61,7 +61,7 @@ function BookmarksPanel(props) {
 }
 
 const stateToProps = ({ user }) => {
-  return { history: user.history, search: user.search };
+  return { history: user.history, user: user };
 };
 
 export default connect(stateToProps)(BookmarksPanel);

@@ -20,7 +20,6 @@ export type SearchState = {
   id: number;
   displayType: string;
   screenshotFilepath: string;
-  bookmarkedFrames: FrameRef[];
   likedFrames: FrameRef[];
   filters: SearchFiltersState;
 };
@@ -35,6 +34,7 @@ export type HistoryPoint = {
 export type UserState = {
   history: HistoryPoint[];
   search: SearchStateEx;
+  bookmarkedFrames: FrameRef[];
 };
 
 export type UserStateEx = UserState | {} | null;
@@ -94,22 +94,17 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
     case CS.ADD_BOOKMARKED_FRAME:
       console.warn("ADD_BOOKMARKED_FRAME", action);
       const a0 = action as AddBookmarkedFrameAction;
-      const s0 = (state as UserState).search as SearchState;
-
-      const sr1 = {
-        ...s0,
-        bookmarkedFrames: [...s0.bookmarkedFrames, a0.payload],
-      };
+      const us = state as UserState;
 
       return {
-        ...state,
-        search: sr1,
+        ...us,
+        bookmarkedFrames: [...us.bookmarkedFrames, a0.payload],
       };
 
     case CS.REMOVE_BOOKMARKED_FRAME:
       console.warn("REMOVE_BOOKMARKED_FRAME", action);
       const id1 = action as AddLikedFrameAction;
-      const s01 = (state as UserState).search as SearchState;
+      const s01 = state as UserState;
 
       let aaa0 = [];
       for (let i = 0; i < s01.bookmarkedFrames.length; ++i) {
@@ -119,20 +114,14 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
 
       return {
         ...state,
-        search: {
-          ...s01,
-          bookmarkedFrames: aaa0,
-        },
+        bookmarkedFrames: aaa0,
       };
 
     case CS.RESET_BOOKMARKED_FRAMES:
       const s3 = (state as UserState).search as SearchState;
       return {
         ...state,
-        search: {
-          ...s3,
-          bookmarkedFrames: [],
-        },
+        bookmarkedFrames: [],
       };
       break;
 
@@ -147,7 +136,11 @@ function userReducer(state = defaultState, action: Action): UserStateEx {
       // Else fetch successfull
       else {
         const pl = action.payload as UserState;
-        return { history: pl.history, search: pl.search };
+        return {
+          history: pl.history,
+          search: pl.search,
+          bookmarkedFrames: pl.bookmarkedFrames,
+        };
       }
 
     default:

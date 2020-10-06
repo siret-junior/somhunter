@@ -68,7 +68,7 @@ SomHunter::get_display(DisplayType d_type, ImageId selected_image, PageId page, 
 			break;
 	}
 
-	return GetDisplayResult{ frs, user.ctx.likes, user.ctx.bookmarks };
+	return GetDisplayResult{ frs, user.ctx.likes, user.bookmarks };
 }
 
 std::vector<bool>
@@ -118,18 +118,18 @@ SomHunter::bookmark_frames(const std::vector<ImageId>& new_bookmarks)
 	for (auto&& fr_ID : new_bookmarks) {
 
 		// Find the item in the set
-		size_t count{ user.ctx.bookmarks.count(fr_ID) };
+		size_t count{ user.bookmarks.count(fr_ID) };
 
 		// If item is not present (NOT LIKED) -> bookmark it
 		if (count == 0) {
-			user.ctx.bookmarks.insert(fr_ID);
+			user.bookmarks.insert(fr_ID);
 			res.emplace_back(true);
 
 			// \todo Log it?
 		}
 		// If the item is present (LIKED) -> unbookmark it
 		else {
-			user.ctx.bookmarks.erase(fr_ID);
+			user.bookmarks.erase(fr_ID);
 			res.emplace_back(false);
 
 			// \todo Log it?
