@@ -28,7 +28,7 @@ function FiltersPanel(props) {
 
   const weekdayContRef = useRef();
 
-  console.debug("<FiltersPanel>: Rendering...");
+  console.debug("<FiltersPanel>: Rendering...", props.filters.hourFrom);
 
   const strArr = ["M", "T", "W", "T", "F", "S", "S"];
   return (
@@ -82,9 +82,10 @@ function FiltersPanel(props) {
               type="number"
               min="0"
               max="24"
+              key={`hourFrom${Math.random()}`}
               defaultValue={props.filters.hourFrom}
               onChange={(e) => {
-                onFilterChangeHandler(s, props);
+                onFilterChangeHandler(s, props, e);
               }}
             />
           </div>
@@ -94,10 +95,11 @@ function FiltersPanel(props) {
               id={config.ui.htmlElIds.queryFiltersHourTo}
               type="number"
               min="0"
+              key={`hourTo${Math.random()}`}
               max={24}
               defaultValue={props.filters.hourTo}
               onChange={(e) => {
-                onFilterChangeHandler(s, props);
+                onFilterChangeHandler(s, props, e);
               }}
             />
           </div>
