@@ -50,6 +50,7 @@ struct VideoFrame
 	  , shot_ID{ shot_ID }
 	  , frame_number{ frame_number }
 	  , frame_ID{ image_ID }
+	  , LSC_id{ "" }
 	  , weekday{ weekday }
 	  , hour{ hour }
 	{}
@@ -61,6 +62,8 @@ struct VideoFrame
 	ImageId frame_ID;
 
 	// *** LSC medadata ***
+	/** Original filename without the suffix */
+	std::string LSC_id;
 
 	/** Day in a week (mon -> 0, ..., sun -> 7). */
 	Weekday weekday;
@@ -251,7 +254,7 @@ private:
 	/**
 	 * Parses the desired metadata from the metadata line.
 	 */
-	std::tuple<Weekday, Hour> parse_metadata_line(const std::string& line);
+	std::tuple<Weekday, Hour, LscId> parse_metadata_line(const std::string& line);
 };
 
 #endif

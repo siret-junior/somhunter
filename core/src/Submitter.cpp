@@ -185,6 +185,11 @@ poster_thread(const std::string& submit_url,
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30);
 
+		// Add `-L` option
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		// Add `--post301 --post302 --post303` option
+		curl_easy_setopt(curl, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
+
 		std::string url = submit_url;
 		url += "?" + query;
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -264,6 +269,7 @@ getter_thread(const std::string& submit_url, const std::string& query, bool& fin
 
 #endif // DEBUG_CURL_REQUESTS
 
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_HEADER, 0);
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30);
@@ -273,6 +279,11 @@ getter_thread(const std::string& submit_url, const std::string& query, bool& fin
 
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+		// Add `-L` option
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		// Add `--post301 --post302 --post303` option
+		curl_easy_setopt(curl, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
 
 		static std::string hdr = "Content-type: application/json";
 		static struct curl_slist reqheader = { hdr.data(), nullptr };
@@ -331,7 +342,11 @@ Submitter::login_to_DRES() const
 
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_easy_setopt(curl, CURLOPT_URL, s_cfg.login_URL.c_str());
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+		// Add `-L` option
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		// Add `--post301 --post302 --post303` option
+		curl_easy_setopt(curl, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
 
 		struct curl_slist* headers = NULL;
 		headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -341,6 +356,10 @@ Submitter::login_to_DRES() const
 			                    s_cfg.password + "\" }" };
 
 		const char* data = data_str.c_str();
+
+		std::cout << "URL:" << s_cfg.login_URL << std::endl;
+		std::cout << "data:" << data_str << std::endl;
+
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, res_cb);
@@ -465,9 +484,21 @@ Submitter::submit_and_log_submit(const DatasetFrames& frames, DisplayType disp_t
 	std::stringstream query_ss;
 
 	if (is_DRES_server()) {
+
+		// LSC submit
+#ifdef SUBMIT_FILENAME_ID
+
+		query_ss << "item=" << vf.LSC_id;
+
+		// Non-LSC submit
+#else
+
 		query_ss << "item=" << std::setfill('0') << std::setw(5)
 		         << (vf.video_ID + 1)             //< !! VBS videos start from 1
 		         << "&frame=" << vf.frame_number; //< !! VBS frame numbers start at 0
+
+#endif // SUBMIT_FILENAME_ID
+
 	} else {
 		query_ss << "team=" << cfg.team_ID << "&member=" << cfg.member_ID
 		         << "&video=" << (vf.video_ID + 1) //< !! VBS videos start from 1

@@ -11,13 +11,13 @@
         "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
       },
       "dres": {
-        "submit_interaction_URL": "http://localhost:8080/log/query",
-        "submit_rerank_URL": "http://localhost:8080/log/result",
-        "submit_URL": "http://localhost:8080/submit",
+        "submit_interaction_URL": "https://vbs.itec.aau.at/log/query",
+        "submit_rerank_URL": "https://vbs.itec.aau.at/log/result",
+        "submit_URL": "https://vbs.itec.aau.at/submit",
         "cookie_file": "cookie.txt",
-        "login_URL": "xxxx",
-        "username": "admin",
-        "password": "adminadmin"
+        "login_URL": "https://vbs.itec.aau.at/api/login/",
+        "username": "somhunter",
+        "password": "ZW6cVRXk"
 			}
 		},
 	
@@ -26,7 +26,7 @@
 	  
 		"VBS_submit_archive_dir": "logs/submitted_logs/",
 		"VBS_submit_archive_log_suffix": ".json",
-		"extra_verbose_log": false,
+		"extra_verbose_log": true,
 	  
 		"send_logs_to_server_period": 10000,
 		"apply_log_action_timeout_in_core": false,

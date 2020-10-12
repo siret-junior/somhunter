@@ -24,6 +24,9 @@
 
 #include "common.h"
 
+/** For the LSC submits */
+#define SUBMIT_FILENAME_ID
+
 /*
  * Text query settings
  */

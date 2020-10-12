@@ -54,7 +54,7 @@ public:
 		ctx.screenshot_fpth = "";
 		ctx.ID = 0;
 
-				// Reset bookmarks
+		// Reset bookmarks
 		bookmarks.clear();
 
 		history.clear();
@@ -72,7 +72,6 @@ public:
 	Submitter submitter;
 	AsyncSom async_SOM;
 
-	
 	/** Frames selected as important. */
 	BookmarksCont bookmarks;
 };

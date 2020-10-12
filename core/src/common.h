@@ -204,5 +204,6 @@ using PageId = unsigned;
 
 using Weekday = uint8_t;
 using Hour = uint8_t;
+using LscId = std::string;
 
 #endif // COMMON_H_

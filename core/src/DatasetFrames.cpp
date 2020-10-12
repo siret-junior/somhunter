@@ -133,10 +133,11 @@ DatasetFrames::DatasetFrames(const Config& config)
 				}
 
 				// Parse this line
-				auto [weekday, hour]{ DatasetFrames::parse_metadata_line(md_line) };
+				auto [weekday, hour, LSC_id]{ DatasetFrames::parse_metadata_line(md_line) };
 
 				vf.weekday = weekday;
 				vf.hour = hour;
+				vf.LSC_id = std::move(LSC_id);
 			}
 
 			vf.frame_ID = i;
@@ -195,10 +196,10 @@ DatasetFrames::parse_video_filename(std::string&& filename)
 	  std::move(filename), str_to_int(videoIdString), str_to_int(shotIdString), str_to_int(frameNumberString), 0);
 }
 
-std::tuple<Weekday, Hour>
+std::tuple<Weekday, Hour, LscId>
 DatasetFrames::parse_metadata_line(const std::string& line)
 {
-	// EXAMPLE `line`: 20160815,509,2016-08-15_06:09,53.3892,0,-6.15827,Home
+	// EXAMPLE `line`: 20160815,509,2016-08-15_06:09,53.3892,0,-6.15827,Home,b00000000_21i6bq_20150223_070647e
 
 	auto tokens{ split(line, ',') };
 
@@ -207,7 +208,9 @@ DatasetFrames::parse_metadata_line(const std::string& line)
 
 	Weekday wd{ static_cast<Weekday>(str2<size_t>(tokens[5])) };
 
-	return std::tuple{ wd, h };
+	std::string LSC_id{ tokens[7] };
+
+	return std::tuple{ wd, h, LSC_id };
 }
 
 std::vector<VideoFramePointer>

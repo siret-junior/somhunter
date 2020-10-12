@@ -891,8 +891,8 @@ SomHunterNapi::filters_to_SearchFiltersState(const Napi::Env& env, const SearchC
 }
 
 Napi::Value
-SomHunterNapi::construct_result_from_SearchContext(Napi::Env& env, 
-	const SearchContext& search_ctx,
+SomHunterNapi::construct_result_from_SearchContext(Napi::Env& env,
+                                                   const SearchContext& search_ctx,
                                                    const BookmarksCont& bookmarks)
 {
 
