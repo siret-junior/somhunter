@@ -52,6 +52,7 @@ class AsyncSom
 	 */
 	bool new_data, terminate;
 	std::vector<float> points, scores;
+	std::vector<bool> present_mask;
 
 	/*
 	 * Worker output protocol:

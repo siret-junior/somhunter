@@ -27,13 +27,13 @@
 #include "log.h"
 
 // uncomment to get euclidean distances
-#define EUCL
+//#define EUCL
 
 #ifdef EUCL
 #	define DIST_FUNC d_sqeucl
 #	define UNDIST_FUNC sqrtf
 #else
-#	define DIST_FUNC d_manhattan
+#	define DIST_FUNC d_dot
 #	define UNDIST_FUNC
 #endif
 
@@ -115,6 +115,7 @@ som(size_t /*n*/,
     const float alphasB[2],
     const float radiiB[2],
     const std::vector<float>& scores,
+    const std::vector<bool>& present_mask,
     std::mt19937& rng)
 {
 	info("build begin");
@@ -177,19 +178,22 @@ mapPointsToKohos(size_t start,
                  size_t dim,
                  const std::vector<float>& points,
                  const std::vector<float>& koho,
-                 std::vector<size_t>& mapping)
+                 std::vector<size_t>& mapping,
+                 const std::vector<bool>& present_mask)
 {
 	for (size_t point = start; point < end; ++point) {
-		size_t nearest = 0;
-		float nearestd = DIST_FUNC(points.data() + dim * point, koho.data(), dim);
-		for (size_t i = 1; i < k; ++i) {
-			float tmp = DIST_FUNC(points.data() + dim * point, koho.data() + dim * i, dim);
-			if (tmp < nearestd) {
-				nearest = i;
-				nearestd = tmp;
+		if (present_mask[point]) {
+			size_t nearest = 0;
+			float nearestd = DIST_FUNC(points.data() + dim * point, koho.data(), dim);
+			for (size_t i = 1; i < k; ++i) {
+				float tmp = DIST_FUNC(points.data() + dim * point, koho.data() + dim * i, dim);
+				if (tmp < nearestd) {
+					nearest = i;
+					nearestd = tmp;
+				}
 			}
-		}
 
-		mapping[point] = nearest;
+			mapping[point] = nearest;
+		}
 	}
 }

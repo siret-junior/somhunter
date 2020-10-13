@@ -338,14 +338,16 @@ ScoreModel::apply_bayes(std::set<ImageId> likes, const std::set<ImageId>& screen
 			const ImageId last = ImageId((threadID + 1) * _scores.size() / n_threads);
 
 			for (ImageId ii = first; ii < last; ++ii) {
-				float divSum = 0;
+				if (_mask[ii]) {
+					float divSum = 0;
 
-				for (ImageId oi : others)
-					divSum += expf(-features.d_dot(ii, oi) / Sigma);
+					for (ImageId oi : others)
+						divSum += expf(-features.d_dot(ii, oi) / Sigma);
 
-				for (auto&& like : likes) {
-					const float likeValTmp = expf(-features.d_dot(ii, like) / Sigma);
-					_scores[ii] *= likeValTmp / (likeValTmp + divSum);
+					for (auto&& like : likes) {
+						const float likeValTmp = expf(-features.d_dot(ii, like) / Sigma);
+						_scores[ii] *= likeValTmp / (likeValTmp + divSum);
+					}
 				}
 			}
 		};
@@ -367,9 +369,9 @@ ScoreModel::normalize()
 {
 	float smax = 0;
 
-	for (float s : _scores)
-		if (s > smax)
-			smax = s;
+	for (ImageId ii = 0; ii < _scores.size(); ++ii)
+		if (_scores[ii] > smax)
+			smax = _scores[ii];
 
 	if (smax < MINIMAL_SCORE) {
 		warn("all images have negligible score!");
@@ -377,10 +379,12 @@ ScoreModel::normalize()
 	}
 
 	size_t n = 0;
-	for (float& s : _scores) {
-		s /= smax;
-		if (s < MINIMAL_SCORE)
-			++n, s = MINIMAL_SCORE;
+	for (ImageId ii = 0; ii < _scores.size(); ++ii) {
+		if (_mask[ii]) {
+			_scores[ii] /= smax;
+			if (_scores[ii] < MINIMAL_SCORE)
+				++n, _scores[ii] = MINIMAL_SCORE;
+		}
 	}
 }
 

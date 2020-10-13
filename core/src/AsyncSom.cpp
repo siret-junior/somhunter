@@ -43,6 +43,7 @@ AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 
 		std::vector<float> points;
 		std::vector<float> scores;
+		std::vector<bool> present_mask;
 		size_t n;
 
 		{
@@ -58,6 +59,7 @@ AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 
 			points.swap(parent->points);
 			scores.swap(parent->scores);
+			present_mask.swap(parent->present_mask);
 			n = scores.size();
 			parent->new_data = false;
 			parent->m_ready = false;
@@ -104,6 +106,7 @@ AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 		    alphasB,
 		    radiiB,
 		    scores,
+		    present_mask,
 		    rng);
 		std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
 		debug("SOM took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
@@ -112,7 +115,7 @@ AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 		if (parent->new_data || parent->terminate)
 			continue;
 
-		std::vector<size_t> mapping(n);
+		std::vector<size_t> point_to_koho(n);
 		begin = std::chrono::high_resolution_clock::now();
 		{
 			size_t n_threads = std::thread::hardware_concurrency();
@@ -127,7 +130,8 @@ AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 				                 cfg.features_dim,
 				                 points,
 				                 koho,
-				                 mapping);
+				                 point_to_koho,
+				                 present_mask);
 			};
 
 			for (size_t i = 0; i < n_threads; ++i)
@@ -145,8 +149,9 @@ AsyncSom::async_som_worker(AsyncSom* parent, const Config& cfg)
 
 		parent->mapping.clear();
 		parent->mapping.resize(SOM_DISPLAY_GRID_WIDTH * SOM_DISPLAY_GRID_HEIGHT);
-		for (ImageId im = 0; im < mapping.size(); ++im)
-			parent->mapping[mapping[im]].push_back(im);
+		for (ImageId im = 0; im < point_to_koho.size(); ++im)
+			if (present_mask[im])
+				parent->mapping[point_to_koho[im]].push_back(im);
 
 		parent->koho = std::move(koho);
 
@@ -182,6 +187,10 @@ AsyncSom::start_work(const DatasetFeatures& fs, const ScoreModel& sc)
 	std::unique_lock lck(worker_lock);
 	points = std::vector<float>(fs.fv(0), fs.fv(0) + fs.dim() * sc.size());
 	scores = std::vector<float>(sc.v(), sc.v() + sc.size());
+	present_mask = std::vector<bool>(sc.size(), false);
+	for (ImageId ii = 0; ii < sc.size(); ++ii)
+		present_mask[ii] = sc.is_masked(ii);
+
 	new_data = true;
 	lck.unlock();
 

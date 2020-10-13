@@ -38,6 +38,7 @@ som(size_t n,
     const float alphasB[2],
     const float radiiB[2],
     const std::vector<float>& scores,
+    const std::vector<bool>& present_mask,
     std::mt19937& rng);
 
 void
@@ -47,5 +48,6 @@ mapPointsToKohos(size_t start,
                  size_t dim,
                  const std::vector<float>& points,
                  const std::vector<float>& koho,
-                 std::vector<size_t>& mapping);
+                 std::vector<size_t>& mapping,
+                 const std::vector<bool>& present_mask);
 #endif

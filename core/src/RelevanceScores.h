@@ -35,8 +35,11 @@ class ScoreModel
 	std::vector<float> _scores;
 
 	/**
-	 * Frames mask telling what frames should not be place inside the
+	 * Frames mask telling what frames should be placed inside the
 	 * results.
+	 * 
+	 * true <=> present in the result set
+	 * false <=> filtered out
 	 */
 	std::vector<bool> _mask;
 
