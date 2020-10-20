@@ -33,7 +33,7 @@
 #	define DIST_FUNC d_sqeucl
 #	define UNDIST_FUNC sqrtf
 #else
-#	define DIST_FUNC d_dot
+#	define DIST_FUNC(v1, v2, dims) 1 - d_dot(v1, v2, dims)
 #	define UNDIST_FUNC
 #endif
 
