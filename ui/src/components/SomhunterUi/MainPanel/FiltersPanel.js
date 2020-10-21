@@ -46,6 +46,7 @@ function FiltersPanel(props) {
             return (
               <Form.Check
                 inline
+                key={`weekday_filter_${i}`}
                 label={strArr[i]}
                 type="checkbox"
                 value="0"
