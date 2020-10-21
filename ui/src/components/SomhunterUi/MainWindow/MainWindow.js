@@ -66,18 +66,11 @@ function MainWindow(props) {
 
       <DetailWindow
         show={props.detailWindow.show}
-        onShow={() =>
-          scrollToPivot(detailGridElRef, props.detailWindow.pivotFrameId)
-        }
+        frames={props.detailWindow.frames}
+        pivotId={props.detailWindow.pivotFrameId}
+        gridElRef={detailGridElRef}
         onHide={() => props.createHideDetailWindow()}
-      >
-        <FrameGrid
-          id="detailGrid"
-          gridRef={detailGridElRef}
-          mainWindow={props.detailWindow}
-          replayGridRef={replayGridElRef}
-        />
-      </DetailWindow>
+      />
 
       <ReplayWindow
         show={props.replayWindow.show}

@@ -131,6 +131,15 @@ function Frame(props) {
     classNameStr += " pivot";
   }
 
+  let style = {
+    backgroundImage: `url("${config.ui.media.thumbsPathPrefix}${props.frame.src}")`,
+  };
+  if (props.style != undefined)
+    style = {
+      ...props.style,
+      backgroundImage: `url("${config.ui.media.thumbsPathPrefix}${props.frame.src}")`,
+    };
+
   if (props.frame.src === "")
     return <Col className={classNameStr + " no-frame"} xs={2}></Col>;
   else
@@ -144,9 +153,7 @@ function Frame(props) {
         }}
         data-frame-id={props.frame.id}
         xs={2}
-        style={{
-          backgroundImage: `url("${config.ui.media.thumbsPathPrefix}${props.frame.src}")`,
-        }}
+        style={style}
       >
         <div className="frame-debug-hover">
           <p>
@@ -227,6 +234,7 @@ function Frame(props) {
         </Button>
       </Col>
     );
+
 }
 
 const stateToProps = (state) => {

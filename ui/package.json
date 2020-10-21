@@ -27,6 +27,7 @@
     "react-icons": "^3.11.0",
     "react-redux": "^7.2.1",
     "react-scripts": "3.4.3",
+    "react-virtualized": "^9.22.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "typescript": "^3.9.7"

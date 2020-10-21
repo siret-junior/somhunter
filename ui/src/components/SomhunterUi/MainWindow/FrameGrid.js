@@ -10,9 +10,9 @@ import * as CS from "../../../constants";
 import { useSettings } from "../../../hooks/useSettings";
 import { get, post } from "../../../apis/coreApi";
 import {
-  createAddLiked,
-  createAddBookmarked,
-  createRemoveLiked,
+    createAddLiked,
+    createAddBookmarked,
+    createRemoveLiked,
 } from "../../../actions/userCreator";
 import { crSetQueryChanged } from "../../../actions/indicatorCreator";
 
@@ -23,7 +23,7 @@ async function onLikeHandler(s, props, gridElRef, frameId) {
   const url = config.api.endpoints.searchLike.post.url;
 
   const reqData = {
-    frameId: frameId,
+      frameId: frameId,
   };
 
   const response = await post(dispatch, url, reqData);
@@ -43,30 +43,30 @@ async function onLikeHandler(s, props, gridElRef, frameId) {
   // Flag ALL the frames accrodingly
   const grid = gridElRef.current;
   if (response.data.isLiked) {
-    const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
+      const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
 
-    fs.forEach((x) => x.classList.add("liked"));
-    const urlSrc = fs[0].style.backgroundImage;
-    let s = urlSrc.substr(5, urlSrc.length - 7);
-    if (s.startsWith(config.ui.media.thumbsPathPrefix)) {
-      s = s.substr(config.ui.media.thumbsPathPrefix.length - 1);
-    }
-    dispatch(
-      createAddLiked(s, {
-        id: frameId,
-        liked: true,
-        sId: null,
-        vId: null,
-        // Trim the url( .... ) string
-        src: s,
-      })
-    );
+      fs.forEach((x) => x.classList.add("liked"));
+      const urlSrc = fs[0].style.backgroundImage;
+      let s = urlSrc.substr(5, urlSrc.length - 7);
+      if (s.startsWith(config.ui.media.thumbsPathPrefix)) {
+          s = s.substr(config.ui.media.thumbsPathPrefix.length - 1);
+      }
+      dispatch(
+          createAddLiked(s, {
+              id: frameId,
+              liked: true,
+              sId: null,
+              vId: null,
+              // Trim the url( .... ) string
+              src: s,
+          })
+      );
   } else {
-    const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
+      const fs = grid.querySelectorAll(`[data-frame-id="${frameId}"]`);
 
-    fs.forEach((x) => x.classList.remove("liked"));
+      fs.forEach((x) => x.classList.remove("liked"));
 
-    dispatch(createRemoveLiked(s, frameId));
+      dispatch(createRemoveLiked(s, frameId));
   }
 }
 
