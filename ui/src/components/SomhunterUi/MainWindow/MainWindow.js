@@ -14,6 +14,7 @@ import { createHideZoomWindow } from "../../../actions/zoomWindowCreator";
 import { crShowDisplay } from "../../../actions/mainWindowCreator";
 
 import FrameGrid from "./FrameGrid";
+import FrameGridVirtualized from "./FrameGridVirtualized";
 import DetailWindow from "./DetailWindow";
 import ReplayWindow from "./ReplayWindow";
 import ZoomWindow from "./ZoomWindow";
@@ -68,6 +69,7 @@ function MainWindow(props) {
         show={props.detailWindow.show}
         frames={props.detailWindow.frames}
         pivotId={props.detailWindow.pivotFrameId}
+        mainWindow={props.detailWindow}
         gridElRef={detailGridElRef}
         onHide={() => props.createHideDetailWindow()}
       />
