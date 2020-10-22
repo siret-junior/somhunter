@@ -297,7 +297,12 @@ SomHunter::reset_search_session()
 {
 	user.submitter.poll();
 
+	user.ctx.shown_images.clear();
+	user.ctx.likes.clear();
+	user.ctx.last_text_query = "";
+
 	reset_scores();
+
 	user.submitter.log_reset_search();
 	som_start();
 
@@ -578,14 +583,6 @@ void
 SomHunter::reset_scores()
 {
 	user.ctx.used_tools.reset();
-
-	user.ctx.shown_images.clear();
-
-	// Reset likes
-	user.ctx.likes.clear();
-
-	user.ctx.last_text_query = "";
-
 	user.ctx.scores.reset();
 }
 
