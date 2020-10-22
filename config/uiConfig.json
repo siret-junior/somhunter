@@ -1,7 +1,7 @@
 {
     "development": {
         "media": {
-            "thumbsPathPrefix": "/thumbs/",
+            "thumbsPathPrefix": "/frames/",
             "framesPathPrefix": "/frames/"
         },
         "history": {

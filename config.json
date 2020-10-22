@@ -11,11 +11,11 @@
         "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
       },
       "dres": {
-        "submit_interaction_URL": "https://vbs.itec.aau.at/log/query",
-        "submit_rerank_URL": "https://vbs.itec.aau.at/log/result",
-        "submit_URL": "https://vbs.itec.aau.at/submit",
+        "submit_interaction_URL": "https://vbs.itec.aau.at:9443/log/query",
+        "submit_rerank_URL": "https://vbs.itec.aau.at:9443/log/result",
+        "submit_URL": "https://vbs.itec.aau.at:9443/submit",
         "cookie_file": "cookie.txt",
-        "login_URL": "https://vbs.itec.aau.at/api/login/",
+        "login_URL": "https://vbs.itec.aau.at:9443/api/login/",
         "username": "somhunter",
         "password": "ZW6cVRXk"
 			}
@@ -26,7 +26,7 @@
 	  
 		"VBS_submit_archive_dir": "logs/submitted_logs/",
 		"VBS_submit_archive_log_suffix": ".json",
-		"extra_verbose_log": true,
+		"extra_verbose_log": false,
 	  
 		"send_logs_to_server_period": 10000,
 		"apply_log_action_timeout_in_core": false,
@@ -35,8 +35,8 @@
 
 	"max_frame_filename_len": 64,
 	"display_page_size": 128,
-  "topn_frames_per_video": 5,
-	"topn_frames_per_shot": 5,
+  "topn_frames_per_video": 0,
+	"topn_frames_per_shot": 0,
 	
 	"filename_offsets": {
 		"fr_filename_off": 6,
