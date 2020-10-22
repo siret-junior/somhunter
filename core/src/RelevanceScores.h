@@ -78,10 +78,14 @@ public:
 	/** Normalizes the score distribution. */
 	void normalize();
 
+	void invalidate_cache() {
+		_cache_dirty = true;
+		_cache_ctx_dirty = true;
+	}
+
 	void reset_mask()
 	{
-		_cache_dirty = true;
-
+		invalidate_cache();
 		std::transform(_mask.begin(), _mask.end(), _mask.begin(), [](const bool&) { return true; });
 	};
 
@@ -90,8 +94,8 @@ public:
 
 	/** Sets the mask value for the frame. */
 	bool set_mask(ImageId ID, bool val)
-	{
-		_cache_dirty = true;
+	{	
+		invalidate_cache();
 		return _mask[ID] = val;
 	}
 

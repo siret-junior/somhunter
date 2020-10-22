@@ -27,7 +27,7 @@
 #include "log.h"
 
 // uncomment to get euclidean distances
-//#define EUCL
+#define EUCL
 
 #ifdef EUCL
 #	define DIST_FUNC d_sqeucl

@@ -101,8 +101,7 @@ ScoreModel::operator==(const ScoreModel& other) const
 void
 ScoreModel::reset()
 {
-	_cache_dirty = true;
-	_cache_ctx_dirty = true;
+	invalidate_cache();
 
 	for (auto& i : _scores)
 		i = 1.0f;
@@ -111,8 +110,7 @@ ScoreModel::reset()
 float
 ScoreModel::adjust(ImageId i, float prob)
 {
-	_cache_dirty = true;
-	_cache_ctx_dirty = true;
+	invalidate_cache();
 
 	return _scores[i] *= prob;
 }
@@ -120,8 +118,7 @@ ScoreModel::adjust(ImageId i, float prob)
 float
 ScoreModel::set(ImageId i, float prob)
 {
-	_cache_dirty = true;
-	_cache_ctx_dirty = true;
+	invalidate_cache();
 
 	return _scores[i] = prob;
 }
@@ -304,7 +301,7 @@ ScoreModel::apply_bayes(std::set<ImageId> likes, const std::set<ImageId>& screen
 	if (likes.empty())
 		return;
 
-	_cache_dirty = true;
+	invalidate_cache();
 
 	constexpr float Sigma = .1f;
 	constexpr size_t max_others = 64;
