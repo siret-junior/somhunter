@@ -547,7 +547,7 @@ $theme-colors: (
 .replay-window {
   position: absolute;
   width: 100vw;
-  height: auto;
+  height: 24vh;
   .modal-dialog {
     width: 100%;
     height: auto;
@@ -563,7 +563,8 @@ $theme-colors: (
     .frame-grid {
       position: relative;
       flex-wrap: nowrap;
-      width: auto;
+      height: 20vh;
+      width: 100vw !important;
       width: max-content;
       > .col-2 {
         flex: 0 0 320px;

@@ -70,23 +70,20 @@ function MainWindow(props) {
         frames={props.detailWindow.frames}
         pivotId={props.detailWindow.pivotFrameId}
         mainWindow={props.detailWindow}
-        gridElRef={detailGridElRef}
+        gridRef={detailGridElRef}
         onHide={() => props.createHideDetailWindow()}
       />
 
       <ReplayWindow
         show={props.replayWindow.show}
         styles={replayWindowStyles}
+        gridRef={replayGridElRef}
+        frames={props.replayWindow.frames}
+        pivotId={props.replayWindow.pivotFrameId}
+        mainWindow={props.replayWindow}
         onShow={() => null}
         onHide={() => props.createHideReplayWindow()}
-      >
-        <FrameGrid
-          id="replayGrid"
-          gridRef={replayGridElRef}
-          mainWindow={props.replayWindow}
-          replayGridRef={replayGridElRef}
-        />
-      </ReplayWindow>
+      />
 
       <ZoomWindow
         show={props.zoomWindow.show}

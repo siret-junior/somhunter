@@ -84,7 +84,7 @@ function calcReplayLeftOffset(gridEl, pivotFrameId, deltaX = 0) {
     return 0;
   }
 
-  const currOffset = parseInt(gridEl.style.left);
+  const currOffset = parseInt(gridEl.state.scrollLeft);
   const unitWidth = 200;
   const leftOffset = currOffset + deltaX * unitWidth;
 
@@ -103,8 +103,16 @@ function onWheellHandler(settings, props, e) {
       triggerLogsThrottled(settings, props, e, frameId, delta);
 
       const gridEl = props.replayGridRef.current;
-      const left = calcReplayLeftOffset(gridEl, frameId, delta);
-      gridEl.style.left = `${left}px`;
+      if (gridEl != null) {
+        const left = Math.min(
+          Math.floor(gridEl.props.columnCount * gridEl.props.columnWidth - gridEl.props.width),
+          calcReplayLeftOffset(gridEl, frameId, delta)
+        );
+        //gridEl.state.scrollLeft = left;
+        gridEl.scrollToPosition({ scrollLeft: left, scrollTop: gridEl.state.scrollTop });
+      } else {
+        console.error("gridEl is null => no scrolling in replay window!");
+      }
 
       // \todo This seems too slow
       //props.createScrollReplayWindow(settings, delta);
