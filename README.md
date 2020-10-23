@@ -51,6 +51,9 @@ The UI expects directories `thumbs` and `frames` in the public root (relative ei
 
 Please be aware that if the symlink to `frames` and/or `thumbs` is present in the `public` directory when running `npm run build`, it will try to copy the contents to the `build` directory which takes a lot of time and is unnecessary. Just remove the symlink from the `public` directory before running the `npm run build`.
 
+### Server certificates
+Please bear in mind that by default the server uses self-signed certificate and therefore requests to the back-end will be probbably rejected, unless you give this certificate an exception (or use normal one). To do so, just add the certificate into the exceptions (you can directly "visit" any URL that starts with the server URL, like `www.loaclhost:8888/whatever` and you should get a warning popup).
+
 ## Installation from source
 
 Prerequisites:
