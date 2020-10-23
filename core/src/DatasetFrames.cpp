@@ -199,9 +199,9 @@ DatasetFrames::parse_video_filename(std::string&& filename)
 std::tuple<Weekday, Hour, LscId>
 DatasetFrames::parse_metadata_line(const std::string& line)
 {
-	// EXAMPLE `line`: 20160815,509,2016-08-15_06:09,53.3892,0,-6.15827,Home,b00000000_21i6bq_20150223_070647e
-
-	auto tokens{ split(line, ',') };
+	// !!! Beware that the data MUST NOT contain the separator char
+	// TODO: Use propper CSV parser
+	auto tokens{ split(line, ';') };
 
 	auto datetime_str{ tokens[2].substr(11, 2) };
 	Hour h{ static_cast<Hour>(str2<size_t>(datetime_str)) };

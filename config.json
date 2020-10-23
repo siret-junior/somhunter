@@ -35,7 +35,7 @@
 
 	"max_frame_filename_len": 64,
 	"display_page_size": 128,
-  "topn_frames_per_video": 0,
+  "topn_frames_per_video": 5,
 	"topn_frames_per_shot": 0,
 	
 	"filename_offsets": {
