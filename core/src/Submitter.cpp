@@ -566,10 +566,24 @@ Submitter::submit_and_log_rescore(const DatasetFrames& frames,
 		size_t i{ 0 };
 		for (auto&& img_ID : topn_imgs) {
 			auto vf = frames.get_frame(img_ID);
+			// LSC submit
+#ifdef SUBMIT_FILENAME_ID
+
+			results.push_back(Json::object{ { "video", vf.LSC_id },
+											{ "frame", int(vf.frame_number) },
+											{ "score", double(scores[img_ID]) },
+											{ "rank", int(i) } });
+
+			// Non-LSC submit
+#else
+
 			results.push_back(Json::object{ { "video", std::to_string(vf.video_ID + 1) },
-			                                { "frame", int(vf.frame_number) },
-			                                { "score", double(scores[img_ID]) },
-			                                { "rank", int(i) } });
+											{ "frame", int(vf.frame_number) },
+											{ "score", double(scores[img_ID]) },
+											{ "rank", int(i) } });
+
+#endif // SUBMIT_FILENAME_ID
+			
 			++i;
 		}
 	}
