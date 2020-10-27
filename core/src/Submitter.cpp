@@ -164,9 +164,9 @@ poster_thread(const std::string& submit_url,
 
 		if (cfg.extra_verbose_log) {
 			std::cout << "**********************" << std::endl
-			          << "POST '" << submit_url << "' request: " << query << std::endl
-			          << "body: " << data_not_so_pretty_fmtd << std::endl
-			          << "**********************" << std::endl;
+			          << "POST '" << submit_url << "' request: " << query << std::endl;
+			//<< "body: " << data_not_so_pretty_fmtd << std::endl
+			//<< "**********************" << std::endl;
 		}
 	}
 
@@ -245,12 +245,15 @@ getter_thread(const std::string& submit_url, const std::string& query, bool& fin
 		warn("wtf, directory was not created");
 
 	{
-		std::string path = cfg.VBS_submit_archive_dir + std::string("/") + std::to_string(timestamp()) +
-		                   cfg.VBS_submit_archive_log_suffix;
+		auto ts{ timestamp() };
+		std::string path = cfg.VBS_submit_archive_dir + std::string("/") + std::to_string(ts) +
+		                   std::string("_submit") + cfg.VBS_submit_archive_log_suffix;
 		std::ofstream o(path.c_str(), std::ios::app);
 		if (!o) {
 			warn("Could not write a log file!");
 		}
+
+		o << "{\n\ttype=\"submit\",\n\ttimestamp=" << ts << ", \n\tquery=\"" << query << "\"\n}";
 	}
 
 	if (cfg.extra_verbose_log) {
@@ -570,20 +573,20 @@ Submitter::submit_and_log_rescore(const DatasetFrames& frames,
 #ifdef SUBMIT_FILENAME_ID
 
 			results.push_back(Json::object{ { "video", vf.LSC_id },
-											{ "frame", int(vf.frame_number) },
-											{ "score", double(scores[img_ID]) },
-											{ "rank", int(i) } });
+			                                { "frame", int(vf.frame_number) },
+			                                { "score", double(scores[img_ID]) },
+			                                { "rank", int(i) } });
 
 			// Non-LSC submit
 #else
 
 			results.push_back(Json::object{ { "video", std::to_string(vf.video_ID + 1) },
-											{ "frame", int(vf.frame_number) },
-											{ "score", double(scores[img_ID]) },
-											{ "rank", int(i) } });
+			                                { "frame", int(vf.frame_number) },
+			                                { "score", double(scores[img_ID]) },
+			                                { "rank", int(i) } });
 
 #endif // SUBMIT_FILENAME_ID
-			
+
 			++i;
 		}
 	}

@@ -37,7 +37,7 @@ class ScoreModel
 	/**
 	 * Frames mask telling what frames should be placed inside the
 	 * results.
-	 * 
+	 *
 	 * true <=> present in the result set
 	 * false <=> filtered out
 	 */
@@ -78,7 +78,8 @@ public:
 	/** Normalizes the score distribution. */
 	void normalize();
 
-	void invalidate_cache() {
+	void invalidate_cache()
+	{
 		_cache_dirty = true;
 		_cache_ctx_dirty = true;
 	}
@@ -94,7 +95,7 @@ public:
 
 	/** Sets the mask value for the frame. */
 	bool set_mask(ImageId ID, bool val)
-	{	
+	{
 		invalidate_cache();
 		return _mask[ID] = val;
 	}

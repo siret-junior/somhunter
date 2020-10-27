@@ -26,7 +26,7 @@
 	  
 		"VBS_submit_archive_dir": "logs/submitted_logs/",
 		"VBS_submit_archive_log_suffix": ".json",
-		"extra_verbose_log": false,
+		"extra_verbose_log": true,
 	  
 		"send_logs_to_server_period": 10000,
 		"apply_log_action_timeout_in_core": false,
