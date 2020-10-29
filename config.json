@@ -56,7 +56,7 @@
 	"features_dim": 128,
 	"features_file": "data/LSC2020/LSC-20201023.w2vv",
 	
-	"kw_bias_vec_file": "data/LSC2020/LSC-20201023.w2vv.pca.mean.bin",
+	"kw_bias_vec_file": "data/LSC2020/txt_bias-2048floats.bin",
 	"kw_scores_mat_file": "data/LSC2020/txt_weight-11147x2048floats.bin",
 
 	"kw_PCA_mat_dim": 128,
