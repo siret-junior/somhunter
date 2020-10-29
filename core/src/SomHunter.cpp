@@ -465,10 +465,15 @@ SomHunter::get_som_display()
 						ci.erase(fi);
 				}
 
-				assert(!ci.empty());
-
-				ImageId id = user.ctx.scores.weighted_example(ci);
-				ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
+				// If some frame candidates
+				if (!ci.empty()) {
+					ImageId id = user.ctx.scores.weighted_example(ci);
+					ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
+				} 
+				// Subsitute with "empty" frame
+				else {
+					ids[i + SOM_DISPLAY_GRID_WIDTH * j] = ERR_VAL<ImageId>();
+				}
 			}
 		}
 	}
