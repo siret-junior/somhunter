@@ -86,7 +86,7 @@ function calcReplayLeftOffset(gridEl, pivotFrameId, deltaX = 0) {
 
   const currOffset = parseInt(gridEl.state.scrollLeft);
   const unitWidth = 200;
-  const leftOffset = currOffset + deltaX * unitWidth;
+  const leftOffset = currOffset - deltaX * unitWidth;
 
   return leftOffset;
 }
