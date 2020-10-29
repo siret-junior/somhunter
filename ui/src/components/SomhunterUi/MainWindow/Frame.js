@@ -128,6 +128,8 @@ function onWheellHandler(settings, props, e) {
   }
 }
 
+const weedaysString = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 function Frame(props) {
   const settings = useSettings();
 
@@ -177,7 +179,7 @@ function Frame(props) {
             <span>Hour:</span> {props.frame.hour}
           </p>
           <p>
-            <span>Weekday:</span> {props.frame.weekday}
+            <span>Weekday:</span> {weedaysString[props.frame.weekday]}
           </p>
         </div>
 
