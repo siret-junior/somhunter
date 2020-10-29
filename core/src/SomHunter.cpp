@@ -219,6 +219,15 @@ SomHunter::rescore(const std::string& text_query,
 	 */
 	if (p_filters != nullptr && has_metadata()) {
 		user.ctx.filters = *p_filters;
+
+		// If filters used
+		if (!user.ctx.filters.is_default()) {
+			user.ctx.used_tools.filters = &user.ctx.filters;
+		}
+		// Else reset filters used
+		else {
+			user.ctx.used_tools.filters = nullptr;
+		}
 	}
 
 	/* ***
@@ -469,7 +478,7 @@ SomHunter::get_som_display()
 				if (!ci.empty()) {
 					ImageId id = user.ctx.scores.weighted_example(ci);
 					ids[i + SOM_DISPLAY_GRID_WIDTH * j] = id;
-				} 
+				}
 				// Subsitute with "empty" frame
 				else {
 					ids[i + SOM_DISPLAY_GRID_WIDTH * j] = ERR_VAL<ImageId>();

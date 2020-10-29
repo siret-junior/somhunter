@@ -144,6 +144,8 @@ constexpr size_t operator""_z(unsigned long long int x)
 /** What tools has been used during current search session.
  *  We need to send this info to logs.
  */
+struct Filters;
+
 struct UsedTools
 {
 	bool operator==(const UsedTools& other) const
@@ -155,6 +157,7 @@ struct UsedTools
 	  : KWs_used(false)
 	  , bayes_used(false)
 	  , topknn_used(false)
+	  , filters(nullptr)
 	{}
 
 	void reset()
@@ -162,11 +165,14 @@ struct UsedTools
 		KWs_used = false;
 		bayes_used = false;
 		topknn_used = false;
+		filters = nullptr;
 	}
 
 	bool KWs_used;
 	bool bayes_used;
 	bool topknn_used;
+
+	const Filters* filters;
 };
 
 struct SubmitData

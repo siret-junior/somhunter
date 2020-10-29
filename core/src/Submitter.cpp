@@ -27,6 +27,8 @@
 
 #include <curl/curl.h>
 
+#include "Filters.h"
+
 #ifdef DEBUG_CURL_REQUESTS
 
 static void
@@ -596,6 +598,7 @@ Submitter::submit_and_log_rescore(const DatasetFrames& frames,
 	std::vector<Json> sort_types;
 
 	std::string query_val(sentence_query + ";");
+	std::stringstream filters_val_ss;
 
 	// If Top KNN request
 	if (used_tools.topknn_used) {
@@ -624,6 +627,24 @@ Submitter::submit_and_log_rescore(const DatasetFrames& frames,
 			used_types.push_back("feedbackModel");
 			sort_types.push_back("feedbackModel");
 		}
+
+		if (used_tools.filters != nullptr) {
+			used_cats.push_back("filter");
+			used_types.push_back("lifelog");
+
+			const Filters* fs{ used_tools.filters };
+
+			// Write values value
+			filters_val_ss << "h_from=" << size_t(fs->time.from) << ";"
+			               << "h_to=" << size_t(fs->time.to) << ";"
+			               << "days=";
+
+			for (size_t i{ 0 }; i < 7; ++i) {
+				auto&& d{ fs->days[i] };
+				filters_val_ss << (d ? "1" : "0");
+			}
+			filters_val_ss << ";";
+		}
 	}
 
 	query_val += "from_video_limit=";
@@ -634,6 +655,12 @@ Submitter::submit_and_log_rescore(const DatasetFrames& frames,
 	Json result_json_arr = Json::array(results);
 
 	std::vector<Json> values{ query_val };
+
+	auto filters_val{ filters_val_ss.str() };
+	if (!filters_val.empty()) {
+		values.emplace_back(filters_val);
+	}
+
 	Json values_arr = Json::array(values);
 
 	Json top = Json::object{ { "teamId", int(cfg.team_ID) },

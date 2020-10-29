@@ -77,5 +77,12 @@ struct Filters
 	WeekDaysFilter days;
 
 	bool operator==(const Filters& other) const { return (time == other.time && days == other.days); }
+	bool is_default() const
+	{
+		if (time == TimeFilter{} && days == WeekDaysFilter{})
+			return true;
+
+		return false;
+	}
 };
 #endif // FILTERS_H_
