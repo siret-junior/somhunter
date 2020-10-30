@@ -15,7 +15,7 @@
         "frameGrid": {
             "infiniteScrollThreshold": 1000,
             "infiniteScrollTimeout": 1000,
-            "defaultRescoreDisplay": "topn_display",
+            "defaultRescoreDisplay": "topn_display_with_context",
             "defaultSecondaryRescoreDisplay": "SOM_display"
         },
         "textSearch": {

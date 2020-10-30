@@ -181,6 +181,9 @@ function Frame(props) {
           <p>
             <span>Weekday:</span> {weedaysString[props.frame.weekday]}
           </p>
+          <p>
+            <span>LSC ID:</span> {props.frame.lscId}
+          </p>
         </div>
 
         <span className="video-id-label top left">{props.frame.vId}</span>

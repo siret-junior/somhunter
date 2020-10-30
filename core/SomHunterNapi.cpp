@@ -101,6 +101,7 @@ VideoFrame_to_res(Napi::Env& env,
 
 		Hour hour{ ERR_VAL<Hour>() };
 		Weekday weekday{ ERR_VAL<Weekday>() };
+		std::string LSC_ID{ "" };
 
 		bool is_liked{ false };
 		bool is_bookmarked{ false };
@@ -113,6 +114,8 @@ VideoFrame_to_res(Napi::Env& env,
 
 			hour = p_frame->hour;
 			weekday = p_frame->weekday;
+
+			LSC_ID = p_frame->LSC_id;
 
 			is_liked = (likes.count(ID) > 0 ? true : false);
 			filename = path_prefix + p_frame->filename;
@@ -185,6 +188,20 @@ VideoFrame_to_res(Napi::Env& env,
 				napi_get_null(env, &value);
 			} else {
 				napi_create_uint32(env, uint32_t(weekday), &value);
+			}
+
+			napi_set_property(env, obj, key, value);
+		}
+
+		{ // *** LSC ID***
+			napi_value key;
+			napi_create_string_utf8(env, "lscId", NAPI_AUTO_LENGTH, &key);
+
+			napi_value value;
+			if (LSC_ID.empty()) {
+				napi_get_null(env, &value);
+			} else {
+				napi_create_string_utf8(env, LSC_ID.c_str(), NAPI_AUTO_LENGTH, &value);
 			}
 
 			napi_set_property(env, obj, key, value);

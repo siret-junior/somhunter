@@ -148,7 +148,7 @@ function MainPanel(props) {
               props.crShowDisplay(settings, CS.DISP_TYPE_SOM, 0, 0)
             }
           >
-            SOM Screen
+            SOM Display
           </Button>
         </Col>
         <Col xs={6} className="cont-btn">
@@ -159,7 +159,7 @@ function MainPanel(props) {
               props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N, 0, 0)
             }
           >
-            Top N
+            Top Scored
           </Button>
         </Col>
         <Col xs={6} className="cont-btn">
@@ -172,7 +172,7 @@ function MainPanel(props) {
               props.crShowDisplay(settings, CS.DISP_TYPE_TOP_N_CONTEXT, 0, 0)
             }
           >
-            Top N Context
+            Top Scored Context
           </Button>
         </Col>
       </ControlsPanel>
