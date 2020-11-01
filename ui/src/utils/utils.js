@@ -85,7 +85,7 @@ export async function takeScreenshotOfElem(elem, frames) {
       const dx = wi * j;
       const dy = hi * i;
 
-      if (frame_idx >= frames.length){
+      if (frame_idx >= frames.length) {
         break;
       }
       const img = new Image(wi, hi);

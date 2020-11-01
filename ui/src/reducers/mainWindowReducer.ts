@@ -30,8 +30,6 @@ function mainWindowReducer(
       // Assert type
       pl = (<ShowTopNDisplay>action).payload;
 
-      
-
       // If screen switch
       if (pl.currentPage === 0) {
         return {
@@ -41,9 +39,9 @@ function mainWindowReducer(
           frames: [...pl.frames],
         };
       }
-      
+
       if (pl.frames.length === 0) break;
-      
+
       if (
         state.frames.length === 0 ||
         state.frames[state.frames.length - 1].id !==
