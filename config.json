@@ -11,11 +11,11 @@
         "submit_URL": "http://herkules.ms.mff.cuni.cz:8080/vbs/submit"
       },
       "dres": {
-        "submit_interaction_URL": "https://vbs.itec.aau.at:9443/log/query",
-        "submit_rerank_URL": "https://vbs.itec.aau.at:9443/log/result",
-        "submit_URL": "https://vbs.itec.aau.at:9443/submit",
+        "submit_interaction_URL": "localhost:1234/log/query",
+        "submit_rerank_URL": "localhost:1234/log/result",
+        "submit_URL": "localhost:1234/submit",
         "cookie_file": "cookie.txt",
-        "login_URL": "https://vbs.itec.aau.at:9443/api/login/",
+        "login_URL": "localhost:1234/api/login/",
         "username": "somhunter",
         "password": "ZW6cVRXk"
 			}

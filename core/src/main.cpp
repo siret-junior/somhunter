@@ -49,7 +49,7 @@
  *
  */
 //#define TESTING_ITEC_DATASET
-#	define TESTING_LSC5DAYS_DATASET
+//#	define TESTING_LSC5DAYS_DATASET
 
 /*
  * What keywords are we testing?
