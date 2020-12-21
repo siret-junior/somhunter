@@ -1,0 +1,3 @@
+[submodule "core/somhunter-core"]
+	path = core/somhunter-core
+	url = https://github.com/FrankMejzlik/somhunter-core
