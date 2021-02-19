@@ -21,8 +21,12 @@
 
 #include <optional>
 #include <stdexcept>
+#include <vector>
+#include <sstream>
+#include <string>
 
 #include "SomHunterNapi.h"
+#include "CollageRanker.h"
 
 #include "common.h"
 
@@ -40,6 +44,7 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	                InstanceMethod("likeFrames", &SomHunterNapi::like_frames),
 	                InstanceMethod("bookmarkFrames", &SomHunterNapi::bookmark_frames),
 	                InstanceMethod("rescore", &SomHunterNapi::rescore),
+					InstanceMethod("rescore_collage", &SomHunterNapi::rescore_collage),
 	                InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
 	                InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
 	                InstanceMethod("logTextQueryChange", &SomHunterNapi::log_text_query_change),
@@ -62,7 +67,7 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<SomHunterNapi>(info)
 {
-	debug("API: Instantiating SomHunter...");
+	debug_d("API: Instantiating SomHunter...");
 
 	Napi::Env env = info.Env();
 	Napi::HandleScope scope(env);
@@ -79,7 +84,7 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo& info)
 	Config cfg = Config::parse_json_config(config_fpth);
 	try {
 		somhunter = new SomHunter(cfg);
-		debug("API: SomHunter initialized.");
+		debug_d("API: SomHunter initialized.");
 	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
@@ -371,7 +376,7 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo& info)
 
 	std::vector<bool> like_flags;
 	try {
-		debug("API: CALL \n\t like_frames\n\t\fr_IDs.size() = " << fr_IDs.size() << std::endl);
+		debug_d("API: CALL \n\t like_frames\n\t\fr_IDs.size() = " << fr_IDs.size() << std::endl);
 
 		like_flags = somhunter->like_frames(fr_IDs);
 	} catch (const std::exception& e) {
@@ -564,6 +569,78 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 	return Napi::Object{};
 }
 
+
+Napi::Value
+SomHunterNapi::rescore_collage(const Napi::CallbackInfo &info)
+{
+	debug_d("API: CALL \n\t rescore_collage\n\t\t query " << std::endl);
+
+	Napi::Env env = info.Env();
+	Napi::HandleScope scope(env);
+
+	// Process arguments
+	int length = info.Length();
+
+	if (length != 8) {
+		Napi::TypeError::New(
+		  env,
+		  "Wrong number of parameters: SomHunterNapi::rescore_collage")
+		  .ThrowAsJavaScriptException();
+	}
+	Napi::Float32Array js_lefts = info[0].As<Napi::Float32Array>();
+	Napi::Float32Array js_tops = info[1].As<Napi::Float32Array>();
+	Napi::Float32Array js_heights = info[2].As<Napi::Float32Array>();
+	Napi::Float32Array js_widths = info[3].As<Napi::Float32Array>();
+	Napi::Int32Array js_p_heights = info[4].As<Napi::Int32Array>();
+	Napi::Int32Array js_p_widths = info[5].As<Napi::Int32Array>();
+	Napi::Int32Array js_break_point = info[6].As<Napi::Int32Array>();
+	Napi::Uint8Array js_concat_pics = info[7].As<Napi::Uint8Array>();
+
+
+	Collage collage;
+
+	for(std::size_t i = 0; i < js_lefts.ElementLength(); i++)
+	{
+		collage.lefts.push_back(js_lefts[i]);
+		collage.tops.push_back(js_tops[i]);
+		collage.relative_heights.push_back(js_heights[i]);
+		collage.relative_widths.push_back(js_widths[i]);
+		collage.pixel_heights.push_back(js_p_heights[i]);
+		collage.pixel_widths.push_back(js_p_widths[i]);
+	}
+	collage.break_point = js_break_point[0];
+	collage.channels = 4;
+
+
+	std::size_t index = 0;
+	std::size_t end = 0;
+	for(std::size_t i = 0; i < collage.pixel_heights.size(); i++)
+	{
+		std::vector<float> img;
+		end = index + (collage.pixel_heights[i] * collage.pixel_widths[i] * 4);
+
+		for(index; index < end; index++)
+		{
+			img.push_back(js_concat_pics[index]);
+		}
+		collage.images.push_back(img);
+	}
+
+	debug_d("API: CALL \n\t images\n\t\t " << collage.images.size() << std::endl);
+
+	try {
+		debug_d("API: CALL \n\t rescore_collage\n\t\t " << std::endl);
+		somhunter->rescore(collage);
+
+	} catch (const std::exception &e) {
+		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	}
+
+	return Napi::Object{};
+}
+
+
+
 Napi::Value
 SomHunterNapi::reset_all(const Napi::CallbackInfo& info)
 {
@@ -579,7 +656,7 @@ SomHunterNapi::reset_all(const Napi::CallbackInfo& info)
 		  .ThrowAsJavaScriptException();
 	}
 	try {
-		debug("API: CALL \n\t reset_all()");
+		debug_d("API: CALL \n\t reset_all()");
 
 		somhunter->reset_search_session();
 
@@ -607,7 +684,7 @@ SomHunterNapi::log_video_replay(const Napi::CallbackInfo& info)
 	float delta{ float(info[1].As<Napi::Number>().DoubleValue()) };
 
 	try {
-		debug("API: CALL \n\t log_video_replay\n\t frame_ID = " << fr_ID << std::endl);
+		debug_d("API: CALL \n\t log_video_replay\n\t frame_ID = " << fr_ID << std::endl);
 
 		somhunter->log_video_replay(fr_ID, delta);
 	} catch (const std::exception& e) {
@@ -636,7 +713,7 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo& info)
 	DisplayType dt{ str_to_disp_type(disp_type) };
 
 	try {
-		debug("API: CALL \n\t log_scroll\n\t disp_type=" << disp_type << "\n\tdeltaY=" << delta_Y << std::endl);
+		debug_d("API: CALL \n\t log_scroll\n\t disp_type=" << disp_type << "\n\tdeltaY=" << delta_Y << std::endl);
 
 		somhunter->log_scroll(dt, delta_Y);
 	} catch (const std::exception& e) {
@@ -662,7 +739,7 @@ SomHunterNapi::log_text_query_change(const Napi::CallbackInfo& info)
 	std::string query{ info[0].As<Napi::String>().Utf8Value() };
 
 	try {
-		debug("API: CALL \n\t log_text_query_change\n\t query=" << query << std::endl);
+		debug_d("API: CALL \n\t log_text_query_change\n\t query=" << query << std::endl);
 
 		somhunter->log_text_query_change(query);
 	} catch (const std::exception& e) {
@@ -787,11 +864,11 @@ SomHunterNapi::login_to_dres(const Napi::CallbackInfo& info)
 
 	bool result{ false };
 	try {
-		debug("API: CALL \n\t login_to_dres()");
+		debug_d("API: CALL \n\t login_to_dres()");
 
 		result = somhunter->login_to_dres();
 
-		debug("API: RETURN \n\t login_to_dres()\n\t\result = " << result);
+		debug_d("API: RETURN \n\t login_to_dres()\n\t\result = " << result);
 
 	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
@@ -820,11 +897,11 @@ SomHunterNapi::is_som_ready(const Napi::CallbackInfo& info)
 
 	bool is_ready{ false };
 	try {
-		debug("API: CALL \n\t som_ready()");
+		debug_d("API: CALL \n\t som_ready()");
 
 		is_ready = somhunter->som_ready();
 
-		debug("API: RETURN \n\t som_ready()\n\t\tis_ready = " << is_ready);
+		debug_d("API: RETURN \n\t som_ready()\n\t\tis_ready = " << is_ready);
 
 	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
@@ -852,7 +929,7 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo& info)
 	ImageId frame_ID{ info[0].As<Napi::Number>().Uint32Value() };
 
 	try {
-		debug("API: CALL \n\t submit_to_server\n\t\frame_ID = " << frame_ID);
+		debug_d("API: CALL \n\t submit_to_server\n\t\frame_ID = " << frame_ID);
 
 		somhunter->submit_to_server(frame_ID);
 	} catch (const std::exception& e) {

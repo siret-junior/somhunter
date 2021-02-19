@@ -26,6 +26,11 @@ export function getTextQueryInput(idx) {
   return document.getElementById(`textQuery${idx}`).childNodes[0];
 }
 
+export function getCollageInput(idx) {
+  return document.getElementById(`collageQuery${idx}`).childNodes[0];
+}
+
+
 export function getFiltersInput() {
   const filtersContEl = document.getElementById("queryFilters");
 

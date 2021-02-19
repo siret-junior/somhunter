@@ -2,10 +2,11 @@
     "targets": [
         {
             "target_name": "somhunter_core",
+            
             "sources": [
                 "main.cpp",
                 "SomHunterNapi.cpp",
-                "somhunter-core/src/json11.cpp",
+                "somhunter-core/3rdparty/json11/json11.cpp",
                 "somhunter-core/src/SomHunter.cpp",
                 "somhunter-core/src/SOM.cpp",
                 "somhunter-core/src/AsyncSom.cpp",
@@ -17,10 +18,16 @@
                 "somhunter-core/src/UserContext.cpp",
                 "somhunter-core/src/SearchContext.cpp",
                 "somhunter-core/src/Filters.cpp",
+                "somhunter-core/src/ImageManipulator.cpp",
+                "somhunter-core/src/CollageRanker.cpp",
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")",
-                "somhunter-core/src/"
+                "somhunter-core/src/",
+                "somhunter-core/3rdparty/json11/",
+                "somhunter-core/3rdparty/stb/",
+                "somhunter-core/3rdparty/libtorch/include/torch/csrc/api/include",
+                "somhunter-core/3rdparty/libtorch/include/",
             ],
             "libraries": [],
             "dependencies": [
@@ -28,15 +35,20 @@
             ],
             "defines": [
                 "NAPI_CPP_EXCEPTIONS",
-                "HAS_NAPI_HEADERS"
+                "HAS_NAPI_HEADERS",
+                "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"
             ],
             "cflags_cc": [
-                "-std=c++17","-fexceptions","-Wall", "-march=native"
+                "-std=c++17","-fexceptions", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1"
             ],
             "msvs_settings": {
                 "VCCLCompilerTool": {
                     "AdditionalOptions": [
-                        "-std:c++17"
+                                    "-std:c++17",
+                                    "/MP /EHsc /Qspectre",
+                                    "/GR",
+                                    "/experimental:external /external:anglebrackets /external:W0"
+                                
                     ]
                 } 
             },
@@ -44,12 +56,27 @@
                 [
                     "OS=='linux'",
                     {
+                        'actions': [
+                            {
+                                'action_name': 'Install libTorch',
+                                'inputs': [ 
+                                    "somhunter-core/scripts/install_libtorch.sh" 
+                                ],
+                                'outputs': [
+                                    '<(INTERMEDIATE_DIR)/some_output',
+                                ],
+                                'action': ['sh "<(RULE_INPUT_PATH)" "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.7.1%2Bcpu.zip" <(RULE_INPUT_DIRNAME)\\..\\3rdparty\\'],
+                            },
+                        ],
                         "include_dirs":[
                             "<!@(pkg-config libcurl --cflags-only-I | sed s/-I//g)"
                         ],
                         "link_settings": {
                             "libraries": [
                                 "-L/usr/lib64/",
+                                "-L somhunter-core/3rdparty/libtorch/lib",
+                                "-lstdc++fs",
+                                "-lc10", "-ltorch", "-ltorch_cpu",
                                 "<!@(pkg-config libcurl --libs)"
                             ]
                         }
@@ -58,31 +85,60 @@
                 [
                     "OS=='win'",
                     {
+                        'actions': [
+                            {
+                                'action_name': 'Install libTorch',
+                                'inputs': [ 
+                                    "somhunter-core/scripts/install_libtorch.ps1" 
+                                ],
+                                'outputs': [
+                                    '<(INTERMEDIATE_DIR)/some_output',
+                                ],
+                                'action': ['powershell -ExecutionPolicy Bypass -File "<(RULE_INPUT_PATH)" "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-1.7.1%2Bcpu.zip" <(RULE_INPUT_DIRNAME)\\..\\3rdparty\\'],
+                            },
+                        ],
                         "include_dirs":[
-                            "C:\\Program Files\\curl\\include\\"
+                            "C:\\Program Files\\curl\\include\\",
                         ],
                         "link_settings": {
                             "libraries": [
                                 "libcurl.lib",
-                                "zlib.lib"
+                                "zlib.lib",
+                                "torch.lib",
+                                "c10.lib",
+                                "torch_cpu.lib"
                             ]
                         },
                         "copies": [
                             {
                                 "destination": "<(PRODUCT_DIR)",
-                                "files": [ "C:\\Program Files\\curl\\bin\\libcurl.dll", "C:\\Program Files\\curl\\bin\\zlib1.dll" ]
+                                "files": [ 
+                                    "C:\\Program Files\\curl\\bin\\libcurl.dll", 
+                                    "C:\\Program Files\\curl\\bin\\zlib1.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\torch.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\c10.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\torch_cpu.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\asmjit.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\uv.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\libiompstubs5md.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\libiomp5md.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\fbgemm.dll",
+                                ]
                             }
                         ],
                         "msvs_settings": {
                             "VCCLCompilerTool": {
                                 "AdditionalOptions": [
                                     "-std:c++17",
-                                    "/MP /EHsc /Qspectre"
+                                    "/MP /EHsc /Qspectre",
+                                    "/GR",
+                                    "/experimental:external /external:anglebrackets /external:W0"
                                 ]
                             },
                             "VCLinkerTool": {
                                 "AdditionalLibraryDirectories": [
-                                    "C:\\Program Files\\curl\\lib\\"
+                                    "C:\\Program Files\\curl\\lib\\",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\",
                                 ]
                             }
                         }

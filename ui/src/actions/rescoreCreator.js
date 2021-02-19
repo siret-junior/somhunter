@@ -49,6 +49,9 @@ export function createRescore(s, destDisplay) {
     const query0 = getTextQueryInput(0).value;
     const query1 = getTextQueryInput(1).value;
 
+    const collage0 = getCollageQueryInput(0).value;
+    const collage1 = getCollageQueryInput(1).value;
+
     const filters = getFiltersInput();
     console.info(filters);
 

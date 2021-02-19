@@ -56,6 +56,9 @@ function MainPanel(props) {
   const refQuery0 = useRef(null);
   const refQuery1 = useRef(null);
 
+  const refCollage0 = useRef(null);
+  const refCollage1 = useRef(null);
+
   const [isAcOpen, setIsAcOpen] = useState(false);
 
   useEffect(() => {}, []);
@@ -73,9 +76,7 @@ function MainPanel(props) {
               onTriggerResetHandler(
                 settings,
                 config.ui.frameGrid.defaultRescoreDisplay,
-                isAcOpen,
-                refQuery0,
-                refQuery1
+                isAcOpen
               )
             }
           >
@@ -111,9 +112,7 @@ function MainPanel(props) {
               onTriggerRescoretHandler(
                 settings,
                 config.ui.frameGrid.defaultRescoreDisplay,
-                isAcOpen,
-                refQuery0,
-                refQuery1
+                isAcOpen
               )
             }
           >
@@ -128,9 +127,7 @@ function MainPanel(props) {
               onTriggerRescoretHandler(
                 settings,
                 CS.DISP_TYPE_SOM,
-                isAcOpen,
-                refQuery0,
-                refQuery1
+                isAcOpen
               )
             }
           >
