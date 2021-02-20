@@ -80,9 +80,11 @@ const myFormat = printf(({ level, message, timestamp }) => {
 });
 
 // Make sure that this dir exists
-fs.mkdir(global.serverCfg.logsDir, { recursive: true }, (err) => {
-  if (err) throw err;
-});
+if (fs.accessSync(global.serverCfg.logsDir)) {
+  fs.mkdirSync(global.serverCfg.logsDir, { recursive: true }, (err) => {
+    if (err) throw err;
+  });
+}
 
 // Create main logger
 global.logger = createLogger({

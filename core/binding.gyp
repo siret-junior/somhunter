@@ -1,4 +1,10 @@
 {
+    "variables": {
+        "LIBTORCH_URL_PREBUILT_UNIX": "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.7.1%2Bcpu.zip",
+        "LIBTORCH_URL_PREBUILT_UNIX_CUDA": "",
+        "LIBTORCH_URL_PREBUILT_WIN": "",
+        "LIBTORCH_URL_PREBUILT_WIN_CUDA": "",
+    },
     "targets": [
         {
             "target_name": "somhunter_core",
@@ -65,7 +71,7 @@
                                 'outputs': [
                                     '<(INTERMEDIATE_DIR)/some_output',
                                 ],
-                                'action': ['sh "<(RULE_INPUT_PATH)" "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.7.1%2Bcpu.zip" <(RULE_INPUT_DIRNAME)\\..\\3rdparty\\'],
+                                'action': ['sh',  'somhunter-core/scripts/install_libtorch.sh', '<(LIBTORCH_URL_PREBUILT_UNIX)', '<!(pwd)/somhunter-core/3rdparty/'],
                             },
                         ],
                         "include_dirs":[
@@ -74,7 +80,7 @@
                         "link_settings": {
                             "libraries": [
                                 "-L/usr/lib64/",
-                                "-L somhunter-core/3rdparty/libtorch/lib",
+                                "-L <!(pwd)/somhunter-core/3rdparty/libtorch/lib",
                                 "-lstdc++fs",
                                 "-lc10", "-ltorch", "-ltorch_cpu",
                                 "<!@(pkg-config libcurl --libs)"
