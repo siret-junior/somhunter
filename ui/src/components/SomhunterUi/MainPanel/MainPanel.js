@@ -29,7 +29,7 @@ import CollageSearchPanel from "./CollageSearchPanel";
 
 function onTriggerRescoretHandler(settings, destDisplay, isAcOpen) {
   const dispatch = settings.dispatch;
-
+  
   // Make sure that autocomplete popup is not shown
   if (!isAcOpen) {
     dispatch(createRescore(settings, destDisplay));
@@ -126,8 +126,9 @@ function MainPanel(props) {
 
       <FiltersPanel visible={config.ui.queries.filters ? true : false} />
 
-      {config.ui.queries.text ? (
+      
         <TextSearchPanel
+          visible={config.ui.queries.text ? true : false}
           setIsAcOpen={setIsAcOpen}
           isAcOpen={isAcOpen}
           refQuery0={refQuery0}
@@ -140,10 +141,11 @@ function MainPanel(props) {
             )
           }
         />
-      ) : null}
+      
 
-      {config.ui.queries.collage ? (
+
         <CollageSearchPanel
+          visible={config.ui.queries.collage ? true : false}
           setIsAcOpen={setIsAcOpen}
           isAcOpen={isAcOpen}
           refQuery0={refQuery0}
@@ -156,7 +158,6 @@ function MainPanel(props) {
             )
           }
         />
-      ) : null}
 
       <LikedPanel />
 

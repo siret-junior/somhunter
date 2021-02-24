@@ -36,7 +36,8 @@ function TextSearchPanel(props) {
   const subInputsRef = useRef();
 
   return (
-    <Container fluid className="text-search panel">
+    <Container fluid className="text-search panel"
+      style={{display: props.visible ? "block" : "none" }}>
       <Form className="panel-content text-search-form">
         <Row>
           <Col xs={6} className="text-search-cont pr-0">

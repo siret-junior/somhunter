@@ -27,7 +27,8 @@ function CollageSearchPanel(props) {
   const collageCanvas1Ref = useRef();
 
   return (
-    <div className="collage-search small-12 cell">
+    <div className="collage-search small-12 cell"
+    style={{display: props.visible ? "block" : "none" }}>
       <div id="collageTemporalQueries" ref={collagePanel}>
         <div className="canvas-wrapper">
           <div

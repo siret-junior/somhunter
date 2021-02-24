@@ -51,20 +51,17 @@ export function createRescore(s, destDisplay) {
     let filters = null;
     let collagesData = null;
 
-    if (config.ui.queries.text) {
-      // Current text queries
-      // \todo Do it propperly!
-      query0 = getTextQueryInput(0).value;
-      query1 = getTextQueryInput(1).value;
-    }
-    if (config.ui.queries.collage) {
-      collagesData = getCollageInputs();
-    }
-
     
+    // Current text queries
+    // \todo Do it propperly!
+    query0 = getTextQueryInput(0).value;
+    query1 = getTextQueryInput(1).value;
+    
+    
+    collagesData = getCollageInputs();
+        
     filters = getFiltersInput();
     
-
     // POST data
     const reqData = {
       srcSearchCtxId: srcSearchCtxId,
