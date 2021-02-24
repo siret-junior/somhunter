@@ -8,9 +8,9 @@ import { get, post } from "../../../apis/coreApi";
 import * as CS from "../../../constants";
 
 import { Modal, Button, Container } from "react-bootstrap";
-import FrameGridVirtualized from "./FrameGridVirtualized"
+import FrameGridVirtualized from "./FrameGridVirtualized";
 import Frame from "./Frame";
-import { AutoSizer, Grid } from 'react-virtualized';
+import { AutoSizer, Grid } from "react-virtualized";
 import { useSettings } from "../../../hooks/useSettings";
 
 async function virtualizedOnLikeHandler(s, props, grid, frameId) {
@@ -36,9 +36,11 @@ async function virtualizedOnLikeHandler(s, props, grid, frameId) {
   // }
 
   // Flag ALL the frames accrodingly
-  const lid = props.frames.findIndex(e => e.id == frameId)
+  const lid = props.frames.findIndex((e) => e.id == frameId);
   if (response.data.isLiked) {
-    const fs = document.getElementsByClassName("main-window")[0].querySelectorAll(`[data-frame-id="${frameId}"]`);
+    const fs = document
+      .getElementsByClassName("main-window")[0]
+      .querySelectorAll(`[data-frame-id="${frameId}"]`);
 
     fs.forEach((x) => x.classList.add("liked"));
 
@@ -55,7 +57,9 @@ async function virtualizedOnLikeHandler(s, props, grid, frameId) {
       })
     );
   } else {
-    const fs = document.getElementsByClassName("main-window")[0].querySelectorAll(`[data-frame-id="${frameId}"]`);
+    const fs = document
+      .getElementsByClassName("main-window")[0]
+      .querySelectorAll(`[data-frame-id="${frameId}"]`);
 
     fs.forEach((x) => x.classList.remove("liked"));
 
@@ -119,57 +123,80 @@ function ReplayWindow(props) {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             Video replay
-        </Modal.Title>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container fluid className="p-0 frame-grid row no-gutters">
             <AutoSizer>
               {({ height }) => {
                 const rowHeight = height - 17;
-                const colWidth = rowHeight * 16 / 9;
-                var pivotColumn = props.frames.map(e => e.id).includes(props.pivotId) ?
-                    props.frames.map(e => e.id).indexOf(props.pivotId) + 3 :
-                    0
-                pivotColumn = Math.min(pivotColumn, props.frames.length - 1)
-                
-                return (<Grid
-                  ref={props.gridRef}
-                  cellRenderer={({ columnIndex, key, parent, rowIndex, style }) => {
-                    let frame = props.frames[Math.min(columnIndex, props.frames.length - 1)];
-                    if (columnIndex < props.frames.length)
-                      return (
-                        <Frame
-                          isPivot={frame.id === props.pivotId}
-                          onLikeHandler={(frameId) => virtualizedOnLikeHandler(settings, props, parent, frameId)}
-                          key={frame.id + rowIndex * Math.pow(2, 32)}
-                          frame={frame}
-                          replayGridRef={props.gridRef}
-                          style={style}
-                        />
-                      )
-                    else
-                      return (<div style={style} />)
-                  }}
-                  columnCount={props.frames.length}
-                  columnWidth={colWidth}
-                  height={height}
-                  rowCount={1}
-                  rowHeight={rowHeight}
-                  width={1900}
-                  style={overflowStyle}
-                  scrollToColumn={pivotColumn}
-                  onScroll={(e) => {
-                    onScrollTriggerLogsThrottled(settings, props, e, scrollYRef);
-                  }}
-                />)
+                const colWidth = (rowHeight * 16) / 9;
+                var pivotColumn = props.frames
+                  .map((e) => e.id)
+                  .includes(props.pivotId)
+                  ? props.frames.map((e) => e.id).indexOf(props.pivotId) + 3
+                  : 0;
+                pivotColumn = Math.min(pivotColumn, props.frames.length - 1);
+
+                return (
+                  <Grid
+                    ref={props.gridRef}
+                    cellRenderer={({
+                      columnIndex,
+                      key,
+                      parent,
+                      rowIndex,
+                      style,
+                    }) => {
+                      let frame =
+                        props.frames[
+                          Math.min(columnIndex, props.frames.length - 1)
+                        ];
+                      if (columnIndex < props.frames.length)
+                        return (
+                          <Frame
+                            isPivot={frame.id === props.pivotId}
+                            onLikeHandler={(frameId) =>
+                              virtualizedOnLikeHandler(
+                                settings,
+                                props,
+                                parent,
+                                frameId
+                              )
+                            }
+                            key={frame.id + rowIndex * Math.pow(2, 32)}
+                            frame={frame}
+                            replayGridRef={props.gridRef}
+                            style={style}
+                          />
+                        );
+                      else return <div style={style} />;
+                    }}
+                    columnCount={props.frames.length}
+                    columnWidth={colWidth}
+                    height={height}
+                    rowCount={1}
+                    rowHeight={rowHeight}
+                    width={1900}
+                    style={overflowStyle}
+                    scrollToColumn={pivotColumn}
+                    onScroll={(e) => {
+                      onScrollTriggerLogsThrottled(
+                        settings,
+                        props,
+                        e,
+                        scrollYRef
+                      );
+                    }}
+                  />
+                );
               }}
             </AutoSizer>
           </Container>
         </Modal.Body>
       </Modal>
     );
-  else
-    return (<div />);
+  else return <div />;
 }
 
 export default ReplayWindow;

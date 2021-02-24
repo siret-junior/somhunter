@@ -7,12 +7,14 @@ export type IndicatorState = {
   loginWarning: boolean;
   notSendingWarning: boolean;
   queryChanged: boolean;
+  collageChanged: boolean;
 };
 
 const defaultState: IndicatorState = {
   loginWarning: false,
   notSendingWarning: false,
   queryChanged: false,
+  collageChanged: false,
 };
 
 function indicatorReducer(
@@ -28,6 +30,9 @@ function indicatorReducer(
 
     case CS.SET_QUERY_CHANGED:
       return { ...state, queryChanged: action.payload };
+
+    case CS.SET_COLLAGE_CHANGED:
+      return { ...state, collageChanged: action.payload };
 
     default:
       break;

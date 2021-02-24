@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Modal, Button, Container } from "react-bootstrap";
-import FrameGridVirtualized from "./FrameGridVirtualized"
+import FrameGridVirtualized from "./FrameGridVirtualized";
 
 const columns = 6;
 
@@ -20,10 +20,7 @@ function DetailWindow(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <FrameGridVirtualized 
-          {...props}
-          columns={columns}
-         />
+        <FrameGridVirtualized {...props} columns={columns} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={props.onHide}>Close</Button>

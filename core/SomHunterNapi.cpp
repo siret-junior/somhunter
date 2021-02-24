@@ -20,13 +20,13 @@
  */
 
 #include <optional>
-#include <stdexcept>
-#include <vector>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
-#include "SomHunterNapi.h"
 #include "CollageRanker.h"
+#include "SomHunterNapi.h"
 
 #include "common.h"
 
@@ -44,7 +44,6 @@ SomHunterNapi::Init(Napi::Env env, Napi::Object exports)
 	                InstanceMethod("likeFrames", &SomHunterNapi::like_frames),
 	                InstanceMethod("bookmarkFrames", &SomHunterNapi::bookmark_frames),
 	                InstanceMethod("rescore", &SomHunterNapi::rescore),
-					InstanceMethod("rescore_collage", &SomHunterNapi::rescore_collage),
 	                InstanceMethod("logVideoReplay", &SomHunterNapi::log_video_replay),
 	                InstanceMethod("logScroll", &SomHunterNapi::log_scroll),
 	                InstanceMethod("logTextQueryChange", &SomHunterNapi::log_text_query_change),
@@ -531,7 +530,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 
 	// Process arguments
 	int length = info.Length();
-	if (length != 6) {
+	if (length != 7) {
 		Napi::TypeError::New(env, "Wrong number of arguments!").ThrowAsJavaScriptException();
 	}
 
@@ -539,68 +538,20 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 	std::string user_token{ info[0].As<Napi::String>().Utf8Value() };
 	std::string query{ info[1].As<Napi::String>().Utf8Value() };
 
-	// Convert filters argument
-	Napi::Object o{ info[2].As<Napi::Object>() };
-	Hour from{ Hour(o.Get("hourFrom").As<Napi::Number>().Uint32Value()) };
-	Hour to{ Hour(o.Get("hourTo").As<Napi::Number>().Uint32Value()) };
-	uint8_t weekdays_mask{ uint8_t(o.Get("weekdaysMask").As<Napi::Number>().Uint32Value()) };
-
-	size_t src_search_ctx_ID{ info[3].As<Napi::Number>().Uint32Value() };
-	std::string screenshot{ info[4].As<Napi::String>().Utf8Value() };
-	std::string time_string{ info[5].As<Napi::String>().Utf8Value() };
-
-	Filters filters{ TimeFilter{ from, to }, WeekDaysFilter{ weekdays_mask } };
-
-	std::cout << "Calling `rescore` with filters: "
-	          << "\n\t from=" << size_t(from) << "\n\t to=" << size_t(to)
-	          << "\n\t weekdays_mask=" << size_t(weekdays_mask) << std::endl;
-
-	try {
-		// << Core >>
-		auto rescore_res{ somhunter->rescore(query, &filters, src_search_ctx_ID, screenshot, time_string) };
-		// << Core >>
-
-		return construct_result_from_RescoreResult(env, rescore_res);
-
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
-	}
-
-	return Napi::Object{};
-}
-
-
-Napi::Value
-SomHunterNapi::rescore_collage(const Napi::CallbackInfo &info)
-{
-	debug_d("API: CALL \n\t rescore_collage\n\t\t query " << std::endl);
-
-	Napi::Env env = info.Env();
-	Napi::HandleScope scope(env);
-
-	// Process arguments
-	int length = info.Length();
-
-	if (length != 8) {
-		Napi::TypeError::New(
-		  env,
-		  "Wrong number of parameters: SomHunterNapi::rescore_collage")
-		  .ThrowAsJavaScriptException();
-	}
-	Napi::Float32Array js_lefts = info[0].As<Napi::Float32Array>();
-	Napi::Float32Array js_tops = info[1].As<Napi::Float32Array>();
-	Napi::Float32Array js_heights = info[2].As<Napi::Float32Array>();
-	Napi::Float32Array js_widths = info[3].As<Napi::Float32Array>();
-	Napi::Int32Array js_p_heights = info[4].As<Napi::Int32Array>();
-	Napi::Int32Array js_p_widths = info[5].As<Napi::Int32Array>();
-	Napi::Int32Array js_break_point = info[6].As<Napi::Int32Array>();
-	Napi::Uint8Array js_concat_pics = info[7].As<Napi::Uint8Array>();
-
+	// ----- Collage argument
+	Napi::Object o_collages{ info[2].As<Napi::Object>() };
+	Napi::Uint8Array js_concat_pics = o_collages.Get("pictures").As<Napi::Uint8Array>();
+	Napi::Float32Array js_lefts = o_collages.Get("left").As<Napi::Float32Array>();
+	Napi::Float32Array js_tops = o_collages.Get("top").As<Napi::Float32Array>();
+	Napi::Float32Array js_heights = o_collages.Get("width").As<Napi::Float32Array>();
+	Napi::Float32Array js_widths = o_collages.Get("height").As<Napi::Float32Array>();
+	Napi::Int32Array js_p_heights = o_collages.Get("pixel_width").As<Napi::Int32Array>();
+	Napi::Int32Array js_p_widths = o_collages.Get("pixel_height").As<Napi::Int32Array>();
+	Napi::Int32Array js_break_point = o_collages.Get("break").As<Napi::Int32Array>();
 
 	Collage collage;
 
-	for(std::size_t i = 0; i < js_lefts.ElementLength(); i++)
-	{
+	for (std::size_t i = 0; i < js_lefts.ElementLength(); i++) {
 		collage.lefts.push_back(js_lefts[i]);
 		collage.tops.push_back(js_tops[i]);
 		collage.relative_heights.push_back(js_heights[i]);
@@ -611,35 +562,50 @@ SomHunterNapi::rescore_collage(const Napi::CallbackInfo &info)
 	collage.break_point = js_break_point[0];
 	collage.channels = 4;
 
-
 	std::size_t index = 0;
 	std::size_t end = 0;
-	for(std::size_t i = 0; i < collage.pixel_heights.size(); i++)
-	{
+	for (std::size_t i = 0; i < collage.pixel_heights.size(); i++) {
 		std::vector<float> img;
 		end = index + (collage.pixel_heights[i] * collage.pixel_widths[i] * 4);
 
-		for(index; index < end; index++)
-		{
+		for (index; index < end; index++) {
 			img.push_back(js_concat_pics[index]);
 		}
 		collage.images.push_back(img);
 	}
 
-	debug_d("API: CALL \n\t images\n\t\t " << collage.images.size() << std::endl);
+	// -----
+
+	// Convert filters argument
+	Napi::Object o{ info[3].As<Napi::Object>() };
+	Hour from{ Hour(o.Get("hourFrom").As<Napi::Number>().Uint32Value()) };
+	Hour to{ Hour(o.Get("hourTo").As<Napi::Number>().Uint32Value()) };
+	uint8_t weekdays_mask{ uint8_t(o.Get("weekdaysMask").As<Napi::Number>().Uint32Value()) };
+
+	size_t src_search_ctx_ID{ info[4].As<Napi::Number>().Uint32Value() };
+	std::string screenshot{ info[5].As<Napi::String>().Utf8Value() };
+	std::string time_string{ info[6].As<Napi::String>().Utf8Value() };
+
+	Filters filters{ TimeFilter{ from, to }, WeekDaysFilter{ weekdays_mask } };
+
+	std::cout << "Calling `rescore` with filters: "
+	          << "\n\t from=" << size_t(from) << "\n\t to=" << size_t(to)
+	          << "\n\t weekdays_mask=" << size_t(weekdays_mask) << std::endl;
 
 	try {
-		debug_d("API: CALL \n\t rescore_collage\n\t\t " << std::endl);
-		somhunter->rescore(collage);
+		// << Core >>
+		auto rescore_res{ somhunter->rescore(
+		  query, collage, &filters, src_search_ctx_ID, screenshot, time_string) };
+		// << Core >>
 
-	} catch (const std::exception &e) {
+		return construct_result_from_RescoreResult(env, rescore_res);
+
+	} catch (const std::exception& e) {
 		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
 }
-
-
 
 Napi::Value
 SomHunterNapi::reset_all(const Napi::CallbackInfo& info)
@@ -713,7 +679,8 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo& info)
 	DisplayType dt{ str_to_disp_type(disp_type) };
 
 	try {
-		debug_d("API: CALL \n\t log_scroll\n\t disp_type=" << disp_type << "\n\tdeltaY=" << delta_Y << std::endl);
+		debug_d("API: CALL \n\t log_scroll\n\t disp_type=" << disp_type << "\n\tdeltaY=" << delta_Y
+		                                                   << std::endl);
 
 		somhunter->log_scroll(dt, delta_Y);
 	} catch (const std::exception& e) {

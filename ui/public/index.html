@@ -15,6 +15,7 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -25,6 +26,11 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+
+      <!-- Include jQuery UI v1.12.1 -->
+      <link rel="stylesheet" type="text/css"  href="/assets/css/jquery-ui.min.css">
+      <script src="/assets/js/jquery.js"></script>
+      <script src="/assets/js/jquery-ui.min.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -40,4 +46,66 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+
+  <script>
+    let collage_temporal_queries;
+    let collage_canvases;
+    
+    function deleteElementByUid(uid) {
+        var elem = document.getElementById(uid);
+        elem.remove();
+    }
+
+    function draggableAndResizable(elements, containment) {
+          elements.draggable({
+              containment: containment
+          });
+          elements.resizable({
+              containment: containment,
+              aspectRatio: true,
+          });
+      }
+      
+      function collageImageElement(uid, src) {
+          return $(
+              `<div id="${uid}" class="collage-image ui-widget-content">
+                  <span class="delete" onclick="deleteElementByUid($(this).closest('div').attr('id'))">&times;</span>
+                  <img src="${src}">
+              </div>`
+          );
+      }
+
+      $(document).ready(function() {
+        collage_temporal_queries = $("#collageTemporalQueries");
+        collage_canvases = $(".collage-canvas")
+        var available_id = 0;
+      
+      
+        $(document).on('paste', function (event) {
+            const active_canvas = $(".paste-active");
+            // use event.originalEvent.clipboard for newer chrome versions
+            var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            // find pasted image among pasted items
+            var blob = null;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image") === 0) {
+                    blob = items[i].getAsFile();
+                }
+            }
+            // load image if there is a pasted image
+            if (blob !== null) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    const encoded_image = event.target.result;
+                    const collage_image = collageImageElement("image_" + available_id, encoded_image);
+                    draggableAndResizable(collage_image, active_canvas);
+                    active_canvas.append(collage_image);
+                    available_id++;
+                };
+                reader.readAsDataURL(blob);
+            }
+        });
+    });
+    
+  </script>
 </html>

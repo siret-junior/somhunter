@@ -16,6 +16,7 @@ import {
   getTextQueryInput,
   takeScreenshotOfElem,
   getFiltersInput,
+  getCollageInputs,
 } from "../utils/utils";
 
 export function createRescore(s, destDisplay) {
@@ -25,7 +26,8 @@ export function createRescore(s, destDisplay) {
     // If no need for the rescore
     // \todo This state is reset on refresh! If need to handle this,
     //      store this dirty flag in the core/local storage
-    if (!state.indicators.queryChanged) {
+    if (!state.indicators.queryChanged && false) {
+      // Just because collage
       return;
     }
 
@@ -44,16 +46,24 @@ export function createRescore(s, destDisplay) {
       );
     }
 
-    // Current text queries
-    // \todo Do it propperly!
-    const query0 = getTextQueryInput(0).value;
-    const query1 = getTextQueryInput(1).value;
+    let query0 = null;
+    let query1 = null;
+    let filters = null;
+    let collagesData = null;
 
-    const collage0 = getCollageQueryInput(0).value;
-    const collage1 = getCollageQueryInput(1).value;
+    if (config.ui.queries.text) {
+      // Current text queries
+      // \todo Do it propperly!
+      query0 = getTextQueryInput(0).value;
+      query1 = getTextQueryInput(1).value;
+    }
+    if (config.ui.queries.collage) {
+      collagesData = getCollageInputs();
+    }
 
-    const filters = getFiltersInput();
-    console.info(filters);
+    if (config.ui.queries.filters) {
+      filters = getFiltersInput();
+    }
 
     // POST data
     const reqData = {
@@ -62,6 +72,7 @@ export function createRescore(s, destDisplay) {
       q0: query0,
       q1: query1,
       filters,
+      collages: collagesData,
     };
 
     const requestSettings = config.api.endpoints.searchRescore;

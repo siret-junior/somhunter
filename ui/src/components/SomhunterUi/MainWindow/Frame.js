@@ -105,11 +105,17 @@ function onWheellHandler(settings, props, e) {
       const gridEl = props.replayGridRef.current;
       if (gridEl != null) {
         const left = Math.min(
-          Math.floor(gridEl.props.columnCount * gridEl.props.columnWidth - gridEl.props.width),
+          Math.floor(
+            gridEl.props.columnCount * gridEl.props.columnWidth -
+              gridEl.props.width
+          ),
           calcReplayLeftOffset(gridEl, frameId, delta)
         );
         //gridEl.state.scrollLeft = left;
-        gridEl.scrollToPosition({ scrollLeft: left, scrollTop: gridEl.state.scrollTop });
+        gridEl.scrollToPosition({
+          scrollLeft: left,
+          scrollTop: gridEl.state.scrollTop,
+        });
       } else {
         console.error("gridEl is null => no scrolling in replay window!");
       }
@@ -128,7 +134,15 @@ function onWheellHandler(settings, props, e) {
   }
 }
 
-const weedaysString = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const weedaysString = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
 
 function Frame(props) {
   const settings = useSettings();
@@ -247,7 +261,6 @@ function Frame(props) {
         </Button>
       </Col>
     );
-
 }
 
 const stateToProps = (state) => {

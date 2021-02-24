@@ -9,6 +9,7 @@ import reducers from "./reducers";
 import App from "./components/App";
 
 import "./index.scss";
+import "./collage_ui.scss";
 
 function disableProdLogging() {
   window.console.debug = () => null;
@@ -24,6 +25,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   // Turn on browser support for dev tools extension
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  ``;
 
   middleware = composeEnhancers(applyMiddleware(thunk));
 }

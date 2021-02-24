@@ -1,0 +1,18 @@
+FROM debian:testing-slim
+
+RUN apt-get -qq update
+RUN apt-get install -y --no-install-recommends \
+      build-essential nodejs npm gyp libcurl4-openssl-dev pkg-config
+RUN  apt-get install -y python3 wget unzip
+
+
+RUN wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.7.1%2Bcpu.zip
+RUN unzip libtorch-cxx11-abi-shared-with-deps-1.7.1+cpu.zip
+
+RUN rm -fr /var/lib/apt /var/cache/apt
+
+WORKDIR /host/
+
+
+
+EXPOSE 8080

@@ -420,7 +420,7 @@ exports.rescore = function (req, res) {
   // \todo Dummy data
   let filters = null;
 
-  if (global.uiCfg.textSearch.showMetadataFilters) {
+  if (global.uiCfg.textSearch.showMetadataFilters && body.filters !== null) {
     // [true, false, false, true, true, true, true]
     const weekdays = body.filters.weekdays;
     let weekdaysMask = 0x0;
@@ -439,10 +439,19 @@ exports.rescore = function (req, res) {
       weekdaysMask,
     };
   }
-  console.warn("filters:", filters);
+
+  const collageData = req.body.collages;
 
   // << Core NAPI >>
-  const history = global.core.rescore(user_token, textQuery, filters, srcSearchCtxId, screenshotFilename, timeStr);
+  const history = global.core.rescore(
+    user_token,
+    textQuery,
+    filters,
+    collageData,
+    srcSearchCtxId,
+    screenshotFilename,
+    timeStr
+  );
   // << Core NAPI >>
 
   res.status(200).jsonp(history);

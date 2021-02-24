@@ -1,5 +1,10 @@
 {
     "development": {
+        "queries": {
+            "text": false,
+            "filters": false,
+            "collage": true
+        },
         "media": {
             "thumbsPathPrefix": "/frames/",
             "framesPathPrefix": "/frames/"

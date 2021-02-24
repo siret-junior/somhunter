@@ -229,9 +229,15 @@ class Autocomplete extends Component {
               if (index === activeSuggestion) {
                 className += "active";
               }
-              
+
               let exampleImagesElems = suggestion.exampleFrames.map(
-                (frame, i) => <img key={`ei_${i}`} src={`${config.ui.media.thumbsPathPrefix}${frame}`} alt="Example." />
+                (frame, i) => (
+                  <img
+                    key={`ei_${i}`}
+                    src={`${config.ui.media.thumbsPathPrefix}${frame}`}
+                    alt="Example."
+                  />
+                )
               );
 
               return (

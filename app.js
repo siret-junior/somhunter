@@ -24,7 +24,7 @@ const express = require("express");
 const session = require("express-session");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const fs = require("fs");
 const cors = require("cors");
@@ -117,7 +117,7 @@ if (process.env.NODE_ENV !== "production") {
 // Instantiate Express app
 const app = express();
 
-app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Setup where EJS templates are stored

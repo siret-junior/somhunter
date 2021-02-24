@@ -48,8 +48,6 @@ private:
 
 	Napi::Value rescore(const Napi::CallbackInfo& info);
 
-	Napi::Value rescore_collage(const Napi::CallbackInfo &info);
-
 	Napi::Value reset_all(const Napi::CallbackInfo& info);
 
 	Napi::Value autocomplete_keywords(const Napi::CallbackInfo& info);

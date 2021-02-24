@@ -20,3 +20,10 @@ export function crSetQueryChanged(settings, value) {
     payload: value,
   };
 }
+
+export function crSetCollageChanged(settings, value) {
+  return {
+    type: CS.SET_COLLAGE_CHANGED,
+    payload: value,
+  };
+}
