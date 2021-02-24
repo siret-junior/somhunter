@@ -32,6 +32,7 @@
                 "somhunter-core/src/",
                 "somhunter-core/3rdparty/json11/",
                 "somhunter-core/3rdparty/stb/",
+                "somhunter-core/3rdparty/cereal/include/",
                 "somhunter-core/3rdparty/libtorch/include/torch/csrc/api/include",
                 "somhunter-core/3rdparty/libtorch/include/",
             ],
@@ -50,10 +51,10 @@
             "msvs_settings": {
                 "VCCLCompilerTool": {
                     "AdditionalOptions": [
-                                    "-std:c++17",
-                                    "/MP /EHsc /Qspectre",
-                                    "/GR",
-                                    "/experimental:external /external:anglebrackets /external:W0"
+                        "-std:c++17",
+                        "/MP /EHsc /Qspectre",
+                        "/GR",
+                        "/experimental:external /external:anglebrackets /external:W0"
                                 
                     ]
                 } 
@@ -134,12 +135,7 @@
                         ],
                         "msvs_settings": {
                             "VCCLCompilerTool": {
-                                "AdditionalOptions": [
-                                    "-std:c++17",
-                                    "/MP /EHsc /Qspectre",
-                                    "/GR",
-                                    "/experimental:external /external:anglebrackets /external:W0"
-                                ]
+                                "AdditionalOptions": [                                ]
                             },
                             "VCLinkerTool": {
                                 "AdditionalLibraryDirectories": [

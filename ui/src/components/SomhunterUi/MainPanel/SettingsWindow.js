@@ -110,7 +110,7 @@ function getCommonBodyJsx(s) {
       </p>
       <p>
         <strong>Logs directory: </strong>
-        {cfg.VBS_submit_archive_dir}
+        {cfg.log_submitted_dir}
       </p>
       <p>
         <strong>Apply action trottle in the core: </strong>

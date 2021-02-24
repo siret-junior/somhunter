@@ -440,14 +440,23 @@ exports.rescore = function (req, res) {
     };
   }
 
-  const collageData = req.body.collages;
+  const collageData = {
+    left: new Float32Array(body.collages.left), 
+    top: new Float32Array(body.collages.top), 
+    height: new Float32Array(body.collages.height),
+    width: new Float32Array(body.collages.width), 
+    pixel_height: new Int32Array(body.collages.pixel_height),
+    pixel_width: new Int32Array(body.collages.pixel_width),
+    break: new Int32Array(body.collages.break),
+    pictures: new Uint8Array(body.collages.pictures)
+  }
 
   // << Core NAPI >>
   const history = global.core.rescore(
     user_token,
     textQuery,
-    filters,
     collageData,
+    filters,
     srcSearchCtxId,
     screenshotFilename,
     timeStr

@@ -124,7 +124,7 @@ function MainPanel(props) {
         </Col>
       </ControlsPanel>
 
-      {config.ui.queries.filters ? <FiltersPanel /> : null}
+      <FiltersPanel visible={config.ui.queries.filters ? true : false} />
 
       {config.ui.queries.text ? (
         <TextSearchPanel

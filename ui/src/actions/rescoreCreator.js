@@ -46,8 +46,8 @@ export function createRescore(s, destDisplay) {
       );
     }
 
-    let query0 = null;
-    let query1 = null;
+    let query0 = "";
+    let query1 = "";
     let filters = null;
     let collagesData = null;
 
@@ -61,9 +61,9 @@ export function createRescore(s, destDisplay) {
       collagesData = getCollageInputs();
     }
 
-    if (config.ui.queries.filters) {
-      filters = getFiltersInput();
-    }
+    
+    filters = getFiltersInput();
+    
 
     // POST data
     const reqData = {

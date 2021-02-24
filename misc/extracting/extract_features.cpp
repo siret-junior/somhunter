@@ -128,14 +128,14 @@ torch::Tensor get_features(cv::Mat image,
 		cv::resize(region, region, cv::Size(224, 224));
 
 		auto tensor_image = torch::from_blob(region.data, {region.rows, region.cols, region.channels() }, at::kByte).to(torch::kFloat);
-
+		
 		torch::Tensor t_means = torch::from_blob(means, {3}).unsqueeze_(0).unsqueeze_(0);
 
 		auto tensor_image_norm = tensor_image - t_means;
 
 		tensor_image = tensor_image.permute({ 2,0,1 });
 		tensor_image_norm = tensor_image_norm.permute({ 2,0,1 });
-
+		
 		tensor_image.unsqueeze_(0);
 		tensor_image_norm.unsqueeze_(0);
 

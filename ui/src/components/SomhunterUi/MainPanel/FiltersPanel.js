@@ -32,7 +32,10 @@ function FiltersPanel(props) {
 
   const strArr = ["M", "T", "W", "T", "F", "S", "S"];
   return (
-    <Container fluid>
+    <Container fluid
+     style={{display: props.visible ? "block" : "none" }}
+    
+    >
       <Form
         id={config.ui.htmlElIds.queryFilters}
         className="filters-panel panel row"

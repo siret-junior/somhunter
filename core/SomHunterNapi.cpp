@@ -537,7 +537,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 	// Convert arguments
 	std::string user_token{ info[0].As<Napi::String>().Utf8Value() };
 	std::string query{ info[1].As<Napi::String>().Utf8Value() };
-
+	
 	// ----- Collage argument
 	Napi::Object o_collages{ info[2].As<Napi::Object>() };
 	Napi::Uint8Array js_concat_pics = o_collages.Get("pictures").As<Napi::Uint8Array>();
@@ -545,8 +545,8 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 	Napi::Float32Array js_tops = o_collages.Get("top").As<Napi::Float32Array>();
 	Napi::Float32Array js_heights = o_collages.Get("width").As<Napi::Float32Array>();
 	Napi::Float32Array js_widths = o_collages.Get("height").As<Napi::Float32Array>();
-	Napi::Int32Array js_p_heights = o_collages.Get("pixel_width").As<Napi::Int32Array>();
-	Napi::Int32Array js_p_widths = o_collages.Get("pixel_height").As<Napi::Int32Array>();
+	Napi::Int32Array js_p_widths = o_collages.Get("pixel_width").As<Napi::Int32Array>();
+	Napi::Int32Array js_p_heights = o_collages.Get("pixel_height").As<Napi::Int32Array>();
 	Napi::Int32Array js_break_point = o_collages.Get("break").As<Napi::Int32Array>();
 
 	Collage collage;

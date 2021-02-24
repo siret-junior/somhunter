@@ -73,8 +73,8 @@ export type CoreApiConfig = {
     max_frame_filename_len: number;
     pre_PCA_features_dim: number;
     submitter_config: {
-      VBS_submit_archive_dir: string;
-      VBS_submit_archive_log_suffix: string;
+      log_submitted_dir: string;
+      log_file_suffix: string;
       apply_log_action_timeout_in_core: boolean;
       extra_verbose_log: boolean;
       log_action_timeout: number;

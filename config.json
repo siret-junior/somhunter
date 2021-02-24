@@ -24,8 +24,11 @@
 		"team_ID": 4,
 		"member_ID": 1,
 	  
-		"VBS_submit_archive_dir": "logs/submitted_logs/",
-		"VBS_submit_archive_log_suffix": ".json",
+		"log_submitted_dir": "logs/submitted_logs/",
+		"log_actions_dir": "logs/actions/",
+		"log_collages_dir": "logs/collages/",
+		"log_requests_dir": "logs/requests/",
+		"log_file_suffix": ".json",
 		"extra_verbose_log": false,
 	  
 		"send_logs_to_server_period": 10000,

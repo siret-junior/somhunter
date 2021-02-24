@@ -102,6 +102,7 @@ export function getCollageInputs() {
   }
   // console.log(conc_pics)
 
+  
   let body = {
     pictures: conc_pics,
     left: lefts,

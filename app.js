@@ -80,8 +80,9 @@ const myFormat = printf(({ level, message, timestamp }) => {
 });
 
 // Make sure that this dir exists
-if (fs.accessSync(global.serverCfg.logsDir)) {
-  fs.mkdirSync(global.serverCfg.logsDir, { recursive: true }, (err) => {
+const logsdir = path.join(global.rootDir, global.serverCfg.logsDir);
+if (!fs.existsSync(logsdir)){
+  fs.mkdirSync(logsdir, { recursive: true }, (err) => {
     if (err) throw err;
   });
 }
@@ -95,10 +96,10 @@ global.logger = createLogger({
     // Write all logs with level `error` and below to `error.log`
     // Write all logs with level `info` and below to `combined.log`
     new transports.Stream({
-      stream: fs.createWriteStream(global.serverCfg.logsDir + "error.log", { flags: "a+" }),
+      stream: fs.createWriteStream(logsdir + "error.log", { flags: "a+" }),
       level: "error",
     }),
-    new transports.Stream({ stream: fs.createWriteStream(global.serverCfg.logsDir + "combined.log", { flags: "a+" }) }),
+    new transports.Stream({ stream: fs.createWriteStream(logsdir + "combined.log", { flags: "a+" }) }),
   ],
 });
 
