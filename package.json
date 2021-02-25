@@ -15,6 +15,7 @@
     "build-ui": "npm run build --prefix ./ui/",
     "postbuild-ui": "npx gulp createSymlinks",
     "build": "node-gyp build && npm run build-ui",
+    "build-server": "node-gyp build",
     "rebuild": "node-gyp rebuild",
     "build:debug": "node-gyp build --debug",
     "rebuild:debug": "node-gyp rebuild --debug",

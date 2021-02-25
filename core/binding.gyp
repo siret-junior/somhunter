@@ -46,10 +46,11 @@
                 "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"
             ],
             "cflags_cc": [
-                "-std=c++17","-fexceptions", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1"
+                "-std=c++17","-fno-exceptions", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1"
             ],
             "msvs_settings": {
                 "VCCLCompilerTool": {
+                    'ExceptionHandling': 1,
                     "AdditionalOptions": [
                         "-std:c++17",
                         "/MP /EHsc /Qspectre",

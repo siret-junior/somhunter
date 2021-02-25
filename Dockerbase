@@ -3,12 +3,13 @@ FROM debian:testing-slim
 RUN apt-get -qq update
 RUN apt-get install -y --no-install-recommends \
       build-essential nodejs npm gyp libcurl4-openssl-dev pkg-config
-RUN  apt-get install -y python3 wget unzip
+RUN  apt-get install -y python python3 wget unzip
 
 RUN rm -fr /var/lib/apt /var/cache/apt
 
-WORKDIR /host/
+WORKDIR /opt/somhunter/
 
 
-
-EXPOSE 8080
+EXPOSE 8888
+EXPOSE 5000
+EXPOSE 3000
