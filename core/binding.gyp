@@ -105,7 +105,7 @@
                             },
                         ],
                         "include_dirs":[
-                            "C:\\Program Files\\curl\\include\\",
+                            "<!(echo %cd%)\\somhunter-core\\3rdparty\libcurl\\win\\curl\\include\\",
                         ],
                         "link_settings": {
                             "libraries": [
@@ -120,8 +120,8 @@
                             {
                                 "destination": "<(PRODUCT_DIR)",
                                 "files": [ 
-                                    "C:\\Program Files\\curl\\bin\\libcurl.dll", 
-                                    "C:\\Program Files\\curl\\bin\\zlib1.dll",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\libcurl\\win\\curl\\bin\\libcurl.dll", 
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\libcurl\\win\\curl\\bin\\zlib1.dll",
                                     "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\torch.dll",
                                     "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\c10.dll",
                                     "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\torch_cpu.dll",
@@ -139,7 +139,7 @@
                             },
                             "VCLinkerTool": {
                                 "AdditionalLibraryDirectories": [
-                                    "C:\\Program Files\\curl\\lib\\",
+                                    "<!(echo %cd%)\\somhunter-core\\3rdparty\libcurl\\win\\curl\\lib\\",
                                     "<!(echo %cd%)\\somhunter-core\\3rdparty\\libtorch\\lib\\",
                                 ]
                             }
