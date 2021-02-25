@@ -75,7 +75,7 @@ function fetchModels(cb) {
   const m2 = path.join(models_dir, "/traced_Resnext101.pt");
 
   if (!fs.existsSync(m1)) {
-    console.log(`Downloading model: ${ResNet_URL}`.orange);
+    console.log(`Downloading model: ${ResNet_URL}`);
     download(ResNet_URL, m1, (msg) => console.log(msg));
 
   } else {
@@ -83,7 +83,7 @@ function fetchModels(cb) {
   }
 
   if (!fs.existsSync(m2)) {
-    console.log(`Downloading model: ${ResNext_URL}`.orange);
+    console.log(`Downloading model: ${ResNext_URL}`);
     download(ResNet_URL, m2, (msg) => console.log(msg));
 
   } else {
@@ -94,7 +94,7 @@ function fetchModels(cb) {
 }
 
 function cleanSymlinks(cb) {
-  console.log("Deleting existing symlinks in the `ui` directory...".orange)
+  console.log("Deleting existing symlinks in the `ui` directory...")
   fs.rmdirSync("./ui/public/thumbs/", { recursive: true });
   fs.rmdirSync("./ui/public/frames/", { recursive: true });
   fs.rmdirSync("./ui/build/thumbs/", { recursive: true });
@@ -105,7 +105,7 @@ function cleanSymlinks(cb) {
 
 
 function createSymlinks(cb) {
-  console.log("Creating frames/thumbs symlinks from the `ui`...".orange)
+  console.log("Creating frames/thumbs symlinks from the `ui`...")
 
   fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", () => { });
   fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir2, "junction", () => { });
