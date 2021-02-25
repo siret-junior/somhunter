@@ -2,6 +2,12 @@
 
 # TLDR Build
 ## Installation
+0. 
+```
+  git clone https://github.com/FrankMejzlik/somhunter
+  git checkout --recurse-submodules another-branch
+```
+  
 1. Put the models to `data/ITEC_w2vv/nn_models/` (e.g. `traced_Resnet152.pt` & `traced_Resnext101.pt`)
 2. The **ITEC dataset** is bundled directly. 
     * If you want to chhange it, modify `config.json` accordingly.

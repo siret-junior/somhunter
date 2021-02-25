@@ -76,8 +76,6 @@ function cleanSymlinks(cb) {
 function createSymlinks(cb) {
   console.log("Creating frames/thumbs symlinks from the `ui`...")
 
-
-
   fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", () => {});
   fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir2, "junction", () => {});
 
@@ -86,6 +84,62 @@ function createSymlinks(cb) {
   cb();
 }
 
+function preinstall(cb) {
+  cb();
+}
+
+function clean(cb) {
+  console.log("Deleting  all...")
+
+  if (!fs.existsSync("./build/")){
+    fs.rmSync("./build/", { recursive: true, force: true });
+  }
+
+  if (!fs.existsSync(path.join(config.ui_dir, "./build/"))){
+    fs.rmSync(path.join(config.ui_dir, "./build/"), { recursive: true, force: true });
+  }
+  cb();
+}
+
+exports.clean = clean;
 exports.cleanSymlinks = cleanSymlinks;
-exports.preinstall = series(fetchModels);
-exports.postinstall = series(cleanSymlinks, createSymlinks);
+exports.createSymlinks = createSymlinks;
+exports.preinstall = preinstall;
+exports.postinstall = series(fetchModels, cleanSymlinks, createSymlinks);
+
+
+
+// var child_process = require('child_process');
+// var fs = require('fs');
+// var path = require('path');
+// var safe = 0;
+
+// let args = process.argv.splice(2).toString().replace(/,/g ,' ');
+// function recurse(_path){
+// safe ++;
+// if(safe > 5000){
+//   console.log('directory may be too large')
+//   return
+// }
+
+//   if(/node_modules$/.test(_path)){
+//     let cwd = path.resolve(__dirname ,_path)
+//     console.log('found node_modules at '+cwd)
+//     child_process.exec(`start cmd.exe /k npm ${args}`,{cwd})
+
+//     return
+//   }
+//   let directoryList = fs.readdirSync(_path);
+//     directoryList.forEach(function(nextDir){
+//     if(fs.statSync(_path+'/'+nextDir).isFile()){
+//       return
+
+//     }
+//     if(/^\./.test(nextDir)){ //.folder beginging with .
+//       return
+//     }
+//     recurse(_path+'/'+nextDir);
+
+//   })
+// }
+// recurse('./' )

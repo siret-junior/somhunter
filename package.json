@@ -3,21 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preinstall": "npx gulp preinstall",
-    "postinstall": "npx gulp postinstall",
+    "preinstall": "",
+    "postinstall": "npx gulp postinstall && cd ui && npm install && cd .. && npm run build-ui",
     "start": "concurrently -k \"npm run server\" \"npm run ui\" --prefix ./ui/",
-    "start-dev": "concurrently -k  \"npm run server\" \"npm run ui-dev\" --prefix ./ui/",
+    "start:dev": "concurrently -k  \"npm run server\" \"npm run ui-dev\" --prefix ./ui/",
     "server": "node ./bin/www somhunter",
+    "server:dev": "node ./bin/www somhunter",
     "ui": "serve -s ./ui/build",
-    "ui-dev": "npm run start --prefix ./ui/",
+    "ui:dev": "npm run start --prefix ./ui/",
     "prebuild-ui": "npx gulp cleanSymlinks",
     "build-ui": "npm run build --prefix ./ui/",
     "postbuild-ui": "npx gulp createSymlinks",
-    "build": "node-gyp build",
+    "build": "node-gyp build && npm run build-ui",
     "rebuild": "node-gyp rebuild",
     "build:debug": "node-gyp build --debug",
     "rebuild:debug": "node-gyp rebuild --debug",
-    "clean": "node-gyp clean"
+    "clean": "npx gulp clean"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
