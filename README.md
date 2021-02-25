@@ -3,8 +3,9 @@
 # TLDR Installation
 1. Clone & change to the correct branch
 ```
-  git clone https://github.com/FrankMejzlik/somhunter
-  git checkout --recurse-submodules another-branch
+  git clone https://github.com/FrankMejzlik/somhunter --recurse-submodules
+  cd somhunter
+  git checkout -b integrate-collage-hunter origin/integrate-collage-hunter --recurse-submodules
 ```
 2. Run `npm install`
 3. Models should be downloaded & installed during the `npm install`
