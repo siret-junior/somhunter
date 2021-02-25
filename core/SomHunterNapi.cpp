@@ -84,8 +84,8 @@ SomHunterNapi::SomHunterNapi(const Napi::CallbackInfo& info)
 	try {
 		somhunter = new SomHunter(cfg);
 		debug_d("API: SomHunter initialized.");
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 }
 
@@ -344,8 +344,8 @@ SomHunterNapi::get_display(const Napi::CallbackInfo& info)
 
 		return construct_result_from_GetDisplayResult(env, display_frames, page_num, path_prefix);
 
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 	return Napi::Object(env, {});
 }
@@ -378,8 +378,8 @@ SomHunterNapi::like_frames(const Napi::CallbackInfo& info)
 		debug_d("API: CALL \n\t like_frames\n\t\fr_IDs.size() = " << fr_IDs.size() << std::endl);
 
 		like_flags = somhunter->like_frames(fr_IDs);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	// Return structure
@@ -423,8 +423,8 @@ SomHunterNapi::bookmark_frames(const Napi::CallbackInfo& info)
 	std::vector<bool> like_flags;
 	try {
 		like_flags = somhunter->bookmark_frames(fr_IDs);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	// Return structure
@@ -600,8 +600,8 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 
 		return construct_result_from_RescoreResult(env, rescore_res);
 
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -626,8 +626,8 @@ SomHunterNapi::reset_all(const Napi::CallbackInfo& info)
 
 		somhunter->reset_search_session();
 
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -653,8 +653,8 @@ SomHunterNapi::log_video_replay(const Napi::CallbackInfo& info)
 		debug_d("API: CALL \n\t log_video_replay\n\t frame_ID = " << fr_ID << std::endl);
 
 		somhunter->log_video_replay(fr_ID, delta);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -683,8 +683,8 @@ SomHunterNapi::log_scroll(const Napi::CallbackInfo& info)
 		                                                   << std::endl);
 
 		somhunter->log_scroll(dt, delta_Y);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -709,8 +709,8 @@ SomHunterNapi::log_text_query_change(const Napi::CallbackInfo& info)
 		debug_d("API: CALL \n\t log_text_query_change\n\t query=" << query << std::endl);
 
 		somhunter->log_text_query_change(query);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -738,8 +738,8 @@ SomHunterNapi::autocomplete_keywords(const Napi::CallbackInfo& info)
 	std::vector<const Keyword*> kws;
 	try {
 		kws = somhunter->autocomplete_keywords(prefix, count);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	// Return structure
@@ -837,8 +837,8 @@ SomHunterNapi::login_to_dres(const Napi::CallbackInfo& info)
 
 		debug_d("API: RETURN \n\t login_to_dres()\n\t\result = " << result);
 
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	napi_value res;
@@ -870,8 +870,8 @@ SomHunterNapi::is_som_ready(const Napi::CallbackInfo& info)
 
 		debug_d("API: RETURN \n\t som_ready()\n\t\tis_ready = " << is_ready);
 
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	napi_value result;
@@ -899,8 +899,8 @@ SomHunterNapi::submit_to_server(const Napi::CallbackInfo& info)
 		debug_d("API: CALL \n\t submit_to_server\n\t\frame_ID = " << frame_ID);
 
 		somhunter->submit_to_server(frame_ID);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -1095,8 +1095,8 @@ SomHunterNapi::get_search_context(const Napi::CallbackInfo& info)
 
 		// Return the processed result
 		return construct_result_from_SearchContext(env, user_context.ctx, user_context.bookmarks);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -1172,8 +1172,8 @@ SomHunterNapi::get_user_context(const Napi::CallbackInfo& info)
 
 		// Return the processed result
 		return construct_result_from_UserContext(env, user_context);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};
@@ -1206,8 +1206,8 @@ SomHunterNapi::switch_search_context(const Napi::CallbackInfo& info)
 
 		// Return the processed result
 		return construct_result_from_UserContext(env, user_context);
-	} catch (const std::exception& e) {
-		Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+	} catch (const std::exception&) {
+		Napi::Error::New(env, "Core exception thrown!").ThrowAsJavaScriptException();
 	}
 
 	return Napi::Object{};

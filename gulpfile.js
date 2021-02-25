@@ -84,7 +84,7 @@ function fetchModels(cb) {
 
   if (!fs.existsSync(m2)) {
     console.log(`Downloading model: ${ResNext_URL}`);
-    download(ResNet_URL, m2, (msg) => console.log(msg));
+    download(ResNext_URL, m2, (msg) => console.log(msg));
 
   } else {
     console.log(`Model ${m2} found!`.green);

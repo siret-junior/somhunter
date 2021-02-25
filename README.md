@@ -31,6 +31,9 @@ npm run start
 npm run server:dev
 # OR
 npm run server
+
+# To rebuild the C++ core
+npm run build-server
 ```
 
 ## UI
@@ -38,6 +41,9 @@ npm run server
 npm run ui:dev
 # OR
 npm run ui # Changes in the UI require `npm run build-ui` so the static build is generated
+
+# To rebuild the UI 
+npm run build-ui
 ```
 
 
