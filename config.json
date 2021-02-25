@@ -72,8 +72,8 @@
 		
 	"LSC_metadata_file": "",
 
-	"model_W2VV_img_bias": "data/ITEC_w2vv/nn_models/w2vv-img_bias-2048floats.bin",
-  	"model_W2VV_img_weigths": "data/ITEC_w2vv/nn_models/w2vv-img_weight-2048x4096floats.bin",
+	"model_W2VV_img_bias": "data/nn_models/w2vv-img_bias-2048floats.bin",
+  	"model_W2VV_img_weigths": "data/nn_models/w2vv-img_weight-2048x4096floats.bin",
 	
 	"model_ResNet_file": "data/nn_models/traced_Resnet152.pt",
 	"model_ResNext_file": "data/nn_models/traced_Resnext101.pt",
