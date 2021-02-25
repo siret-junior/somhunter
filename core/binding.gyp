@@ -30,7 +30,7 @@
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")",
                 "somhunter-core/src/",
-                "somhunter-core/3rdparty/json11/",
+                "-isystem somhunter-core/3rdparty/json11/",
                 "somhunter-core/3rdparty/stb/",
                 "somhunter-core/3rdparty/cereal/include/",
                 "somhunter-core/3rdparty/libtorch/include/torch/csrc/api/include",
@@ -46,7 +46,7 @@
                 "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"
             ],
             "cflags_cc": [
-                "-std=c++17","-fno-exceptions", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1"
+                "-std=c++17","-fexceptions", "-Wno-switch", "-Wno-reorder", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1"
             ],
             "msvs_settings": {
                 "VCCLCompilerTool": {

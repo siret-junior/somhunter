@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preinstall": "",
     "postinstall": "npx gulp postinstall && cd ui && npm install",
     "start:prod": "concurrently -k \"npm run server\" \"npm run ui:prod\" --prefix ./ui/",
     "start": "concurrently -k  \"npm run server\" \"npm run ui\" --prefix ./ui/",

@@ -20,8 +20,8 @@ const thumbs_scr_dir2 = path.join(__dirname, config.ui_dir, "/build/thumbs/");
 const frames_scr_dir = path.join(__dirname, config.ui_dir, "./public/frames/");
 const frames_scr_dir2 = path.join(__dirname, config.ui_dir, "/build/frames/");
 
-const thumbs_dest_dir = config.thumbs_dir;
-const frames_dest_dir = config.frames_dir;
+let thumbs_dest_dir = config.thumbs_dir;
+let frames_dest_dir = config.frames_dir;
 
 const ResNet_URL = config.model_ResNet_URL;
 const ResNext_URL = config.model_ResNext_URL;
@@ -95,10 +95,18 @@ function fetchModels(cb) {
 
 function cleanSymlinks(cb) {
   console.log("Deleting existing symlinks in the `ui` directory...")
-  fs.rmdirSync("./ui/public/thumbs/", { recursive: true });
-  fs.rmdirSync("./ui/public/frames/", { recursive: true });
-  fs.rmdirSync("./ui/build/thumbs/", { recursive: true });
-  fs.rmdirSync("./ui/build/frames/", { recursive: true });
+
+  if (process.platform === 'win32') {
+    fs.rmdirSync("./ui/public/thumbs/", { recursive: true });
+    fs.rmdirSync("./ui/public/frames/", { recursive: true });
+    fs.rmdirSync("./ui/build/thumbs/", { recursive: true });
+    fs.rmdirSync("./ui/build/frames/", { recursive: true });
+  } else {
+    if (fs.existsSync("./ui/public/thumbs")) fs.rmdirSync("./ui/public/thumbs",{force: true, recursive: true}, (e) => { console.log(e) });
+    if (fs.existsSync("./ui/public/frames"))fs.rmdirSync("./ui/public/frames",{force: true, recursive: true},(e) => { console.log(e) });
+    if (fs.existsSync("./ui/build/thumbs"))fs.rmdirSync("./ui/build/thumbs",{force: true, recursive: true},(e) => { console.log(e) });
+    if (fs.existsSync("./ui/build/frames"))fs.rmdirSync("./ui/build/frames",{force: true, recursive: true},(e) => { console.log(e) });
+  }
 
   cb();
 }
@@ -107,11 +115,29 @@ function cleanSymlinks(cb) {
 function createSymlinks(cb) {
   console.log("Creating frames/thumbs symlinks from the `ui`...")
 
-  fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", () => { });
-  fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir2, "junction", () => { });
+  if (process.platform === 'win32') {
 
-  fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir, "junction", () => { });
-  fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir2, "junction", () => { });
+    fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", (e) => { console.log(e) });
+    fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir2, "junction", (e) => { console.log(e) });
+
+    fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir, "junction", (e) => { console.log(e) });
+    fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir2, "junction", (e) => { console.log(e) });
+
+  } else {
+
+    thumbs_dest_dir = path.join("../../", thumbs_dest_dir);
+    frames_dest_dir = path.join("../../", frames_dest_dir);
+
+    process.chdir(config.ui_dir + "/public/");
+    console.log("PWD:" + process.cwd());
+    fs.symlinkSync(frames_dest_dir, "frames","dir");
+    fs.symlinkSync(thumbs_dest_dir, "thumbs","dir");
+
+    process.chdir(path.join(__dirname, config.ui_dir, "/build/"));
+    console.log("PWD:" + process.cwd());
+    fs.symlinkSync(frames_dest_dir, "frames", "dir");
+    fs.symlinkSync(thumbs_dest_dir, "thumbs", "dir");
+  }
   cb();
 }
 
