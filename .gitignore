@@ -4,7 +4,6 @@ node_modules/
 build
 data/*
 !data/ITEC_w2vv/
-.vscode/
 .vs/
 logs/*
 output/
