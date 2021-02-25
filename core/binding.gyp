@@ -30,7 +30,7 @@
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")",
                 "somhunter-core/src/",
-                "-isystem somhunter-core/3rdparty/json11/",
+                "somhunter-core/3rdparty/json11/",
                 "somhunter-core/3rdparty/stb/",
                 "somhunter-core/3rdparty/cereal/include/",
                 "somhunter-core/3rdparty/libtorch/include/torch/csrc/api/include",

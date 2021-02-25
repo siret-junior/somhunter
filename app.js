@@ -104,13 +104,13 @@ global.logger = createLogger({
 });
 
 // Log only into log files while in production
-if (process.env.NODE_ENV !== "production") {
+//if (process.env.NODE_ENV !== "production") {
   global.logger.add(
     new transports.Console({
       format: combine(timestamp(), myFormat),
     })
   );
-}
+//}
 
 /*
  * Launch the app

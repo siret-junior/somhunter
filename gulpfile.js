@@ -115,6 +115,14 @@ function cleanSymlinks(cb) {
 function createSymlinks(cb) {
   console.log("Creating frames/thumbs symlinks from the `ui`...")
 
+  const public_dir = config.ui_dir + "/public/";
+  const build_dir = path.join(__dirname, config.ui_dir, "/build/");
+
+  // Make sure `build` dir exists
+  if (!fs.existsSync(build_dir)) {
+    fs.mkdirSync(build_dir);
+  }
+
   if (process.platform === 'win32') {
 
     fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", (e) => { console.log(e) });
@@ -124,16 +132,17 @@ function createSymlinks(cb) {
     fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir2, "junction", (e) => { console.log(e) });
 
   } else {
+  
 
     thumbs_dest_dir = path.join("../../", thumbs_dest_dir);
     frames_dest_dir = path.join("../../", frames_dest_dir);
 
-    process.chdir(config.ui_dir + "/public/");
+    process.chdir(public_dir);
     console.log("PWD:" + process.cwd());
     fs.symlinkSync(frames_dest_dir, "frames","dir");
     fs.symlinkSync(thumbs_dest_dir, "thumbs","dir");
 
-    process.chdir(path.join(__dirname, config.ui_dir, "/build/"));
+    process.chdir(build_dir);
     console.log("PWD:" + process.cwd());
     fs.symlinkSync(frames_dest_dir, "frames", "dir");
     fs.symlinkSync(thumbs_dest_dir, "thumbs", "dir");

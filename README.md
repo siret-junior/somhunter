@@ -24,19 +24,12 @@
 > **NOTE**
 > In development mode of the UI, rescore will trigger also reload, because there is running auto-reload and rescore generates new file - screenshot. This does not happen in production build.
 
-## Server & UI
-```bash
-npm run start:dev
-# OR
-npm run start
-```
-
 ## Server
 > NOTE: For the first time, it needs to be launched before the UI, it generates config file into the `ui` directory.
 ```bash
-npm run server:dev
-# OR
 npm run server
+# OR
+sh run_server.sh # Includes LD_LD_LIBRARY_PATH export
 
 # To rebuild the C++ core
 npm run build-server
@@ -44,12 +37,10 @@ npm run build-server
 
 ## UI
 ```bash
-npm run ui:dev
+npm run build-ui # To rebuild the UI 
+npm run ui:prod
 # OR
-npm run ui # Changes in the UI require `npm run build-ui` so the static build is generated
-
-# To rebuild the UI 
-npm run build-ui
+sh run_ui.sh
 ```
 
 
