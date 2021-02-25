@@ -18,6 +18,12 @@
 > **NOTE: All these tasks are inside `package.json` & `gulpfile.js`.**
 
 # Run
+> **IMPORTANT:**
+> When running for the first time your browser will complain about self-signed certificate and won't respond to the UI. Just access some URL of the server (e.g.`https://localhost:8888`) and "accept the risk".
+
+> **NOTE**
+> In development mode of the UI, rescore will trigger also reload, because there is running auto-reload and rescore generates new file - screenshot. This does not happen in production build.
+
 ## Server & UI
 ```bash
 npm run start:dev

@@ -310,6 +310,7 @@ exports.searchContextPost = function (req, res) {
     timeStr = new Date().toLocaleTimeString();
     screenshotFilename = `screenshot_${ts}.jpg`;
     const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
+    
 
     var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
     console.log(screenshotFilepath);
@@ -392,6 +393,7 @@ exports.rescore = function (req, res) {
     screenshotFilename = `screenshot_${ts}.jpg`;
     const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
 
+    console.log(screenshotFilepath);
     var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
 
     fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
