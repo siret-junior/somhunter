@@ -1,8 +1,16 @@
 
+/*
+ TODOs:
+ - better error handling
+ - checksum the downloaded files
+ - better error reporting
+*/
+
 const { series } = require("gulp");
 const fs = require("fs");
 const path = require("path")
 const http = require('http');
+const colors = require('colors');
 
 const config = require("./config.json");
 
@@ -21,66 +29,89 @@ const ResNext_URL = config.model_ResNext_URL;
 const models_dir = path.join(__dirname, config.models_dir);
 
 
-function download(url, dest, cb) {
+function download(url, dest, err) {
 
   var file = fs.createWriteStream(dest);
 
-  http.get(url, function(response) {
+  http.get(url, function (response) {
     response.pipe(file);
-    file.on('finish', function() {
-      file.close(cb);
+
+    file.on('finish', function () {
+      file.close();
       console.log(`File ${url} downloaded.`)
     });
+
+  }).on("error", function (e) {
+    file.close();
+    console.log(`Deleting ${dest}`);
+    fs.rmSync(dest, { recursive: true, force: true });
+
+    console.error(`
+    
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Downloading model to '${dest}' failed! Install it manually.
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    `.red);
+
+    err(` 
+
+    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        Unable to download from ${url}.
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+    
+    `.red);
   });
 }
 
-async function fetchModels(cb) {
-  if (!fs.existsSync(models_dir)){
+function fetchModels(cb) {
+  if (!fs.existsSync(models_dir)) {
     fs.mkdirSync(models_dir, { recursive: true }, (err) => {
       if (err) throw err;
     });
   }
- 
+
   const m1 = path.join(models_dir, "/traced_Resnet152.pt");
   const m2 = path.join(models_dir, "/traced_Resnext101.pt");
 
-  if (!fs.existsSync(m2)){
-    console.log(`Downloading model: ${ResNet_URL}`);
-    await download(ResNet_URL, m1);
- 
+  if (!fs.existsSync(m1)) {
+    console.log(`Downloading model: ${ResNet_URL}`.orange);
+    download(ResNet_URL, m1, (msg) => console.log(msg));
+
   } else {
-    console.log(`Model ${m1} found!`);
+    console.log(`Model ${m1} found!`.green);
   }
 
-  if (!fs.existsSync(m2)){
-    console.log(`Downloading model: ${ResNext_URL}`);
-    await download(ResNext_URL, m2);
+  if (!fs.existsSync(m2)) {
+    console.log(`Downloading model: ${ResNext_URL}`.orange);
+    download(ResNet_URL, m2, (msg) => console.log(msg));
+
   } else {
-    console.log(`Model ${m2} found!`);
+    console.log(`Model ${m2} found!`.green);
   }
 
   cb();
 }
 
 function cleanSymlinks(cb) {
-  console.log("Deleting existing symlinks in the `ui` directory...")
-  fs.rmdirSync("./ui/public/thumbs/", {recursive: true});
-  fs.rmdirSync("./ui/public/frames/", {recursive: true});
-  fs.rmdirSync("./ui/build/thumbs/", {recursive: true});
-  fs.rmdirSync("./ui/build/frames/", {recursive: true});
+  console.log("Deleting existing symlinks in the `ui` directory...".orange)
+  fs.rmdirSync("./ui/public/thumbs/", { recursive: true });
+  fs.rmdirSync("./ui/public/frames/", { recursive: true });
+  fs.rmdirSync("./ui/build/thumbs/", { recursive: true });
+  fs.rmdirSync("./ui/build/frames/", { recursive: true });
 
   cb();
 }
 
 
 function createSymlinks(cb) {
-  console.log("Creating frames/thumbs symlinks from the `ui`...")
+  console.log("Creating frames/thumbs symlinks from the `ui`...".orange)
 
-  fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", () => {});
-  fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir2, "junction", () => {});
+  fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir, "junction", () => { });
+  fs.symlink(path.join(__dirname, thumbs_dest_dir), thumbs_scr_dir2, "junction", () => { });
 
-  fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir, "junction", () => {});
-  fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir2, "junction", () => {});
+  fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir, "junction", () => { });
+  fs.symlink(path.join(__dirname, frames_dest_dir), frames_scr_dir2, "junction", () => { });
   cb();
 }
 
@@ -89,13 +120,13 @@ function preinstall(cb) {
 }
 
 function clean(cb) {
-  console.log("Deleting  all...")
+  console.log("Deleting  all...".orange)
 
-  if (!fs.existsSync("./build/")){
+  if (fs.existsSync("./build/")) {
     fs.rmSync("./build/", { recursive: true, force: true });
   }
 
-  if (!fs.existsSync(path.join(config.ui_dir, "./build/"))){
+  if (fs.existsSync(path.join(config.ui_dir, "./build/"))) {
     fs.rmSync(path.join(config.ui_dir, "./build/"), { recursive: true, force: true });
   }
   cb();

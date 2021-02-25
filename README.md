@@ -1,30 +1,68 @@
 # SOMHunter opensource ![Node.js CI](https://github.com/siret/somhunter/workflows/Node.js%20CI/badge.svg)
 
-# TLDR Build
-## Installation
-0. 
+# TLDR Installation
+1. Clone & change to the correct branch
 ```
   git clone https://github.com/FrankMejzlik/somhunter
   git checkout --recurse-submodules another-branch
 ```
-  
-1. Put the models to `data/ITEC_w2vv/nn_models/` (e.g. `traced_Resnet152.pt` & `traced_Resnext101.pt`)
-2. The **ITEC dataset** is bundled directly. 
+2. Run `npm install`
+3. Models should be downloaded & installed during the `npm install`
+    * Check their presence in `data/nn_models/`
+    * If not, place them manually  (e.g. `traced_Resnet152.pt` & `traced_Resnext101.pt`)
+4. The **ITEC dataset** is bundled directly inside. 
     * If you want to chhange it, modify `config.json` accordingly.
-    * Also **don't forget to create according symlinks to frames/thumbnails** inside `ui/public/` & `ui/build/`.
-3. Run `npm install`
+    * Scripts should be creating according symlinks to frames/thumbnais inside `ui/public/` & `ui/build/`.
+
+> **NOTE: All these tasks are inside `package.json` & `gulpfile.js`.**
+
+# Run
+## Server & UI
+```bash
+npm run start:dev
+# OR
+npm run start
+```
 
 ## Server
-NOTE: For the first time, it needs to be launched before the UI, it generates config file into the `ui` directory.
-1. To run the server, run `npm run start`
+> NOTE: For the first time, it needs to be launched before the UI, it generates config file into the `ui` directory.
+```bash
+npm run server:dev
+# OR
+npm run server
+```
 
 ## UI
-### Development
-1. To run the UI for dev, run `cd ui && npm run start`
+```bash
+npm run ui:dev
+# OR
+npm run ui # Changes in the UI require `npm run build-ui` so the static build is generated
+```
 
-### Production
-2. To run the UI for prod, run `cd ui && npm run build` followed by `serve -s build`
-    * Before running `npm run build`, remove symlinks to frames/thumbs and create them again after the build is finished. Otherwise the build is going to follow the symlinks resulting in unnecessary copies of frames/thumbs.
+
+# Important pointers
+## Collage logging
+* Every collage rescore is logged into `logs/collages/<timestamp>/*`.
+* You can find there binary dump (e.g. `Collage_instance_serialized.bin`) that you can use to simulate that query when working on `somhunter-core` without the UI.
+    * Just look for the `TEST_COLLAGE_QUERIES` define inside `somhunter-core` to see how you can use those.
+* Used images are there as well as JFIFs.
+* Query info is inside the `query_info.json`
+
+## Working on core
+- With collage dumps available it should be easy to work only on `somhunter-core` while developing it.
+- It is build using `cmake`.
+- For more info head to `core/somhunter-core/README.md`.
+
+## Errors in build scripts
+Everything regarding the build process is in these files:
+* `core/binding.gyp` - this is build system responsible for C++ `somhunter-core` native addon compilation
+    * It is possible that you will encounter some errors, just fix whatever you need inside this file and fly!
+* `package.json` - npm start * scripts 
+* `gulpfile.js` - More complex task that are invoked from scripts inside `package.json`
+
+
+
+---
 
 
 This is an open-source version of the SOMHunter video search and retrieval
