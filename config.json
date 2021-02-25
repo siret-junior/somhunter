@@ -51,17 +51,20 @@
 		"fr_filename_frame_num_len": 8
 	},
   
-	"kws_file": "data/ITEC_w2vv/word2idx.txt",
-	"frames_path_prefix": "/thumbs/",
 	"frames_list_file": "data/ITEC_w2vv/ITEC.keyframes.dataset",
-
+	"frames_dir": "data/ITEC_w2vv/frames/",
+	"thumbs_dir": "data/ITEC_w2vv/thumbs/",
+	
+	"ui_dir": "ui/",
+	
 	"features_file_data_off": 12,
 	"features_dim": 128,
 	"features_file": "data/ITEC_w2vv/ITEC_20200411.w2vv.images.normed.128pca.viretfromat",
 	
 	"kw_bias_vec_file": "data/ITEC_w2vv/txt_bias-2048floats.bin",
 	"kw_scores_mat_file": "data/ITEC_w2vv/txt_weight-11147x2048floats.bin",
-
+	
+	"kws_file": "data/ITEC_w2vv/word2idx.txt",
 	"kw_PCA_mat_dim": 128,
 	"pre_PCA_features_dim": 2048,
 	"kw_PCA_mean_vec_file": "data/ITEC_w2vv/ITEC_20200411.w2vv.pca.mean.bin",
@@ -71,6 +74,11 @@
 
 	"model_W2VV_img_bias": "data/ITEC_w2vv/nn_models/w2vv-img_bias-2048floats.bin",
   	"model_W2VV_img_weigths": "data/ITEC_w2vv/nn_models/w2vv-img_weight-2048x4096floats.bin",
-	"model_ResNet_file": "data/ITEC_w2vv/nn_models/traced_Resnet152.pt",
-	"model_ResNext_file": "data/ITEC_w2vv/nn_models/traced_Resnext101.pt"
+	
+	"model_ResNet_file": "data/nn_models/traced_Resnet152.pt",
+	"model_ResNext_file": "data/nn_models/traced_Resnext101.pt",
+
+	"model_ResNet_URL": "http://herkules.ms.mff.cuni.cz:8889/data/nn_models/traced_Resnet152.pt",
+	"model_ResNext_URL": "http://herkules.ms.mff.cuni.cz:8889/data/nn_models/traced_Resnext101.pt",
+	"models_dir": "data/nn_models/"
 }

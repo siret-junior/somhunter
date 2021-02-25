@@ -1,5 +1,26 @@
 # SOMHunter opensource ![Node.js CI](https://github.com/siret/somhunter/workflows/Node.js%20CI/badge.svg)
 
+# TLDR Build
+## Installation
+1. Put the models to `data/ITEC_w2vv/nn_models/` (e.g. `traced_Resnet152.pt` & `traced_Resnext101.pt`)
+2. The **ITEC dataset** is bundled directly. 
+    * If you want to chhange it, modify `config.json` accordingly.
+    * Also **don't forget to create according symlinks to frames/thumbnails** inside `ui/public/` & `ui/build/`.
+3. Run `npm install`
+
+## Server
+NOTE: For the first time, it needs to be launched before the UI, it generates config file into the `ui` directory.
+1. To run the server, run `npm run start`
+
+## UI
+### Development
+1. To run the UI for dev, run `cd ui && npm run start`
+
+### Production
+2. To run the UI for prod, run `cd ui && npm run build` followed by `serve -s build`
+    * Before running `npm run build`, remove symlinks to frames/thumbs and create them again after the build is finished. Otherwise the build is going to follow the symlinks resulting in unnecessary copies of frames/thumbs.
+
+
 This is an open-source version of the SOMHunter video search and retrieval
 engine, slightly simplified from the prototype that was featured at Video
 Browser Showdown 2020 in Daejeon, Korea (see https://videobrowsershowdown.org/

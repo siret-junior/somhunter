@@ -33,10 +33,10 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "npm run ui-dev",
+    "ui-dev": "react-scripts start",
+    "ui": "serve -s build",
+    "build": "react-scripts build"
   },
   "browserslist": {
     "production": [
