@@ -20,29 +20,29 @@
 
 # Run
 > **IMPORTANT:**
-> When running for the first time your browser will complain about self-signed certificate and won't respond to the UI. Just access some URL of the server (e.g.`https://localhost:8888`) and "accept the risk".
+> When running for the first time your browser may complain about self-signed certificate and won't respond to the UI. Just access some URL of the server (e.g.`https://localhost:8888`) and "accept the risk" (HTTPS is now truned off, it should be OK, but good to know).
 
-> **NOTE**
-> In development mode of the UI, rescore will trigger also reload, because there is running auto-reload and rescore generates new file - screenshot. This does not happen in production build.
-
-## Server
+## Run the server
 > NOTE: For the first time, it needs to be launched before the UI, it generates config file into the `ui` directory.
 ```bash
-npm run server
-# OR
 sh run_server.sh # Includes LD_LIBRARY_PATH export
+# OR
+npm run server # Beware that libtorch SOs must be found
 
 # To rebuild the C++ core
 npm run build-server
 ```
 
-## UI
+## Run the UI
 ```bash
+sh run_ui.sh
+# OR
 npm run build-ui # To rebuild the UI 
 npm run ui:prod
-# OR
-sh run_ui.sh
 ```
+
+> **NOTE**
+> In development mode of the UI, rescore will trigger also reload, because there is running auto-reload and rescore generates a new file - screenshot. This does not happen in production build.
 
 
 # Important pointers
