@@ -8,6 +8,7 @@
   git checkout -b integrate-collage-hunter origin/integrate-collage-hunter --recurse-submodules
 ```
 2. Run `npm install`
+    * This will take some time since it also downloads models and libraries
 3. Models should be downloaded & installed during the `npm install`
     * Check their presence in `data/nn_models/`
     * If not, place them manually  (e.g. `traced_Resnet152.pt` & `traced_Resnext101.pt`)
@@ -29,7 +30,7 @@
 ```bash
 npm run server
 # OR
-sh run_server.sh # Includes LD_LD_LIBRARY_PATH export
+sh run_server.sh # Includes LD_LIBRARY_PATH export
 
 # To rebuild the C++ core
 npm run build-server
