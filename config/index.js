@@ -93,6 +93,7 @@ exports.initConfig = function () {
     ui: global.uiCfg,
     api: global.apiCfg,
   };
+  global.uiConfigGenerated = uiConfigGenerated
   fs.writeFile(global.serverCfg.uiConfigFilepath, JSON.stringify(uiConfigGenerated, null, 4), (e) => {
     console.error(e);
   });

@@ -215,7 +215,7 @@ if (global.coreCfg.submitter_config.submit_server == "dres" && global.coreCfg.su
 global.logger.log("info", "SOMHunter is ready...");
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1"],
+  origin: ["http://localhost:3000", "http://localhost:5000", "http://localhost:4200", "http://127.0.0.1"],
   credentials: true,
   exposedHeaders: ["set-cookie"],
 };

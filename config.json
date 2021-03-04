@@ -41,6 +41,18 @@
   	"topn_frames_per_video": 3,
 	"topn_frames_per_shot": 1,
 	
+	"model_W2VV_img_bias": "data/nn_models/w2vv-img_bias-2048floats.bin",
+  	"model_W2VV_img_weigths": "data/nn_models/w2vv-img_weight-2048x4096floats.bin",
+	
+	"model_ResNet_file": "data/nn_models/traced_Resnet152.pt",
+	"model_ResNext_file": "data/nn_models/traced_Resnext101.pt",
+
+	"model_ResNet_URL": "http://herkules.ms.mff.cuni.cz:8889/data/nn_models/traced_Resnet152.pt",
+	"model_ResNext_URL": "http://herkules.ms.mff.cuni.cz:8889/data/nn_models/traced_Resnext101.pt",
+	"models_dir": "data/nn_models/",
+
+	"ui_dir": "ui/",
+
   	"filename_offsets": {
 		"fr_filename_off": 6,
 		"fr_filename_vid_ID_off": 7,
@@ -55,8 +67,6 @@
 	"frames_dir": "data/ITEC_w2vv/frames/",
 	"thumbs_dir": "data/ITEC_w2vv/thumbs/",
 	
-	"ui_dir": "ui/",
-	
 	"features_file_data_off": 12,
 	"features_dim": 128,
 	"features_file": "data/ITEC_w2vv/ITEC_20200411.w2vv.images.normed.128pca.viretfromat",
@@ -70,15 +80,5 @@
 	"kw_PCA_mean_vec_file": "data/ITEC_w2vv/ITEC_20200411.w2vv.pca.mean.bin",
 	"kw_PCA_mat_file": "data/ITEC_w2vv/ITEC_20200411.w2vv.pca.matrix.bin",
 		
-	"LSC_metadata_file": "",
-
-	"model_W2VV_img_bias": "data/nn_models/w2vv-img_bias-2048floats.bin",
-  	"model_W2VV_img_weigths": "data/nn_models/w2vv-img_weight-2048x4096floats.bin",
-	
-	"model_ResNet_file": "data/nn_models/traced_Resnet152.pt",
-	"model_ResNext_file": "data/nn_models/traced_Resnext101.pt",
-
-	"model_ResNet_URL": "http://herkules.ms.mff.cuni.cz:8889/data/nn_models/traced_Resnet152.pt",
-	"model_ResNext_URL": "http://herkules.ms.mff.cuni.cz:8889/data/nn_models/traced_Resnext101.pt",
-	"models_dir": "data/nn_models/"
+	"LSC_metadata_file": ""
 }

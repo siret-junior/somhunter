@@ -248,9 +248,8 @@ exports.logTextQueryChange = function (req, res) {
 exports.settingsGet = function (req, res) {
   const sess = req.session;
 
-  const data = {};
-
-  res.status(200).jsonp(data);
+  
+  res.status(200).jsonp(global.uiConfigGenerated);
 };
 
 /**
@@ -485,6 +484,6 @@ exports.userContextGet = function (req, res) {
   if (userContext.search.displayType == "") {
     userContext.search.displayType = global.uiCfg.frameGrid.defaultRescoreDisplay;
   }
-
+  res.status(500);
   res.status(200).jsonp(userContext);
 };
