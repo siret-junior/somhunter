@@ -6,6 +6,8 @@ build
 .vs/
 logs/*
 output/
+public/thumbs/
+public/frames/
 public/images/*
 public/export/*
 public/_thumbs/
