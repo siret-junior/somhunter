@@ -1,4 +1,4 @@
-//g++ -std=c++17 extract_features.cpp -I libtorch/include -I libtorch/include/torch/csrc/api/include -L libtorch/lib -lc10 -ltorch -ltorch_cpu  -lstdc++fs -D_GLIBCXX_USE_CXX11_ABI=1 `pkg-config --cflags --libs opencv` -o cpp_inference
+// g++ -std=c++17 extract_features.cpp -I libtorch/include -I libtorch/include/torch/csrc/api/include -L libtorch/lib -lc10 -ltorch -ltorch_cpu  -lstdc++fs -D_GLIBCXX_USE_CXX11_ABI=1 `pkg-config --cflags --libs opencv` -o cpp_inference
 
 
 
@@ -81,10 +81,10 @@ std::vector<float> parse_float_vector(const std::string &filepath,
 std::vector<cv::Rect> get_RoIs(int width, int height)
 {
 	std::vector<std::vector<float>> RoIs = {
+		{0.0, 0.0, 1.0, 1.0},
 		{0.1, 0.2, 0.4, 0.6},
 		{0.3, 0.2, 0.4, 0.6},
 		{0.5, 0.2, 0.4, 0.6},
-		{0.0, 0.0, 1.0, 1.0},
 
 		{0.0, 0.0, 0.4, 0.6},
 		{0.2, 0.0, 0.4, 0.6},
@@ -94,7 +94,7 @@ std::vector<cv::Rect> get_RoIs(int width, int height)
 		{0.0, 0.4, 0.4, 0.6},
 		{0.2, 0.4, 0.4, 0.6},
 		{0.4, 0.4, 0.4, 0.6},
-		{0.6, 0.4, 0.4, 0.6},	
+		{0.6, 0.4, 0.4, 0.6},
 	};
 
 	std::vector<cv::Rect> rects;
@@ -176,7 +176,7 @@ int main(int argc, const char* argv[]) {
     torch::jit::script::Module resnet152;
     try 
     {
-        resnet152 = torch::jit::load("models/traced_Resnet152.pt");
+        resnet152 = torch::jit::load("data/nn_models/traced_Resnet152.pt");
     }
     catch (const c10::Error& e) 
     {
@@ -187,7 +187,7 @@ int main(int argc, const char* argv[]) {
     torch::jit::script::Module resnext101;
     try 
     {
-        resnext101 = torch::jit::load("models/traced_Resnext101.pt");
+        resnext101 = torch::jit::load("data/nn_models/traced_Resnext101.pt");
     }
     catch (const c10::Error& e) 
     {
@@ -201,12 +201,12 @@ int main(int argc, const char* argv[]) {
 	auto kw_pca_mat = torch::tensor(parse_float_vector("data/ITEC_w2vv/ITEC_20200411.w2vv.pca.matrix.bin", 128*2048)).reshape({128, 2048}).permute({1, 0});
 	auto kw_pca_mean_vec = torch::tensor(parse_float_vector("data/ITEC_w2vv/ITEC_20200411.w2vv.pca.mean.bin", 2048));
 
-	std::string thumbs = "public/thumbs/";
+	std::string thumbs = "data/ITEC_w2vv/frames/";
 	std::string frames = "data/ITEC_w2vv/ITEC.keyframes.dataset";
 
 	std::vector<std::fstream> datafiles;
 	for(int i = 0; i < 12; i++)
-		datafiles.push_back(std::fstream("data/region_" + std::to_string(i) + ".bin", std::ios::out | std::ios::binary));
+		datafiles.push_back(std::fstream("data/ITEC_w2vv/collage/region_" + std::to_string(i) + ".bin", std::ios::out | std::ios::binary));
 
 
 	std::string thumb;

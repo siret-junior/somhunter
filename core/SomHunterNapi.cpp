@@ -561,6 +561,7 @@ SomHunterNapi::rescore(const Napi::CallbackInfo& info)
 	}
 	collage.break_point = js_break_point[0];
 	collage.channels = 4;
+	collage.len = js_lefts.ElementLength();
 
 	std::size_t index = 0;
 	std::size_t end = 0;

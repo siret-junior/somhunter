@@ -3,7 +3,7 @@ FROM debian:testing-slim
 RUN apt-get -qq update
 RUN apt-get install -y --no-install-recommends \
       build-essential nodejs npm gyp libcurl4-openssl-dev pkg-config
-RUN  apt-get install -y python python3 wget unzip
+RUN  apt-get install -y python3 wget unzip
 
 RUN rm -fr /var/lib/apt /var/cache/apt
 
