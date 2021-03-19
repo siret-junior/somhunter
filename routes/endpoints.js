@@ -392,14 +392,16 @@ exports.rescore = function (req, res) {
     screenshotFilename = `screenshot_${ts}.jpg`;
     const screenshotFilepath = `${global.serverCfg.uiTempImgDir}/${screenshotFilename}`;
 
-    console.log(screenshotFilepath);
-    var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
+    if (decodedData) {
+      console.log(screenshotFilepath);
+      var decodedData = screenshotData.replace(/^data:image\/\w+;base64,/, "");
 
-    fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
-      if (e) {
-        global.logger.log("error", "Writing screenshot failed!\n\n" + e.message);
-      }
-    });
+      fs.writeFile(screenshotFilepath, decodedData, { encoding: "base64" }, function (e) {
+        if (e) {
+          global.logger.log("error", "Writing screenshot failed!\n\n" + e.message);
+        }
+      });
+    }
   }
 
   const q0 = body.q0;
@@ -441,16 +443,32 @@ exports.rescore = function (req, res) {
     };
   }
 
-  const collageData = {
-    left: new Float32Array(body.collages.left), 
-    top: new Float32Array(body.collages.top), 
-    height: new Float32Array(body.collages.height),
-    width: new Float32Array(body.collages.width), 
-    pixel_height: new Int32Array(body.collages.pixel_height),
-    pixel_width: new Int32Array(body.collages.pixel_width),
-    break: new Int32Array(body.collages.break),
-    pictures: new Uint8Array(body.collages.pictures)
+  let collageData 
+  
+  if (body.collages) {
+    collageData = {
+      left: new Float32Array(body.collages.left), 
+      top: new Float32Array(body.collages.top), 
+      height: new Float32Array(body.collages.height),
+      width: new Float32Array(body.collages.width), 
+      pixel_height: new Int32Array(body.collages.pixel_height),
+      pixel_width: new Int32Array(body.collages.pixel_width),
+      break: new Int32Array(body.collages.break),
+      pictures: new Uint8Array(body.collages.pictures)
+    }
+  } else {
+    collageData = {
+      left: new Float32Array(), 
+      top: new Float32Array(), 
+      height: new Float32Array(),
+      width: new Float32Array(), 
+      pixel_height: new Int32Array(),
+      pixel_width: new Int32Array(),
+      break: new Int32Array(),
+      pictures: new Uint8Array()
+    }
   }
+
 
   // << Core NAPI >>
   const history = global.core.rescore(
