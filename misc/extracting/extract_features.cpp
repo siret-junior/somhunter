@@ -1,4 +1,4 @@
-// g++ -std=c++17 extract_features.cpp -I libtorch/include -I libtorch/include/torch/csrc/api/include -L libtorch/lib -lc10 -ltorch -ltorch_cpu  -lstdc++fs -D_GLIBCXX_USE_CXX11_ABI=1 `pkg-config --cflags --libs opencv` -o cpp_inference
+// g++ -std=c++17 misc/extracting/extract_features.cpp -I libtorch/include -I libtorch/include/torch/csrc/api/include -L libtorch/lib -lc10 -ltorch -ltorch_cpu  -lstdc++fs -D_GLIBCXX_USE_CXX11_ABI=1 `pkg-config --cflags --libs opencv` -o cpp_inference
 
 
 
@@ -203,10 +203,11 @@ int main(int argc, const char* argv[]) {
 
 	std::string thumbs = "data/ITEC_w2vv/frames/";
 	std::string frames = "data/ITEC_w2vv/ITEC.keyframes.dataset";
+	std::string out = "data/ITEC_w2vv/collage/region_";
 
 	std::vector<std::fstream> datafiles;
 	for(int i = 0; i < 12; i++)
-		datafiles.push_back(std::fstream("data/ITEC_w2vv/collage/region_" + std::to_string(i) + ".bin", std::ios::out | std::ios::binary));
+		datafiles.push_back(std::fstream(out + std::to_string(i) + ".bin", std::ios::out | std::ios::binary));
 
 
 	std::string thumb;
