@@ -102,10 +102,10 @@ function cleanSymlinks(cb) {
     fs.rmdirSync("./ui/build/thumbs/", { recursive: true });
     fs.rmdirSync("./ui/build/frames/", { recursive: true });
   } else {
-    if (fs.existsSync("./ui/public/thumbs")) fs.rmdirSync("./ui/public/thumbs",{force: true, recursive: true}, (e) => { console.log(e) });
-    if (fs.existsSync("./ui/public/frames"))fs.rmdirSync("./ui/public/frames",{force: true, recursive: true},(e) => { console.log(e) });
-    if (fs.existsSync("./ui/build/thumbs"))fs.rmdirSync("./ui/build/thumbs",{force: true, recursive: true},(e) => { console.log(e) });
-    if (fs.existsSync("./ui/build/frames"))fs.rmdirSync("./ui/build/frames",{force: true, recursive: true},(e) => { console.log(e) });
+    if (fs.existsSync("./ui/public/thumbs")) fs.unlinkSync("./ui/public/thumbs",{force: true, recursive: true}, (e) => { console.log(e) });
+    if (fs.existsSync("./ui/public/frames")) fs.unlinkSync("./ui/public/frames",{force: true, recursive: true},(e) => { console.log(e) });
+    if (fs.existsSync("./ui/build/thumbs")) fs.unlinkSync("./ui/build/thumbs",{force: true, recursive: true},(e) => { console.log(e) });
+    if (fs.existsSync("./ui/build/frames")) fs.unlinkSync("./ui/build/frames",{force: true, recursive: true},(e) => { console.log(e) });
   }
 
   cb();

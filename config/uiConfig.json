@@ -1,5 +1,14 @@
 {
     "development": {
+        "videoReplay": {
+          "slideSpeed": 50,
+          "thumbWidth": 200
+        },
+        "videoDetail":{
+            "thumbWidth": 150,
+            "gridWidth": 8,
+            "gridHeight": 8
+        },
         "queries": {
             "text": false,
             "filters": false,
