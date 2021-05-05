@@ -125,7 +125,7 @@ torch::Tensor get_features(cv::Mat image,
 	for(int i = 0; i < RoIs.size(); i++)
 	{
 		cv::Mat region = image(RoIs[i]);
-		cv::resize(region, region, cv::Size(224, 224));
+		cv::resize(region, region, cv::Size(224, 224), 0, 0, cv::INTER_AREA);
 
 		auto tensor_image = torch::from_blob(region.data, {region.rows, region.cols, region.channels() }, at::kByte).to(torch::kFloat);
 		
@@ -216,6 +216,7 @@ int main(int argc, const char* argv[]) {
 	{
 		std::cout << thumb << '\n';
 		cv::Mat src = cv::imread(thumbs + thumb);
+		cv::cvtColor( src, src, cv::COLOR_BGR2RGB );
 		torch::Tensor features =  get_features(src,resnext101, resnet152, weights, bias, kw_pca_mat, kw_pca_mean_vec);
 		for(size_t i = 0; i < 12; i++)
 		{
