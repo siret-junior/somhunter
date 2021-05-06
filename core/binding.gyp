@@ -48,7 +48,7 @@
                 "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"
             ],
             "cflags_cc": [
-                "-std=c++17","-fexceptions", "-Wno-switch", "-Wno-reorder", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1"
+                "-std=c++17","-fexceptions", "-Wno-switch", "-Wno-reorder", "-march=native", "-frtti", "-D_GLIBCXX_USE_CXX11_ABI=1", "-fopenmp"
             ],
             "msvs_settings": {
                 "VCCLCompilerTool": {
