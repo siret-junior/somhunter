@@ -1,6 +1,6 @@
 # SOMHunter Video Search Tool
 
-SOMHunter consists of **three main parts** — [Core](./somhunter-core/README.md), [Data Server](./somhunter-data-server/README.md) and [UI](./somhunter-ui/README.md).
+SOMHunter consists of **three main parts** — [Core](https://github.com/siret-junior/somhunter-core), [Data Server](https://github.com/siret-junior/somhunter-data-server/) and [UI](https://github.com/siret-junior/somhunter-ui/).
 
 ## Prerequisites
 - Python 3
@@ -14,7 +14,7 @@ SOMHunter consists of **three main parts** — [Core](./somhunter-core/README.md
 git clone --recurse-submodules https://github.com/FrankMejzlik/somhunter
 ```
 
-The core is built with CMake which and expects some dependencies. Before going further, go to the [core project](./somhunter-core/README.md) and build the core. Whatever `somhunter` binary will be placed inside `somhunter-core/build/` directory will be used during `run` script.
+The core is built with CMake which and expects some dependencies. Before going further, go to the [core project](https://github.com/siret-junior/somhunter-core) and build the core. Whatever `somhunter` binary will be placed inside `somhunter-core/build/` directory will be used during `run` script.
 
 With core built, just run the following and watch for errors! 
 ```sh
@@ -22,7 +22,7 @@ sh install.sh
 ```
 
 
-# **[SOMHunter Core](./somhunter-core/README.md)**
+# **[SOMHunter Core](https://github.com/siret-junior/somhunter-core)**
 This is the place of the main logic — all the models and scoring functions happen there. Moreover it also runs the HTTP server handling requests that interact with the core (usually called by the UI). 
 
 ## Run
@@ -34,7 +34,7 @@ sh run-core.sh
 We try to follow the OpenAPI specification for whitch there is available HTTP documentation at [http://loacalhost:8888/api/](http://loacalhost:8888/api/) (if your core is running locally at port 8888). For more information check its README file.
 
 
-# **[SOMHunter Data Server](./somhunter-data-server/README.md)**
+# **[SOMHunter Data Server](https://github.com/siret-junior/somhunter-data-server/)**
 
 ## Run
 > **IMPORTANT:**
@@ -45,7 +45,7 @@ sh run-data-server.sh
 ```
 
 
-# **[SOMHunter UI](./somhunter-ui/README.md)**
+# **[SOMHunter UI](https://github.com/siret-junior/somhunter-ui/)**
 
 ## Run
 ```sh
