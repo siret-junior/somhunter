@@ -2,63 +2,77 @@
 
 SOMHunter consists of **three main parts** — [Core](https://github.com/siret-junior/somhunter-core), [Data Server](https://github.com/siret-junior/somhunter-data-server/) and [UI](https://github.com/siret-junior/somhunter-ui/).
 
+
+# Build
 ## Prerequisites
-- Python 3
-- Node.js (with npm)
-- Ember.js (also CLI tools)
+- Python 3 (with `python` alias pointing to python3 binary)
+- Node.js (with `npm`)
+- Ember.js
 
-
-## Build
+## Clone (recursive)
 ```sh
 # Clone with submodules
 git clone --recurse-submodules https://github.com/FrankMejzlik/somhunter
 ```
 
+## Build core
 The core is built with CMake which and expects some dependencies. Before going further, go to the [core project](https://github.com/siret-junior/somhunter-core) and build the core. Whatever `somhunter` binary will be placed inside `somhunter-core/build/` directory will be used during `run` script.
 
+## Build the rest
 With core built, just run the following and watch for errors! 
 ```sh
 sh install.sh
 ```
 
-
-# **[SOMHunter Core](https://github.com/siret-junior/somhunter-core)**
-This is the place of the main logic — all the models and scoring functions happen there. Moreover it also runs the HTTP server handling requests that interact with the core (usually called by the UI). 
-
-## Run
+# Run
+Running SOMHunter means to run all the three components.
 ```sh
 sh run-core.sh
-```
-
-## HTTP API
-We try to follow the OpenAPI specification for whitch there is available HTTP documentation at [http://loacalhost:8888/api/](http://loacalhost:8888/api/) (if your core is running locally at port 8888). For more information check its README file.
-
-
-# **[SOMHunter Data Server](https://github.com/siret-junior/somhunter-data-server/)**
-
-## Run
-> **IMPORTANT:**
-> Because data server is running on HTTP/2 it uses self-signed certificate. When running for the first time your browser may complain about it and won't respond to the UI. Just access some URL of the data server manually (e.g.`https://localhost:8889/`) and "accept the risk".
-
-```sh
 sh run-data-server.sh
-```
-
-
-# **[SOMHunter UI](https://github.com/siret-junior/somhunter-ui/)**
-
-## Run
-```sh
 sh run-ui.sh
 ```
 
+After that, the UI script should inform you that the UI is running at some port. Just visit that in your browser. By default, these are of importance:
+```sh
+# Data server
+https://localhost:8889
 
-# Important pointers
-## Collage logging
-* Every collage rescore is logged into `logs/collages/<timestamp>/*`.
-* You can find there binary dump (e.g. `Collage_instance_serialized.bin`) that you can use to simulate that query when working on `somhunter-core` without the UI.
-    * Just look for the `TEST_COLLAGE_QUERIES` define inside `somhunter-core` to see how you can use those.
-* Used images are there as well as JFIFs.
-* Query info is inside the `query_info.json`
+# HTTP Core
+https://localhost:8888
 
+# API Docs
+https://localhost:8888/api/
+
+# GUI
+http://localhost:4200
+```
+
+> ## **Don't see the frames in the UI?**
+> See *FAQ** below, point 1)
+
+
+## *Core HTTP API*
+We try to follow the OpenAPI specification for whith there is available HTTP documentation at [http://loacalhost:8888/api/](http://loacalhost:8888/api/) (if your core is running locally at port 8888). For more information check its README file.
+
+
+# Architecture
+## **[SOMHunter Core](https://github.com/siret-junior/somhunter-core)**
+This is the place of the main logic — all the models and scoring functions happen there. Moreover, it also runs the HTTP server handling requests that interact with the core (usually called by the UI). 
+
+## **[SOMHunter Data Server](https://github.com/siret-junior/somhunter-data-server/)**
+Responsible for providing the shared data for SOMHunter instances (e.g. frames, videos).
+
+## **[SOMHunter UI](https://github.com/siret-junior/somhunter-ui/)**
+This is the GUI of the tool.
+
+
+# FAQ
+## 1.  *I don't see the frames rendered in the GUI.*
+Because the data server is running on HTTP/2 it uses a self-signed certificate. When running for the first time your browser may complain about it and won't respond to the UI. Just access some URL of the data server manually (e.g.`https://localhost:8889/`) and "accept the risk".
+
+## 2.  *I'm am getting an error saying "python not found". *
+Do you have Python 3 installed? Maybe you don't have it aliased on `python` command. Consider aliasing it (or use something like `apt install python-is-pyton3`).
+
+## 3.  *I am getting errors while building the core/data-server/ui.*
+Please see the **FAQ** in the corresponding repository.
 
