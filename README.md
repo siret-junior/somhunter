@@ -48,7 +48,7 @@ http://localhost:4200
 ```
 
 > ## **Don't see the frames in the UI?**
-> See *FAQ** below, point 1)
+> See *FAQ* below, point 1)
 
 
 ## *Core HTTP API*
@@ -70,7 +70,7 @@ This is the GUI of the tool.
 ## 1.  *I don't see the frames rendered in the GUI.*
 Because the data server is running on HTTP/2 it uses a self-signed certificate. When running for the first time your browser may complain about it and won't respond to the UI. Just access some URL of the data server manually (e.g.`https://localhost:8889/`) and "accept the risk".
 
-## 2.  *I'm am getting an error saying "python not found". *
+## 2.  *I'm am getting an error saying \"python not found\".*
 Do you have Python 3 installed? Maybe you don't have it aliased on `python` command. Consider aliasing it (or use something like `apt install python-is-pyton3`).
 
 ## 3.  *I am getting errors while building the core/data-server/ui.*
