@@ -27,9 +27,13 @@ sh install.sh
 # Run
 Running SOMHunter means to run all the three components.
 ```sh
+# Run all part separately
 sh run-core.sh
 sh run-data-server.sh
 sh run-ui.sh
+
+# Or run then in parallel in one terminal
+sh run.sh
 ```
 
 After that, the UI script should inform you that the UI is running at some port. Just visit that in your browser. By default, these are of importance:
