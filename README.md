@@ -2,13 +2,19 @@
 
 SOMHunter consists of **three main parts** — [Core](./somhunter-core/README.md), [Data Server](./somhunter-data-server/README.md) and [UI](./somhunter-ui/README.md).
 
+## Prerequisites
+- Python 3
+- Node.js (with npm)
+- Ember.js (also CLI tools)
+
+
 ## Build
 ```sh
 # Clone with submodules
 git clone --recurse-submodules https://github.com/FrankMejzlik/somhunter
 ```
 
-The core is built with CMake which and expects some dependencies. Before going further, go to the [core project](./somhunter-core/README.md) and build the core.
+The core is built with CMake which and expects some dependencies. Before going further, go to the [core project](./somhunter-core/README.md) and build the core. Whatever `somhunter` binary will be placed inside `somhunter-core/build/` directory will be used during `run` script.
 
 With core built, just run the following and watch for errors! 
 ```sh
