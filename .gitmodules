@@ -1,6 +1,6 @@
 [submodule "somhunter-core"]
 	path = somhunter-core
-	url = https://github.com/FrankMejzlik/somhunter-core
+	url = https://github.com/siret-junior/somhunter-core
 	branch = fm-test-http-server
 [submodule "somhunter-ui"]
 	path = somhunter-ui
