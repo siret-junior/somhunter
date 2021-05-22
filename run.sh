@@ -7,4 +7,4 @@ printf "=============================================\n"
 ABSOLUTE_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 cd $ABSOLUTE_PATH # CD to script dir
     
-parallel -u ::: ./run-core.sh ./run-data-server.sh ./run-ui.sh
+parallel -u ::: bash ./run-core.sh bash ./run-data-server.sh bash ./run-ui.sh
