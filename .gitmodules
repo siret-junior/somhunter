@@ -1,10 +1,10 @@
 [submodule "somhunter-core"]
 	path = somhunter-core
-	url = https://github.com/siret-junior/somhunter-core
+	url = git@github.com:siret-junior/somhunter-core
 	branch = fm-test-http-server
 [submodule "somhunter-ui"]
 	path = somhunter-ui
-	url = https://github.com/siret-junior/somhunter-ui
+	url = git@github.com:siret-junior/somhunter-ui
 [submodule "somhunter-data-server"]
 	path = somhunter-data-server
-	url = https://github.com/siret-junior/somhunter-data-server.git
+	url = git@github.com:siret-junior/somhunter-data-server.git
