@@ -12,7 +12,8 @@ SOMHunter consists of **three main parts** — [Core](https://github.com/siret-j
 ## Clone (recursive)
 ```sh
 # Clone with submodules
-git clone --recurse-submodules https://github.com/FrankMejzlik/somhunter
+# Using SSH, therefore you need you SSH public key added to the remote repository
+git clone --recurse-submodules git@github.com:siret-junior/somhunter.git
 ```
 
 ## Build core
