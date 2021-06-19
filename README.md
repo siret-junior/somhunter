@@ -16,10 +16,7 @@ SOMHunter consists of **three main parts** — [Core](https://github.com/siret-j
 git clone --recurse-submodules git@github.com:siret-junior/somhunter.git
 ```
 
-## Build core
-The core is built with CMake which and expects some dependencies. Before going further, go to the [core project](https://github.com/siret-junior/somhunter-core) and build the core. Whatever `somhunter` binary will be placed inside `somhunter-core/build/` directory will be used during `run` script.
-
-## Build the rest
+## Build the tool
 With core built, just run the following and watch for errors! 
 ```sh
 sh install.sh
