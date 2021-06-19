@@ -11,20 +11,21 @@ SOMHunter consists of **three main parts** — [Core](https://github.com/siret-j
 
 ## Clone (recursive)
 ```sh
-# Clone with submodules
-# Using SSH, therefore you need you SSH public key added to the remote repository
+# Clone with submodules (using SSH)
 git clone --recurse-submodules git@github.com:siret-junior/somhunter.git
 ```
 
 ## Build the tool
-With core built, just run the following and watch for errors! 
 ```sh
 cd somhunter
 sh install.sh
+
+# Alternatively you can add string denoting what BUILD_TYPE you want, default is `RelWithDebInfo`.
+sh install.sh Debug
 ```
 
 # Run
-Running SOMHunter means to run all the three components.
+Running SOMHunter means to run all the three components simultaneously.
 ```sh
 # Run all part separately
 sh run-core.sh
