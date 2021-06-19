@@ -19,6 +19,7 @@ git clone --recurse-submodules git@github.com:siret-junior/somhunter.git
 ## Build the tool
 With core built, just run the following and watch for errors! 
 ```sh
+cd somhunter
 sh install.sh
 ```
 
