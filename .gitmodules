@@ -8,3 +8,6 @@
 [submodule "somhunter-data-server"]
 	path = somhunter-data-server
 	url = git@github.com:siret-junior/somhunter-data-server.git
+[submodule "somhunter-docs"]
+	path = somhunter-docs
+	url = https://github.com/siret-junior/somhunter-docs

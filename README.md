@@ -1,6 +1,10 @@
 # SOMHunter Video Search Tool
 
-SOMHunter consists of **three main parts** — [Core](https://github.com/siret-junior/somhunter-core), [Data Server](https://github.com/siret-junior/somhunter-data-server/) and [UI](https://github.com/siret-junior/somhunter-ui/).
+The SOMHunter system consists of **four main parts**:
+* [Core](https://github.com/siret-junior/somhunter-core)
+* [Data Server](https://github.com/siret-junior/somhunter-data-server/) 
+* [UI](https://github.com/siret-junior/somhunter-ui/)
+* [Documentation](https://github.com/siret-junior/somhunter-docs/)
 
 
 # Build
