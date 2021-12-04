@@ -17,7 +17,7 @@ sudo docker run -ti --rm \
     -p 8080:8080 \
     -p 8081:8081 \
     -p 8082:8082 \
-    somhunter:latest
+    somhunter:latest sh run.sh
 ```
 
 ## Prerequisites
