@@ -1,0 +1,16 @@
+*.tmp
+*.log
+**/build/
+**/dist/
+**/node_modules/
+
+somhunter-core/build/
+somhunter-core/logs/
+somhunter-core/data/*
+!somhunter-core/data/nn-models/
+!somhunter-core/data/nn_models/
+!somhunter-core/data/ITEC_W2VV-CLIP/
+
+somhunter-core/third-party/libtorch*
+
+

@@ -11,9 +11,13 @@ The SOMHunter system consists of **four main parts**:
 ## Docker
 ```sh
 # Build the image
-docker build -t somhunter .
+sudo docker build -t somhunter .
 
-docker run -ti --rm
+sudo docker run -ti --rm \
+    -p 8080:8080 \
+    -p 8081:8081 \
+    -p 8082:8082 \
+    somhunter:latest
 ```
 
 ## Prerequisites
