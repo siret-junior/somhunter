@@ -8,8 +8,16 @@ The SOMHunter system consists of **four main parts**:
 
 
 # Build
+## Docker
+```sh
+# Build the image
+docker build -t somhunter .
+
+docker run -ti --rm
+```
+
 ## Prerequisites
-- Python 3 (with `python` alias pointing to python3 binary)
+- Python 3 (with `python` alias pointing to the python3 binary)
 - Node.js (with `npm`)
 - Ember.js
 
