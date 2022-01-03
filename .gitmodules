@@ -11,3 +11,6 @@
 [submodule "somhunter-docs"]
 	path = somhunter-docs
 	url = git@github.com:siret-junior/somhunter-docs.git
+[submodule "ranking-server"]
+	path = ranking-server
+	url = git@github.com:siret-junior/ranking-server.git
