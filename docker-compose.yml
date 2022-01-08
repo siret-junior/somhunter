@@ -1,0 +1,36 @@
+services:
+  core:
+    image: somhunter-core
+    command: sh run.sh
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./somhunter-core:/somhunter-core
+      
+  ui:
+    image: somhunter-ui
+    command: sh run.sh
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/somhunter
+    # depends_on:
+    #  - core
+  
+  data-server:
+    image: somhunter-data-server
+    command: sh run.sh
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/somhunter
+    # depends_on:
+    #  - core
+
+  ranking-server:
+    image: ranking-server
+    command: sh run.sh
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./ranking-server:/ranking-server
