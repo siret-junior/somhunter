@@ -33,7 +33,7 @@ sudo docker-compose up
 sudo docker-compose up core ui
 
 ```
-If you feel like you'd want to build it in your environment, please see [this guide](HOWTO-build-native).
+If you feel like you'd want to build it in your environment, please see [this guide](HOWTO-build-native.md).
 
 ## **Configuring SOMHunter**
 > For more detailed documentation, please see our developer documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs) repository.
