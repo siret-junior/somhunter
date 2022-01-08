@@ -23,7 +23,8 @@ git submodule update --init --remote ./somhunter-core/ ./somhunter-ui/
 
 ## **Build & Run with Docker (recommended)**
 ```sh
-# Build the images and install all (checked out) modules
+# Build the images and install all (checked out) modules 
+# (This may take some time.)
 sudo sh install-docker.sh RelWithDebubInfo #< Feel free to use Release or Debug build type as well
 
 # Run all modules on this machine
