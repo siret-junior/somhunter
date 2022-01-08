@@ -10,20 +10,21 @@ The SOMHunter system consists of **multiple parts**:
 
 ## Getting the Sources
 Do not forget to also **checkout any submodules** you wish to use (since `somhunter` repo itself are just references to submodules). 
-
-If you don't want to run some submodule on the given machine, just do not checkout that submodule and leave the directory empty.
 ```sh
 # Clone with ALL submodules (using SSH)
-git clone --recurse-submodules git@github.com:siret-junior/somhunter.git
-
-# Checkout just core & UI modules
+git clone --recurse-submodules git@github.com:siret-junior/somhunter.git && cd somhunter
+```
+If you don't want to run some submodule on the given machine, just do not checkout that submodule and leave the directory empty.
+```sh
+# For example, checkout just core & UI modules
 git clone git@github.com:siret-junior/somhunter.git && cd somhunter
 git submodule update --init --remote ./somhunter-core/ ./somhunter-ui/
 ```
 
 ## **Build & Run with Docker (recommended)**
 ```sh
-# Build the images and install all (checked out) modules
+# Build the images and install all (checked out) modules 
+# (This may take some time.)
 sudo sh install-docker.sh RelWithDebubInfo #< Feel free to use Release or Debug build type as well
 
 # Run all modules on this machine
