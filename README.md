@@ -27,79 +27,34 @@ git submodule update --init --remote ./somhunter-core/ ./somhunter-ui/
 sudo sh install-docker.sh RelWithDebubInfo #< Feel free to use Release or Debug build type as well
 
 # Run all modules on this machine
-docker-compose up
+sudo docker-compose up
 # .. or run just some (e.g. core + UI) like this
 #           docker-compose services: core, ui, data-server, ranking-server
-docker-compose up core ui
+sudo docker-compose up core ui
 
 ```
+If you feel like you'd want to build it in your environment, please see [this guide](HOWTO-build-native).
 
-## **Build & Run (for bold & brave)**
-Alright, you decided to build SOMHunter in your environment. First make sure that you have all the prerequisites installed.
+## **Configuring SOMHunter**
+> For more detailed documentation, please see our developer documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs) repository.
 
-### Prerequisites
-- Python3 (with `python` alias pointing to the python3 binary)
-    - with `urllib3` lib installed
-- Node.js & `npm`
-- [Ember.js](https://guides.emberjs.com/release/getting-started/quick-start/)
+Almost everything can be configured inside the `./somhuner-core/config/config-core.json` file. 
 
+### Different Dataset
+First, you need the extracted metadata from [`extraction-pipeline`](https://github.com/siret-junior/extraction-pipeline). To know more about the formats, please see the developer documentation.
 
-```sh
-# This will attempt to install all the submodules (the first parameter specifies build type for the core)
-sh install.sh RelWithDebugInfo
+To plug in a different dataset, pay attention to the filepaths inside `datasets` dictionary. Feel free to check example configs that lie next to this file with the suffix saying what dataset it is meant for.
 
-# Run all part separately (in different shells if you want)
-sh scripts/run-core.sh
-sh scripts/run-data-server.sh
-sh scripts/run-ui.sh
-sh scripts/run-ranking-server.sh
+### Running (some) Parts Remotely
+If you wish to run your tool **remotely** set `local_only` field to `false`. Also all `hostname` keys must be set correctly as well as `CLIP_query_to_vec` address. Use the public hostname of the server it will be reachable at.
 
-# Or run them in parallel in one terminal (requires the `parallel` utility)
-sh run.sh
-```
+### Running in Competition Setup
+If you compete, make sure that `server_config` dictionar is correctly filled. Also make sure that `do_network_requests` is `true`, otherwise the network requests to the evaluation server will be imitated but not actually done.
+
 ## **Using SOMHunter**
 
-After that, the UI script should inform you that the UI is running at some port. Just visit that in your browser. By default, these are of importance:
-```sh
-# Data server
-https://localhost:8889
+If everything went well, your SOMHunter should be running. Just visit http://localhost:8080 and enjoy. These are of course default values, if you configured it differently, edit the address accordingly.
 
-# HTTP Core
-https://localhost:8888
+Also, Core API specification can be seen (by default) at https://localhost:8080/api/.
 
-# API Docs
-https://localhost:8888/api/
-
-# GUI
-http://localhost:4200
-```
-
-> ## **Don't see the frames in the UI?**
-> See *FAQ* below, point 1)
-
-
-## *Core HTTP API*
-We try to follow the OpenAPI specification for whith there is available HTTP documentation at [http://loacalhost:8888/api/](http://loacalhost:8888/api/) (if your core is running locally at port 8888). For more information check its README file.
-
-
-# Architecture
-## **[SOMHunter Core](https://github.com/siret-junior/somhunter-core)**
-This is the place of the main logic — all the models and scoring functions happen there. Moreover, it also runs the HTTP server handling requests that interact with the core (usually called by the UI). 
-
-## **[SOMHunter Data Server](https://github.com/siret-junior/somhunter-data-server/)**
-Responsible for providing the shared data for SOMHunter instances (e.g. frames, videos).
-
-## **[SOMHunter UI](https://github.com/siret-junior/somhunter-ui/)**
-This is the GUI of the tool.
-
-
-# FAQ
-## 1.  *I don't see the frames rendered in the GUI.*
-Because the data server is running on HTTP/2 it uses a self-signed certificate. When running for the first time your browser may complain about it and won't respond to the UI. Just access some URL of the data server manually (e.g.`https://localhost:8889/`) and "accept the risk".
-
-## 2.  *I'm am getting an error saying \"python not found\".*
-Do you have Python 3 installed? Maybe you don't have it aliased on `python` command. Consider aliasing it (or use something like `apt install python-is-python3`).
-
-## 3.  *I am getting errors while building the core/data-server/ui.*
-Please see the **FAQ** in the corresponding repository.
-
+To see how to use the application itself, please see our user documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs).
