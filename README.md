@@ -22,6 +22,8 @@ git submodule update --init --remote ./somhunter-core/ ./somhunter-ui/
 ```
 
 ## **Build & Run with Docker (recommended)**
+> Requires Docker and Docker Compose installed
+
 This will create four images, one for each submodule (core, data-server, ui, ranking server) It will run them and will install each part (download models, dependencies, build core, ...). After that you can run the containers (e.g. with `docker-compose`).
 ```sh
 # Build the images and install all (checked out) modules 
