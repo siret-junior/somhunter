@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   core:
     image: somhunter-core
@@ -7,6 +8,8 @@ services:
       - "8082:8082"
     volumes:
       - ./somhunter-core:/somhunter-core
+    networks:
+      - test
       
   ui:
     image: somhunter-ui
@@ -15,8 +18,8 @@ services:
       - "8080:8080"
     volumes:
       - .:/somhunter
-    # depends_on:
-    #  - core
+    networks:
+      - test
   
   data-server:
     image: somhunter-data-server
@@ -25,8 +28,8 @@ services:
       - "8081:8081"
     volumes:
       - .:/somhunter
-    # depends_on:
-    #  - core
+    networks:
+      - test
 
   ranking-server:
     image: ranking-server
@@ -35,3 +38,9 @@ services:
       - "8083:8083"
     volumes:
       - ./ranking-server:/ranking-server
+    networks:
+      - test
+
+networks:
+  test: 
+    driver: bridge
