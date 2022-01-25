@@ -9,7 +9,7 @@ The SOMHunter system consists of **multiple parts**:
 
 
 ## Getting the Sources
-Do not forget to also **checkout any submodules** you wish to use (since `somhunter` repo itself are just references to submodules). 
+Do not forget to also **checkout any submodules** you wish to use (since `somhunter` repo itself is just references to submodules). 
 ```sh
 # Clone with ALL submodules (using SSH)
 git clone --recurse-submodules git@github.com:siret-junior/somhunter.git && cd somhunter
@@ -22,9 +22,9 @@ git submodule update --init --remote ./somhunter-core/ ./somhunter-ui/
 ```
 
 ## **Build & Run with Docker (recommended)**
+This will create four images, one for each submodule (core, data-server, ui, ranking server) It will run them and will install each part (download models, dependencies, build core, ...). After that you can run the containers (e.g. with `docker-compose`).
 ```sh
 # Build the images and install all (checked out) modules 
-# (This may take some time.)
 sudo sh install-docker.sh RelWithDebubInfo #< Feel free to use Release or Debug build type as well
 
 # Run all modules on this machine
