@@ -61,3 +61,22 @@ If everything went well, your SOMHunter should be running. Just visit http://loc
 Also, Core API specification can be seen (by default) at https://localhost:8080/api/.
 
 To see how to use the application itself, please see our user documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs).
+
+## Licenses
+### Our Sources
+Please see the [LICENSE file](LICENSE). 
+
+### Attached dataset
+The attached dataset is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+For more information, please see:
+https://ftp.itec.aau.at/datasets/short-casual-videos/
+
+### Attached models
+The provided models are licensed as well. If you intend to use them, please make sure it complies with their licenses:
+
+- ResNext101:
+Mettes, P., Koelma, D. C., & Snoek, C. G. (2020). Shuffled ImageNet Banks for Video Event Detection and Search. ACM Transactions on Multimedia Computing, Communications, and Applications (TOMM), 16(2), 1-21.
+
+- ResNet152: 
+https://mxnet.incubator.apache.org/versions/1.9.0/
