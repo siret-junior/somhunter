@@ -72,8 +72,8 @@ The attached dataset is licensed under a [Creative Commons Attribution-NonCommer
 For more information, please see:
 https://ftp.itec.aau.at/datasets/short-casual-videos/
 
-### Attached models
-The provided models are licensed as well. If you intend to use them, please make sure it complies with their licenses:
+### Models downloaded during the installation
+During the installation, the script will download two third-party models. You will be prompted to accept this. You need to check that the way you're about to use them is OK with their respective licenses.
 
 - ResNext101:
 Mettes, P., Koelma, D. C., & Snoek, C. G. (2020). Shuffled ImageNet Banks for Video Event Detection and Search. ACM Transactions on Multimedia Computing, Communications, and Applications (TOMM), 16(2), 1-21.
