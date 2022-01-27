@@ -62,6 +62,33 @@ Also, Core API specification can be seen (by default) at https://localhost:8080/
 
 To see how to use the application itself, please see our user documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs).
 
+## Related Publications
+For exploring and referencing the original work, you may find some of
+the following articles helpful:
+
+- Kratochvíl, M., Veselý, P., Mejzlík, F., & Lokoč, J.
+  (2020, January).
+  [SOM-Hunter: Video Browsing with Relevance-to-SOM Feedback Loop](https://link.springer.com/chapter/10.1007/978-3-030-37734-2_71).
+  In *International Conference on Multimedia Modeling* (pp. 790-795). Springer, Cham.
+- Mejzlík, F., Veselý, P., Kratochvíl, M., Souček, T., & Lokoč, J.
+  (2020, June).
+  [SOMHunter for Lifelog Search](https://dl.acm.org/doi/abs/10.1145/3379172.3391727).
+  In *Proceedings of the Third Annual Workshop on Lifelog Search Challenge* (pp. 73-75).
+- Kratochvil, M., Mejzlík, F., Veselý, P., Souček, T., & Lokoč, J. 
+  (2020, October). 
+  [SOMHunter: Lightweight Video Search System with SOM-Guided Relevance Feedback](https://dl.acm.org/doi/10.1145/3394171.3414542). 
+  In *Proceedings of the 28th ACM International Conference on Multimedia* (pp. 4481-4484).
+- Veselý, P., Mejzlík, F., & Lokoč, J. 
+  (2021, June). 
+  [SOMHunter V2 at Video Browser Showdown 2021](https://link.springer.com/chapter/10.1007/978-3-030-67835-7_45). 
+  In *International Conference on Multimedia Modeling* (pp. 461-466). Springer, Cham.
+ - Lokoč, J., Mejzlík, F., Veselý, P. & Souček, T.
+  (2021, August).
+  [Enhanced SOMHunter for Known-item Search in Lifelog Data](https://dl.acm.org/doi/10.1145/3463948.3469074).
+  In *Proceedings of the 4th Annual Workshop on Lifelog Search Challenge* (pp. 71-73).
+  
+    
+
 ## Licenses
 ### Our Sources
 Please see the [LICENSE file](LICENSE). 
