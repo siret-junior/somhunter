@@ -2,10 +2,16 @@
 Alright, you decided to build SOMHunter in your environment. First make sure that you have all the prerequisites installed.
 
 ### Prerequisites
+- Git
 - Python3 (with `python` alias pointing to the python3 binary)
     - with `urllib3` lib installed
 - Node.js & `npm`
 - [Ember.js](https://guides.emberjs.com/release/getting-started/quick-start/)
+- `libcurl`- [https://curl.se/libcurl/](https://curl.se/libcurl/)
+- `OpenCV` - [https://opencv.org/](https://opencv.org/)
+- `cpprestsdk` - [https://github.com/microsoft/cpprestsdk](https://github.com/microsoft/cpprestsdk)
+- `libtorch`  - [https://pytorch.org/](https://pytorch.org/)
+  - (this will be downloaded and installed during CMake script execution, you shouldn't worry about this)
 
 
 ```sh
