@@ -39,7 +39,9 @@ sudo docker-compose up core ui
 If you feel like you'd want to build it in your environment, please see [this guide](HOWTO-build-native.md).
 
 ## **Configuring SOMHunter**
-> For more detailed documentation, please see our developer documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs) repository.
+> For more detailed documentation, please see our developer documentation inside [`somhunter-docs`](https://github.com/siret-junior/somhunter-docs) repository. 
+
+> The pre-built version of the generated Doxygen documentation is available [here](https://siret-junior.github.io/somhunter-core/).
 
 Almost everything can be configured inside the `./somhuner-core/config/config-core.json` file. 
 
